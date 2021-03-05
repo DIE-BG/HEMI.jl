@@ -1,2 +1,6 @@
+name = "HEMI"
+authors = ["Juan Carlos Castañeda", "Rodrigo Chang", "Oscar Solís", "Mauricio Vargas"]
+[compat]
+julia = "1.5.3"
 [deps]
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
