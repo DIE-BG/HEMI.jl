@@ -5,13 +5,12 @@
 """
 module CPIDataBase
 
-greet() = print("Hello World!")
-f(x) = 2x+1
-g(x) = 2x^2+2
+export CPIBase, 
+        weights
 
-# export f
 
+# Definición de tipos para bases del IPC
 include("types.jl")
-export CPIBase
+
 
 end # module
