@@ -1,9 +1,21 @@
-struct CPIBase{T} 
-    v::Matrix{T}
-    w::Vector{T}
-end
+import TimeSeries: TimeArray, meta
 
-function Base.show(io::IO, b::CPIBase)
-    println("CPIBase: ", size(b.v)[1], " períodos")
-    println("| -> ", size(b.v)[2], " gastos básicos")    
-end
+const CPIBase = TimeArray
+
+"""
+    weights(ta::TimeArray)
+
+Campo `meta` de `TimeArray` utilizado para almacenar las ponderaciones
+de los gastos básicos de la base del IPC.
+"""
+weights(ta::TimeArray) = meta(ta)
+
+
+# import Base: show
+
+# function show(io::IO, base::CPIBase)
+#     println("Base del IPC")
+#     show(io, base)
+# end
+
+# export show
