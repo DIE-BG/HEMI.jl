@@ -4,6 +4,7 @@ authors = ["Rodrigo Chang <rrcp777@gmail.com> and contributors"]
 version = "0.1.0"
 
 [deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 TimeSeries = "9e3dc215-6440-5c97-bce1-76c03772f85e"
 
 [compat]

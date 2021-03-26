@@ -5,12 +5,15 @@
 """
 module CPIDataBase
 
-export CPIBase, 
-        weights
+using Dates
+
+export CPIBase, CPIFullBase
 
 
 # Definición de tipos para bases del IPC
 include("types.jl")
 
+# Métodos para carga de datos
+include("loading.jl")
 
 end # module
