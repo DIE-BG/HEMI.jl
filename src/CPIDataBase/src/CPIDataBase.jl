@@ -8,7 +8,7 @@ module CPIDataBase
 using Dates
 using DataFrames
 
-export CPIBase, VarCPIBase
+export CPIBase, VarCPIBase, CountryStructure
 
 # Definición de tipos para bases del IPC
 include("types.jl")

@@ -1,4 +1,4 @@
-import Base: show, summary, convert
+import Base: show, summary, convert, getindex
 
 # Tipo abstracto para definir contenedores del IPC
 abstract type AbstractCPIBase end
@@ -36,6 +36,12 @@ Base.@kwdef struct VarCPIBase{T<:AbstractFloat} <: AbstractCPIBase
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
+
+    function VarCPIBase(v::Matrix{T}, w::Vector{T}, fechas::DATETYPE) where T
+        size(v, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
+        size(v, 1) == length(fechas) || throw(ArgumentError("número de filas debe coincidir con vector de fechas"))
+        new{T}(v, w, fechas)
+    end
 end
 
 
@@ -77,6 +83,17 @@ function VarCPIBase(df::DataFrame, gb::DataFrame)
     return VarCPIBase(cpi_base.v, cpi_base.w, cpi_base.fechas)
 end
 
+
+"""
+    CountryStructure{N, T<:AbstractFloat}
+
+Estructura que representa el conjunto de bases del IPC de un país, 
+posee el campo `base`, que es un vector de la estructura `CPIBase`
+"""
+struct CountryStructure{N, T<:AbstractFloat}
+    base::NTuple{N, VarCPIBase{T}}
+end
+
 ## Conversión
 
 convert(::Type{T}, base::VarCPIBase) where {T <: AbstractFloat} = 
@@ -91,9 +108,27 @@ function summary(io::IO, base::AbstractCPIBase)
 end
 
 function show(io::IO, base::AbstractCPIBase)
-    periodos = typeof(base) == CPIBase ? size(base.v, 1) : size(base.v, 1) + 1
+    periodos = typeof(base) <: VarCPIBase ? size(base.v, 1) : size(base.v, 1) + 1
     print(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos ")
     datestart = Dates.format(base.fechas[begin], dateformat"u-yyyy")
     dateend = Dates.format(base.fechas[end], dateformat"u-yyyy")
     print(io, datestart, "-", dateend)
 end
+
+function summary(io::IO, cst::CountryStructure)
+    datestart = Dates.format(cst.base[begin].fechas[begin], dateformat"u-yyyy")
+    dateend = Dates.format(cst.base[end].fechas[end], dateformat"u-yyyy")
+    print(io, typeof(cst), ": ", datestart, "-", dateend)
+end
+
+function show(io::IO, cst::CountryStructure)
+    l = length(cst.base)
+    println(io, typeof(cst), " con ", l, " bases")
+    for base in cst.base
+        println(io, "|-> ", sprint(show, base))
+    end
+end
+
+## getindex
+
+getindex(cst::CountryStructure{N, T}, i::Int) where {N, T} = cst.base[i]
