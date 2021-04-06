@@ -6,14 +6,11 @@
 module CPIDataBase
 
 using Dates
+using DataFrames
 
-export CPIBase, CPIFullBase
-
+export CPIBase, VarCPIBase
 
 # Definición de tipos para bases del IPC
 include("types.jl")
-
-# Métodos para carga de datos
-include("loading.jl")
 
 end # module
