@@ -1,4 +1,4 @@
-import Base: show
+import Base: show, summary, convert
 
 # Tipo abstracto para definir contenedores del IPC
 abstract type AbstractCPIBase end
@@ -7,7 +7,7 @@ abstract type AbstractCPIBase end
 const DATETYPE = Union{Vector{Date}, StepRange{Date, Month}}
 
 """
-    CPIFullBase{T<:AbstractFloat} <: AbstractCPIBase
+    CPIBase{T<:AbstractFloat} <: AbstractCPIBase
 
 Contenedor completo para datos del IPC de un país. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
@@ -15,7 +15,7 @@ Contenedor completo para datos del IPC de un país. Se representa por:
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct CPIFullBase{T<:AbstractFloat} <: AbstractCPIBase
+Base.@kwdef struct CPIBase{T<:AbstractFloat} <: AbstractCPIBase
     ipc::Matrix{T}
     v::Matrix{T}
     w::Vector{T}
@@ -24,7 +24,7 @@ end
 
 
 """
-    CPIBase{T<:AbstractFloat} <: AbstractCPIBase
+    VarCPIBase{T<:AbstractFloat} <: AbstractCPIBase
 
 Contenedor genérico para datos del IPC. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
@@ -32,15 +32,68 @@ Contenedor genérico para datos del IPC. Se representa por:
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct CPIBase{T<:AbstractFloat} <: AbstractCPIBase
+Base.@kwdef struct VarCPIBase{T<:AbstractFloat} <: AbstractCPIBase
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
 end
 
-# Métodos para mostrar los tipos
-function Base.show(io::IO, base::AbstractCPIBase)
+
+## Constructores
+
+"""
+    CPIBase(df::DataFrame, gb::DataFrame)
+
+Este constructor devuelve una estructura `CPIBase` a partir del DataFrame 
+de índices de precios `df`, que contiene en las columnas las categorías o gastos 
+básicos del IPC y en las filas los períodos por meses. Las ponderaciones se obtienen 
+de la estructura `gb`, en la columna denominada `:Ponderacion`.
+"""
+function CPIBase(df::DataFrame, gb::DataFrame)
+    # Obtener matriz de índices de precios
+    ipc_mat = convert(Matrix, df[!, 2:end])
+    # Matrices de variaciones intermensuales de índices de precios
+    v_mat = 100 .* (ipc_mat[2:end, :] ./ ipc_mat[1:end-1, :] .- 1)
+    # Ponderación de gastos básicos o categorías
+    w = gb[!, :Ponderacion]
+    # Actualización de fechas
+    fechas = df[1, 1]:Month(1):df[end, 1] 
+    # Estructura de variaciones intermensuales de base del IPC
+    return CPIBase(ipc_mat, v_mat, w, fechas)
+end
+
+"""
+    VarCPIBase(df::DataFrame, gb::DataFrame)
+
+Este constructor devuelve una estructura `VarCPIBase` a partir del DataFrame 
+de índices de precios `df`, que contiene en las columnas las categorías o gastos 
+básicos del IPC y en las filas los períodos por meses. Las ponderaciones se obtienen 
+de la estructura `gb`, en la columna denominada `:Ponderacion`.
+"""
+function VarCPIBase(df::DataFrame, gb::DataFrame)
+    # Obtener estructura completa
+    cpi_base = CPIBase(df, gb)
+    # Estructura de variaciones intermensuales de base del IPC
+    return VarCPIBase(cpi_base.v, cpi_base.w, cpi_base.fechas)
+end
+
+## Conversión
+
+convert(::Type{T}, base::VarCPIBase) where {T <: AbstractFloat} = 
+    VarCPIBase(convert.(T, base.v), convert.(T, base.w), base.fechas)
+
+
+## Métodos para mostrar los tipos
+
+function summary(io::IO, base::AbstractCPIBase)
     periodos = typeof(base) == CPIBase ? size(base.v, 1) : size(base.v, 1) + 1
-    println(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos")
-    println(io, "|─> Fechas: ", base.fechas[begin], " - ", base.fechas[end])
+    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos")
+end
+
+function show(io::IO, base::AbstractCPIBase)
+    periodos = typeof(base) == CPIBase ? size(base.v, 1) : size(base.v, 1) + 1
+    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos ")
+    datestart = Dates.format(base.fechas[begin], dateformat"u-yyyy")
+    dateend = Dates.format(base.fechas[end], dateformat"u-yyyy")
+    print(io, datestart, "-", dateend)
 end

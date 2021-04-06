@@ -8,7 +8,7 @@ DrWatson.greet()
 # Función básica para variación interanual del IPC con varias bases
 # ... (mucho más)
 
-## 
-using CPIDataBase
-CPIDataBase.f(2)
-CPIDataBase.g(2) # Probando Revise
+using Dates, CPIDataBase
+using JLD2
+
+@load datadir("guatemala", "gtdata.jld2") gt00 gt10
