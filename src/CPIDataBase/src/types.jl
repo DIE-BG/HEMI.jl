@@ -1,3 +1,4 @@
+# types.jl - Type definitions and structure
 import Base: show, summary, convert, getindex
 
 # Tipo abstracto para definir contenedores del IPC
