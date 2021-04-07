@@ -5,12 +5,19 @@
 """
 module CPIDataBase
 
-using Dates
-using DataFrames
+    using Dates
+    using DataFrames
 
-export CPIBase, VarCPIBase, CountryStructure
+    # Export types
+    export CPIBase, VarCPIBase, CountryStructure
 
-# Definición de tipos para bases del IPC
-include("types.jl")
+    # Export functions
+    export capitalize
+
+    # Definición de tipos para bases del IPC
+    include("types.jl")
+
+    # Basic operations
+    include("operations.jl")
 
 end # module
