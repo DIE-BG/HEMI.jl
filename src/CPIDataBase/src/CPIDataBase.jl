@@ -9,7 +9,7 @@ module CPIDataBase
     using DataFrames
 
     # Export types
-    export CPIBase, VarCPIBase, CountryStructure
+    export IndexCPIBase, VarCPIBase, FullCPIBase, CountryStructure
 
     # Export functions
     export capitalize

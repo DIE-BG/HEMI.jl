@@ -14,7 +14,8 @@ gt_base00 = CSV.read(datadir("guatemala", "Guatemala_IPC_2000.csv"),
 gt00gb = CSV.read(datadir("guatemala", "Guatemala_GB_2000.csv"), 
     DataFrame, types=[String, String, Float64])
 
-gt00 = VarCPIBase(gt_base00, gt00gb)
+full_gt00 = FullCPIBase(gt_base00, gt00gb)
+gt00 = VarCPIBase(full_gt00)
 
 # Base 2010
 gt_base10 = CSV.read(datadir("guatemala", "Guatemala_IPC_2010.csv"), 
@@ -22,7 +23,8 @@ gt_base10 = CSV.read(datadir("guatemala", "Guatemala_IPC_2010.csv"),
 gt10gb = CSV.read(datadir("guatemala", "Guatemala_GB_2010.csv"), 
     DataFrame, types=[String, String, Float64])
 
-gt10 = VarCPIBase(gt_base10, gt10gb)
+full_gt10 = FullCPIBase(gt_base10, gt10gb)
+gt10 = VarCPIBase(full_gt10)
 
 ## Guardar datos para su carga posterior
 using JLD2
