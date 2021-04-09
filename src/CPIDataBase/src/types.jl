@@ -2,13 +2,18 @@
 import Base: show, summary, convert, getindex
 
 # Tipo abstracto para definir contenedores del IPC
-abstract type AbstractCPIBase end
+abstract type AbstractCPIBase{T <: AbstractFloat} end
 
 # Tipos para los vectores de fechas
 const DATETYPE = StepRange{Date, Month}
 
+# El tipo B representa el tipo utilizado para almacenar los índices base. 
+# Puede ser un tipo flotante, por ejemplo, Float64 o bien, si los datos 
+# disponibles empiezan con índices diferentes a 100, un vector, Vector{Float64}, 
+# por ejemplo
+
 """
-    FullCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+    FullCPIBase{T, B} <: AbstractCPIBase{T}
 
 Contenedor completo para datos del IPC de un país. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
@@ -16,7 +21,7 @@ Contenedor completo para datos del IPC de un país. Se representa por:
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct FullCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+Base.@kwdef struct FullCPIBase{T, B} <: AbstractCPIBase{T}
     ipc::Matrix{T}
     v::Matrix{T}
     w::Vector{T}
@@ -33,14 +38,14 @@ end
 
 
 """
-    IndexCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+    IndexCPIBase{T, B} <: AbstractCPIBase{T}
 
 Contenedor genérico de índices de precios del IPC de un país. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct IndexCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+Base.@kwdef struct IndexCPIBase{T, B} <: AbstractCPIBase{T}
     ipc::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
@@ -55,14 +60,14 @@ end
 
 
 """
-    VarCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+    VarCPIBase{T, B} <: AbstractCPIBase{T}
 
 Contenedor genérico para de variaciones intermensuales de índices de precios del IPC de un país. Se representa por:
 - Matriz de variaciones intermensuales `v`. En las filas contiene los períodos y en las columnas contiene los gastos básicos.
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct VarCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
+Base.@kwdef struct VarCPIBase{T, B} <: AbstractCPIBase{T}
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
@@ -154,13 +159,17 @@ IndexCPIBase(base::VarCPIBase) = convert(IndexCPIBase, deepcopy(base))
 
 ## Conversión
 
+# Estos métodos sí crean copias a través de la función `convert` de los campos
 convert(::Type{T}, base::VarCPIBase) where {T <: AbstractFloat} = 
     VarCPIBase(convert.(T, base.v), convert.(T, base.w), base.fechas, convert.(T, base.baseindex))
 convert(::Type{T}, base::IndexCPIBase) where {T <: AbstractFloat} = 
-    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.w), base.fechas)
+    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.w), base.fechas, convert.(T, base.baseindex))
 convert(::Type{T}, base::FullCPIBase) where {T <: AbstractFloat} = 
-    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.v), convert.(T, base.w), base.fechas)
+    FullCPIBase(convert.(T, base.ipc), convert.(T, base.v), convert.(T, base.w), base.fechas, convert.(T, base.baseindex))
 
+# Estos métodos no crean copias, como se indica en la documentación: 
+# > If T is a collection type and x a collection, the result of convert(T, x) 
+# > may alias all or part of x.
 # Al convertir de esta forma se muta la matriz de variaciones intermensuales y se
 # devuelve el mismo tipo, pero sin asignar nueva memoria
 function convert(::Type{IndexCPIBase}, base::VarCPIBase)
@@ -179,7 +188,7 @@ end
 function summary(io::IO, base::AbstractCPIBase)
     field = hasproperty(base, :v) ? :v : :ipc
     periodos, gastos = size(getproperty(base, field))
-    print(io, typeof(base), ": ", periodos, " períodos × ", gastos, " gastos básicos")
+    print(io, typeof(base), ": ", periodos, " × ", gastos)
 end
 
 function show(io::IO, base::AbstractCPIBase)
@@ -200,10 +209,10 @@ end
 Estructura que representa el conjunto de bases del IPC de un país, 
 posee el campo `base`, que es un vector de la estructura `VarCPIBase`
 """
-struct CountryStructure{N, T<:AbstractFloat, B}
-    base::NTuple{N, VarCPIBase{T, B}}
+struct CountryStructure{N, T<:AbstractFloat}
+    # Tupla de VarCPIBase, cada una con su propio tipo de índices base B
+    base::NTuple{N, VarCPIBase{T, B} where B} 
 end
-
 
 function summary(io::IO, cst::CountryStructure)
     datestart, dateend = _formatdate.((cst.base[begin].fechas[begin], cst.base[end].fechas[end]))
@@ -214,11 +223,22 @@ function show(io::IO, cst::CountryStructure)
     l = length(cst.base)
     println(io, typeof(cst), " con ", l, " bases")
     for base in cst.base
-        println(io, "|-> ", sprint(show, base))
+        println(io, "|─> ", sprint(show, base))
     end
 end
 
-getindex(cst::CountryStructure{N, T, B}, i::Int) where {N, T, B} = cst.base[i]
+# Conversión
+
+# Este método crea una copia a través de los métodos de conversión de bases
+function convert(::Type{T}, cst::CountryStructure) where {T <: AbstractFloat}
+    # Convert each base to type T
+    conv_b = convert.(T, cst.base)
+    CountryStructure(conv_b)
+end
+
+# Acceso 
+
+getindex(cst::CountryStructure, i::Int) = cst.base[i]
 
 
 
