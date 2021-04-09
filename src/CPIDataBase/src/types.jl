@@ -8,7 +8,7 @@ abstract type AbstractCPIBase end
 const DATETYPE = StepRange{Date, Month}
 
 """
-    FullCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+    FullCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
 
 Contenedor completo para datos del IPC de un país. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
@@ -16,62 +16,62 @@ Contenedor completo para datos del IPC de un país. Se representa por:
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct FullCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+Base.@kwdef struct FullCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
     ipc::Matrix{T}
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
-    baseindex::Union{T, Vector{T}}
+    baseindex::B
 
-    function FullCPIBase(ipc::Matrix{T}, v::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::Union{T, Vector{T}}=100) where T
+    function FullCPIBase(ipc::Matrix{T}, v::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::B) where {T, B}
         size(ipc, 2) == size(v, 2) || throw(ArgumentError("número de columnas debe coincidir entre matriz de índices y variaciones"))
         size(ipc, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
         size(ipc, 1) == size(v, 1) == length(fechas) || throw(ArgumentError("número de filas de `ipc` debe coincidir con vector de fechas"))
-        new{T}(ipc, v, w, fechas, baseindex)
+        new{T, B}(ipc, v, w, fechas, baseindex)
     end
 end
 
 
 """
-    IndexCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+    IndexCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
 
 Contenedor genérico de índices de precios del IPC de un país. Se representa por:
 - Matriz de índices de precios `ipc` que incluye la fila con los índices del númbero base. 
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct IndexCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+Base.@kwdef struct IndexCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
     ipc::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
-    baseindex::Union{T, Vector{T}}
+    baseindex::B
 
-    function IndexCPIBase(ipc::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::Union{T, Vector{T}}=100) where T
+    function IndexCPIBase(ipc::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::B) where {T, B}
         size(ipc, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
         size(ipc, 1) == length(fechas) || throw(ArgumentError("número de filas debe coincidir con vector de fechas"))
-        new{T}(ipc, w, fechas, baseindex)
+        new{T, B}(ipc, w, fechas, baseindex)
     end
 end
 
 
 """
-    VarCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+    VarCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
 
 Contenedor genérico para de variaciones intermensuales de índices de precios del IPC de un país. Se representa por:
 - Matriz de variaciones intermensuales `v`. En las filas contiene los períodos y en las columnas contiene los gastos básicos.
 - Vector de ponderaciones `w` de los gastos básicos.
 - Fechas correspondientes `fechas` (por meses).
 """
-Base.@kwdef struct VarCPIBase{T<:AbstractFloat} <: AbstractCPIBase
+Base.@kwdef struct VarCPIBase{T<:AbstractFloat, B} <: AbstractCPIBase
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
-    baseindex::Union{T, Vector{T}}
+    baseindex::B
 
-    function VarCPIBase(v::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::Union{T, Vector{T}}=100) where T
+    function VarCPIBase(v::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::B) where {T, B}
         size(v, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
         size(v, 1) == length(fechas) || throw(ArgumentError("número de filas debe coincidir con vector de fechas"))
-        new{T}(v, w, fechas, baseindex)
+        new{T, B}(v, w, fechas, baseindex)
     end
 end
 
@@ -200,8 +200,8 @@ end
 Estructura que representa el conjunto de bases del IPC de un país, 
 posee el campo `base`, que es un vector de la estructura `VarCPIBase`
 """
-struct CountryStructure{N, T<:AbstractFloat}
-    base::NTuple{N, VarCPIBase{T}}
+struct CountryStructure{N, T<:AbstractFloat, B}
+    base::NTuple{N, VarCPIBase{T, B}}
 end
 
 
@@ -218,7 +218,7 @@ function show(io::IO, cst::CountryStructure)
     end
 end
 
-getindex(cst::CountryStructure{N, T}, i::Int) where {N, T} = cst.base[i]
+getindex(cst::CountryStructure{N, T, B}, i::Int) where {N, T, B} = cst.base[i]
 
 
 
