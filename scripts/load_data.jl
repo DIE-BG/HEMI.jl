@@ -1,9 +1,6 @@
 using DrWatson
 @quickactivate "HEMI"
 
-using Dates, CPIDataBase
-using DataFrames
-
 ## Cargar datos de la base 2000 y 2010 del IPC 
 using Dates, CSV, DataFrames
 using CPIDataBase
