@@ -5,7 +5,7 @@ import Base: show, summary, convert, getindex
 abstract type AbstractCPIBase end
 
 # Tipos para los vectores de fechas
-const DATETYPE = Union{Vector{Date}, StepRange{Date, Month}}
+const DATETYPE = StepRange{Date, Month}
 
 """
     FullCPIBase{T<:AbstractFloat} <: AbstractCPIBase
@@ -21,12 +21,13 @@ Base.@kwdef struct FullCPIBase{T<:AbstractFloat} <: AbstractCPIBase
     v::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
+    baseindex::Union{T, Vector{T}}
 
-    function FullCPIBase(ipc::Matrix{T}, v::Matrix{T}, w::Vector{T}, fechas::DATETYPE) where T
+    function FullCPIBase(ipc::Matrix{T}, v::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::Union{T, Vector{T}}=100) where T
         size(ipc, 2) == size(v, 2) || throw(ArgumentError("número de columnas debe coincidir entre matriz de índices y variaciones"))
         size(ipc, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
-        size(ipc, 1) == size(v, 1)+1 == length(fechas) || throw(ArgumentError("número de filas de `ipc` debe coincidir con vector de fechas"))
-        new{T}(ipc, v, w, fechas)
+        size(ipc, 1) == size(v, 1) == length(fechas) || throw(ArgumentError("número de filas de `ipc` debe coincidir con vector de fechas"))
+        new{T}(ipc, v, w, fechas, baseindex)
     end
 end
 
@@ -43,11 +44,12 @@ Base.@kwdef struct IndexCPIBase{T<:AbstractFloat} <: AbstractCPIBase
     ipc::Matrix{T}
     w::Vector{T}
     fechas::DATETYPE
+    baseindex::Union{T, Vector{T}}
 
-    function IndexCPIBase(ipc::Matrix{T}, w::Vector{T}, fechas::DATETYPE) where T
+    function IndexCPIBase(ipc::Matrix{T}, w::Vector{T}, fechas::DATETYPE, baseindex::Union{T, Vector{T}}=100) where T
         size(ipc, 2) == length(w) || throw(ArgumentError("número de columnas debe coincidir con vector de ponderaciones"))
         size(ipc, 1) == length(fechas) || throw(ArgumentError("número de filas debe coincidir con vector de fechas"))
-        new{T}(ipc, w, fechas)
+        new{T}(ipc, w, fechas, baseindex)
     end
 end
 
@@ -75,6 +77,14 @@ end
 
 
 ## Constructores
+# Los constructores entre tipos crean copias y asignan nueva memoria
+
+function _getbaseindex(baseindex)
+    if length(unique(baseindex)) == 1
+        return baseindex[1]
+    end
+    baseindex
+end
 
 """
     FullCPIBase(df::DataFrame, gb::DataFrame)
@@ -92,9 +102,9 @@ function FullCPIBase(df::DataFrame, gb::DataFrame)
     # Ponderación de gastos básicos o categorías
     w = gb[!, :Ponderacion]
     # Actualización de fechas
-    fechas = df[1, 1]:Month(1):df[end, 1] 
+    fechas = df[2, 1]:Month(1):df[end, 1] 
     # Estructura de variaciones intermensuales de base del IPC
-    return FullCPIBase(ipc_mat, v_mat, w, fechas)
+    return FullCPIBase(ipc_mat[2:end, :], v_mat, w, fechas, _getbaseindex(ipc_mat[1, :]))
 end
 
 
@@ -113,13 +123,9 @@ function VarCPIBase(df::DataFrame, gb::DataFrame)
     VarCPIBase(cpi_base)
 end
 
-function VarCPIBase(base::FullCPIBase) 
-    # Obtener índice(s) base
-    baseindex = base.ipc[1, :]
-    if length(unique(baseindex)) == 1
-        return VarCPIBase(base.v, base.w, base.fechas[2:end], baseindex[1])
-    end
-    VarCPIBase(base.v, base.w, base.fechas[2:end], baseindex)
+function VarCPIBase(base::FullCPIBase)
+    nbase = deepcopy(base)
+    VarCPIBase(nbase.v, nbase.w, nbase.fechas, nbase.baseindex)
 end
 
 ## Obtener VarCPIBase de IndexCPIBase con variaciones intermensuales
@@ -137,11 +143,56 @@ function IndexCPIBase(df::DataFrame, gb::DataFrame)
     # Obtener estructura completa
     cpi_base = FullCPIBase(df, gb)
     # Estructura de índices de precios de base del IPC
-    return IndexCPIBase(cpi_base.ipc, cpi_base.w, cpi_base.fechas)
+    return IndexCPIBase(cpi_base)
 end
 
-IndexCPIBase(base::FullCPIBase) = IndexCPIBase(base.ipc, base.w, base.fechas)
-IndexCPIBase(base::VarCPIBase) = capitalize(base)
+function IndexCPIBase(base::FullCPIBase) 
+    nbase = deepcopy(base)
+    IndexCPIBase(nbase.ipc, nbase.w, nbase.fechas, nbase.baseindex)
+end
+IndexCPIBase(base::VarCPIBase) = convert(IndexCPIBase, deepcopy(base))
+
+## Conversión
+
+convert(::Type{T}, base::VarCPIBase) where {T <: AbstractFloat} = 
+    VarCPIBase(convert.(T, base.v), convert.(T, base.w), base.fechas, convert.(T, base.baseindex))
+convert(::Type{T}, base::IndexCPIBase) where {T <: AbstractFloat} = 
+    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.w), base.fechas)
+convert(::Type{T}, base::FullCPIBase) where {T <: AbstractFloat} = 
+    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.v), convert.(T, base.w), base.fechas)
+
+# Al convertir de esta forma se muta la matriz de variaciones intermensuales y se
+# devuelve el mismo tipo, pero sin asignar nueva memoria
+function convert(::Type{IndexCPIBase}, base::VarCPIBase)
+    vmat = base.v
+    capitalize!(vmat, base.baseindex)
+    IndexCPIBase(vmat, base.w, base.fechas, base.baseindex)
+end
+
+
+## Métodos para mostrar los tipos
+
+function _formatdate(fecha)
+    Dates.format(fecha, dateformat"u-yyyy")
+end
+
+function summary(io::IO, base::AbstractCPIBase)
+    field = hasproperty(base, :v) ? :v : :ipc
+    periodos, gastos = size(getproperty(base, field))
+    print(io, typeof(base), ": ", periodos, " períodos × ", gastos, " gastos básicos")
+end
+
+function show(io::IO, base::AbstractCPIBase)
+    field = hasproperty(base, :v) ? :v : :ipc
+    periodos, gastos = size(getproperty(base, field))
+    print(io, typeof(base), ": ", periodos, " períodos × ", gastos, " gastos básicos ")
+    datestart, dateend = _formatdate.((base.fechas[begin], base.fechas[end]))
+    print(io, datestart, "-", dateend)
+end
+
+
+
+## CountryStructure
 
 """
     CountryStructure{N, T<:AbstractFloat}
@@ -153,45 +204,6 @@ struct CountryStructure{N, T<:AbstractFloat}
     base::NTuple{N, VarCPIBase{T}}
 end
 
-## Conversión
-
-convert(::Type{T}, base::VarCPIBase) where {T <: AbstractFloat} = 
-    VarCPIBase(convert.(T, base.v), convert.(T, base.w), base.fechas, convert.(T, base.baseindex))
-convert(::Type{T}, base::IndexCPIBase) where {T <: AbstractFloat} = 
-    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.w), base.fechas)
-convert(::Type{T}, base::FullCPIBase) where {T <: AbstractFloat} = 
-    IndexCPIBase(convert.(T, base.ipc), convert.(T, base.v), convert.(T, base.w), base.fechas)
-
-
-## Métodos para mostrar los tipos
-
-function _formatdate(fecha)
-    Dates.format(fecha, dateformat"u-yyyy")
-end
-
-function summary(io::IO, base::IndexCPIBase)
-    periodos = size(base.ipc, 1)
-    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.ipc)[2], " gastos básicos")
-end
-
-function summary(io::IO, base::AbstractCPIBase)
-    periodos = typeof(base) == VarCPIBase ? size(base.v, 1) : size(base.v, 1) + 1
-    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos")
-end
-
-function show(io::IO, base::IndexCPIBase)
-    periodos = size(base.ipc, 1)
-    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.ipc)[2], " gastos básicos ")
-    datestart, dateend = _formatdate.((base.fechas[begin], base.fechas[end]))
-    print(io, datestart, "-", dateend)
-end
-
-function show(io::IO, base::AbstractCPIBase)
-    periodos = typeof(base) <: VarCPIBase ? size(base.v, 1) : size(base.v, 1) + 1
-    print(io, typeof(base), ": ", periodos, " períodos × ", size(base.v)[2], " gastos básicos ")
-    datestart, dateend = _formatdate.((base.fechas[begin], base.fechas[end]))
-    print(io, datestart, "-", dateend)
-end
 
 function summary(io::IO, cst::CountryStructure)
     datestart, dateend = _formatdate.((cst.base[begin].fechas[begin], cst.base[end].fechas[end]))
@@ -206,6 +218,7 @@ function show(io::IO, cst::CountryStructure)
     end
 end
 
-## getindex
-
 getindex(cst::CountryStructure{N, T}, i::Int) where {N, T} = cst.base[i]
+
+
+
