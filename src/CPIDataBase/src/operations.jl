@@ -81,6 +81,11 @@ function _offset_back(dates)
     start:Month(1):dates[end]
 end
 
+"""
+    capitalize(base::VarCPIBase)
+
+This returns a new instance (copy) of type `IndexCPIBase` from a `VarCPIBase`.
+"""
 function capitalize(base::VarCPIBase)
-    IndexCPIBase(capitalize_addbase(base.v, base.baseindex), base.w, _offset_back(base.fechas))
+    IndexCPIBase(base)
 end
