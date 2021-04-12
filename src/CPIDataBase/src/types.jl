@@ -133,8 +133,8 @@ function VarCPIBase(base::FullCPIBase)
     VarCPIBase(nbase.v, nbase.w, nbase.fechas, nbase.baseindex)
 end
 
-## Obtener VarCPIBase de IndexCPIBase con variaciones intermensuales
-## TODO
+# Obtener VarCPIBase de IndexCPIBase con variaciones intermensuales
+VarCPIBase(base::IndexCPIBase) = convert(VarCPIBase, deepcopy(base))
 
 """
     IndexCPIBase(df::DataFrame, gb::DataFrame)
@@ -155,6 +155,8 @@ function IndexCPIBase(base::FullCPIBase)
     nbase = deepcopy(base)
     IndexCPIBase(nbase.ipc, nbase.w, nbase.fechas, nbase.baseindex)
 end
+
+# Obtener IndexCPIBase de VarCPIBase con capitalización intermensual
 IndexCPIBase(base::VarCPIBase) = convert(IndexCPIBase, deepcopy(base))
 
 ## Conversión
@@ -176,6 +178,12 @@ function convert(::Type{IndexCPIBase}, base::VarCPIBase)
     vmat = base.v
     capitalize!(vmat, base.baseindex)
     IndexCPIBase(vmat, base.w, base.fechas, base.baseindex)
+end
+
+function convert(::Type{VarCPIBase}, base::IndexCPIBase)
+    ipcmat = base.ipc
+    varinterm!(ipcmat, base.baseindex)
+    VarCPIBase(ipcmat, base.w, base.fechas, base.baseindex)
 end
 
 

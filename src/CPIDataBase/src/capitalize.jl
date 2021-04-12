@@ -1,4 +1,4 @@
-# operations.jl - basic operations with types
+# capitalize.jl - basic operations to chain price change arrays
 
 """
     capitalize(v::AbstractVector, base_index = 100)
