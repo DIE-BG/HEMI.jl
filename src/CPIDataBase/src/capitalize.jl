@@ -6,12 +6,8 @@
 Function to chain a vector of price changes with an index starting with `base_index`.
 """
 function capitalize(v::AbstractVector, base_index = 100)
-    l = length(v)
     idx = similar(v)
-    idx[1] = base_index * (1 + v[1]/100)
-    for i in 2:l
-        idx[i] = idx[i-1] * (1 + v[i]/100)
-    end
+    capitalize!(idx, v, base_index)
     idx
 end
 
@@ -31,19 +27,17 @@ function capitalize_addbase(vmat::AbstractMatrix, base_index = 100)
 end
 
 """
-    capitalize(vmat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+    capitalize(vmat::AbstractMatrix, base_index::Real = 100.0)
 
 Function to chain a matrix of price changes with an index starting with `base_index`.
 """
-function capitalize(vmat::AbstractMatrix, base_index::AbstractFloat = 100.0)
-    r, c = size(vmat)
+function capitalize(vmat::AbstractMatrix, base_index::Real = 100.0)
+    c = size(vmat, 2)
     idxmat = similar(vmat)
-    for i in 1:r, j in 1:c
-        if i == 1
-            @inbounds idxmat[i, j] = base_index * (1 + vmat[i, j]/100)
-        else
-            @inbounds idxmat[i, j] = idxmat[i-1, j] * (1 + vmat[i, j]/100)
-        end
+    for j in 1:c
+        vcol = @view vmat[:, j]
+        idxcol = @view idxmat[:, j]
+        capitalize!(idxcol, vcol, base_index)
     end
     idxmat
 end
@@ -54,14 +48,12 @@ end
 Function to chain a matrix of price changes with an index vector starting with `base_index`. `base_index` needs to have the same number of elements as the columns of `vmat`.
 """
 function capitalize(vmat::AbstractMatrix, base_index::AbstractVector)
-    r, c = size(vmat)
+    c = size(vmat, 2)
     idxmat = similar(vmat)
-    for i in 1:r, j in 1:c
-        if i == 1
-            @inbounds idxmat[i, j] = base_index[j] * (1 + vmat[i, j]/100)
-        else
-            @inbounds idxmat[i, j] = idxmat[i-1, j] * (1 + vmat[i, j]/100)
-        end
+    for j in 1:c
+        vcol = @view vmat[:, j]
+        idxcol = @view idxmat[:, j]
+        capitalize!(idxcol, vcol, base_index[j])
     end
     idxmat
 end
@@ -69,7 +61,20 @@ end
 ## Version in place
 
 """
-    capitalize!(vmat::AbstractMatrix, base_index = 100) where T
+capitalize!(idx:: AbstractVector, v::AbstractVector, base_index)
+
+Function to chain a vector of price changes in vector `idx` with an index starting with `base_index`.
+"""
+function capitalize!(idx:: AbstractVector, v::AbstractVector, base_index)
+    l = length(v)
+    idx[1] = base_index * (1 + v[1]/100)
+    for i in 2:l
+        @inbounds idx[i] = idx[i-1] * (1 + v[i]/100)
+    end
+end
+
+"""
+    capitalize!(vmat::AbstractMatrix, base_index = 100)
 
 Function to chain a matrix of price changes **in place** with an index starting with `base_index`.
 """
