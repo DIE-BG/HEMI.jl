@@ -7,10 +7,10 @@ Fill `v` vector of price changes of `idx` vector using `base_index` as starting 
 """
 function varinterm!(v::AbstractVector, idx::AbstractVector, base_index)
     l = length(v)
-    v[1] = 100 * (idx[1] / base_index - 1)
-    for i in 2:l
+    for i in l:-1:2
         @inbounds v[i] = 100 * (idx[i] / idx[i-1] - 1)
     end
+    v[1] = 100 * (idx[1] / base_index - 1)
 end
 
 
@@ -55,15 +55,21 @@ end
 #     vmat
 # end
 
+"""
+    varinterm(cpimat::AbstractMatrix, base_index::AbstractVector)
 
-function varinterm_back!(v::AbstractVector, idx::AbstractVector, base_index)
-    l = length(v)
-    for i in l:-1:2
-        @inbounds v[i] = 100 * (idx[i] / idx[i-1] - 1)
+Function to get a matrix of price changes from a price index matrix starting with **vector** `base_index`.
+"""
+function varinterm(cpimat::AbstractMatrix, base_index::AbstractVector)
+    c = size(cpimat, 2)
+    vmat = similar(cpimat)
+    for j in 1:c
+        vcol = @view vmat[:, j]
+        idxcol = @view cpimat[:, j]
+        varinterm!(vcol, idxcol, base_index[j])
     end
-    v[1] = 100 * (idx[1] / base_index - 1)
+    vmat
 end
-
 
 """
     varinterm!(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
@@ -74,7 +80,7 @@ function varinterm!(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
     c = size(cpimat, 2)
     for j in 1:c
         idxcol = @view cpimat[:, j]
-        varinterm_back!(idxcol, idxcol, base_index)
+        varinterm!(idxcol, idxcol, base_index)
     end
 end
 

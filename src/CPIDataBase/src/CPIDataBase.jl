@@ -12,7 +12,7 @@ module CPIDataBase
     export IndexCPIBase, VarCPIBase, FullCPIBase, CountryStructure
 
     # Export functions
-    export capitalize, varinterm
+    export capitalize, varinterm, varinteran
 
     # Definición de tipos para bases del IPC
     include("types.jl")
@@ -20,5 +20,6 @@ module CPIDataBase
     # Basic operations
     include("capitalize.jl")
     include("varinterm.jl")
+    include("varinteran.jl")
 
 end # module
