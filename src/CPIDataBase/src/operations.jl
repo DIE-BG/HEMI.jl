@@ -30,30 +30,41 @@ function capitalize_addbase(vmat::AbstractMatrix, base_index = 100)
     idxmat
 end
 
-# julia> @btime (t = CPIDataBase.capitalize3($(gt00.v)));
-# 32.900 μs (2 allocations: 206.20 KiB)
-# julia> @btime (t = CPIDataBase.capitalize3($(gt00.v), base_index = $b));
-# 32.200 μs (2 allocations: 206.20 KiB)
-
 """
-    capitalize(vmat::AbstractMatrix, base_index = 100)
+    capitalize(vmat::AbstractMatrix, base_index::AbstractFloat = 100.0)
 
 Function to chain a matrix of price changes with an index starting with `base_index`.
 """
-function capitalize(vmat::AbstractMatrix, base_index = 100)
-    r = size(vmat, 1)
+function capitalize(vmat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+    r, c = size(vmat)
     idxmat = similar(vmat)
-    @views @. idxmat[1, :] = base_index * (1 + vmat[1, :]/100)
-    for i in 2:r
-        @views @. idxmat[i, :] = idxmat[i-1, :] * (1 + vmat[i, :]/100)
+    for i in 1:r, j in 1:c
+        if i == 1
+            @inbounds idxmat[i, j] = base_index * (1 + vmat[i, j]/100)
+        else
+            @inbounds idxmat[i, j] = idxmat[i-1, j] * (1 + vmat[i, j]/100)
+        end
     end
     idxmat
 end
 
-# julia> @btime (t = CPIDataBase.capitalize31($(gt00.v)));
-# 32.200 μs (4 allocations: 208.42 KiB)
-# julia> @btime (t = CPIDataBase.capitalize31($(gt00.v), base_index = $b));
-# 31.100 μs (2 allocations: 204.45 KiB)
+"""
+    capitalize(vmat::AbstractMatrix, base_index::AbstractVector)
+
+Function to chain a matrix of price changes with an index vector starting with `base_index`. `base_index` needs to have the same number of elements as the columns of `vmat`.
+"""
+function capitalize(vmat::AbstractMatrix, base_index::AbstractVector)
+    r, c = size(vmat)
+    idxmat = similar(vmat)
+    for i in 1:r, j in 1:c
+        if i == 1
+            @inbounds idxmat[i, j] = base_index[j] * (1 + vmat[i, j]/100)
+        else
+            @inbounds idxmat[i, j] = idxmat[i-1, j] * (1 + vmat[i, j]/100)
+        end
+    end
+    idxmat
+end
 
 ## Version in place
 
@@ -69,10 +80,6 @@ function capitalize!(vmat::AbstractMatrix, base_index = 100)
         @views @. vmat[i, :] = vmat[i-1, :] * (1 + vmat[i, :]/100)
     end
 end
-
-# julia> v00 = copy(gt00.v)
-# julia> @btime (t = CPIDataBase.capitalize!($v00));
-# 25.000 μs (2 allocations: 3.97 KiB)
 
 ## On containers
 
