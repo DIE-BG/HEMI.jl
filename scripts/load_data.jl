@@ -27,3 +27,9 @@ gt10 = VarCPIBase(full_gt10)
 using JLD2
 
 @save datadir("guatemala", "gtdata.jld2") gt00 gt10
+
+## Conversión a Float32
+
+fgt00 = convert(Float32, gt00)
+fgt10 = convert(Float32, gt10)
+@save datadir("guatemala", "gtdata32.jld2") gt00=fgt00 gt10=fgt10

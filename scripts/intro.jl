@@ -12,4 +12,4 @@ using JLD2
 
 @load datadir("guatemala", "gtdata.jld2") gt00 gt10
 
-gtdata = CountryStructure((gt00, gt10))
+gtdata = CountryStructure(gt00, gt10)
