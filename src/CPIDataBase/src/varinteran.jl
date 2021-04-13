@@ -1,6 +1,21 @@
 # varinteran.jl - basic operations to compute annual price change arrays
 
 """
+    varinteran!(idx, base_index = 100)
+
+Compute annual price changes of `idx` index vector in place, using `base_index` as starting point.
+Fills observations 1 to 11 with NaN values.
+"""
+function varinteran!(idx::AbstractVector, base_index = 100)
+    l = length(idx)
+    for i in l:-1:13
+        @inbounds idx[i] = 100 * (idx[i] / idx[i-12] - 1)
+    end
+    idx[12] = 100 * (idx[12] / base_index - 1)
+    idx[1:11] .= NaN
+end
+
+"""
     varinteran!(v, idx, base_index)
 
 Fill `v` vector of annual price changes of `idx` index vector using `base_index` as starting point.
