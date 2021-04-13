@@ -222,6 +222,9 @@ struct CountryStructure{N, T<:AbstractFloat}
     base::NTuple{N, VarCPIBase{T, B} where B} 
 end
 
+# Anotar también como VarCPIBase...
+CountryStructure(bases::Vararg{VarCPIBase}) = CountryStructure(bases)
+
 function summary(io::IO, cst::CountryStructure)
     datestart, dateend = _formatdate.((cst.base[begin].fechas[begin], cst.base[end].fechas[end]))
     print(io, typeof(cst), ": ", datestart, "-", dateend)
