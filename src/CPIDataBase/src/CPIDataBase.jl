@@ -1,7 +1,7 @@
 """
     CPIDataBase
 
-    Librería base para tipos y funcionalidad básica para manejo de datos del IPC a nivel desagregado de gastos básicos
+Librería base para tipos y funcionalidad básica para manejo de datos del IPC a nivel desagregado de gastos básicos
 """
 module CPIDataBase
 
@@ -28,5 +28,8 @@ module CPIDataBase
 
     # Basic inflation measures structure
     include("inflation.jl")
+
+    # Resample functions
+    include("resample.jl")
 
 end # module
