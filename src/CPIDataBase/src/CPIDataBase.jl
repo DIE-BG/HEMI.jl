@@ -12,7 +12,11 @@ module CPIDataBase
     export IndexCPIBase, VarCPIBase, FullCPIBase, CountryStructure
 
     # Export functions
-    export capitalize, varinterm, varinteran
+    export capitalize, varinterm, varinteran, 
+        capitalize!, varinterm!, varinteran!
+
+    # Basic inflation function
+    export TotalCPI
 
     # Definición de tipos para bases del IPC
     include("types.jl")
@@ -21,5 +25,8 @@ module CPIDataBase
     include("capitalize.jl")
     include("varinterm.jl")
     include("varinteran.jl")
+
+    # Basic inflation measures structure
+    include("inflation.jl")
 
 end # module
