@@ -18,10 +18,14 @@ using JLD2
 
 const gtdata = CountryStructure(gt00, gt10)
 
-# Computar inflación de Guatemala
+## Computar inflación de Guatemala
+
+fgt00 = convert(Float32, gt00) 
+fgt10 = convert(Float32, gt10) 
+gtdata32 = CountryStructure(fgt00, fgt10)
+
 totalfn = TotalCPI()
 tray_infl_gt = totalfn(gtdata)
-
 
 using CPIDataBase.Resample
 
@@ -30,3 +34,4 @@ gtnew = deepcopy(gtdata)
 scramblevar!(gtnew[1])
 scramblenew = scramblevar(gtnew[1].v);
 [gtdata[1].v[1:12:end, 1] gtnew[1].v[1:12:end, 1] scramblenew[1:12:end, 1]]
+
