@@ -14,10 +14,19 @@ using DrWatson
 using Dates, CPIDataBase
 using JLD2
 
-@load datadir("guatemala", "gtdata.jld2") gt00 gt10
+@load datadir("guatemala", "gtdata32.jld2") gt00 gt10
 
 const gtdata = CountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
 totalfn = TotalCPI()
 tray_infl_gt = totalfn(gtdata)
+
+
+using CPIDataBase.Resample
+
+## 
+gtnew = deepcopy(gtdata)
+scramblevar!(gtnew[1])
+scramblenew = scramblevar(gtnew[1].v);
+[gtdata[1].v[1:12:end, 1] gtnew[1].v[1:12:end, 1] scramblenew[1:12:end, 1]]
