@@ -1,19 +1,35 @@
 using DrWatson
 @quickactivate "HEMI"
 
-using Dates, TimeSeries, CPIDataBase
+## Cargar datos de la base 2000 y 2010 del IPC 
+using Dates, CSV, DataFrames
+using CPIDataBase
 
-## Carga de base del IPC de prueba
-gt_00 = CPIBase([Date(2010,12,1) + Month(i) for i in 1:120],
-       rand(120, 279),
-       [Symbol("GT", i) for i in 1:279],
-       rand(279)/100)
+# Base 2000
+gt_base00 = CSV.read(datadir("guatemala", "Guatemala_IPC_2000.csv"), 
+    DataFrame, normalizenames=true)
+gt00gb = CSV.read(datadir("guatemala", "Guatemala_GB_2000.csv"), 
+    DataFrame, types=[String, String, Float64])
 
-# Mostrar base, problemas número columnas
-gt_00
+full_gt00 = FullCPIBase(gt_base00, gt00gb)
+gt00 = VarCPIBase(full_gt00)
 
-# Obtener ponderaciones
-weights(gt_00)
+# Base 2010
+gt_base10 = CSV.read(datadir("guatemala", "Guatemala_IPC_2010.csv"), 
+    DataFrame, normalizenames=true)
+gt10gb = CSV.read(datadir("guatemala", "Guatemala_GB_2010.csv"), 
+    DataFrame, types=[String, String, Float64])
 
-# Computar IPC
-values(gt_00) * weigths(gt_00)
+full_gt10 = FullCPIBase(gt_base10, gt10gb)
+gt10 = VarCPIBase(full_gt10)
+
+## Guardar datos para su carga posterior
+using JLD2
+
+@save datadir("guatemala", "gtdata.jld2") gt00 gt10
+
+## Conversión a Float32
+
+fgt00 = convert(Float32, gt00)
+fgt10 = convert(Float32, gt10)
+@save datadir("guatemala", "gtdata32.jld2") gt00=fgt00 gt10=fgt10
