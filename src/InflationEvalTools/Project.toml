@@ -1,0 +1,23 @@
+name = "InflationEvalTools"
+uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
+authors = ["Rodrigo Chang <rrcp777@gmail.com> and contributors"]
+version = "0.1.0"
+
+[deps]
+CPIDataBase = "e4c88d09-b53c-432a-84e8-7deb46235234"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
+InflationFunctions = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

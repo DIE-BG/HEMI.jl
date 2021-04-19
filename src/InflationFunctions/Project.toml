@@ -1,0 +1,16 @@
+name = "InflationFunctions"
+uuid = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
+authors = ["Rodrigo Chang <rrcp777@gmail.com> and contributors"]
+version = "0.1.0"
+
+[deps]
+CPIDataBase = "e4c88d09-b53c-432a-84e8-7deb46235234"
+
+[compat]
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
