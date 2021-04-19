@@ -9,8 +9,14 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
+[[BenchmarkTools]]
+deps = ["JSON", "Logging", "Printf", "Statistics", "UUIDs"]
+git-tree-sha1 = "068fda9b756e41e6c75da7b771e6f89fa8a43d15"
+uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+version = "0.7.0"
+
 [[CPIDataBase]]
-deps = ["DataFrames", "Dates", "Random", "TimeSeries"]
+deps = ["DataFrames", "Dates", "LinearAlgebra", "Random", "TimeSeries"]
 path = "src/CPIDataBase"
 uuid = "e4c88d09-b53c-432a-84e8-7deb46235234"
 version = "0.1.0"
@@ -281,6 +287,12 @@ version = "0.3.1"
 [[SparseArrays]]
 deps = ["LinearAlgebra", "Random"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[StaticArrays]]
+deps = ["LinearAlgebra", "Random", "Statistics"]
+git-tree-sha1 = "2f01a51c23eed210ff4a1be102c4cc8236b66e5b"
+uuid = "90137ffa-7385-5640-81b9-e52037218182"
+version = "1.1.0"
 
 [[Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
