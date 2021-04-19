@@ -13,7 +13,13 @@ module CPIDataBase
 
     # Export functions
     export capitalize, varinterm, varinteran, 
-        capitalize!, varinterm!, varinteran!
+        capitalize!, varinterm!, varinteran!, 
+        periods
+
+    # Export types for implement new inflation functions
+    export InflationFunction, EnsembleInflationFunction
+    export EnsembleFunction, CombinationFunction
+    export num_measures, weights, measure_names
 
     # Basic inflation function
     export TotalCPI
@@ -28,6 +34,7 @@ module CPIDataBase
 
     # Basic inflation measures structure
     include("inflation.jl")
+    include("ensemble.jl")
 
     # Resample functions
     include("resample.jl")

@@ -2,11 +2,17 @@
 
 abstract type InflationFunction <: Function end
 	
+num_measures(::InflationFunction) = 1
+measure_names(inflfn::InflationFunction) = getfield(inflfn, :name)
+
+
+## TotalCPI - Variación interanual del IPC
+
 Base.@kwdef struct TotalCPI <: InflationFunction
     name::String = "Variación interanual IPC"
 end
 
-## Las funciones sobre VarCPIBase resumen en variaciones intermensuales
+# Las funciones sobre VarCPIBase resumen en variaciones intermensuales
 
 # Función para bases cuyo índice base es un escalar
 function (inflfn::TotalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
@@ -26,8 +32,7 @@ function (inflfn::TotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B
     ipc
 end
 
-## La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
-
+# La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
 function (inflfn::TotalCPI)(cs::CountryStructure) 
     vm = mapfoldl(inflfn, vcat, cs.base)
     capitalize!(vm, vm, 100)

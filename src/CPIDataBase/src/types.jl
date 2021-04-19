@@ -1,5 +1,5 @@
 # types.jl - Type definitions and structure
-import Base: show, summary, convert, getindex
+import Base: show, summary, convert, getindex, eltype
 
 # Tipo abstracto para definir contenedores del IPC
 abstract type AbstractCPIBase{T <: AbstractFloat} end
@@ -186,6 +186,9 @@ function convert(::Type{VarCPIBase}, base::IndexCPIBase)
     VarCPIBase(ipcmat, base.w, base.fechas, base.baseindex)
 end
 
+# Tipo de flotante del contenedor
+eltype(::AbstractCPIBase{T}) where {T} = T
+
 
 ## Métodos para mostrar los tipos
 
@@ -252,4 +255,13 @@ end
 getindex(cst::CountryStructure, i::Int) = cst.base[i]
 
 
+## Utilidades
 
+# Tipo de flotante del contenedor
+eltype(cst::CountryStructure{N, T}) where {N,T} = T 
+
+# Cantidad de períodos de sus bases de variaciones intermensuales
+periods(cst::CountryStructure) = sum(size(b.v, 1) for b in cst.base)
+
+# Número de períodos de las trayectorias de inflación
+infl_periods(cst::CountryStructure) = periods(cst) - 11
