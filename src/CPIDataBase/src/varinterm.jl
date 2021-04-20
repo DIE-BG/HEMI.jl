@@ -1,11 +1,11 @@
 # varinterm.jl - basic operations to compute price change arrays
 
 """
-    varinterm!(v, idx, base_index)
+    varinterm!(v, idx, base_index::Real = 100)
 
 Fill `v` vector of price changes of `idx` vector using `base_index` as starting point.
 """
-function varinterm!(v::AbstractVector, idx::AbstractVector, base_index)
+function varinterm!(v::AbstractVector, idx::AbstractVector, base_index::Real = 100)
     l = length(v)
     for i in l:-1:2
         @inbounds v[i] = 100 * (idx[i] / idx[i-1] - 1)
@@ -15,11 +15,11 @@ end
 
 
 """
-    varinterm(idx::AbstractVector, base_index = 100)
+    varinterm(idx::AbstractVector, base_index::Real = 100)
 
 Function to get a vector of price changes from a price index vector starting with `base_index`.
 """
-function varinterm(idx::AbstractVector, base_index = 100)
+function varinterm(idx::AbstractVector, base_index::Real = 100)
     v = similar(idx)
     varinterm!(v, idx, base_index)
     v
@@ -27,11 +27,11 @@ end
 
 
 """
-    varinterm(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+    varinterm(cpimat::AbstractMatrix, base_index::Real = 100)
 
 Function to get a matrix of price changes from a price index matrix starting with `base_index`.
 """
-function varinterm(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+function varinterm(cpimat::AbstractMatrix, base_index::Real = 100)
     c = size(cpimat, 2)
     vmat = similar(cpimat)
     for j in 1:c
@@ -41,19 +41,6 @@ function varinterm(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
     end
     vmat
 end
-
-# function varinterm(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
-#     r, c = size(cpimat)
-#     vmat = similar(cpimat)
-#     for i in 1:r, j in 1:c
-#         if i == 1
-#             @inbounds vmat[i, j] = 100 * (cpimat[i, j] / base_index - 1)
-#         else
-#             @inbounds vmat[i, j] = 100 * (cpimat[i, j] / cpimat[i-1, j] - 1)
-#         end
-#     end
-#     vmat
-# end
 
 """
     varinterm(cpimat::AbstractMatrix, base_index::AbstractVector)
@@ -72,11 +59,11 @@ function varinterm(cpimat::AbstractMatrix, base_index::AbstractVector)
 end
 
 """
-    varinterm!(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+    varinterm!(cpimat::AbstractMatrix, base_index::Real = 100)
 
 Function to get a matrix of price changes from a price index matrix starting with `base_index`.
 """
-function varinterm!(cpimat::AbstractMatrix, base_index::AbstractFloat = 100.0)
+function varinterm!(cpimat::AbstractMatrix, base_index::Real = 100)
     c = size(cpimat, 2)
     for j in 1:c
         idxcol = @view cpimat[:, j]

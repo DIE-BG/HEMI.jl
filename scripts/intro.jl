@@ -16,13 +16,13 @@ using JLD2
 
 @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
 
-const gtdata = CountryStructure(gt00, gt10)
+const gtdata = UniformCountryStructure(gt00, gt10)
 
 ## Computar inflación de Guatemala
 
 fgt00 = convert(Float32, gt00) 
 fgt10 = convert(Float32, gt10) 
-gtdata32 = CountryStructure(fgt00, fgt10)
+gtdata32 = UniformCountryStructure(fgt00, fgt10)
 
 totalfn = TotalCPI()
 tray_infl_gt = totalfn(gtdata)

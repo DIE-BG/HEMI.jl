@@ -1,9 +1,42 @@
 # inflation.jl - Basic inflation function structure, annual change on cpi
 
 abstract type InflationFunction <: Function end
-	
+
+# La mayoría de funciones de inflación devuelven una medida
 num_measures(::InflationFunction) = 1
+
+# Funciones de inflación deben definir campo `name`
 measure_name(inflfn::InflationFunction) = getfield(inflfn, :name)
+
+## Tipos para resultados, utilizados para el despacho de métodos
+abstract type CPIResult end
+struct CPIIndex <: CPIResult end
+struct CPIVarInterm <: CPIResult end
+
+## Esquema general de cómputo (programación genérica con tipos abstractos): 
+# - La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
+# - Esta llama a la función de inflación que recibe `CPIIndex`. 
+# - Y esta a su vez, llama a la función de inflación que recibe `CPIVarInterm`. 
+# De tal manera que la mayoría de funciones solamente requieren definir su operación
+# sobre los contenedores `VarCPIBase` y devolver una variación intermensual resumen 
+
+function (generalfn::InflationFunction)(cs::CountryStructure)
+    vm = generalfn(cs, CPIIndex)
+    varinteran(vm)
+end
+
+function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIIndex})
+    vm = generalfn(cs, CPIVarInterm)
+    capitalize!(vm, 100)
+    vm
+end
+
+function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIVarInterm}) 
+    # Acá se llama a generalfn(base) for base in cs, esta es la función que debe definirse
+    vm = mapfoldl(generalfn, vcat, cs.base)
+end
+
+
 
 
 ## TotalCPI - Variación interanual del IPC
@@ -12,7 +45,7 @@ Base.@kwdef struct TotalCPI <: InflationFunction
     name::String = "Variación interanual IPC"
 end
 
-# Las funciones sobre VarCPIBase resumen en variaciones intermensuales
+# Las funciones sobre VarCPIBase deben resumir en variaciones intermensuales
 
 # Función para bases cuyo índice base es un escalar
 function (inflfn::TotalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
@@ -22,6 +55,9 @@ function (inflfn::TotalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat}
     ipc
 end
 
+# Esta medida sí se comporta diferente de acuerdo a los índices base, por lo que 
+# se define una versión que toma en cuenta los diferentes índices. Si la medida
+# solamente genera resumen de las variaciones intermensuales, no es necesario.
 # Función para bases cuyos índices base son un vector
 function (inflfn::TotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B <: AbstractVector{T}} 
     base_ipc = capitalize(base.v, base.baseindex)
@@ -32,88 +68,3 @@ function (inflfn::TotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B
     ipc
 end
 
-abstract type CPIResult end
-struct CPIIndex <: CPIResult end
-struct CPIVarInterm <: CPIResult end
-
-function (generalfn::InflationFunction)(cs::CountryStructure{N, T}, ::Type{CPIVarInterm}) where {N, T}
-    vm::Vector{T} = mapfoldl(generalfn, vcat, cs.base)
-end
-
-function (generalfn::InflationFunction)(cs::CountryStructure{N, T}, ::Type{CPIIndex}) where {N, T}
-    vm::Vector{T} = generalfn(cs, CPIVarInterm)
-    capitalize!(vm, vm, 100)
-    vm
-end
-
-# La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
-function (generalfn::InflationFunction)(cs::CountryStructure{N, T}) where {N, T}
-    vm::Vector{T} = generalfn(cs, CPIIndex)
-    varinteran(vm)
-end
-
-
-
-## Versión in-place intermedia para evaluación: 
-#  capitaliza las matrices de variaciones in-place para ahorrar memoria
-
-Base.@kwdef struct TotalEvalCPI <: InflationFunction
-    name::String = "Variación interanual IPC"
-end
-
-# Función para bases cuyo índice base es un escalar
-function (inflfn::TotalEvalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
-    base_ipc = convert(IndexCPIBase, base)
-    ipc = base_ipc.ipc * base.w / base.baseindex
-    varinterm!(ipc, ipc, 100)
-    ipc
-end
-
-# Variación interanual 
-function (inflfn::TotalEvalCPI)(cs::CountryStructure) 
-    vm = mapfoldl(inflfn, vcat, cs.base)
-    capitalize!(vm, vm, 100)
-    varinteran!(vm)
-    vm[12:end]
-end
-
-
-## Versión in-place extrema para evaluación: 
-#  capitaliza las matrices de variaciones in-place para ahorrar memoria y 
-#  guarda en vector los resultados
-
-Base.@kwdef struct TotalExtremeCPI <: InflationFunction
-    name::String = "Variación interanual IPC"
-end
-
-# # Función para bases cuyo índice base es un escalar
-# function (inflfn::TotalExtremeCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
-#     base_ipc = convert(IndexCPIBase, base)
-#     ipc = base_ipc.ipc * base.w / base.baseindex
-#     varinterm!(ipc, ipc, 100)
-#     ipc
-# end
-
-import LinearAlgebra: mul!
-
-# Variación interanual 
-function (inflfn::TotalExtremeCPI)(tray_infl::AbstractVector, cs::CountryStructure) 
-    B = length(cs.base) # número de bases
-
-    # Para cada base, obtener IPC y variación intermensual
-    ib = 0
-    for b in 1:B
-        l = ib + size(cs[b].v, 1) # número de períodos
-        interm = @view tray_infl[ib+1:l] # vector para guardar inflación intermensual
-        
-        base_ipc = convert(IndexCPIBase, cs.base[b])
-        mul!(interm, base_ipc.ipc, base_ipc.w)
-        varinterm!(interm, interm, 100*base_ipc.baseindex)
-        ib = l
-    end
-    
-    # Capitalizar y obtener var interanual
-    capitalize!(tray_infl, tray_infl, 100)
-    varinteran!(tray_infl)
-    nothing
-end
