@@ -41,7 +41,4 @@ module CPIDataBase
     include("inflation.jl")
     include("ensemble.jl")
 
-    # Resample functions
-    include("resample.jl")
-
 end # module

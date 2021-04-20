@@ -3,13 +3,15 @@ using DrWatson
 
 ## TODO 
 # Simulación básica en serie con replicación y benchmark vs MATLAB ✔
-# Simulación en paralelo con replicación y benchmark vs MATLAB
+# Simulación en paralelo con replicación y benchmark vs MATLAB ✔
 # Agregar funciones de inflación adicionales
 # ... (mucho más)
 
 using Dates, CPIDataBase
-using JLD2
 using CPIDataBase.Resample
+using InflationFunctions
+using InflationEvalTools
+using JLD2
 
 # Carga de datos
 @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
@@ -17,42 +19,7 @@ const gtdata = UniformCountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
 totalfn = TotalCPI()
-tray_infl_gt = totalfn(gtdata)
-
-## Definición de función de simulación
-
-using Random
-import CPIDataBase: InflationFunction
-using ProgressMeter
-
-function gentrayinfl(inflfn::F, csdata::CountryStructure; 
-    K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction}
-
-    # Configurar el generador de números aleatorios
-    myrng = MersenneTwister(rndseed)
-
-    # Matriz de trayectorias de salida
-    T = sum(size(gtdata[i].v, 1) for i in 1:length(gtdata.base)) - 11
-    tray_infl = zeros(Float32, T, K)
-
-    # Control de progreso
-    p = Progress(K; enabled = showprogress)
-
-    # Generar las trayectorias
-    for k in 1:K 
-        # Muestra de bootstrap de los datos 
-        bootsample = deepcopy(csdata)
-        scramblevar!(bootsample, myrng)
-
-        # Computar la medida de inflación 
-        tray_infl[:, k] = inflfn(bootsample)
-        
-        ProgressMeter.next!(p)
-    end
-
-    # Retornar las trayectorias
-    tray_infl
-end
+perk50 = Percentil(0.5)
 
 ## Benchmark de tiempos
 
@@ -88,5 +55,5 @@ tray_infl1 == tray_infl2
 using Statistics
 using Plots
 
-m_tray_infl = mean(tray_infl; dims = 2)
+m_tray_infl = mean(tray_infl; dims = 3)
 plot(m_tray_infl, title = "Trayectoria promedio", label = totalfn.name)
