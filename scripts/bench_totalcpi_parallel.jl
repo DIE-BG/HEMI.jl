@@ -32,11 +32,12 @@ const gtdata = UniformCountryStructure(gt00, gt10)
 # Computar inflación de Guatemala
 const totalfn = TotalCPI()
 const perk70 = Percentil(0.7)
+const totalfneval = TotalEvalCPI()
 
 ## Benchmark de tiempos en paralelo
 
 # Sin control de progreso
-@time tray_infl = pargentrayinfl(totalfn, gtdata; K=10_000)  
+@time tray_infl = pargentrayinfl(totalfneval, gtdata; K=10_000)  
 # 3.543101 seconds (227.32 k allocations: 13.874 MiB, 0.33% gc time, 2.63% compilation time)
 
 # Con control de progreso

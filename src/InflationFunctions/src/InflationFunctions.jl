@@ -11,7 +11,11 @@ import CPIDataBase: measure_name
 
 export Percentil
 
-# Percentiles equiponderados
+## Percentiles equiponderados
 include("percentiles_eq.jl")
+
+## Desarrollo 
+
+include("dev/totalcpi_methods.jl")
 
 end
