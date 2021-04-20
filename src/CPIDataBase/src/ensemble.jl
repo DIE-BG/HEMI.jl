@@ -21,10 +21,24 @@ function measure_name(ensfn::EnsembleInflationFunction)
     reduce(vcat, [measure_name(inflfn) for inflfn in ensfn.functions])
 end
 
+# Sobre las bases de CountryStructure
+# function (ensfn::EnsembleFunction)(base::VarCPIBase) 
+#     # to do? 
+# end
+
+
 # Método para obtener las trayectorias de inflación del conjunto
 # Se computan para cada medida y se concatenan horizontalmente
 function (ensfn::EnsembleFunction)(cst::CountryStructure) 
     mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
+end
+
+# Índices y variaciones intermensuales
+function (ensfn::EnsembleFunction)(cst::CountryStructure, ::Type{CPIIndex})
+    mapreduce(inflfn -> inflfn(cst, CPIIndex), hcat, ensfn.functions)
+end
+function (ensfn::EnsembleFunction)(cst::CountryStructure, ::Type{CPIVarInterm})
+    mapreduce(inflfn -> inflfn(cst, CPIVarInterm), hcat, ensfn.functions)
 end
 
 
@@ -63,5 +77,13 @@ function (combfn::CombinationFunction)(cst::CountryStructure)
     tray_infl = mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
     # Return weighted sum
     tray_infl * combfn.weights
+end
+
+# Índices y variaciones intermensuales
+function (combfn::CombinationFunction)(cst::CountryStructure, ::Type{CPIVarInterm})
+    combfn.ensemble(cst, CPIVarInterm)
+end
+function (combfn::CombinationFunction)(cst::CountryStructure, ::Type{CPIIndex})
+    combfn.ensemble(cst, CPIIndex)
 end
 
