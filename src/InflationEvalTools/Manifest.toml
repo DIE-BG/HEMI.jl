@@ -111,7 +111,7 @@ deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[InflationFunctions]]
-deps = ["CPIDataBase"]
+deps = ["CPIDataBase", "Statistics"]
 path = "../InflationFunctions"
 uuid = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
 version = "0.1.0"
