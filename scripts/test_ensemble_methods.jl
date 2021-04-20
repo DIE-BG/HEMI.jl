@@ -8,7 +8,7 @@ using Dates, CPIDataBase
 using JLD2
 
 @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
-const gtdata = CountryStructure(gt00, gt10)
+const gtdata = UniformCountryStructure(gt00, gt10)
 
 ## Computar inflación de Guatemala
 

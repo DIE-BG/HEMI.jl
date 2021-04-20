@@ -9,12 +9,14 @@ module CPIDataBase
     using DataFrames
 
     # Export types
-    export IndexCPIBase, VarCPIBase, FullCPIBase, CountryStructure
+    export IndexCPIBase, VarCPIBase, FullCPIBase
+    export CountryStructure, UniformCountryStructure, MixedCountryStructure
+
 
     # Export functions
     export capitalize, varinterm, varinteran, 
         capitalize!, varinterm!, varinteran!, 
-        periods
+        periods, infl_periods
 
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction

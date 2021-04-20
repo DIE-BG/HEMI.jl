@@ -13,7 +13,7 @@ using CPIDataBase.Resample
 
 # Carga de datos
 @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
-const gtdata = CountryStructure(gt00, gt10)
+const gtdata = UniformCountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
 totalfn = TotalCPI()
@@ -25,8 +25,8 @@ using Random
 import CPIDataBase: InflationFunction
 using ProgressMeter
 
-function gentrayinfl(inflfn::InflationFunction, csdata::CountryStructure; 
-    K = 100, rndseed = 161803, showprogress = true)
+function gentrayinfl(inflfn::F, csdata::CountryStructure; 
+    K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction}
 
     # Configurar el generador de números aleatorios
     myrng = MersenneTwister(rndseed)
@@ -59,10 +59,12 @@ end
 @time tray_infl = gentrayinfl(totalfn, gtdata; K=10_000)  
 # Progress: 100%|██████████████████████████| Time: 0:00:10
 #  10.099791 seconds (399.15 k allocations: 4.574 GiB, 1.41% gc time, 0.06% compilation time)
+# 10.426991 seconds (335.09 k allocations: 4.574 GiB, 2.44% gc time) type-inference fixed
 
 @time tray_infl = gentrayinfl(totalfn, gtdata; K = 125_000)
 # julia> @time tray_infl = gentrayinfl(totalfn, gtdata; K = 125000) 
 # 136.687623 seconds (4.87 M allocations: 57.170 GiB, 2.85% gc time)
+# 130.347705 seconds (4.19 M allocations: 57.171 GiB, 2.33% gc time) type-inference fixed
 
 ## Con o sin generador propio ? 
 

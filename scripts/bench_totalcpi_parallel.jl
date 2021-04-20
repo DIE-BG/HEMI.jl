@@ -28,7 +28,7 @@ using JLD2
 
 # Carga de datos
 @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
-const gtdata = CountryStructure(gt00, gt10)
+const gtdata = UniformCountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
 totalfn = TotalCPI()
@@ -50,8 +50,8 @@ function remote_seed(rndseed)
 end
 
 
-function pargentrayinfl(inflfn::InflationFunction, csdata::CountryStructure; 
-    K = 100, rndseed = 161803, showprogress = true)
+function pargentrayinfl(inflfn::F, csdata::CS; 
+    K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction, CS <: CountryStructure}
 
     # Configurar la semilla en workers
     remote_seed(rndseed)
