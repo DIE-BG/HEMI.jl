@@ -1,3 +1,5 @@
+const LOCAL_RNG = Random.MersenneTwister(0)
+
 # Función para configurar semilla de los workers 
 function remote_seed(rndseed)
 	ids=SharedArray{Int}(nworkers())
@@ -16,8 +18,8 @@ end
 function pargentrayinfl(inflfn::F, csdata::CS; 
     K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction, CS <: CountryStructure}
 
-    # Configurar la semilla en workers
-    remote_seed(rndseed)
+    # # Configurar la semilla en workers
+    # remote_seed(rndseed)
 
     # Cubo de trayectorias de salida
     periods = infl_periods(csdata)
@@ -26,9 +28,13 @@ function pargentrayinfl(inflfn::F, csdata::CS;
 
     # Generar las trayectorias
     @sync @showprogress @distributed for k in 1:K 
+
+        # Configurar la semilla en el proceso
+        Random.seed!(LOCAL_RNG, rndseed + k)
+
         # Muestra de bootstrap de los datos 
         bootsample = deepcopy(csdata)
-        scramblevar!(bootsample)
+        scramblevar!(bootsample, LOCAL_RNG)
 
         # Computar la medida de inflación 
         tray_infl[:, :, k] = inflfn(bootsample)
