@@ -21,6 +21,9 @@ module CPIDataBase
     export EnsembleFunction, CombinationFunction
     export num_measures, weights, measure_names
 
+    # Export types needed to specify results
+    export CPIIndex, CPIVarInterm
+
     # Basic inflation function
     export TotalCPI
 

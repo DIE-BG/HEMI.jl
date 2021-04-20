@@ -32,10 +32,23 @@ function (inflfn::TotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B
     ipc
 end
 
-# La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
-function (inflfn::TotalCPI)(cs::CountryStructure) 
-    vm = mapfoldl(inflfn, vcat, cs.base)
+abstract type CPIResult end
+struct CPIIndex <: CPIResult end
+struct CPIVarInterm <: CPIResult end
+
+function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIVarInterm})
+    vm = mapfoldl(generalfn, vcat, cs.base)
+end
+
+function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIIndex})
+    vm = generalfn(cs, CPIVarInterm)
     capitalize!(vm, vm, 100)
+    vm
+end
+
+# La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
+function (generalfn::InflationFunction)(cs::CountryStructure)
+    vm = generalfn(cs, CPIIndex)
     varinteran(vm)
 end
 
