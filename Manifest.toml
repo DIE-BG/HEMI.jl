@@ -19,7 +19,7 @@ version = "0.7.0"
 deps = ["DataFrames", "Dates", "LinearAlgebra", "Random", "TimeSeries"]
 path = "src/CPIDataBase"
 uuid = "e4c88d09-b53c-432a-84e8-7deb46235234"
-version = "0.1.0"
+version = "0.2.0"
 
 [[CSV]]
 deps = ["Dates", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode"]
@@ -115,6 +115,18 @@ version = "0.4.2"
 [[Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
+
+[[InflationEvalTools]]
+deps = ["CPIDataBase", "CSV", "DataFrames", "Distributed", "DrWatson", "InflationFunctions", "JLD2", "ProgressMeter"]
+path = "src/InflationEvalTools"
+uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
+version = "0.1.0"
+
+[[InflationFunctions]]
+deps = ["CPIDataBase", "Statistics"]
+path = "src/InflationFunctions"
+uuid = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
+version = "0.1.0"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
