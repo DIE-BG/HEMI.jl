@@ -3,7 +3,7 @@
 abstract type InflationFunction <: Function end
 	
 num_measures(::InflationFunction) = 1
-measure_names(inflfn::InflationFunction) = getfield(inflfn, :name)
+measure_name(inflfn::InflationFunction) = getfield(inflfn, :name)
 
 
 ## TotalCPI - Variación interanual del IPC

@@ -19,7 +19,7 @@ module CPIDataBase
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction
     export EnsembleFunction, CombinationFunction
-    export num_measures, weights, measure_names
+    export num_measures, weights, measure_name
 
     # Export types needed to specify results
     export CPIIndex, CPIVarInterm
