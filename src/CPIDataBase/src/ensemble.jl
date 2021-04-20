@@ -17,8 +17,8 @@ EnsembleFunction(functions::Vararg{InflationFunction}) = EnsembleFunction(functi
 num_measures(ensfn::EnsembleInflationFunction) = sum(num_measures(inflfn) for inflfn in ensfn.functions)
 
 # Nombres de las medidas del conjunto 
-function measure_names(ensfn::EnsembleInflationFunction) 
-    reduce(vcat, [measure_names(inflfn) for inflfn in ensfn.functions])
+function measure_name(ensfn::EnsembleInflationFunction) 
+    reduce(vcat, [measure_name(inflfn) for inflfn in ensfn.functions])
 end
 
 # Método para obtener las trayectorias de inflación del conjunto
@@ -54,7 +54,7 @@ end
 weights(combfn::CombinationFunction) = getfield(combfn, :weights)
 
 # Nombres de medidas
-measure_names(combfn::CombinationFunction) = measure_names(combfn.ensemble)
+measure_name(combfn::CombinationFunction) = measure_name(combfn.ensemble)
 
 # Aplicación sobre CountryStructure 
 function (combfn::CombinationFunction)(cst::CountryStructure)
