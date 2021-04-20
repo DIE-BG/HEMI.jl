@@ -6,8 +6,8 @@ abstract type EnsembleInflationFunction <: InflationFunction end
 ## EnsembleFunction
 
 # Tipo para representar conjuntos de medidas de inflación
-struct EnsembleFunction{N, F} <: EnsembleInflationFunction where {F <: InflationFunction}
-    functions::NTuple{N, F} 
+struct EnsembleFunction{N} <: EnsembleInflationFunction
+    functions::NTuple{N, F where {F <: InflationFunction}} 
 end
 
 # Constructor a partir de funciones de inflación
@@ -23,17 +23,12 @@ end
 
 # Método para obtener las trayectorias de inflación del conjunto
 # Se computan para cada medida y se concatenan horizontalmente
-function (ensfn::EnsembleFunction)(cst::CountryStructure)
-    mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
+function (ensfn::EnsembleFunction)(base::VarCPIBase{T}) where T
+    mapreduce(inflfn -> inflfn(base), hcat, ensfn.functions)::Matrix{T}
 end
 
-# Índices y variaciones intermensuales
-function (ensfn::EnsembleFunction)(cst::CountryStructure, ::Type{CPIIndex})
-    mapreduce(inflfn -> inflfn(cst, CPIIndex), hcat, ensfn.functions)
-end
-function (ensfn::EnsembleFunction)(cst::CountryStructure, ::Type{CPIVarInterm})
-    mapreduce(inflfn -> inflfn(cst, CPIVarInterm), hcat, ensfn.functions)
-end
+
+
 
 
 ## CombinationFunction
@@ -64,20 +59,14 @@ weights(combfn::CombinationFunction) = getfield(combfn, :weights)
 # Nombres de medidas
 measure_name(combfn::CombinationFunction) = measure_name(combfn.ensemble)
 
-# Aplicación sobre CountryStructure 
+# Aplicación sobre VarCPIBase del ensemble 
+(ensfn::CombinationFunction)(base::VarCPIBase) = ensfn.ensemble(base)
+
+# Aplicación especifica sobre CountryStructure: devuelve la combinación lineal
+# en variaciones interanuales
 function (combfn::CombinationFunction)(cst::CountryStructure)
     # Get ensemble and compute trajectories
-    ensfn = combfn.ensemble 
-    tray_infl = mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
+    tray_infl = combfn.ensemble(cst)
     # Return weighted sum
     tray_infl * combfn.weights
 end
-
-# Índices y variaciones intermensuales
-function (combfn::CombinationFunction)(cst::CountryStructure, ::Type{CPIVarInterm})
-    combfn.ensemble(cst, CPIVarInterm)
-end
-function (combfn::CombinationFunction)(cst::CountryStructure, ::Type{CPIIndex})
-    combfn.ensemble(cst, CPIIndex)
-end
-
