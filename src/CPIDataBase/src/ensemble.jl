@@ -6,8 +6,8 @@ abstract type EnsembleInflationFunction <: InflationFunction end
 ## EnsembleFunction
 
 # Tipo para representar conjuntos de medidas de inflación
-struct EnsembleFunction{N} <: EnsembleInflationFunction
-    functions::NTuple{N, F where {F <: InflationFunction}} 
+struct EnsembleFunction{N, F} <: EnsembleInflationFunction where {F <: InflationFunction}
+    functions::NTuple{N, F} 
 end
 
 # Constructor a partir de funciones de inflación
@@ -29,7 +29,7 @@ end
 
 # Método para obtener las trayectorias de inflación del conjunto
 # Se computan para cada medida y se concatenan horizontalmente
-function (ensfn::EnsembleFunction)(cst::CountryStructure) 
+function (ensfn::EnsembleFunction)(cst::CountryStructure)
     mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
 end
 
