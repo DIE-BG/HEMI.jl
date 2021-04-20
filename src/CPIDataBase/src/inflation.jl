@@ -36,19 +36,19 @@ abstract type CPIResult end
 struct CPIIndex <: CPIResult end
 struct CPIVarInterm <: CPIResult end
 
-function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIVarInterm})
-    vm = mapfoldl(generalfn, vcat, cs.base)
+function (generalfn::InflationFunction)(cs::CountryStructure{N, T}, ::Type{CPIVarInterm}) where {N, T}
+    vm::Vector{T} = mapfoldl(generalfn, vcat, cs.base)
 end
 
-function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIIndex})
-    vm = generalfn(cs, CPIVarInterm)
+function (generalfn::InflationFunction)(cs::CountryStructure{N, T}, ::Type{CPIIndex}) where {N, T}
+    vm::Vector{T} = generalfn(cs, CPIVarInterm)
     capitalize!(vm, vm, 100)
     vm
 end
 
 # La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
-function (generalfn::InflationFunction)(cs::CountryStructure)
-    vm = generalfn(cs, CPIIndex)
+function (generalfn::InflationFunction)(cs::CountryStructure{N, T}) where {N, T}
+    vm::Vector{T} = generalfn(cs, CPIIndex)
     varinteran(vm)
 end
 
