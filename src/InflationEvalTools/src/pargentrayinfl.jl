@@ -15,31 +15,41 @@ end
 
 # Función para generación de trayectorias con computación paralela y replicación 
 # con la misma cantidad de workers
-function pargentrayinfl(inflfn::F, csdata::CS; 
-    K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction, CS <: CountryStructure}
-
-    # # Configurar la semilla en workers
-    # remote_seed(rndseed)
+function pargentrayinfl(inflfn::F, csdata::CountryStructure; 
+    K = 100, rndseed = 0, showprogress = true) where {F <: InflationFunction}
 
     # Cubo de trayectorias de salida
     periods = infl_periods(csdata)
     n_measures = num_measures(inflfn)
     tray_infl = SharedArray{Float32}(periods, n_measures, K)
 
-    # Generar las trayectorias
-    @sync @showprogress @distributed for k in 1:K 
+    # Control de progreso
+    progress= Progress(K, enabled=showprogress)
+    channel = RemoteChannel(()->Channel{Bool}(K), 1)
 
+    # Tarea asíncrona para actualizar el progreso
+    @async while take!(channel)
+        next!(progress)
+    end
+        
+    # Tarea de cómputo de trayectorias
+    @sync @distributed for k in 1:K 
         # Configurar la semilla en el proceso
         Random.seed!(LOCAL_RNG, rndseed + k)
-
+        
         # Muestra de bootstrap de los datos 
         bootsample = deepcopy(csdata)
         scramblevar!(bootsample, LOCAL_RNG)
 
         # Computar la medida de inflación 
         tray_infl[:, :, k] = inflfn(bootsample)
-    end
+
+        put!(channel, true)
+    end 
+    put!(channel, false)
 
     # Retornar las trayectorias
     sdata(tray_infl)
 end
+
+

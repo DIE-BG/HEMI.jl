@@ -9,12 +9,13 @@ using DrWatson
 
 ## Configuración de procesos
 using Distributed
-addprocs(4)
+addprocs(4, exeflags="--project")
 
-@everywhere begin 
-    import Pkg; 
-    Pkg.activate(".")
-end
+# # O de esta forma
+# @everywhere begin 
+#     import Pkg; 
+#     Pkg.activate(".")
+# end
 
 @everywhere begin 
     using Dates, CPIDataBase
