@@ -65,3 +65,28 @@ function pargentrayinfl_prog(inflfn::InflationFunction, csdata::CountryStructure
     # Retornar las trayectorias
     sdata(tray_infl)
 end
+
+
+# export pargentrayinfl_pmap
+# Versión con pmap es más lenta
+function pargentrayinfl_pmap(inflfn::F, csdata::CS; 
+    K = 100, rndseed = 161803, showprogress = true) where {F <: InflationFunction, CS <: CountryStructure}
+
+    p = Progress(K, barglyphs=BarGlyphs("[=> ]"), enabled = showprogress)
+    
+    tray_infl = progress_pmap(1:K, progress=p) do k
+        # Configurar la semilla en el proceso
+        Random.seed!(LOCAL_RNG, rndseed + k)
+
+        # Muestra de bootstrap de los datos 
+        bootsample = deepcopy(csdata)
+        scramblevar!(bootsample, LOCAL_RNG)
+
+        # Computar la medida de inflación 
+        inflfn(bootsample)
+    end
+
+    # Retornar las trayectorias
+    # cat(tray_infl...; dims=3)
+    tray_infl
+end
