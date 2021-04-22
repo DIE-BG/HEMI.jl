@@ -40,9 +40,10 @@ function pargentrayinfl(inflfn::F, csdata::CountryStructure;
         # Muestra de bootstrap de los datos 
         bootsample = deepcopy(csdata)
         scramblevar!(bootsample, LOCAL_RNG)
+        trended_sample = apply_trend(bootsample, RWTREND)
 
         # Computar la medida de inflación 
-        tray_infl[:, :, k] = inflfn(bootsample)
+        tray_infl[:, :, k] = inflfn(trended_sample)
 
         put!(channel, true)
     end 
