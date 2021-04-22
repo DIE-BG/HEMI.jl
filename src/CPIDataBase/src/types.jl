@@ -245,7 +245,7 @@ struct MixedCountryStructure{N, T} <: CountryStructure{N, T}
 end
 
 # Anotar también como VarCPIBase...
-UniformCountryStructure(bases::Vararg{VarCPIBase}) = UniformCountryStructure(bases)
+UniformCountryStructure(bases::Vararg{VarCPIBase{T, B}, N}) where {N, T, B} = UniformCountryStructure{N, T, B}(bases)
 MixedCountryStructure(bases::Vararg{VarCPIBase}) = MixedCountryStructure(bases)
 
 function summary(io::IO, cst::CountryStructure)
