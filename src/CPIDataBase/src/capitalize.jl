@@ -1,11 +1,11 @@
 # capitalize.jl - basic operations to chain price change arrays
 
 """
-    capitalize(v::AbstractVector, base_index = 100)
+    capitalize(v::AbstractVector, base_index::Real = 100)
 
 Function to chain a vector of price changes with an index starting with `base_index`.
 """
-function capitalize(v::AbstractVector, base_index = 100)
+function capitalize(v::AbstractVector, base_index::Real = 100)
     idx = similar(v)
     capitalize!(idx, v, base_index)
     idx
@@ -27,11 +27,11 @@ function capitalize_addbase(vmat::AbstractMatrix, base_index = 100)
 end
 
 """
-    capitalize(vmat::AbstractMatrix, base_index::Real = 100.0)
+    capitalize(vmat::AbstractMatrix, base_index::Real = 100)
 
 Function to chain a matrix of price changes with an index starting with `base_index`.
 """
-function capitalize(vmat::AbstractMatrix, base_index::Real = 100.0)
+function capitalize(vmat::AbstractMatrix, base_index::Real = 100)
     c = size(vmat, 2)
     idxmat = similar(vmat)
     for j in 1:c
@@ -61,11 +61,11 @@ end
 ## Version in place
 
 """
-capitalize!(idx:: AbstractVector, v::AbstractVector, base_index)
+capitalize!(idx:: AbstractVector, v::AbstractVector, base_index::Real)
 
 Function to chain a vector of price changes in vector `idx` with an index starting with `base_index`.
 """
-function capitalize!(idx:: AbstractVector, v::AbstractVector, base_index)
+function capitalize!(idx:: AbstractVector, v::AbstractVector, base_index::Real)
     l = length(v)
     idx[1] = base_index * (1 + v[1]/100)
     for i in 2:l
@@ -73,12 +73,15 @@ function capitalize!(idx:: AbstractVector, v::AbstractVector, base_index)
     end
 end
 
+capitalize!(v::AbstractVector, base_index::Real) = capitalize!(v, v, base_index)
+
+
 """
-    capitalize!(vmat::AbstractMatrix, base_index = 100)
+    capitalize!(vmat::AbstractMatrix, base_index::Real = 100)
 
 Function to chain a matrix of price changes **in place** with an index starting with `base_index`.
 """
-function capitalize!(vmat::AbstractMatrix, base_index = 100)
+function capitalize!(vmat::AbstractMatrix, base_index::Real = 100)
     r = size(vmat, 1)
     @views @. vmat[1, :] = base_index * (1 + vmat[1, :]/100)
     for i in 2:r
