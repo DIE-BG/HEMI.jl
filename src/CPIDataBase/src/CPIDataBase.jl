@@ -9,17 +9,22 @@ module CPIDataBase
     using DataFrames
 
     # Export types
-    export IndexCPIBase, VarCPIBase, FullCPIBase, CountryStructure
+    export IndexCPIBase, VarCPIBase, FullCPIBase
+    export CountryStructure, UniformCountryStructure, MixedCountryStructure
+
 
     # Export functions
     export capitalize, varinterm, varinteran, 
         capitalize!, varinterm!, varinteran!, 
-        periods
+        periods, infl_periods
 
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction
     export EnsembleFunction, CombinationFunction
-    export num_measures, weights, measure_names
+    export num_measures, weights, measure_name
+
+    # Export types needed to specify results
+    export CPIIndex, CPIVarInterm
 
     # Basic inflation function
     export TotalCPI
@@ -35,8 +40,5 @@ module CPIDataBase
     # Basic inflation measures structure
     include("inflation.jl")
     include("ensemble.jl")
-
-    # Resample functions
-    include("resample.jl")
 
 end # module

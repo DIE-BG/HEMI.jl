@@ -75,7 +75,7 @@ using SafeTestsets
     ## Create CountryStructure 
 
     # These hold the same v array values (not same array objects) with different base indexes
-    cs = CountryStructure((vcpi, vcpi_b))
+    cs = MixedCountryStructure((vcpi, vcpi_b))
 
     @test cs[1].v == cs[2].v
     @test !(cs[1].v === cs[2].v)

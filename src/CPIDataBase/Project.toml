@@ -1,7 +1,7 @@
 name = "CPIDataBase"
 uuid = "e4c88d09-b53c-432a-84e8-7deb46235234"
 authors = ["Rodrigo Chang <rrcp777@gmail.com> and contributors"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

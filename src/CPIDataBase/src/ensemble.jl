@@ -17,15 +17,18 @@ EnsembleFunction(functions::Vararg{InflationFunction}) = EnsembleFunction(functi
 num_measures(ensfn::EnsembleInflationFunction) = sum(num_measures(inflfn) for inflfn in ensfn.functions)
 
 # Nombres de las medidas del conjunto 
-function measure_names(ensfn::EnsembleInflationFunction) 
-    reduce(vcat, [measure_names(inflfn) for inflfn in ensfn.functions])
+function measure_name(ensfn::EnsembleInflationFunction) 
+    reduce(vcat, [measure_name(inflfn) for inflfn in ensfn.functions])
 end
 
 # Método para obtener las trayectorias de inflación del conjunto
 # Se computan para cada medida y se concatenan horizontalmente
-function (ensfn::EnsembleFunction)(cst::CountryStructure) 
-    mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
+function (ensfn::EnsembleFunction)(base::VarCPIBase{T}) where T
+    mapreduce(inflfn -> inflfn(base), hcat, ensfn.functions)::Matrix{T}
 end
+
+
+
 
 
 ## CombinationFunction
@@ -54,14 +57,16 @@ end
 weights(combfn::CombinationFunction) = getfield(combfn, :weights)
 
 # Nombres de medidas
-measure_names(combfn::CombinationFunction) = measure_names(combfn.ensemble)
+measure_name(combfn::CombinationFunction) = measure_name(combfn.ensemble)
 
-# Aplicación sobre CountryStructure 
+# Aplicación sobre VarCPIBase del ensemble 
+(ensfn::CombinationFunction)(base::VarCPIBase) = ensfn.ensemble(base)
+
+# Aplicación especifica sobre CountryStructure: devuelve la combinación lineal
+# en variaciones interanuales
 function (combfn::CombinationFunction)(cst::CountryStructure)
     # Get ensemble and compute trajectories
-    ensfn = combfn.ensemble 
-    tray_infl = mapreduce(inflfn -> inflfn(cst), hcat, ensfn.functions)
+    tray_infl = combfn.ensemble(cst)
     # Return weighted sum
     tray_infl * combfn.weights
 end
-

@@ -215,18 +215,38 @@ end
 ## CountryStructure
 
 """
-    CountryStructure{N, T<:AbstractFloat}
+    CountryStructure{N, T <: AbstractFloat}
+
+Tipo abstracto que representa el conjunto de bases del IPC de un país.
+"""
+abstract type CountryStructure{N, T <: AbstractFloat} end
+
+"""
+    UniformCountryStructure{N, T, B} <: CountryStructure{N, T}
 
 Estructura que representa el conjunto de bases del IPC de un país, 
-posee el campo `base`, que es un vector de la estructura `VarCPIBase`
+posee el campo `base`, que es una tupla de la estructura `VarCPIBase`. Todas
+las bases deben tener el mismo tipo de índice base.
 """
-struct CountryStructure{N, T<:AbstractFloat}
-    # Tupla de VarCPIBase, cada una con su propio tipo de índices base B
+struct UniformCountryStructure{N, T, B} <: CountryStructure{N, T}
+    base::NTuple{N, VarCPIBase{T, B}} 
+end
+
+# Este tipo se puede utilizar con datos cuyos primeros índices no sean todos 100
+"""
+    MixedCountryStructure{N, T} <: CountryStructure{N, T}
+
+Estructura que representa el conjunto de bases del IPC de un país, 
+posee el campo `base`, que es una tupla de la estructura `VarCPIBase`, cada una 
+con su propio tipo de índices base B. Este tipo es una colección de un tipo abstracto.
+"""
+struct MixedCountryStructure{N, T} <: CountryStructure{N, T}
     base::NTuple{N, VarCPIBase{T, B} where B} 
 end
 
 # Anotar también como VarCPIBase...
-CountryStructure(bases::Vararg{VarCPIBase}) = CountryStructure(bases)
+UniformCountryStructure(bases::Vararg{VarCPIBase{T, B}, N}) where {N, T, B} = UniformCountryStructure{N, T, B}(bases)
+MixedCountryStructure(bases::Vararg{VarCPIBase}) = MixedCountryStructure(bases)
 
 function summary(io::IO, cst::CountryStructure)
     datestart, dateend = _formatdate.((cst.base[begin].fechas[begin], cst.base[end].fechas[end]))
@@ -247,7 +267,7 @@ end
 function convert(::Type{T}, cst::CountryStructure) where {T <: AbstractFloat}
     # Convert each base to type T
     conv_b = convert.(T, cst.base)
-    CountryStructure(conv_b)
+    UniformCountryStructure(conv_b)
 end
 
 # Acceso 
@@ -258,7 +278,7 @@ getindex(cst::CountryStructure, i::Int) = cst.base[i]
 ## Utilidades
 
 # Tipo de flotante del contenedor
-eltype(cst::CountryStructure{N, T}) where {N,T} = T 
+eltype(::CountryStructure{N, T}) where {N,T} = T 
 
 # Cantidad de períodos de sus bases de variaciones intermensuales
 periods(cst::CountryStructure) = sum(size(b.v, 1) for b in cst.base)
