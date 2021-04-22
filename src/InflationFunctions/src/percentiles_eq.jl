@@ -7,7 +7,7 @@ Base.@kwdef struct Percentil{K} <: InflationFunction
     params::K
 end
 
-Percentil(k::Real) = Percentil(; params=k)
+Percentil(k::Real) = Percentil(; params=convert(Float32, k))
 
 measure_name(inflfn::Percentil) = inflfn.name * " " * string(inflfn.params)
 
