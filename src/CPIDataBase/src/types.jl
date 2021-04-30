@@ -274,6 +274,73 @@ end
 
 getindex(cst::CountryStructure, i::Int) = cst.base[i]
 
+function _base_index(cst, date, retfirst=true)
+    for (b, base) in enumerate(cst.base)
+        fechas = base.fechas
+        dateindex = findfirst(fechas .== date)
+        if !isnothing(dateindex)
+            return b, dateindex
+        end
+    end
+    # return first or last
+    if retfirst
+        1, 1
+    else
+        length(cst.base), size(cst.base[end].v, 1)
+    end
+end
+
+getunionalltype(::UniformCountryStructure) = UniformCountryStructure
+getunionalltype(::MixedCountryStructure) = MixedCountryStructure
+
+function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
+
+    # Obtener base y fila de inicio
+    start_base, start_index = _base_index(cst, startdate, true)
+    final_base, final_index = _base_index(cst, finaldate, false)
+
+    bases = deepcopy(cst.base[start_base:final_base])
+    if start_base == final_base
+        # copy same base and slice
+        @debug "Fechas en la misma base"
+        # @info bases[1]
+        onlybase = bases[1]
+        newbase = VarCPIBase(
+            onlybase.v[start_index:final_index, :], 
+            copy(onlybase.w), onlybase.fechas[start_index:final_index], copy(onlybase.baseindex))
+        
+        return getunionalltype(cst)(newbase)
+    else 
+        # different bases
+        @debug "Fechas en diferentes bases"
+        firstbase = bases[begin]
+        lastbase = bases[end]
+        newstart = VarCPIBase(
+            firstbase.v[start_index:end, :], 
+            copy(firstbase.w), firstbase.fechas[start_index:end], copy(firstbase.baseindex))
+        newfinal = VarCPIBase(
+            lastbase.v[begin:final_index, :], 
+            copy(lastbase.w), lastbase.fechas[begin:final_index], copy(lastbase.baseindex))
+        
+        if final_base - start_base > 1
+            # more than one base
+            @debug "Más de dos bases"
+            newbases = (newstart, bases[start_base+1:final_base-1], newfinal)
+        else
+            # only two bases
+            @debug "Dos bases"
+            newbases = (newstart, newfinal)
+            return getunionalltype(cst)(newbases)
+        end
+    end
+
+end
+
+function getindex(cst::CountryStructure, finaldate::Date)
+    startdate = cst.base[1].fechas[1]
+    getindex(cst, startdate, finaldate)
+end
+
 
 ## Utilidades
 
