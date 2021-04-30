@@ -2,17 +2,22 @@
 
 ## Percentil equiponderado
 
-Base.@kwdef struct Percentil{K} <: InflationFunction
+Base.@kwdef struct Percentil{K <: AbstractFloat} <: InflationFunction
     name::String = "Percentil equiponderado"
     params::K
 end
 
-Percentil(k::Real) = Percentil(; params=convert(Float32, k))
+Percentil(k::Int) = Percentil(; params=k/100)
 
 measure_name(inflfn::Percentil) = inflfn.name * " " * string(inflfn.params)
 
 # Las funciones sobre VarCPIBase resumen en variaciones intermensuales
 function (inflfn::Percentil)(base::VarCPIBase) 
     k = inflfn.params
-    k_interm = map(r -> quantile(r, k), eachrow(base.v))
+
+    # Percentil k es el elemento número K_idx del vector de gastos básicos
+    G = size(base.v, 2)
+    K_idx = Int(ceil(k * G))
+    
+    k_interm = map(r -> sort(r)[K_idx], eachrow(base.v))
 end
