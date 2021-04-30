@@ -49,7 +49,7 @@ end
 
 ## Remuestreo de objetos de CPIDataBase
     
-import ..CPIDataBase: VarCPIBase, CountryStructure
+import CPIDataBase: VarCPIBase, CountryStructure
 
 scramblevar!(base::VarCPIBase, rng = Random.GLOBAL_RNG) = scramblevar!(base.v, rng)
 

@@ -22,45 +22,13 @@ using JLD2
 @load datadir("guatemala", "gtdata.jld2") gt00 gt10
 gtdata = UniformCountryStructure(gt00, gt10)
 
-# Datos hasta dic-2019
-gtdata = gtdata[Date(2019,12)]
+# Datos hasta 2019
+gtdata_19 = gtdata[Date(2019,12)]
 
-# Computar inflación de Guatemala
-totalfn = TotalCPI()
-perk = Percentil(0.72)
-totalfneval = TotalEvalCPI()
-
-
-
-## Probar aplicación de tendencia 
-
-gt00_fict = convert(Float32, VarCPIBase(ones(120, 218), copy(gt00.w), gt00.fechas, gt00.baseindex))
-gt10_fict = convert(Float32, VarCPIBase(ones(120, 279), copy(gt10.w), gt10.fechas[1:120], gt10.baseindex))
-gtdata_fict = UniformCountryStructure(gt00_fict, gt10_fict)
-trended_gtdata = apply_trend(gtdata_fict, RWTREND)
-
-
-## Probar el muestreo 
-
-gt00_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 218), dims=2), copy(gt00.w), gt00.fechas, gt00.baseindex)
-gt10_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 279), dims=2), copy(gt10.w), gt10.fechas[1:120], gt10.baseindex)
-gtdata_fict = UniformCountryStructure(gt00_fict, gt10_fict)
-
-scramblevar!(gtdata_fict)
-
-using Random
-rng = MersenneTwister(0)
-testmat = repeat(1.0:120.0, 1, 218)
-outmat = scramblevar(testmat, rng) .% 12
-
-using Test
-for j in 1:12
-    @test all(outmat[j:12:end, :] .== (j % 12))
-end
-
-
-# scramblevar!(testmat, rng)
-# testmat
+# Funciones de inflación 
+# totalfn = TotalCPI()
+PERC = 0.65:0.01:0.80
+percfn = Percentil.(PERC) |> Tuple |> EnsembleFunction
 
 ## Carga parámetro
 
@@ -75,41 +43,61 @@ tray_infl_pob = Float32[5.42722940444946,5.21740913391113,5.1054835319519,5.0497
 
 using Statistics
 
-tray_infl = pargentrayinfl(totalfn, gtdata; rndseed = 0, K=1_000_000);
+tray_infl = pargentrayinfl(percfn, gtdata; rndseed = 0, K=125_000); # 12:54
 
-# Distribución de errores al cuadrado
-sq_dist = vec( (tray_infl .- tray_infl_pob) .^ 2 )
+# @save datadir("percentiles", "trayectorias", "tray_infl.jld2") tray_infl
+# @load datadir("percentiles", "trayectorias", "tray_infl.jld2") tray_infl
 
 # Distribución de errores por realización 
-mse_dist = mean((tray_infl .- tray_infl_pob) .^ 2; dims=1) |> vec 
+mse_dist = dropdims(permutedims(mean((tray_infl .- tray_infl_pob) .^ 2; dims=1), (3,2,1)), dims=3)
 
 # Métricas de evaluación 
-mse = mean( (tray_infl .- tray_infl_pob) .^ 2 )
-rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2) )
-me = mean((tray_infl .- tray_infl_pob))
+mse = mean( (tray_infl .- tray_infl_pob) .^ 2 ; dims=[1, 3]) |> vec
+rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2); dims=[1, 3]) |> vec
+me = mean((tray_infl .- tray_infl_pob), dims=[1, 3]) |> vec
 
 # Ancho de la distribución de MSE 
-std(mse_dist)
-std(mse_dist) / 125_000
-
-# Ancho de la distribución de error cuadrático de todos los períodos
-std(sq_dist)
-std(sq_dist) / 125_000
+std(mse_dist; dims=1)
+std(mse_dist; dims=1) / 125_000
 
 
-## Gráfica de trayectorias promedio 
+## Gráfica de distribución MSE 
 using Plots
 
-histogram(sq_dist, normalize=:probability)
-xlims!(0,4000)
+best_pk = argmin(mse)
+histogram(mse_dist[:, best_pk], normalize=:probability)
 
-histogram(mse_dist)
-xlims!(0,4000)
+sq_dist = vec( (tray_infl[:, best_pk, :] .- tray_infl_pob) .^ 2 )
+histogram(sq_dist, normalize=:probability)
+xlims!(0,1)
+
+err_dist = vec( (tray_infl[:, best_pk, :] .- tray_infl_pob) )
+histogram(err_dist, normalize=:probability)
+
+
+## Gráfica de percentiles
+
+scatter(PERC, mse, label="MSE",
+    size=(800, 600), 
+    title="Evaluación de percentiles", 
+    legend = :bottomright)
+
+scatter(PERC, rmse, label="RMSE",
+    size=(800, 600), 
+    title="Evaluación de percentiles", 
+    legend = :bottomright)
+
+scatter(PERC, me, label="ME",
+    size=(800, 600), 
+    title="Evaluación de percentiles", 
+    legend = :bottomright)
 
 ## Gráfica de trayectoria promedio
 
-m_tray_infl = mean(tray_infl; dims=3) |> vec 
-plot(Date(2001, 12):Month(1):Date(2019, 12), 
-    m_tray_infl, label = "Trayectoria promedio")
-plot!(Date(2001, 12):Month(1):Date(2019, 12), 
-    tray_infl_pob, label = "Trayectoria paramétrica")
+m_tray_infl = dropdims(mean(tray_infl; dims=3), dims=3)
+plot(Date(2001, 12):Month(1):Date(2019, 12), m_tray_infl, 
+    label = :none, 
+    size = (800, 600))
+plot!(Date(2001, 12):Month(1):Date(2019, 12), tray_infl_pob, 
+    label = "Trayectoria paramétrica", 
+    linewidth=5)
