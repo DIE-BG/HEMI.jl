@@ -16,8 +16,7 @@ function gentrayinfl(inflfn::F, csdata::CountryStructure;
     # Generar las trayectorias
     for k in 1:K 
         # Muestra de bootstrap de los datos 
-        bootsample = deepcopy(csdata)
-        scramblevar!(bootsample, myrng)
+        bootsample = scramblevar(csdata, myrng)
         trended_sample = apply_trend(bootsample, RWTREND)
 
         # Computar la medida de inflación 
