@@ -38,8 +38,7 @@ function pargentrayinfl(inflfn::F, csdata::CountryStructure;
         Random.seed!(LOCAL_RNG, rndseed + k)
         
         # Muestra de bootstrap de los datos 
-        bootsample = deepcopy(csdata)
-        scramblevar!(bootsample, LOCAL_RNG)
+        bootsample = scramblevar(csdata, LOCAL_RNG)
         trended_sample = apply_trend(bootsample, RWTREND)
 
         # Computar la medida de inflación 
