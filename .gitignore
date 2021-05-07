@@ -6,8 +6,8 @@
 #data
 videos
 plots
-notebooks
-_research
+# notebooks
+# _research
 
 ################################################################################
 #                          Extra data project structure                        #
