@@ -19,7 +19,7 @@ end
 using JLD2
 
 # Carga de datos
-@load datadir("guatemala", "gtdata.jld2") gt00 gt10
+@load datadir("guatemala", "gtdata32.jld2") gt00 gt10
 gtdata = UniformCountryStructure(gt00, gt10)
 
 # Datos hasta 2019
@@ -101,3 +101,32 @@ plot(Date(2001, 12):Month(1):Date(2019, 12), m_tray_infl,
 plot!(Date(2001, 12):Month(1):Date(2019, 12), tray_infl_pob, 
     label = "Trayectoria paramétrica", 
     linewidth=5)
+
+
+## Una sola medida
+
+tray_infl = pargentrayinfl(Percentil(74), gtdata[Date(2019,12)]; rndseed = 0, K=125_000);
+
+mse_dist = vec(mean((tray_infl .- tray_infl_pob) .^ 2; dims=1))
+
+# Métricas de evaluación 
+mse = mean( (tray_infl .- tray_infl_pob) .^ 2)
+rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2))
+me = mean((tray_infl .- tray_infl_pob))
+
+# Ancho de la distribución de MSE 
+mean(mse_dist)
+std(mse_dist)
+std(mse_dist) / 125_000
+
+sqerr_dist = vec((tray_infl .- tray_infl_pob) .^ 2)
+
+mean(sqerr_dist)
+std(sqerr_dist)
+std(sqerr_dist) / 125_000
+
+# Gráficas
+histogram(sqerr_dist, normalize=:probability)
+xlims!(0,1)
+
+histogram(mse_dist, normalize=:probability)
