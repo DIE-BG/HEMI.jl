@@ -1,21 +1,23 @@
+"""
+    InflationFunctions
+
+Funciones para computar estimadores muestrales de inflación. 
+"""
 module InflationFunctions
 
-# import CPIDataBase: InflationFunction
-# import CPIDataBase: EnsembleFunction, CombinationFunction
+    using CPIDataBase
+    using Statistics
 
-using CPIDataBase
-using Statistics
+    ## Métodos a extender 
+    import CPIDataBase: measure_name
 
-# Métodos a extender 
-import CPIDataBase: measure_name
+    
+    ## Percentiles equiponderados
+    export Percentil
+    include("percentiles_eq.jl")
 
-export Percentil
+    ## Desarrollo 
 
-## Percentiles equiponderados
-include("percentiles_eq.jl")
-
-## Desarrollo 
-
-include("dev/totalcpi_methods.jl")
+    include("dev/totalcpi_methods.jl")
 
 end

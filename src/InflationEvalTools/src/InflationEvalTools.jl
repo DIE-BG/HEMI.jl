@@ -1,7 +1,7 @@
 """
     InflationEvalTools
 
-Funciones y demás utilidades de simulación para evaluación
+Funciones y demás utilidades de simulación para evaluación.
 """
 module InflationEvalTools
 
@@ -14,14 +14,23 @@ module InflationEvalTools
 
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
-
+    
     include("gentrayinfl.jl")
     include("pargentrayinfl.jl") 
-    include("apply_trend.jl") # Funciones de aplicación de tendencia
+    
+
+    ## Funciones de aplicación de tendencia
+    export apply_trend
+    export RWTREND, SNTREND
+
+    include("apply_trend.jl") 
+    
 
     ## Módulo de remuestreo
-    include("Resample.jl")
-    @reexport using .Resample
+    export scramblevar, scramblevar!
+    
+    include("scramblevar.jl")
+
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
