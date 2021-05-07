@@ -16,7 +16,7 @@ module CPIDataBase
     # Export functions
     export capitalize, varinterm, varinteran, 
         capitalize!, varinterm!, varinteran!, 
-        periods, infl_periods
+        periods, infl_periods, infl_dates
 
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction
