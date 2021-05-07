@@ -267,13 +267,20 @@ end
 function convert(::Type{T}, cst::CountryStructure) where {T <: AbstractFloat}
     # Convert each base to type T
     conv_b = convert.(T, cst.base)
-    UniformCountryStructure(conv_b)
+    getunionalltype(cst)(conv_b)
 end
 
 # Acceso 
 
+"""
+    getindex(cst::CountryStructure, i::Int)
+
+Devuelve la base número `i` de un contenedor `CountryStructure`.
+"""
 getindex(cst::CountryStructure, i::Int) = cst.base[i]
 
+# Función de ayuda para obtener los índices que corresponden a una fecha
+# específica de una base
 function _base_index(cst, date, retfirst=true)
     for (b, base) in enumerate(cst.base)
         fechas = base.fechas
@@ -290,9 +297,32 @@ function _base_index(cst, date, retfirst=true)
     end
 end
 
+
+"""
+    getunionalltype(::UniformCountryStructure)
+
+Devuelve el tipo `UniformCountryStructure`. Utilizado al llamar
+`getunionalltype` sobre un `CountryStructure` para obtener el tipo concreto
+`UnionAll`. 
+"""
 getunionalltype(::UniformCountryStructure) = UniformCountryStructure
+
+
+"""
+    getunionalltype(::MixedCountryStructure)
+
+Devuelve el tipo `MixedCountryStructure`. Utilizado al llamar `getunionalltype`
+sobre un `CountryStructure` para obtener el tipo concreto `UnionAll`.
+"""
 getunionalltype(::MixedCountryStructure) = MixedCountryStructure
 
+
+"""
+    getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
+
+Devuelve una copia del `CountryStructure` con las bases modificadas para tener
+observaciones entre las fechas indicada por `startdate` y `finaldate`.
+"""
 function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
 
     # Obtener base y fila de inicio
@@ -336,6 +366,11 @@ function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
 
 end
 
+"""
+    getindex(cst::CountryStructure, finaldate::Date)
+
+Devuelve una copia del `CountryStructure` hasta la fecha indicada por `finaldate`.
+"""
 function getindex(cst::CountryStructure, finaldate::Date)
     startdate = cst.base[1].fechas[1]
     getindex(cst, startdate, finaldate)
@@ -344,11 +379,39 @@ end
 
 ## Utilidades
 
-# Tipo de flotante del contenedor
+"""
+    eltype(::CountryStructure{N, T})
+
+Tipo de dato de punto flotante del contenedor de la estructura de país
+`CountryStructure`.
+"""
 eltype(::CountryStructure{N, T}) where {N,T} = T 
 
-# Cantidad de períodos de sus bases de variaciones intermensuales
+
+"""
+    periods(cst::CountryStructure)
+
+Computa el número de períodos (meses) en las bases de variaciones intermensuales
+de la estructura de país. 
+"""
 periods(cst::CountryStructure) = sum(size(b.v, 1) for b in cst.base)
 
-# Número de períodos de las trayectorias de inflación
+
+"""
+    infl_periods(cst::CountryStructure)
+
+Computa el número de períodos de inflación de la estructura de país. Corresponde
+al número de observaciones intermensuales menos las primeras 11 observaciones de
+la primera base del IPC.
+"""
 infl_periods(cst::CountryStructure) = periods(cst) - 11
+
+
+"""
+    infl_periods(cst::CountryStructure)
+
+Fechas correspondientes a la trayectorias de inflación computadas a partir un
+`CountryStructure`.
+"""
+infl_dates(cst::CountryStructure) = 
+    cst.base[begin].fechas[12]:Month(1):cst.base[end].fechas[end]
