@@ -1,21 +1,25 @@
-# HEMI
+# Herramienta de evaluación de medidas de inflación (HEMI)
 
-This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
-to make a reproducible scientific project named
-> HEMI
+Repositorio del proyecto de evaluación de medidas de inflación en el [lenguaje
+de programación Julia](https://julialang.org/), utilizando
+[DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) para crear un
+proyecto reproducible.
 
-It is authored by Juan Carlos Castañeda, Rodrigo Chang, Oscar Solís, Mauricio Vargas.
+Sus autores principales son Juan Carlos Castañeda, Rodrigo Chang, Oscar Solís,
+Mauricio Vargas y otros colaboradores, todos miembros del Departamento de
+Investigaciones Económicas del Banco de Guatemala. 
 
-To (locally) reproduce this project, do the following:
+Para reproducir localmente este proyecto, haga lo siguiente:
 
-0. Download this code base. Notice that raw data are typically not included in the
-   git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
+1. Descarga o clona el repositorio. Tenga en cuenta que los datos brutos de
+    simulaciones normalmente no se incluyen en el git-history y es posible que
+    deban obtenerse de forma independiente.
+2. Abra una consola de Julia y haga: 
    ```
    julia> using Pkg
-   julia> Pkg.activate("path/to/this/project")
+   julia> Pkg.activate("ruta/al/proyecto")
    julia> Pkg.instantiate()
    ```
 
-This will install all necessary packages for you to be able to run the scripts and
-everything should work out of the box.
+Este último comando instalará todos los paquetes necesarios para poder ejecutar
+los scripts y todo lo demás debería funcionar inmediatamente. 
