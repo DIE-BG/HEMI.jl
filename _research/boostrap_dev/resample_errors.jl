@@ -166,6 +166,47 @@ function map_block_lags(vmat; method = :nooverlap, methodlabel = "NBB", maxlags=
     nbb_df
 end
 
+
+## Generalized Seasonal Block Bootstrap
+
+# Función para obtener índices de remuestreo
+function dbootinds_gsbb(data, d, b)
+    T = size(data, 1)
+    l = T ÷ b
+    ids = Vector{UnitRange{Int}}(undef, 0)
+    
+    for t in 1:b:T
+        R1 = (t - 1) ÷ d
+        R2 = (T - b - t) ÷ d
+
+        St = (t - d*R1):d:(t+ d*R2)
+        kt = rand(St)
+        
+        push!(ids, kt:(kt+b-1))
+    end
+    final_ids = mapreduce(r -> collect(r), vcat, ids)[1:T]
+end
+
+# Función para remuestrear
+function resample_gsbb(data, d, b)
+    @views ids = dbootinds_gsbb(data[:, 1], d, b)
+    data[ids, :]
+end
+
+function map_block_lags_gsbb(vmat; methodlabel = "GSBB", maxlags=25, N=100, decompose_stations = true)
+    nbb_res = zeros(eltype(vmat), 25, 2)
+    for l in 1:maxlags
+        nbb_res[l, :] = mse_cov_autocov(vmat, v -> resample_gsbb(v, 12, l);  N, decompose_stations)
+    end
+    # Crear el DataFrame
+    nbb_df = DataFrame(nbb_res, [:ErrorCov, :ErrorAutocov])
+    nbb_df[!, :Metodo] .= methodlabel
+    nbb_df[!, :BloqueL] = 1:maxlags
+    nbb_df[!, :NumSimulaciones] .= N
+    nbb_df
+end
+
+
 function map_df_resample(vmat, resamplefn; methodlabel, blocklength, N = 100, decompose_stations = true)
     # Obtener resultados de método
     method_res = mse_cov_autocov(vmat, resamplefn; N, decompose_stations)
@@ -192,13 +233,18 @@ sbb_res = map_block_lags(varbase.v, method=:stationary, methodlabel = "SBB", N=N
 scramble_res = map_df_resample(varbase.v, scramblevar, methodlabel="Método meses", blocklength=1, N=Nsim)
 maxentropy_res = map_df_resample(varbase.v, me_resample, methodlabel="Máxima entropía", blocklength=120, N=Nsim)
 jc_res = map_df_resample(varbase.v, resample_JC_blocks, methodlabel="Método extensión bloques", blocklength=25, N=Nsim, decompose_stations = false)
+
+
 wdb_res = map_block_lags_wdb(varbase.v, lrange=1:25, N=Nsim)
 
+# Este funciona mejor quitando las medias de meses y manejar la estacionalidad
+# remanente con la metodología de muestreo generalizado estacional
+gsbb_res = map_block_lags_gsbb(varbase.v, methodlabel = "SBB", N=Nsim, decompose_stations = false)
 
 ## Gráfica de componentes de covarianza
 p1 = plot(
-    hcat(nbb_res[:, 1], cbb_res[:, 1], mbb_res[:, 1], sbb_res[:, 1], wdb_res[:, 1]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB"])
+    hcat(nbb_res[:, 1], cbb_res[:, 1], mbb_res[:, 1], sbb_res[:, 1], wdb_res[:, 1], gsbb_res[:, 1]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"])
 hline!(scramble_res[:, 1], label="Método selección meses")
 hline!(maxentropy_res[:, 1], label="Método máxima entropía")
 hline!(jc_res[:, 1], label="Método extensión bloques")
@@ -208,8 +254,8 @@ title!("Componentes de covarianza")
 
 ## Gráfica de componentes de autocovarianza
 p2 = plot(
-    hcat(nbb_res[:, 2], cbb_res[:, 2], mbb_res[:, 2], sbb_res[:, 2], wdb_res[:, 2]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB"])
+    hcat(nbb_res[:, 2], cbb_res[:, 2], mbb_res[:, 2], sbb_res[:, 2], wdb_res[:, 2], gsbb_res[:, 2]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"])
 hline!(scramble_res[:, 2], label="Método selección meses")
 hline!(maxentropy_res[:, 2], label="Método máxima entropía")
 hline!(jc_res[:, 2], label="Método extensión bloques")
