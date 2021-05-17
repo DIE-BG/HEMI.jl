@@ -20,20 +20,22 @@ struct CPIVarInterm <: CPIResult end
 # De tal manera que la mayoría de funciones solamente requieren definir su operación
 # sobre los contenedores `VarCPIBase` y devolver una variación intermensual resumen 
 
-function (generalfn::InflationFunction)(cs::CountryStructure)
-    vm = generalfn(cs, CPIIndex)
+function (inflfn::InflationFunction)(cs::CountryStructure)
+    vm = inflfn(cs, CPIIndex())
     varinteran(vm)
 end
 
-function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIIndex})
-    vm = generalfn(cs, CPIVarInterm)
+function (inflfn::InflationFunction)(cs::CountryStructure, ::CPIIndex)
+    vm = inflfn(cs, CPIVarInterm())
     capitalize!(vm, 100)
     vm
 end
 
-function (generalfn::InflationFunction)(cs::CountryStructure, ::Type{CPIVarInterm}) 
-    # Acá se llama a generalfn(base) for base in cs, esta es la función que debe definirse
-    vm = mapfoldl(generalfn, vcat, cs.base)
+function (inflfn::InflationFunction)(cs::CountryStructure, ::CPIVarInterm) 
+    # Acá se llama a inflfn(base), en donde base es de tipo VarCPIBase. Esta
+    # es la función que debe definirse para cualquier medida de inflación.
+    vm = mapfoldl(inflfn, vcat, cs.base)
+    vm
 end
 
 
