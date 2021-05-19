@@ -277,3 +277,46 @@ function create_gif(varbase, resamplefn; x = 1, N = 10, decompose_stations = tru
     gif(anim, path, fps=1.5)
 
 end
+
+
+## Funciones para obtener bloque óptimo de Politis y White 2004, 2009
+
+# Función para obtener bloque óptimo del método `bootmethod`
+# Se utiliza try catch porque en la base 2010, el gasto básico 230 posee 
+# solamente variaciones intermensuales iguales a cero, lo que da un error 
+# no controlado en la función BootInput en el análisis del correlograma
+function optblock_politis_white(base, bootmethod = :stationary; decompose_stations = true)
+    
+    vmat = decompose_stations ? base.v - monthavg(base.v) : base.v
+    G = size(vmat, 2)
+    
+    optblock = map(1:G) do j
+        try
+            bi = BootInput(vmat[:, j], blocklength = 0, 
+                bootmethod = bootmethod, numresample=1)
+            bi.blocklength
+        catch 
+            @warn "Error en cómputo de bloque óptimo en gasto $j"
+            one(eltype(vmat))
+        end
+    end
+    optblock
+end 
+
+# Función para graficar barras de bloques óptimos
+function plot_bar_optblock(opt_blocks, label, basetag)
+    # Gráfica de barras
+    p1 = bar(opt_blocks, label=label, alpha=0.3)
+    # Líneas de media y mediana
+    hline!([mean(opt_blocks)], label = "Media", 
+        color = :blue, linealpha = 0.8, linestyle = :dash, linewidth = 2)
+    hline!([median(opt_blocks)], label = "Mediana", 
+        color = :red, linealpha = 0.7, linestyle = :dash, linewidth = 2)
+    # Percentiles
+    hline!(quantile(opt_blocks, [0.9, 0.95, 0.99]), 
+        label = "Percentiles 90%, 95% y 99%", 
+        linealpha = 0.5, linestyle = :dash, linewidth = 2)
+    title!("Bloque óptimo $label base $basetag")
+
+    p1
+end

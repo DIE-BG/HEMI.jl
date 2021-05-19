@@ -218,40 +218,13 @@ create_gif(base, resample_gsbb_mod,
 
 ## Procedimiento de selección de bloque automático de Politis y White 2004, 2009
 
-# Utilizar este código para mostrar una gráfica de barras con el largo óptimo por serie de cada base del IPC  
-# function temperature_heatmap(x, T)
-# 	p = heatmap(x, [0.], collect(T'), 
-# 			   clims=(-1., 1.), cbar=false, xticks=nothing, yticks=nothing)
-# 	return p
-# end
-
-function optblock_politis_white(base, bootmethod = :stationary; decompose_stations = true)
-    
-    vmat = decompose_stations ? base.v - monthavg(base.v) : base.v
-    G = size(vmat, 2)
-    
-    optblock = map(1:G) do j
-        try
-            bi = BootInput(resid[:, j], blocklength = 0, 
-                bootmethod = bootmethod, numresample=1)
-            bi.blocklength
-        catch 
-            @warn "Error en cómputo de bloque óptimo en gasto $j"
-            0.0
-        end
-    end
-    optblock
-end 
-
 sbb_opt_blocks = optblock_politis_white(base, :stationary; decompose_stations = true)
-p1 = bar(sbb_opt_blocks, label="SBB", alpha=0.3)
-hline!([mean(sbb_opt_blocks), median(sbb_opt_blocks)], label = "Media y mediana", 
-    linealpha = 0.7, linestyle = :dash, linewidth = 2)
-hline!(quantile(sbb_opt_blocks, [0.9, 0.95, 0.99]), 
-    label = "Percentiles 90%, 95% y 99%", 
-    linealpha = 0.5, linestyle = :dash, linewidth = 2)
-title!("Bloque óptimo base $basetag")
- 
-# mbb_opt_blocks = optblock_politis_white(base, :moving; decompose_stations = true)
+p_sbb = plot_bar_optblock(sbb_opt_blocks, "SBB", basetag)
+
+cbb_opt_blocks = optblock_politis_white(base, :circular; decompose_stations = true) 
+p_cbb = plot_bar_optblock(cbb_opt_blocks, "CBB", basetag)
+
+plot(p_sbb, p_cbb, layout=(1, 2), size=(1000, 600), ylims=(0,30))
+savefig(plotsdir("bootstrap_methods", savename("opt_block_politis_white", params, accesses=(:base,))))
 
 
