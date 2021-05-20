@@ -5,19 +5,20 @@ using InflationEvalTools: scramblevar
 using DependentBootstrap
 using Bootstrap
 using CSV, DataFrames
+using JLD2
 
 ## Funciones para investigación de remuestreo
 includet(projectdir("_research", "boostrap_dev", "helper_functions.jl"))
 
 ## Cómputo de resultados de error cuadrático en función de rezagos
-base = gt10
-basetag = "2010"
-nsim = 1000
+base = gt00
+basetag = "2000"
+nsim = 100
 
 # Parámetros para archivos
 params = (base=basetag, nsim=nsim)
 
-# Métodos de remuestreo de bloques 
+## Resultados de métodos de remuestreo de bloques 
 nbb_res = map_block_lags(base.v, method=:nooverlap, methodlabel = "NBB", N=nsim)
 cbb_res = map_block_lags(base.v, method=:circular, methodlabel = "CBB", N=nsim)
 mbb_res = map_block_lags(base.v, method=:moving, methodlabel = "MBB", N=nsim)
@@ -26,10 +27,10 @@ sbb_res = map_block_lags(base.v, method=:stationary, methodlabel = "SBB", N=nsim
 # Métodos que no varían el tamaño de bloque o ancho de banda
 scramble_res = map_df_resample(base.v, scramblevar, 
     methodlabel="Método meses (Scramble)", blocklength=1, N=nsim)
+
+    # Método de máxima entropía
 maxentropy_res = map_df_resample(base.v, me_resample, 
     methodlabel="Máxima entropía (MEBOOT)", blocklength=120, N=nsim)
-gsbb_mod_res = map_df_resample(base.v, resample_gsbb_mod, 
-    methodlabel="Método GSBB-II", blocklength=25, N=nsim, decompose_stations = false)
 
 # Método de Wild Dependent Bootstrap
 wdb_res = map_block_lags_wdb(base.v, lrange=1:25, N=nsim)
@@ -38,6 +39,33 @@ wdb_res = map_block_lags_wdb(base.v, lrange=1:25, N=nsim)
 # Este funciona mejor quitando las medias de meses y manejar la estacionalidad
 # remanente con la metodología de muestreo generalizado estacional
 gsbb_res = map_block_lags_gsbb(base.v, methodlabel = "GSBB", N=nsim, decompose_stations = true)
+
+# GSBB-II con extensión de períodos 
+gsbb_mod_res = map_df_resample(base.v, resample_gsbb_mod, 
+    methodlabel="Método GSBB-II", blocklength=25, N=nsim, decompose_stations = false)
+
+
+## Guardar resultados 
+
+results_file = datadir("bootstrap_methods", savename("bootstrap_methods_results", params, "jld2"))
+
+@pack! results = nbb_res, sbb_res
+
+wsave(results_file, 
+    "nbb_res", nbb_res, 
+    "sbb_res", sbb_res, 
+    "mbb_res", mbb_res, 
+    "cbb_res", cbb_res, 
+    "scramble_res", scramble_res, 
+    "maxentropy_res", maxentropy_res, 
+    "wdb_res", wdb_res, 
+    "gsbb_res", gsbb_res, 
+    "gsbb_mod_res", gsbb_mod_res)
+
+## Cargar resultados 
+
+results = wload(results_file)
+@unpack nbb_res, cbb_res, mbb_res, sbb_res, scramble_res, maxentropy_res, wdb_res, gsbb_res, gsbb_mod_res = results
 
 
 ## Gráfica de componentes de media
