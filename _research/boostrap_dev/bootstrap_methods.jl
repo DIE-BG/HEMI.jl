@@ -141,9 +141,6 @@ savefig(plotsdir("bootstrap_methods", "error_cov"))
 
 ## Gráficas de series remuestreadas
 
-# completar con los últimos métodos
-
-
 ## Selección de rezagos por criterio de autocovarianza 
 
 l_nbb = argmin(nbb_res[:, :ErrorAutocov])
@@ -151,7 +148,10 @@ l_mbb = argmin(mbb_res[:, :ErrorAutocov])
 l_cbb = argmin(cbb_res[:, :ErrorAutocov])
 l_sbb = argmin(sbb_res[:, :ErrorAutocov])
 l_gsbb = argmin(gsbb_res[:, :ErrorAutocov])
+l_wdb = argmin(gsbb_res[:, :ErrorAutocov])
 
+# Obtener datos anteriores de la tabla de resumen al leer el CSV...
+# TO-DO
 
 ## Ilustración métodos de muestreo en base 2000, x = 1 (Arroz)
 
@@ -211,7 +211,12 @@ p = (params..., gb = gb_label, method="GSBB-II", L = 25)
 create_gif(base, resample_gsbb_mod, 
     path = joinpath(path, savename("resample", p, "gif")), 
     x = gb_x, decompose_stations = false)
-
+    
+# Método de Wild Dependent Bootstrap
+p = (params..., gb = gb_label, method="WDB", L = l_wdb)
+create_gif(base, WildDependentBootstrap(size(base.v, 1), l_wdb*one(eltype(base))), 
+    path = joinpath(path, savename("resample", p, "gif")), 
+    x = gb_x, decompose_stations = false)
 
 
 
