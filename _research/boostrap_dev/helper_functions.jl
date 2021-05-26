@@ -2,6 +2,7 @@
 # metodologías de remuestreo
 
 using LinearAlgebra, Distributions
+using ProgressMeter
 
 ## Obtener residuos de las variaciones intermensuales promedio
 function monthavg(vmat)
@@ -78,10 +79,13 @@ end
 
 # Función para mapear error cuadrático de los métodos de bloque en función de
 # tamaño de bloque en un DataFrame 
-function map_block_lags(vmat; method = :nooverlap, methodlabel = "NBB", maxlags=25, N=100)
+function map_block_lags(vmat; method = :nooverlap, methodlabel = "NBB", 
+    decompose_stations=true, maxlags=25, N=100)
+
     nbb_res = zeros(eltype(vmat), maxlags, 4)
-    for l in 1:maxlags
-        nbb_res[l, :] = mse_cov_autocov(vmat, v -> resample_block(v, l, method), N = N)
+    @showprogress for l in 1:maxlags
+        nbb_res[l, :] = mse_cov_autocov(vmat, v -> resample_block(v, l, method), 
+            N = N, decompose_stations = decompose_stations)
     end
     # Crear el DataFrame
     nbb_df = DataFrame(nbb_res, [:ErrorMedia, :ErrorVar, :ErrorCov, :ErrorAutocov])
@@ -244,19 +248,124 @@ function map_df_resample(vmat, resamplefn; methodlabel, blocklength, N = 100, de
 end
 
 
+## Función de remuestreo de SBB con extensión de períodos
+function resample_block_mod(vmat, blocklength, method=:stationary)
+    # Matriz de residuos
+    month_avg = monthavg(vmat)
+    resid_vmat = vmat - month_avg
+
+    resample_res = first(dbootdata(resid_vmat; 
+        blocklength, # tamaño de bloque
+        numresample=1, 
+        bootmethod=method, 
+        numobsperresample = 300))
+
+    final_resample = resample_res + repeat(view(resid_vmat, 1:12, :), 25, 1)
+    final_resample
+end
+
+
+## Función de remuestreo con SBB estacional (SSBB - Stationary Seasonal Block Bootstrap)
+
+function ssbb_sets(t, b, T, d=12)
+    # Límites inferior y superior para los índices, considerando el largo de
+    # bloque b, desde la posición t, en una serie de tiempo de largo T con
+    # estacionalidad d
+    R1 = (t - 1) ÷ d
+    R2 = (T - b - t) ÷ d
+    # @info R1, R2
+
+    # Conjunto de rangos disponibles de largo b en la observación t
+    St = (t - d*R1):d:(t+ d*R2)
+    # @info St
+    # St |> collect
+    
+    # Extraer el índice de inicio de bloque
+    kt = rand(St)
+    # kt = try 
+    #     rand(St)
+    # catch 
+    #     println("St=$St, R1=$R1, R2=$R2, t=$t, b=$b, T=$T")
+    #     error("Error en generación de índices")
+    # end
+
+    # Devolver el rango de índices para el tamaño de bloque b
+    kt:(kt+b-1)
+end
+
+function dbootinds_ssbb(T, l, R=T)
+    G = l == 1 ? Bernoulli(0) : Geometric(1/l)
+
+    # Vector de índices para remuestreo de tamaño final R
+    ids = Vector{Int}(undef, R)
+    
+    t = 1
+    while t <= R
+        # Obtener el largo del bloque para la posición t
+        lt = rand(G) + 1
+        # Condición para el tamaño de bloque aleatorio (b ≤ T - t)
+        while lt > 36
+            lt = rand(G) + 1
+        end
+        
+        # Obtener índices para asignar al bloque 
+        kt_range = ssbb_sets(t, lt, T)
+        t_last_pos = t + lt - 1
+        if t_last_pos > R 
+            t_last_pos = R
+        end
+        block_last_pos = t_last_pos - t + 1
+        
+        # Asignar los índices obtenidos 
+        ids[t:t_last_pos] .= collect(kt_range[1:block_last_pos])
+
+        # Posicionarse en el siguiente t
+        t += lt
+    end
+    
+    ids
+end
+
+function resample_ssbb(vmat, expected_l, Tstar=size(vmat, 1))
+    T = size(vmat, 1)
+    inds = dbootinds_ssbb(T, expected_l, T)
+    # Devolver copia remuestreada
+    vmat[inds, :]
+end
+
+
+function map_block_lags_ssbb(vmat; methodlabel = "SSBB", 
+    decompose_stations=false, maxlags=25, N=100)
+
+    nbb_res = zeros(eltype(vmat), maxlags, 4)
+    @showprogress for l in 1:maxlags
+        nbb_res[l, :] = mse_cov_autocov(vmat, v -> resample_ssbb(v, l), 
+            N = N, decompose_stations = decompose_stations)
+    end
+    # Crear el DataFrame
+    nbb_df = DataFrame(nbb_res, [:ErrorMedia, :ErrorVar, :ErrorCov, :ErrorAutocov])
+    nbb_df[!, :Metodo] .= methodlabel
+    nbb_df[!, :BloqueL] = 1:maxlags
+    nbb_df[!, :NumSimulaciones] .= N
+    nbb_df
+end
+
+
+
 ## Función para animación de remuestreo
 
 # Recibe una VarCPIBase y remuestrea la matriz de variaciones intermensuales.
 # Posteriormente, toma el gasto básico `x` y genera una animación de la serie
 # remuestreada y de la serie original. 
-function create_gif(varbase, resamplefn; x = 1, N = 10, decompose_stations = true, path)
+function create_gif(varbase, resamplefn; path, x = 1, N = 10, decompose_stations = true, extend_periods=false)
 
     # Matriz de residuos
     month_avg = monthavg(varbase.v)
     resid_vmat = varbase.v - month_avg
 
-    # Gráfica de la serie de tiempo
-    fechas = (resamplefn != resample_gsbb_mod) ? 
+    # Fechas de acuerdo con el tipo de función de remuestreo, algunas extienden
+    # períodos
+    fechas = !extend_periods ? 
         varbase.fechas :                    # fechas originales 
         varbase.fechas[1] .+ Month.(0:299)  # fechas extendidas a 300 obs
 
