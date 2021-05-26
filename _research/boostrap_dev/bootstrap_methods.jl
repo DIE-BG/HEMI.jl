@@ -12,11 +12,12 @@ includet(projectdir("_research", "boostrap_dev", "helper_functions.jl"))
 
 ## Cómputo de resultados de error cuadrático en función de rezagos
 base = gt00
-basetag = "2000"
-nsim = 100
+basetag = base == gt00 ? "2000" : "2010"
+nsim = 1000
 
 # Parámetros para archivos
 params = (base=basetag, nsim=nsim)
+
 
 ## Resultados de métodos de remuestreo de bloques 
 nbb_res = map_block_lags(base.v, method=:nooverlap, methodlabel = "NBB", N=nsim)
@@ -42,14 +43,24 @@ gsbb_res = map_block_lags_gsbb(base.v, methodlabel = "GSBB", N=nsim, decompose_s
 
 # GSBB-II con extensión de períodos 
 gsbb_mod_res = map_df_resample(base.v, resample_gsbb_mod, 
-    methodlabel="Método GSBB-II", blocklength=25, N=nsim, decompose_stations = false)
+    methodlabel="Método GSBB-II", 
+    blocklength=25, N=nsim, decompose_stations = false)
+
+# Método de remuestreo de Stationary Block Bootstrap con extensión de períodos
+sbb_mod_res = map_block_lags(base.v, method=:stationary, 
+    methodlabel = "SBB-II", 
+    N=nsim, decompose_stations=false)
+    
+# Método experimental de remuestreo de Stationary Seasonal Block Bootstrap
+# Tal vez haciéndolo circular? 
+ssbb_res = map_block_lags_ssbb(base.v, methodlabel = "SSBB-EXP", 
+    N=nsim, decompose_stations=false, maxlags=36)
+
 
 
 ## Guardar resultados 
 
 results_file = datadir("bootstrap_methods", savename("bootstrap_methods_results", params, "jld2"))
-
-@pack! results = nbb_res, sbb_res
 
 wsave(results_file, 
     "nbb_res", nbb_res, 
@@ -60,22 +71,32 @@ wsave(results_file,
     "maxentropy_res", maxentropy_res, 
     "wdb_res", wdb_res, 
     "gsbb_res", gsbb_res, 
-    "gsbb_mod_res", gsbb_mod_res)
+    "gsbb_mod_res", gsbb_mod_res, 
+    "sbb_mod_res", sbb_mod_res)
 
 ## Cargar resultados 
 
 results = wload(results_file)
-@unpack nbb_res, cbb_res, mbb_res, sbb_res, scramble_res, maxentropy_res, wdb_res, gsbb_res, gsbb_mod_res = results
+@unpack nbb_res, 
+    cbb_res, 
+    mbb_res, 
+    sbb_res, 
+    scramble_res, 
+    maxentropy_res, 
+    wdb_res, 
+    gsbb_res, 
+    gsbb_mod_res, 
+    sbb_mod_res = results
 
 
 ## Gráfica de componentes de media
 p1 = plot(
-    hcat(nbb_res[:, 1], cbb_res[:, 1], mbb_res[:, 1], sbb_res[:, 1], wdb_res[:, 1], gsbb_res[:, 1]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"], 
-    linealpha = [0.7 0.7 0.7 1.0 0.7 1.0],
-    linewidth = [1 1 1 3 1 3], 
-    linestyle = [:solid :solid :solid :solid :solid :dashdot], 
-    color = [:auto :auto :auto :auto :auto :blue], 
+    hcat(nbb_res[:, 1], cbb_res[:, 1], mbb_res[:, 1], sbb_res[:, 1], wdb_res[:, 1], gsbb_res[:, 1], sbb_mod_res[:, 1]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB" "SBB-II"], 
+    linealpha = [0.7 0.7 0.7 1.0 0.7 1.0 0.7],
+    linewidth = [1 1 1 3 1 3 2], 
+    linestyle = [:solid :solid :solid :solid :solid :dashdot :dash], 
+    color = [:auto :auto :auto :auto :auto :blue :red], 
     legend = :topleft)
 
 hline!(gsbb_mod_res[:, 1], label="GSBB-II", linestyle=:dash, linewidth=2, color=:black)
@@ -86,12 +107,12 @@ savefig(plotsdir("bootstrap_methods", savename("mean_err_components", params)))
 
 ## Gráfica de componentes de varianza
 p2 = plot(
-    hcat(nbb_res[:, 2], cbb_res[:, 2], mbb_res[:, 2], sbb_res[:, 2], wdb_res[:, 2], gsbb_res[:, 2]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"], 
-    linealpha = [0.7 0.7 0.7 1.0 0.7 0.7],
-    linewidth = [1 1 1 3 1 3], 
-    linestyle = [:solid :solid :solid :solid :solid :dashdot], 
-    color = [:auto :auto :auto :auto :auto :blue], 
+    hcat(nbb_res[:, 2], cbb_res[:, 2], mbb_res[:, 2], sbb_res[:, 2], wdb_res[:, 2], gsbb_res[:, 2], sbb_mod_res[:, 2]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB" "SBB-II"], 
+    linealpha = [0.7 0.7 0.7 1.0 0.7 1.0 0.7],
+    linewidth = [1 1 1 3 1 3 2], 
+    linestyle = [:solid :solid :solid :solid :solid :dashdot :dash], 
+    color = [:auto :auto :auto :auto :auto :blue :red], 
     legend = :topleft)
 
 hline!(gsbb_mod_res[:, 2], label="GSBB-II", linestyle=:dash, linewidth=2, color=:black)
@@ -103,12 +124,12 @@ savefig(plotsdir("bootstrap_methods", savename("var_err_components", params)))
 
 ## Gráfica de componentes de covarianza
 p3 = plot(
-    hcat(nbb_res[:, 3], cbb_res[:, 3], mbb_res[:, 3], sbb_res[:, 3], wdb_res[:, 3], gsbb_res[:, 3]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"], 
-    linealpha = [0.7 0.7 0.7 1.0 0.7 0.7],
-    linewidth = [1 1 1 3 1 3], 
-    linestyle = [:solid :solid :solid :solid :solid :dashdot], 
-    color = [:auto :auto :auto :auto :auto :blue], 
+    hcat(nbb_res[:, 3], cbb_res[:, 3], mbb_res[:, 3], sbb_res[:, 3], wdb_res[:, 3], gsbb_res[:, 3], sbb_mod_res[:, 3]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB" "SBB-II"], 
+    linealpha = [0.7 0.7 0.7 1.0 0.7 1.0 0.7],
+    linewidth = [1 1 1 3 1 3 2], 
+    linestyle = [:solid :solid :solid :solid :solid :dashdot :dash], 
+    color = [:auto :auto :auto :auto :auto :blue :red], 
     legend = :topleft)
 
 hline!(gsbb_mod_res[:, 3], label="GSBB-II", linestyle=:dash, linewidth=2, color=:black)
@@ -120,12 +141,12 @@ savefig(plotsdir("bootstrap_methods", savename("cov_err_components", params)))
 
 ## Gráfica de componentes de autocovarianza
 p4 = plot(
-    hcat(nbb_res[:, 4], cbb_res[:, 4], mbb_res[:, 4], sbb_res[:, 4], wdb_res[:, 4], gsbb_res[:, 4]), 
-    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB"],
-    linealpha = [0.7 0.7 0.7 1.0 0.7 0.7],
-    linewidth = [1 1 1 3 1 3], 
-    linestyle = [:solid :solid :solid :solid :solid :dashdot], 
-    color = [:auto :auto :auto :auto :auto :blue], 
+    hcat(nbb_res[:, 4], cbb_res[:, 4], mbb_res[:, 4], sbb_res[:, 4], wdb_res[:, 4], gsbb_res[:, 4], sbb_mod_res[:, 4]), 
+    label=["NBB" "CBB" "MBB" "SBB" "WDB" "GSBB" "SBB-II"], 
+    linealpha = [0.7 0.7 0.7 1.0 0.7 1.0 0.7],
+    linewidth = [1 1 1 3 1 3 2], 
+    linestyle = [:solid :solid :solid :solid :solid :dashdot :dash], 
+    color = [:auto :auto :auto :auto :auto :blue :red], 
     legend = :topleft)
 
 hline!(gsbb_mod_res[:, 4], label="GSBB-II", linestyle=:dash, linewidth=2, color=:black)
@@ -146,7 +167,8 @@ savefig(plotsdir("bootstrap_methods", savename("cov_autocov_err_components", par
 
 ## Compilar resultados en DataFrames
 
-bootdf = [nbb_res; mbb_res; cbb_res; sbb_res; scramble_res; maxentropy_res; gsbb_res; gsbb_mod_res; wdb_res]
+bootdf = [nbb_res; mbb_res; cbb_res; sbb_res; scramble_res; 
+    maxentropy_res; gsbb_res; gsbb_mod_res; wdb_res; sbb_mod_res]
 bootdf
 CSV.write(datadir("bootstrap_methods", savename("results_methods", params, "csv")), bootdf)
 
@@ -177,9 +199,8 @@ l_cbb = argmin(cbb_res[:, :ErrorAutocov])
 l_sbb = argmin(sbb_res[:, :ErrorAutocov])
 l_gsbb = argmin(gsbb_res[:, :ErrorAutocov])
 l_wdb = argmin(gsbb_res[:, :ErrorAutocov])
+l_sbb_mod = argmin(sbb_mod_res[:, :ErrorAutocov])
 
-# Obtener datos anteriores de la tabla de resumen al leer el CSV...
-# TO-DO
 
 ## Ilustración métodos de muestreo en base 2000, x = 1 (Arroz)
 
@@ -238,7 +259,7 @@ create_gif(base, v -> resample_gsbb(v, 12, l_gsbb),
 p = (params..., gb = gb_label, method="GSBB-II", L = 25)
 create_gif(base, resample_gsbb_mod, 
     path = joinpath(path, savename("resample", p, "gif")), 
-    x = gb_x, decompose_stations = false)
+    x = gb_x, decompose_stations = false, extend_periods = true)
     
 # Método de Wild Dependent Bootstrap
 p = (params..., gb = gb_label, method="WDB", L = l_wdb)
@@ -246,7 +267,12 @@ create_gif(base, WildDependentBootstrap(size(base.v, 1), l_wdb*one(eltype(base))
     path = joinpath(path, savename("resample", p, "gif")), 
     x = gb_x, decompose_stations = false)
 
-
+# SBB-II (extensión a 300 períodos)
+p = (params..., gb = gb_label, method="SBB-II", L = l_sbb_mod)
+create_gif(base, v -> resample_block_mod(v, l_sbb_mod, :stationary), 
+    path = joinpath(path, savename("resample", p, "gif")), 
+    x = gb_x, decompose_stations = false, extend_periods = true)
+    
 
 
 ## Procedimiento de selección de bloque automático de Politis y White 2004, 2009
