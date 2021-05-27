@@ -3,6 +3,7 @@
 
 using LinearAlgebra, Distributions
 using ProgressMeter
+using OnlineStats
 
 ## Obtener residuos de las variaciones intermensuales promedio
 function monthavg(vmat)
@@ -20,7 +21,7 @@ function mse_cov_autocov(vmat, resamplefn; N = 100,
     decompose_stations=true, max_lag=12, return_sims=false)
     # Valores poblacionales observados, media, Varianza y autocovarianza poblacional
     vmat_cov = cov(vmat)
-    vmat_autocov = autocov(vmat, 1:max_lag, demean=true)
+    vmat_autocov = StatsBase.autocov(vmat, 1:max_lag, demean=true)
     vmat_mean = mean(vmat, dims=1)
     
 
@@ -29,9 +30,13 @@ function mse_cov_autocov(vmat, resamplefn; N = 100,
     resid_vmat = vmat - month_avg
 
     G = size(vmat, 2)
-    res_cov = zeros(eltype(vmat), G, G, N)
-    res_autocov = zeros(eltype(vmat), max_lag, G, N)
-    res_mean = zeros(eltype(vmat), N, G)
+
+    # Resultados de covarianza, autocovarianza y media actualizados online con
+    # OnlineStats
+    T = eltype(vmat)
+    res_cov =  [Mean(T) for _ in 1:G, _ in 1:G] 
+    res_autocov = [Mean(T) for _ in 1:max_lag, _ in 1:G]
+    res_mean = [Mean(T) for _ in 1:G]
 
     # Remuestrear datos N veces y obtener el MSE
     for j in 1:N 
@@ -41,24 +46,34 @@ function mse_cov_autocov(vmat, resamplefn; N = 100,
             boot_vmat = resamplefn(vmat)
         end
 
-        # Matriz de covarianza y funciones de autocovarianza de la matriz de
-        # variaciones intermensuales
-        res_cov[:, :, j] = cov(boot_vmat)
-        res_autocov[:, :, j] = autocov(boot_vmat, 1:max_lag, demean=true)
+        # Actualizar online las matrices de covarianza y funciones de
+        # autocovarianza de los errores cuadráticos entre las medidas obtenidas
+        # con la matriz original variaciones intermensuales de índices de
+        # precios y las obtenidas al remuestrear. 
+        fit!.(res_cov, (cov(boot_vmat) - vmat_cov) .^ 2)
+        
+        vmat_autocov_res = StatsBase.autocov(boot_vmat, 1:max_lag, demean=true)
+        fit!.(res_autocov, (vmat_autocov_res - vmat_autocov) .^ 2)
 
         # Media muestral 
-        res_mean[j, :] = mean(boot_vmat, dims=1)
+        fit!.(res_mean, (mean(boot_vmat, dims=1) - vmat_mean) .^ 2)
     end
 
-    NG = sum(1:G) - G # número de elementos en la matriz triangular inferior
-    cov_mask = tril(ones(G, G), -1) # 1's en el triángulo inferior
+    # Número de elementos debajo de la matriz triangular inferior
+    NG = sum(1:G) - G 
+    # Matriz con 1's en el triángulo inferior
+    cov_mask = tril(ones(G, G), -1) 
 
-    mse_cov = sum(((res_cov .- vmat_cov) .* cov_mask) .^ 2) / (NG * N)
-    mse_autocov = sum((res_autocov .- vmat_autocov) .^ 2) / (max_lag * G * N)
-    mse_mean = sum((res_mean .- vmat_mean) .^ 2) / (N * G)
-    mse_var = sum(((res_cov .- vmat_cov) .* I(G)) .^ 2) / (G * N)
+    # Obtener evaluación de resultados = promedio de los errores cuadráticos
+    mse_cov = sum(mean.(res_cov) .* cov_mask) / NG
+    mse_autocov = mean(mean.(res_autocov))
+    mse_mean = mean(mean.(res_mean))
+    mse_var = sum(mean.(res_cov) .* I(G)) / G
 
-    # Opción para obtener matrices de simulación
+    # Opción para obtener matrices de simulación que contienen los promedios del
+    # error cuadrático de la media y varianza de cada gasto básico y en el caso
+    # de la covarianza, el error cuadrático en la covarianza entre gastos
+    # básicos. 
     return_sims && return res_cov, res_autocov, res_mean, [mse_mean mse_var mse_cov mse_autocov]
 
     # Resumen de propiedades de la matriz de variaciones intermensuales

@@ -9,14 +9,10 @@ using JLD2
 # using Revise 
 
 ## Funciones para investigación de remuestreo
-include(projectdir("_research", "boostrap_dev", "helper_functions.jl"))
+includet(projectdir("_research", "boostrap_dev", "helper_functions.jl"))
 
 ## Obtener argumentos de consola
-if !isempty(ARGS)
-    basearg = ARGS[1]
-else
-    basearg = "2000"
-end
+basearg = !isempty(ARGS) ? ARGS[1] : "2000"
 
 ## Cómputo de resultados de error cuadrático en función de rezagos
 base = basearg == "2000" ? gt00 : gt10
@@ -215,7 +211,7 @@ CSV.write(datadir("bootstrap_methods", savename("summary_methods", params, "csv"
 # xlabel!("Error de covarianza")
 # savefig(joinpath(PLOTS_DIR, "error_cov"))
 
-
+#= 
 
 ## Gráficas de series remuestreadas
 
@@ -320,4 +316,4 @@ p_cbb = plot_bar_optblock(cbb_opt_blocks, "CBB", basetag)
 plot(p_sbb, p_cbb, layout=(1, 2), size=(1000, 600), ylims=(0,30))
 savefig(joinpath(PLOTS_DIR, savename("opt_block_politis_white", params, accesses=(:base,))))
 
-
+ =#
