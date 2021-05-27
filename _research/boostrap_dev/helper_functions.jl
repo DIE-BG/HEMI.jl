@@ -267,6 +267,7 @@ end
 
 ## Función de remuestreo con SBB estacional (SSBB - Stationary Seasonal Block Bootstrap)
 
+# Función de remuestreo respetando estacionalidad en bloques disponibles
 function ssbb_sets(t, b, T, d=12)
     # Límites inferior y superior para los índices, considerando el largo de
     # bloque b, desde la posición t, en una serie de tiempo de largo T con
@@ -293,6 +294,27 @@ function ssbb_sets(t, b, T, d=12)
     kt:(kt+b-1)
 end
 
+# Función de remuestreo respetando estacionalidad en bloques disponibles, pero
+# implementando circularidad en el remuestreo del bloque
+function ssbb_sets_cb(t, b, T, d=12)
+    
+    # Obtener estación de t. Si es 0, entonces corresponde a d
+    d0 = t % d
+    d0 = d0 == 0 ? d : d0
+
+    # Obtener índices iniciales
+    start_bag = d0:d:T
+    start_index = rand(start_bag)
+
+    range0 = (start_index:(start_index + b - 1)) .% T
+    range0[range0 .== 0] .= 120 
+
+    # Devolver el vector de índices para el tamaño de bloque b
+    range0
+end
+
+
+
 function dbootinds_ssbb(T, l, R=T)
     G = l == 1 ? Bernoulli(0) : Geometric(1/l)
 
@@ -309,7 +331,8 @@ function dbootinds_ssbb(T, l, R=T)
         end
         
         # Obtener índices para asignar al bloque 
-        kt_range = ssbb_sets(t, lt, T)
+        # kt_range = ssbb_sets(t, lt, T)
+        idx_range = ssbb_sets(t, lt, T)
         t_last_pos = t + lt - 1
         if t_last_pos > R 
             t_last_pos = R
@@ -317,7 +340,8 @@ function dbootinds_ssbb(T, l, R=T)
         block_last_pos = t_last_pos - t + 1
         
         # Asignar los índices obtenidos 
-        ids[t:t_last_pos] .= collect(kt_range[1:block_last_pos])
+        # ids[t:t_last_pos] .= collect(kt_range[1:block_last_pos])
+        ids[t:t_last_pos] .= @view idx_range[1:block_last_pos]
 
         # Posicionarse en el siguiente t
         t += lt
@@ -326,7 +350,7 @@ function dbootinds_ssbb(T, l, R=T)
     ids
 end
 
-function resample_ssbb(vmat, expected_l, Tstar=size(vmat, 1))
+function resample_ssbb(vmat, expected_l)
     T = size(vmat, 1)
     inds = dbootinds_ssbb(T, expected_l, T)
     # Devolver copia remuestreada
