@@ -1,2 +1,4 @@
-* linguist-vendored
-*.jl linguist-vendored=false
+# Exclude Jupyter notebooks from project
+notebooks/**/*.ipynb linguist-vendored
+# Exclude Julia files from vendored?
+# *.jl linguist-vendored=false
