@@ -5,8 +5,9 @@ Funciones y demás utilidades de simulación para evaluación.
 """
 module InflationEvalTools
 
-    using CPIDataBase
-    using Random
+    using CPIDataBase: getunionalltype
+using Dates, CPIDataBase
+    using Random, Distributions
     using ProgressMeter
     using Distributed
     using SharedArrays
@@ -27,9 +28,24 @@ module InflationEvalTools
     
 
     ## Módulo de remuestreo
+    export ResampleSBB, ResampleGSBB
     export scramblevar, scramblevar!
     
+    # Métodos generales para funciones de remuestreo 
+    include("resample.jl")
+
+    # Método de remuestreo de selección de mismos meses
     include("scramblevar.jl")
+    # Método de remuestreo con Stationary Block Bootstrap
+    include("stationary_block_bootstrap.jl")
+    # Método de remuestreo con Generalized Seasonal Block Bootstrap
+    include("generalized_seasonal_block_bootstrap.jl")
+
+
+    ## Módulo de obtención de trayectorias paramétricas
+    export param_gsbb_mod, param_sbb
+
+    include("param.jl")
 
 
     ## Funciones en desarrollo 
