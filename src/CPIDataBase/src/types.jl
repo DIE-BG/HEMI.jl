@@ -210,6 +210,14 @@ function show(io::IO, base::AbstractCPIBase)
     print(io, datestart, "-", dateend)
 end
 
+"""
+    periods(base::VarCPIBase)
+
+Computa el número de períodos (meses) en las base de variaciones intermensuales. 
+"""
+periods(base::VarCPIBase) = size(base.v, 1)
+
+
 
 
 ## CountryStructure
