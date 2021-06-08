@@ -40,7 +40,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
     # Configurar el método de remuestreo y la trayectoria paramétrica
     if resample_method == "sbb"
         resamplefn = ResampleSBB(b)
-        paramfn = resample_sbb
+        paramfn = param_sbb
     elseif resample_method == "gsbb"
         resamplefn = ResampleGSBB() 
         paramfn = param_gsbb_mod
@@ -68,7 +68,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
     if !isnothing(plotspath)   
         histogram(mse_dist, 
             normalize=:probability, 
-            label = measure_name(totalfn), 
+            label = measure_name(inflfn), 
             title = "Distribución de error cuadtrático medio (MSE)",
             xlabel = "MSE del período completo de simulación")
 
@@ -177,9 +177,117 @@ run_batch(gtdata_eval, sim_params, savepath, plotspath)
 
 ## Análisis de resultados 
 
-# ...
-
 using DataFrames
 
 # Obtener los resultados del directorio de simulaciones 
 df = collect_results(savepath)
+
+## Inspeccionar el DataFrame
+select(df, Not(:mse_dist))
+
+propertynames(df)
+
+## Gráficas de evaluación de percentiles
+
+# Función para graficar métricas en función del número de percentil
+function percentile_eval_plot(df; K = 125_000, method = "sbb", b = 25, stat = :mse, ylabel = "MSE", title = "Evaluación")
+
+    # Filtrar resultados 
+    sbb_perc = filter(df) do r
+        r.infl_method == "percentil" && r.Ksim == K && r.resample_method == method && r.b == b
+    end
+
+    # Obtener métrica de evaluación 
+    if stat == :me
+        kmin = argmin(abs.(sbb_perc[!, stat]))
+    else
+        kmin = argmin(sbb_perc[!, stat])
+    end
+
+    p = scatter(sbb_perc[!, :k], sbb_perc[!, stat], 
+        label="Percentil equiponderado", 
+        legend = :topleft, 
+        xlabel = "Percentil equiponderado", 
+        ylabel = ylabel, 
+        title = title)
+    scatter!(p, [sbb_perc[kmin, :k]], [sbb_perc[kmin, stat]], 
+        label="Percentil óptimo")
+
+    p
+end
+
+# Utiliza la función anterior para generar gráficas de las métricas dee MSE, ME y RMSE
+function percentile_group_plot(; method, b, suptitle)
+    p_mse = percentile_eval_plot(df, method = method, b = b, stat = :mse, 
+        title = "")
+
+    p_rmse = percentile_eval_plot(df, method = method, b = b, stat = :rmse, 
+        title = "", 
+        ylabel="RMSE")
+
+    p_me = percentile_eval_plot(df, method = method, b = b, stat = :me, 
+        title = "", 
+        ylabel="ME")
+
+    # Layout para gráficas de evaluación 
+    l = @layout [a{0.001h}; grid(3,1)]
+    p_group = plot(
+        plot(title=suptitle, grid=false, showaxis = false, ticks = false), 
+        p_mse, p_rmse, p_me, 
+        size=(600, 800), 
+        layout=l)
+
+    p_group
+end
+
+
+## Gráficas de evaluación GSBB
+
+p_gsbb = percentile_group_plot(method = "gsbb", b = 0, suptitle = "GSBB modificado")
+savefig(joinpath(plotspath, "eval_perc_gsbb"))
+
+# Gráficas de evaluación SBB
+p_sbb = [] 
+for b in [12, 25, 36]
+    p = percentile_group_plot(method = "sbb", b = b, suptitle = "SBB, b=$b")
+    push!(p_sbb, p)
+    savefig(joinpath(plotspath, "eval_perc_sbb_b=$b"))
+end
+
+# Mosaico con todas las gráficas, GSBB y SBB con b = 12, 25, 36
+plot(p_gsbb, p_sbb..., 
+    size = (1200, 800),
+    layout = (1, 4))
+savefig(joinpath(plotspath, "eval_perc_sbb_gsbbmod"))
+
+
+
+## Gráficas de evaluación de variación interanual del IPC
+
+# Filtrar resultados 
+results_total = filter(df) do r
+    r.infl_method == "total" && r.Ksim == 125_000
+end
+
+# Gráficas de MSE, RMSE y ME (error medio)
+total_mse = bar(["GSBB (modificado)", "SBB, b=12", "SBB, b=25", "SBB, b=36"], results_total.mse, 
+    label = "Variación interanual IPC", 
+    ylabel = "MSE")
+
+total_rmse = bar(["GSBB (modificado)", "SBB, b=12", "SBB, b=25", "SBB, b=36"], results_total.rmse, 
+    label = "Variación interanual IPC", 
+    ylabel = "RMSE")
+    
+total_me = bar(["GSBB (modificado)", "SBB, b=12", "SBB, b=25", "SBB, b=36"], results_total.me, 
+    label = "Variación interanual IPC", 
+    ylabel = "ME")
+
+
+# Gráfica de resultados de evaluación
+l = @layout [a{0.001h}; grid(3,1)]
+plot(
+    plot(title="Evaluación de variación interanual IPC", grid=false, showaxis = false, ticks = false), 
+    total_mse, total_rmse, total_me, 
+    size = (600, 800), 
+    layout = l)
+savefig(joinpath(plotspath, "eval_total_sbb_gsbbmod"))
