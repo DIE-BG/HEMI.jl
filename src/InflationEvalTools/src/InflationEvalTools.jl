@@ -13,13 +13,6 @@ using Dates, CPIDataBase
     using SharedArrays
     using Reexport
 
-    ## Funciones de generación de trayectorias
-    export gentrayinfl, pargentrayinfl
-    
-    include("gentrayinfl.jl")
-    include("pargentrayinfl.jl") 
-    
-
     ## Funciones de aplicación de tendencia
     export apply_trend
     export RWTREND, SNTREND
@@ -46,6 +39,13 @@ using Dates, CPIDataBase
     export param_gsbb_mod, param_sbb
 
     include("param.jl")
+
+
+    ## Funciones de generación de trayectorias
+    export gentrayinfl, pargentrayinfl
+    
+    include("gentrayinfl.jl")
+    include("pargentrayinfl.jl") 
 
 
     ## Funciones en desarrollo 

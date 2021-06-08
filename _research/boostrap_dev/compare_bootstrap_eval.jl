@@ -79,7 +79,7 @@ plot(p1, p2, layout=(2, 1))
 
 
 
-## Parámetro con cambio de base
+## Parámetro de inflación total con cambio de base
 
 totalrebasefn = TotalRebaseCPI()
 
@@ -88,28 +88,28 @@ totalrebasefn = TotalRebaseCPI()
 # remuestreo con cada metodología 
 
 anim = @animate for j in 1:100
-param_cs = param_sbb(gtdata_dic20)
-tray_boot_sbb = resample_sbb(gtdata_dic20) |> totalfn
-tray_pob_sbb = totalrebasefn(param_cs)
-dates = infl_dates(param_cs)
+    param_cs = param_sbb(gtdata_dic20)
+    tray_boot_sbb = resample_sbb(gtdata_dic20) |> totalfn
+    tray_pob_sbb = totalrebasefn(param_cs)
+    dates = infl_dates(param_cs)
 
-p1 = plot(dates, [tray_pob_sbb tray_boot_sbb], 
-    label=["Parámetro SBB" "Remuestreo SBB"], 
-    legend=:topleft, 
-    ylim=(-2, 15))
+    p1 = plot(dates, [tray_pob_sbb tray_boot_sbb], 
+        label=["Parámetro SBB" "Remuestreo SBB"], 
+        legend=:topleft, 
+        ylim=(-2, 15))
 
 
-param_cs = param_gsbb_mod(gtdata_dic20)
-tray_boot_gsbb = resample_gsbb(gtdata_dic20) |> totalfn
-tray_pob_gsbb = totalrebasefn(param_cs)
-dates = infl_dates(param_cs)
+    param_cs = param_gsbb_mod(gtdata_dic20)
+    tray_boot_gsbb = resample_gsbb(gtdata_dic20) |> totalfn
+    tray_pob_gsbb = totalrebasefn(param_cs)
+    dates = infl_dates(param_cs)
 
-p2 = plot(dates, [tray_pob_gsbb tray_boot_gsbb], 
-    label=["Parámetro GSBB" "Remuestreo GSBB"], 
-    legend=:topleft, 
-    ylim=(-5, 60))
+    p2 = plot(dates, [tray_pob_gsbb tray_boot_gsbb], 
+        label=["Parámetro GSBB" "Remuestreo GSBB"], 
+        legend=:topleft, 
+        ylim=(-5, 60))
 
-plot(p1, p2, layout=(2, 1))
+    plot(p1, p2, layout=(2, 1))
 
 end
 
