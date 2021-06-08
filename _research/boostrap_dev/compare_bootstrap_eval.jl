@@ -115,5 +115,47 @@ end
 
 params = (param="ipc_cb",)
 path = mkpath(plotsdir("bootstrap_methods", "eval_sbb_gsbbmod"))
-anim_path = joinpath(path, savename("resample_sbb_gsbbmod", params, "mp4"))
+anim_path = joinpath(path, savename("resample_total_sbb_gsbbmod", params, "mp4"))
+mp4(anim, anim_path, fps=10)
+
+
+## Animación de remuestreo utilizando percentil 67
+
+# Función de remuestreo Stationary BB
+resample_sbb = ResampleSBB(25)
+# Función de inflación para trayectoria paramétrica
+totalrebasefn = TotalRebaseCPI()
+# Función de inflación de estimador muestral 
+percfn = Percentil(67)
+
+
+anim = @animate for j in 1:100
+    param_cs = param_sbb(gtdata_dic20)
+    tray_boot_sbb = resample_sbb(gtdata_dic20) |> percfn
+    tray_pob_sbb = totalrebasefn(param_cs)
+    dates = infl_dates(param_cs)
+
+    p1 = plot(dates, [tray_pob_sbb tray_boot_sbb], 
+        label=["Parámetro SBB" "Remuestreo SBB"], 
+        legend=:topleft, 
+        ylim=(-2, 15))
+
+
+    param_cs = param_gsbb_mod(gtdata_dic20)
+    tray_boot_gsbb = resample_gsbb(gtdata_dic20) |> percfn
+    tray_pob_gsbb = totalrebasefn(param_cs)
+    dates = infl_dates(param_cs)
+
+    p2 = plot(dates, [tray_pob_gsbb tray_boot_gsbb], 
+        label=["Parámetro GSBB" "Remuestreo GSBB"], 
+        legend=:topleft, 
+        ylim=(-5, 60))
+
+    plot(p1, p2, layout=(2, 1))
+
+end
+
+params = (param="ipc_cb",)
+path = mkpath(plotsdir("bootstrap_methods", "eval_sbb_gsbbmod"))
+anim_path = joinpath(path, savename("resample_perc_sbb_gsbbmod", params, "mp4"))
 mp4(anim, anim_path, fps=10)
