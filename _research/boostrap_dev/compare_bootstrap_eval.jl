@@ -115,8 +115,10 @@ end
 
 params = (param="ipc_cb",)
 path = mkpath(plotsdir("bootstrap_methods", "eval_sbb_gsbbmod"))
-anim_path = joinpath(path, savename("resample_total_sbb_gsbbmod", params, "mp4"))
-mp4(anim, anim_path, fps=10)
+anim_path = joinpath(path, savename("resample_total_sbb_gsbbmod", params, "gif"))
+# mp4(anim, anim_path, fps=10)
+gif(anim, anim_path, fps=5)
+
 
 
 ## Animación de remuestreo utilizando percentil 67
@@ -148,8 +150,8 @@ anim = @animate for j in 1:100
 
     p2 = plot(dates, [tray_pob_gsbb tray_boot_gsbb], 
         label=["Parámetro GSBB" "Remuestreo GSBB"], 
-        legend=:topleft, 
-        ylim=(-5, 60))
+        legend=:topright, 
+        ylim=(-5, 15))
 
     plot(p1, p2, layout=(2, 1))
 
@@ -157,5 +159,6 @@ end
 
 params = (param="ipc_cb",)
 path = mkpath(plotsdir("bootstrap_methods", "eval_sbb_gsbbmod"))
-anim_path = joinpath(path, savename("resample_perc_sbb_gsbbmod", params, "mp4"))
-mp4(anim, anim_path, fps=10)
+anim_path = joinpath(path, savename("resample_perc_sbb_gsbbmod", params, "gif"))
+# mp4(anim, anim_path, fps=10)
+gif(anim, anim_path, fps=5)

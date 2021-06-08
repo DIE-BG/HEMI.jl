@@ -291,3 +291,21 @@ plot(
     size = (600, 800), 
     layout = l)
 savefig(joinpath(plotspath, "eval_total_sbb_gsbbmod"))
+
+## Resultados resumidos 
+
+using PrettyTables
+
+# Se muestran resultados resumidos para los mejores percentiles y para la variación interanual del IPC
+
+# Filtrar resultados 
+sbb_perc = filter(df) do r
+    r.infl_method == "percentil" && r.Ksim == 125_000 && r.k == 71 
+end
+
+best_perc = first(select(sbb_perc, [:resample_method, :b, :k, :mse, :std_mse, :rmse, :me]), 10)
+pretty_table(best_perc, tf=tf_markdown)
+
+# Variación interanual del IPC
+best_total = first(select(results_total, [:resample_method, :b, :mse, :std_mse, :rmse, :me]), 10)
+pretty_table(best_total, tf=tf_markdown)
