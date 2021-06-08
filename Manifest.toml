@@ -325,7 +325,7 @@ uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 version = "0.9.8"
 
 [[InflationEvalTools]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Distributed", "DrWatson", "InflationFunctions", "JLD2", "ProgressMeter", "Random", "Reexport", "SharedArrays"]
+deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "JLD2", "ProgressMeter", "Random", "Reexport", "SharedArrays", "Statistics"]
 path = "src/InflationEvalTools"
 uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 version = "0.1.0"
