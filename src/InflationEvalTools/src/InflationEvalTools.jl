@@ -1,12 +1,12 @@
 """
     InflationEvalTools
 
-Funciones y demás utilidades de simulación para evaluación.
+Tipos, funciones y demás utilidades de simulación para evaluación de medidas
+inflación.
 """
 module InflationEvalTools
 
-    using CPIDataBase: getunionalltype
-using Dates, CPIDataBase
+    using Dates, CPIDataBase
     using Random, Distributions
     using ProgressMeter
     using Distributed
@@ -17,45 +17,39 @@ using Dates, CPIDataBase
     export apply_trend
     export RWTREND, SNTREND
 
-    include("apply_trend.jl") 
+    include("trend/apply_trend.jl") 
     
 
-    ## Módulo de remuestreo
-    export ResampleSBB, ResampleGSBB
-    export scramblevar, scramblevar!
+    ## Funciones de remuestreo de bases del IPC
+    export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths
+    export get_param_function, method_name
     
     # Métodos generales para funciones de remuestreo 
-    include("resample.jl")
+    include("resample/resample.jl")
 
-    # Método de remuestreo de selección de mismos meses
-    include("scramblevar.jl")
+    # Método de remuestreo de remuestreo utilizando selección de mismos meses de
+    # ocurrencia
+    include("resample/scramblevar.jl")
     # Método de remuestreo con Stationary Block Bootstrap
-    include("stationary_block_bootstrap.jl")
+    include("resample/stationary_block_bootstrap.jl")
     # Método de remuestreo con Generalized Seasonal Block Bootstrap
-    include("generalized_seasonal_block_bootstrap.jl")
+    include("resample/generalized_seasonal_block_bootstrap.jl")
 
 
-    ## Módulo de obtención de trayectorias paramétricas
+    ## Métodos para obtener las bases de variaciones intermensuales paramétricas
     export param_gsbb_mod, param_sbb
 
-    include("param.jl")
+    include("param/param.jl")
 
 
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
     
-    include("gentrayinfl.jl")
-    include("pargentrayinfl.jl") 
+    include("simulate/gentrayinfl.jl")
+    include("simulate/pargentrayinfl.jl") 
 
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
-
-    ## Módulo de desarrollo experimental
-    export Devel
-    module Devel
-        # Development functions
-
-    end
 
 end

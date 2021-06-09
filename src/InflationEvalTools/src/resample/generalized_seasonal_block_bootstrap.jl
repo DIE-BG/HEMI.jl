@@ -14,6 +14,9 @@ end
 # Acortar el nombre de la función de remuestreo
 const ResampleGSBB = GeneralizedSeasonalBlockBootstrap
 
+# Definir cuál es la función para obtener bases paramétricas 
+get_param_function(::ResampleGSBB) = param_gsbb_mod
+
 # Definir cómo remuestrear matrices con las series de tiempo en las columnas
 function (resample_gsbb_fn::ResampleGSBB)(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG)
     G = size(vmat, 2)

@@ -20,6 +20,9 @@ end
 # Acortar el nombre de la función de remuestreo
 const ResampleSBB = StationaryBlockBootstrap
 
+# Definir cuál es la función para obtener bases paramétricas 
+get_param_function(::ResampleSBB) = param_sbb
+
 # Definir cómo remuestrear matrices con las series de tiempo en las columnas
 function (resample_sbb_fn::ResampleSBB)(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG)
     

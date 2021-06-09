@@ -5,7 +5,7 @@ module HEMI
 
     ## Reexportar paquetes
     @reexport using Dates, CPIDataBase
-    @reexport using Statistics, StatsBase
+    @reexport using Statistics
     @reexport using JLD2 
     @reexport using Plots
 

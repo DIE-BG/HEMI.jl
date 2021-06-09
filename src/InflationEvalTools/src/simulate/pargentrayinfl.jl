@@ -58,7 +58,8 @@ function pargentrayinfl(inflfn::F, csdata::CountryStructure;
 end
 
 
-# Esta versión considera como argumento la función de remuestreo para poder aplicar diferentes metodologías en la generación de trayectorias 
+# Esta versión considera como argumento la función de remuestreo para poder
+# aplicar diferentes metodologías en la generación de trayectorias 
 
 function pargentrayinfl(inflfn::F, csdata::CountryStructure, 
     resamplefn::R, trend=RWTREND; 

@@ -29,7 +29,7 @@ gtdata_eval = gtdata[Date(2020, 12)]
 
 # Los argumentos son strings o numéricos y dentro de la función se generan los
 # valores y tipos adecuados para llevar a cabo la simulación 
-function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125_000, plotspath = nothing)
+function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125_000, plotspath = nothing, period = 36)
     # Configurar la función de inflación 
     if infl_method == "total"
         inflfn = TotalCPI() 
@@ -37,18 +37,20 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
         inflfn = Percentil(k)
     end
 
-    # Configurar el método de remuestreo y la trayectoria paramétrica
+    # Configurar el método de remuestreo y función para obtener variaciones
+    # intermensuales paramétricas
     if resample_method == "sbb"
         resamplefn = ResampleSBB(b)
-        paramfn = param_sbb
     elseif resample_method == "gsbb"
         resamplefn = ResampleGSBB() 
-        paramfn = param_gsbb_mod
+    elseif resample_method == "scramble"
+        resamplefn = ResampleScrambleVarMonths() 
     end 
+    paramfn = get_param_function(resamplefn)
 
     # Obtener la trayectoria paramétrica de inflación 
     data_param = paramfn(data_eval)
-    totalrebasefn = TotalRebaseCPI()
+    totalrebasefn = TotalRebaseCPI(period = period)
     tray_infl_pob = totalrebasefn(data_param)
 
     @info "Evaluación de medida de inflación" inflfn resamplefn k b Ksim
@@ -79,7 +81,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
 
     # Métricas de evaluación 
     std_mse = std(mse_dist)
-    std_sim_error = std_mse / sqrt(Ksim)
+    std_sim_error = std((tray_infl .- tray_infl_pob) .^ 2) / sqrt(Ksim)
     mse = mean( (tray_infl .- tray_infl_pob) .^ 2) 
     rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2))
     me = mean((tray_infl .- tray_infl_pob))
@@ -90,7 +92,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
 end
 
 
-# results = evalsim(gtdata_eval, "total", "sbb", 64, 36, Ksim = 10000)
+results = evalsim(gtdata_eval, "total", "sbb", 64, 36, Ksim = 10000, period = 60)
 
 function makesim(data, params::Dict; path = nothing)
     # Obtener parámetros de simulación 
