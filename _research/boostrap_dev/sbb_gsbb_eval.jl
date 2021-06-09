@@ -149,6 +149,15 @@ sbb_total_params = Dict(
     "b" => [12, 25, 36], 
     "Ksim" => [10_000, 125_000]) |> dict_list
 
+# Remuestreo ResampleScrambleVarMonths para percentiles
+scramble_perc_params = Dict(
+    "infl_method" => "percentil", 
+    "resample_method" => "scramble", 
+    "k" => collect(60:80), 
+    "b" => 0, 
+    "Ksim" => [10_000, 125_000]) |> dict_list
+
+# sim_params = vcat(scramble_perc_params)
 sim_params = vcat(gsbb_perc_params, sbb_perc_params, gsbb_total_params, sbb_total_params)
 # sim_params = vcat(gsbb_total_params, sbb_total_params)
 
