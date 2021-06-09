@@ -5,13 +5,19 @@ Base.@kwdef struct TotalRebaseCPI <: InflationFunction
     period::Int = 36 # períodos para realizar el cambio de base sintético
 end
 
+# Constructor alternativo
+TotalRebaseCPI(periods::Int) = TotalRebaseCPI(period = periods)
+
 # Computar variación intermensual resumen de medida de inflación aplicando
 # metodología de cambio de base sintético
 function (totalrebasefn::TotalRebaseCPI)(base::VarCPIBase)
     
+    # Número de períodos para realizar cambio de base
+    period = totalrebasefn.period
+
     # Función de ayuda para obtener vector de rangos
     function getranges(startidxs, T)
-        finalidxs = broadcast(x -> x+35, startidxs) .|> x -> (x > T) ? T : x
+        finalidxs = broadcast(x -> x + period - 1, startidxs) .|> x -> (x > T) ? T : x
         startidxs, finalidxs
     end
 

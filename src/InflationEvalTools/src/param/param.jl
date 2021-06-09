@@ -1,11 +1,14 @@
 # param.jl - Desarrollo de funciones para obtener trayectoria paramétrica de
 # inflación 
 
-# Obtiene la matriz de variaciones intermensuales paramétricas para la
-# metodología de remuestreo de Generalized Seasonal Block Bootstrap modificada
-# que extiende las observaciones a 300 períodos. Devuelve una base de tipo
-# VarCPIBase con las variaciones intermensuales paramétricas. Actualmente
-# funciona solamente si `base` tiene 120 observaciones
+"""
+    param_gsbb_mod(base::VarCPIBase)
+Obtiene la matriz de variaciones intermensuales paramétricas para la
+metodología de remuestreo de Generalized Seasonal Block Bootstrap modificada
+que extiende las observaciones a 300 períodos. Devuelve una base de tipo
+VarCPIBase con las variaciones intermensuales paramétricas. Actualmente
+funciona solamente si `base` tiene 120 observaciones.
+"""
 function param_gsbb_mod(base::VarCPIBase)
 
     G = size(base.v, 2)
@@ -30,7 +33,10 @@ function param_gsbb_mod(base::VarCPIBase)
     VarCPIBase(vpob, base.w, dates, base.baseindex)
 end
 
-# Obtener parámetro a partir de objeto CountryStructure
+"""
+    param_gsbb_mod(cs::CountryStructure)
+Obtiene un `CountryStructure` paramétrico. 
+"""
 function param_gsbb_mod(cs::CountryStructure)
     # Obtener bases poblacionales
     pob_base = map(param_gsbb_mod, cs.base)
@@ -48,9 +54,16 @@ end
 
 
 
-# Obtiene la matriz de variaciones intermensuales paramétricas para la
-# metodología de remuestreo de Stationary Block Bootstrap. Devuelve una base de
-# tipo VarCPIBase con las variaciones intermensuales paramétricas. 
+"""
+    param_sbb(base::VarCPIBase)
+Obtiene la matriz de variaciones intermensuales paramétricas para la
+metodología de remuestreo de Stationary Block Bootstrap. Devuelve una base de
+tipo `VarCPIBase` con las variaciones intermensuales promedio de los mismos meses
+de ocurrencia (también llamadas variaciones intermensuales paramétricas). 
+
+Esta definición también aplica a otras metodologías que utilicen como variaciones 
+intermensuales paramétricas los promedios en los mismos meses de ocurrencia. 
+"""
 function param_sbb(base::VarCPIBase)
 
     # Obtener matriz de promedios mensuales
@@ -60,7 +73,12 @@ function param_sbb(base::VarCPIBase)
     VarCPIBase(month_mat, base.w, base.fechas, base.baseindex)
 end
 
-# Obtener parámetro a partir de objeto CountryStructure
+
+"""
+    param_sbb(cs::CountryStructure)
+Obtiene un `CountryStructure` paramétrico. 
+Véase también [`param_sbb`](@ref param_sbb).
+"""
 function param_sbb(cs::CountryStructure)
     pob_base = map(param_sbb, cs.base)
     getunionalltype(cs)(pob_base)
