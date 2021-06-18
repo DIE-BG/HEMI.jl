@@ -101,7 +101,7 @@ de la estructura `gb`, en la columna denominada `:Ponderacion`.
 """
 function FullCPIBase(df::DataFrame, gb::DataFrame)
     # Obtener matriz de índices de precios
-    ipc_mat = convert(Matrix, df[!, 2:end])
+    ipc_mat = Matrix(df[!, 2:end])
     # Matrices de variaciones intermensuales de índices de precios
     v_mat = 100 .* (ipc_mat[2:end, :] ./ ipc_mat[1:end-1, :] .- 1)
     # Ponderación de gastos básicos o categorías
