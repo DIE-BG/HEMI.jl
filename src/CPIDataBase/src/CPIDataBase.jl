@@ -23,26 +23,27 @@ module CPIDataBase
     export EnsembleFunction, CombinationFunction
     export num_measures, weights, measure_name
 
-    # Export types needed to specify results
+    # Export types needed to specify type of results
     export CPIIndex, CPIVarInterm
 
     # Basic inflation function
     export TotalCPI
 
     # Definición de tipos para bases del IPC
-    include("types.jl")
+    include("cpibase.jl")
+    include("countrystructure.jl")
 
-    # Basic operations
-    include("capitalize.jl")
-    include("varinterm.jl")
-    include("varinteran.jl")
+    # Operaciones básicas
+    include("utils/capitalize.jl")
+    include("utils/varinterm.jl")
+    include("utils/varinteran.jl")
 
-    # Basic inflation measures structure
-    include("inflation.jl")
-    include("ensemble.jl")
+    # Estructura básica para medidas de inflación 
+    include("inflation/inflation.jl")
+    include("inflation/ensemble.jl")
 
     # Funciones de utilidad
     export getdates
-    include("utils.jl")
+    include("utils/utils.jl")
 
 end # module
