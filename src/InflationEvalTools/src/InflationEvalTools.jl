@@ -1,45 +1,55 @@
 """
     InflationEvalTools
 
-Funciones y demás utilidades de simulación para evaluación.
+Tipos, funciones y demás utilidades de simulación para evaluación de medidas
+inflación.
 """
 module InflationEvalTools
 
-    using CPIDataBase
-    using Random
+    using Dates, CPIDataBase
+    using Random, Distributions
     using ProgressMeter
     using Distributed
     using SharedArrays
     using Reexport
 
-    ## Funciones de generación de trayectorias
-    export gentrayinfl, pargentrayinfl
-    
-    include("gentrayinfl.jl")
-    include("pargentrayinfl.jl") 
-    
-
     ## Funciones de aplicación de tendencia
     export apply_trend
     export RWTREND, SNTREND
 
-    include("apply_trend.jl") 
+    include("trend/apply_trend.jl") 
     
 
-    ## Módulo de remuestreo
-    export scramblevar, scramblevar!
+    ## Funciones de remuestreo de bases del IPC
+    export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths
+    export get_param_function, method_name
     
-    include("scramblevar.jl")
+    # Métodos generales para funciones de remuestreo 
+    include("resample/resample.jl")
+
+    # Método de remuestreo de remuestreo utilizando selección de mismos meses de
+    # ocurrencia
+    include("resample/scramblevar.jl")
+    # Método de remuestreo con Stationary Block Bootstrap
+    include("resample/stationary_block_bootstrap.jl")
+    # Método de remuestreo con Generalized Seasonal Block Bootstrap
+    include("resample/generalized_seasonal_block_bootstrap.jl")
+
+
+    ## Métodos para obtener las bases de variaciones intermensuales paramétricas
+    export param_gsbb_mod, param_sbb
+
+    include("param/param.jl")
+
+
+    ## Funciones de generación de trayectorias
+    export gentrayinfl, pargentrayinfl
+    
+    include("simulate/gentrayinfl.jl")
+    include("simulate/pargentrayinfl.jl") 
 
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
-
-    ## Módulo de desarrollo experimental
-    export Devel
-    module Devel
-        # Development functions
-
-    end
 
 end
