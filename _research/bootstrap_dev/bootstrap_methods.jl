@@ -9,7 +9,7 @@ using JLD2
 # using Revise 
 
 ## Funciones para investigación de remuestreo
-includet(projectdir("_research", "boostrap_dev", "helper_functions.jl"))
+includet(projectdir("_research", "bootstrap_dev", "helper_functions.jl"))
 
 ## Obtener argumentos de consola
 basearg = !isempty(ARGS) ? ARGS[1] : "2000"
