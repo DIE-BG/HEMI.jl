@@ -12,11 +12,11 @@ module CPIDataBase
     export IndexCPIBase, VarCPIBase, FullCPIBase
     export CountryStructure, UniformCountryStructure, MixedCountryStructure
 
-
     # Export functions
     export capitalize, varinterm, varinteran, 
         capitalize!, varinterm!, varinteran!, 
-        periods, infl_periods, infl_dates
+        periods, infl_periods, infl_dates,
+        getunionalltype
 
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction
@@ -40,5 +40,9 @@ module CPIDataBase
     # Basic inflation measures structure
     include("inflation.jl")
     include("ensemble.jl")
+
+    # Funciones de utilidad
+    export getdates
+    include("utils.jl")
 
 end # module

@@ -77,11 +77,11 @@ capitalize!(v::AbstractVector, base_index::Real) = capitalize!(v, v, base_index)
 
 
 """
-    capitalize!(vmat::AbstractMatrix, base_index::Real = 100)
+    capitalize!(vmat::AbstractMatrix, base_index = 100)
 
 Function to chain a matrix of price changes **in place** with an index starting with `base_index`.
 """
-function capitalize!(vmat::AbstractMatrix, base_index::Real = 100)
+function capitalize!(vmat::AbstractMatrix, base_index = 100)
     r = size(vmat, 1)
     @views @. vmat[1, :] = base_index * (1 + vmat[1, :]/100)
     for i in 2:r
