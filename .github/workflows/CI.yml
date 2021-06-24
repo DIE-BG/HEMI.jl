@@ -35,6 +35,6 @@ jobs:
       - uses: julia-actions/julia-buildpkg@v1
       # - uses: julia-actions/julia-runtest@v1
       - run: |
-          julia --project=docs -e '
+          julia --project=. -e '
             using Pkg
             Pkg.test(["CPIDataBase", "InflationFunctions", "InflationEvalTools"])'
