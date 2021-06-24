@@ -26,8 +26,8 @@ gtdata = UniformCountryStructure(gt00, gt10)
 gtdata = gtdata[Date(2019,12)]
 
 # Computar inflación de Guatemala
-totalfn = TotalCPI()
-perk = Percentil(0.72)
+totalfn = InflationTotalCPI()
+perk = InflationPercentileEq(0.72)
 totalfneval = TotalEvalCPI()
 
 

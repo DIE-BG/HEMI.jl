@@ -19,9 +19,9 @@ end
 gtdata_eval = gtdata[Date(2020, 12)]
 
 # Obtener medida de inflación total 
-totalfn = TotalCPI()
+totalfn = InflationTotalCPI()
 
-percfn = Percentil(64)
+percfn = InflationPercentileEq(64)
 
 # Función de remuestreo Stationary BB
 resample_sbb = ResampleSBB(36)
@@ -30,7 +30,7 @@ resample_sbb = ResampleSBB(36)
 resample_gsbb = ResampleGSBB()
 
 # Función de inflación para trayectoria paramétrica 
-totalrebasefn = TotalRebaseCPI()
+totalrebasefn = InflationTotalRebaseCPI()
 
 ## Evaluación de inflación total con remuestreo Stationary Block Bootstrap
 

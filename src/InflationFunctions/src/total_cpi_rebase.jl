@@ -1,16 +1,14 @@
 # total_cpi_rebase.jl - Función de inflación total con cambio de base sintético. 
 
-Base.@kwdef struct TotalRebaseCPI <: InflationFunction
-    name::String = "Variación interanual IPC con CB"
-    period::Int = 36 # períodos para realizar el cambio de base sintético
+Base.@kwdef struct InflationTotalRebaseCPI <: InflationFunction
+    period::Int = 60 # períodos para realizar el cambio de base sintético
 end
 
-# Constructor alternativo
-TotalRebaseCPI(periods::Int) = TotalRebaseCPI(period = periods)
+measure_name(::InflationTotalRebaseCPI) = "Variación interanual IPC con CB"
 
 # Computar variación intermensual resumen de medida de inflación aplicando
 # metodología de cambio de base sintético
-function (totalrebasefn::TotalRebaseCPI)(base::VarCPIBase)
+function (totalrebasefn::InflationTotalRebaseCPI)(base::VarCPIBase)
     
     # Número de períodos para realizar cambio de base
     period = totalrebasefn.period

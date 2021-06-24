@@ -24,7 +24,7 @@ fgt00 = convert(Float32, gt00)
 fgt10 = convert(Float32, gt10) 
 gtdata32 = UniformCountryStructure(fgt00, fgt10)
 
-totalfn = TotalCPI()
+totalfn = InflationTotalCPI()
 tray_infl_gt = totalfn(gtdata)
 
 using CPIDataBase.Resample

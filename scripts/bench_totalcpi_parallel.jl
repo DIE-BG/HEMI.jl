@@ -31,8 +31,8 @@ using JLD2
 gtdata = UniformCountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
-totalfn = TotalCPI()
-perk70 = Percentil(0.7)
+totalfn = InflationTotalCPI()
+perk70 = InflationPercentileEq(0.7)
 totalfneval = TotalEvalCPI()
 
 ## Benchmark de tiempos en paralelo
@@ -69,7 +69,7 @@ tray_infl2 = pargentrayinfl(totalfn, gtdata; K = 10_000, rndseed = 1618)
 tray_infl1 == tray_infl2
 
 ## Prueba con varias medidas
-ensfn = EnsembleFunction(TotalCPI(), Percentil(0.5))
+ensfn = EnsembleFunction(InflationTotalCPI(), InflationPercentileEq(0.5))
 
 @time tray_infl = pargentrayinfl(ensfn, gtdata; K=10_000); 
 

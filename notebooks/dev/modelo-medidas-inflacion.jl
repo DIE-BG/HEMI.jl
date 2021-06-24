@@ -54,14 +54,14 @@ Se plantea un modelo de cómputo de medidas de inflación para la estructura `Co
 begin
 	abstract type InflationFunction <: Function end
 	
-	Base.@kwdef struct TotalCPI <: InflationFunction
+	Base.@kwdef struct InflationTotalCPI <: InflationFunction
 		name::String = "Variación interanual IPC"
 	end
 	
 	## Las funciones sobre VarCPIBase resumen en variaciones intermensuales
 	
 	# Función para bases cuyo índice base es un escalar
-	function (inflfn::TotalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
+	function (inflfn::InflationTotalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
 		base_ipc = capitalize(base.v, base.baseindex)
 		ipc = base_ipc * base.w / base.baseindex
 		CPIDataBase.varinterm!(ipc, ipc, 100)
@@ -69,7 +69,7 @@ begin
 	end
 	
 	# Función para bases cuyos índices base son un vector
-	function (inflfn::TotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B <: AbstractVector{T}} 
+	function (inflfn::InflationTotalCPI)(base::VarCPIBase{T, B}) where {T <: AbstractFloat, B <: AbstractVector{T}} 
 		base_ipc = capitalize(base.v, base.baseindex)
 		# Obtener índice base y normalizar a 100
 		baseindex = base.baseindex' * base.w
@@ -80,7 +80,7 @@ begin
 	
 	## La función sobre CountryStructure devuelve la inflación interanual sobre todas las bases que componen 
 	
-	function (inflfn::TotalCPI)(cs::CountryStructure) 
+	function (inflfn::InflationTotalCPI)(cs::CountryStructure) 
 		vm = mapfoldl(inflfn, vcat, cs.base)
 		CPIDataBase.capitalize!(vm, vm, 100)
 		varinteran(vm)
@@ -94,7 +94,7 @@ A continuación una demostración de cómo se pueden utilizar dichas funciones:
 """
 
 # ╔═╡ d604f300-9bd5-11eb-0fd3-076a90ce432f
-totalfn = TotalCPI()
+totalfn = InflationTotalCPI()
 
 # ╔═╡ e823c610-9bd5-11eb-1905-c1b4a88135b6
 # Variaciones intermensuales IPC base 2000

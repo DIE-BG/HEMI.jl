@@ -21,13 +21,13 @@ module CPIDataBase
     # Export types for implement new inflation functions
     export InflationFunction, EnsembleInflationFunction
     export EnsembleFunction, CombinationFunction
-    export num_measures, weights, measure_name
+    export num_measures, weights, measure_name, measure_tag
 
     # Export types needed to specify type of results
     export CPIIndex, CPIVarInterm
 
     # Basic inflation function
-    export TotalCPI
+    export InflationTotalCPI
 
     # Definición de tipos para bases del IPC
     include("cpibase.jl")

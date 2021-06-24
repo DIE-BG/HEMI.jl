@@ -11,7 +11,7 @@ using InflationFunctions
 gtdata_dic20 = gtdata[Date(2020, 12)]
 
 # Computar medida de inflación total 
-totalfn = TotalCPI()
+totalfn = InflationTotalCPI()
 
 totalfn(gtdata_dic20)
 
@@ -81,7 +81,7 @@ plot(p1, p2, layout=(2, 1))
 
 ## Parámetro de inflación total con cambio de base
 
-totalrebasefn = TotalRebaseCPI()
+totalrebasefn = InflationTotalRebaseCPI()
 
 # Se muestran gráficas de la trayectoria paramétrica de inflación con fórmula
 # del IPC y cambios de base sintéticos. Además, se muestra una realización de
@@ -126,9 +126,9 @@ gif(anim, anim_path, fps=5)
 # Función de remuestreo Stationary BB
 resample_sbb = ResampleSBB(25)
 # Función de inflación para trayectoria paramétrica
-totalrebasefn = TotalRebaseCPI()
+totalrebasefn = InflationTotalRebaseCPI()
 # Función de inflación de estimador muestral 
-percfn = Percentil(67)
+percfn = InflationPercentileEq(67)
 
 
 anim = @animate for j in 1:100

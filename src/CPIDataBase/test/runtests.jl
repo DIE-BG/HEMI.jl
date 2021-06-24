@@ -145,7 +145,7 @@ end
     mcs = MixedCountryStructure(vcpi_mixed)
 
     # Basic inflation function test
-    totalfn = TotalCPI() 
+    totalfn = InflationTotalCPI() 
     @test totalfn(mcs) isa Vector
     @test infl_periods(mcs) == (PER-11)
 

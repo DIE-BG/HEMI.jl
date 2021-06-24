@@ -3,13 +3,12 @@ module HEMI
     using Reexport
     using DrWatson
 
-    ## Reexportar paquetes
+    ## Reexportar paquetes más utilizados 
     @reexport using Dates, CPIDataBase
     @reexport using Statistics
     @reexport using JLD2 
-    @reexport using Plots
 
-    ## Carga de datos 
+    ## Carga de datos de Guatemala
     @info "Cargando datos de Guatemala" _module=Main
     @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
     gtdata = UniformCountryStructure(gt00, gt10)

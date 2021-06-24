@@ -12,8 +12,8 @@ const gtdata = UniformCountryStructure(gt00, gt10)
 
 ## Computar inflación de Guatemala
 
-totalfn = TotalCPI()
-perk50 = Percentil(0.5)
+totalfn = InflationTotalCPI()
+perk50 = InflationPercentileEq(0.5)
 
 newdata = deepcopy(gtdata)
 
@@ -35,15 +35,15 @@ combfn2 = CombinationFunction(totalfn, perk50, totalfn, Float32[0.1, 0.4, 0.5])
 combfn2(newdata)
 
 # Error
-combfn3 = CombinationFunction(totalfn, TotalCPI(), Float32[0.1, 0.4, 0.5])
+combfn3 = CombinationFunction(totalfn, InflationTotalCPI(), Float32[0.1, 0.4, 0.5])
 
 
 ## Using StaticArrays for + performance?
 
 using StaticArrays
 
-# combfn4 = CombinationFunction(totalfn, TotalCPI(), SVector{2, Float32}([0.4, 0.5]))
-combfn4 = CombinationFunction(totalfn, TotalCPI(), totalfn, @SVector Float32[0.1, 0.4, 0.5])
+# combfn4 = CombinationFunction(totalfn, InflationTotalCPI(), SVector{2, Float32}([0.4, 0.5]))
+combfn4 = CombinationFunction(totalfn, InflationTotalCPI(), totalfn, @SVector Float32[0.1, 0.4, 0.5])
 combfn(newdata)
 
 using BenchmarkTools

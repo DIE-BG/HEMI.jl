@@ -2,20 +2,24 @@
 
 ## Percentil equiponderado
 
-Base.@kwdef struct Percentil{K <: AbstractFloat} <: InflationFunction
-    name::String = "Percentil equiponderado"
-    params::K
+# k representa el cuantil equiponderado (entre 0 y 1)
+Base.@kwdef struct InflationPercentileEq <: InflationFunction
+    k::Float32
 end
 
-Percentil(k) = Percentil(params = k)
-Percentil(k::Int) = Percentil(params=convert(Float32, k) / 100)
+# Métodos para crear funciones de inflación a partir de enteros y flotantes
+InflationPercentileEq(k::Int) = InflationPercentileEq(k = Float32(k) / 100)
+function InflationPercentileEq(q::T) where {T <: AbstractFloat} 
+    q < 1.0 && InflationPercentileEq(convert(Float32, q))
+    InflationPercentileEq(convert(Float32, q) / 100)
+end
 
-measure_name(inflfn::Percentil) = inflfn.name * " " * string(inflfn.params * 100)
+measure_name(inflfn::InflationPercentileEq) = "Percentil equiponderado " * string(round(100inflfn.k, digits=2))
 
 # Las funciones sobre VarCPIBase resumen en variaciones intermensuales
-function (inflfn::Percentil)(base::VarCPIBase{T}) where T 
-    # Percentil k de la distribución de variaciones intermensuales
-    k = inflfn.params
+function (inflfn::InflationPercentileEq)(base::VarCPIBase{T}) where T 
+    # InflationPercentileEq k de la distribución de variaciones intermensuales
+    k = inflfn.k
 
     # Obtener el percentil k de la distribución intermensual 
     rows = size(base.v, 1)

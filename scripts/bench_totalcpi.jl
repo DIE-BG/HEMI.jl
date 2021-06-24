@@ -17,8 +17,8 @@ using JLD2
 gtdata = UniformCountryStructure(gt00, gt10)
 
 # Computar inflación de Guatemala
-totalfn = TotalCPI()
-perk70 = Percentil(0.7)
+totalfn = InflationTotalCPI()
+perk70 = InflationPercentileEq(0.7)
 
 ## Benchmark de tiempos
 

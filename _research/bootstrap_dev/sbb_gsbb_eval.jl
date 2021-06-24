@@ -32,9 +32,9 @@ gtdata_eval = gtdata[Date(2020, 12)]
 function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125_000, plotspath = nothing, period = 36)
     # Configurar la función de inflación 
     if infl_method == "total"
-        inflfn = TotalCPI() 
+        inflfn = InflationTotalCPI() 
     elseif infl_method == "percentil"
-        inflfn = Percentil(k)
+        inflfn = InflationPercentileEq(k)
     end
 
     # Configurar el método de remuestreo y función para obtener variaciones
@@ -50,7 +50,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
 
     # Obtener la trayectoria paramétrica de inflación 
     data_param = paramfn(data_eval)
-    totalrebasefn = TotalRebaseCPI(period = period)
+    totalrebasefn = InflationTotalRebaseCPI(period = period)
     tray_infl_pob = totalrebasefn(data_param)
 
     @info "Evaluación de medida de inflación" inflfn resamplefn k b Ksim

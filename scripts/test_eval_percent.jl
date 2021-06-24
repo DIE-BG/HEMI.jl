@@ -26,9 +26,9 @@ gtdata = UniformCountryStructure(gt00, gt10)
 gtdata_19 = gtdata[Date(2019,12)]
 
 # Funciones de inflación 
-# totalfn = TotalCPI()
+# totalfn = InflationTotalCPI()
 PERC = 0.65:0.01:0.80
-percfn = Percentil.(PERC) |> Tuple |> EnsembleFunction
+percfn = InflationPercentileEq.(PERC) |> Tuple |> EnsembleFunction
 
 ## Carga parámetro
 
@@ -105,7 +105,7 @@ plot!(Date(2001, 12):Month(1):Date(2019, 12), tray_infl_pob,
 
 ## Una sola medida
 
-tray_infl = pargentrayinfl(Percentil(74), gtdata[Date(2019,12)]; rndseed = 0, K=125_000);
+tray_infl = pargentrayinfl(InflationPercentileEq(74), gtdata[Date(2019,12)]; rndseed = 0, K=125_000);
 
 mse_dist = vec(mean((tray_infl .- tray_infl_pob) .^ 2; dims=1))
 
