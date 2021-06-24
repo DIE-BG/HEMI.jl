@@ -2,16 +2,14 @@
 # Bootstrap
 
 using Dates, CPIDataBase
+using CPIDataBase.TestHelpers
 using Test
 
-# Funciones de ayuda para pruebas 
-include("test_helpers.jl")
-
 # Definir una base del IPC base 2000 con variaciones iguales a cero
-test_gt00 = VarCPIBase(get_zero_base(Float32, 218, 120, Date(2001, 1))...)
+test_gt00 = getzerobase(Float32, 218, 120, Date(2001, 1))
 
 # Definir una base del IPC base 2010 con variaciones iguales a cero
-test_gt10 = VarCPIBase(get_zero_base(Float32, 279, 120, Date(2011, 1))...)
+test_gt10 = getzerobase(Float32, 279, 120, Date(2011, 1))
 
 # Crear un CountryStructure
 cs = UniformCountryStructure(test_gt00, test_gt10)
