@@ -40,4 +40,4 @@ jobs:
             Pkg.status() 
             Pkg.instantiate() 
             Pkg.status()
-            Pkg.test("CPIDataBase")' 
+            Pkg.test(\"CPIDataBase\")' 
