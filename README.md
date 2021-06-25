@@ -24,3 +24,5 @@ Para reproducir localmente este proyecto, haga lo siguiente:
 
 Este último comando instalará todos los paquetes necesarios para poder ejecutar
 los scripts y todo lo demás debería funcionar inmediatamente. 
+
+Inicio colaboración EMLF: 25/06/2021
