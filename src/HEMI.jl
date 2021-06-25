@@ -18,6 +18,6 @@ module HEMI
         @show gtdata
         export gt00, gt10, gtdata
     else
-        @warn "Correr el script de carga de datos"
+        @warn "Correr el script de carga de datos antes de cargar paquete HEMI"
     end
 end
