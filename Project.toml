@@ -30,4 +30,4 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TerminalPager = "0c614874-6106-40ed-a7c2-2f1cd0bff883"
 
 [compat]
-julia = "1.5.3"
+julia = "1.6"
