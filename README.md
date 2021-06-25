@@ -1,14 +1,13 @@
 # Herramienta de evaluación de medidas de inflación (HEMI)
 
+[![Build Status](https://github.com/DIE-BG/HEMI/workflows/CI/badge.svg)](https://github.com/DIE-BG/HEMI/actions)
+
 Repositorio del proyecto de evaluación estadística de medidas de inflación
 subyacente de Guatemala empleando una metodología de simulación con
 *bootstrapping*. El proyecto ha sido realizado utilizando el [lenguaje de
 programación Julia](https://julialang.org/) y el paquete
 [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/) para crear un
 proyecto reproducible.
-
-Sus autores principales son Juan Carlos Castañeda, Rodrigo Chang, Oscar Solís,
-Mauricio Vargas y otros colaboradores.
 
 Para reproducir localmente este proyecto, haga lo siguiente:
 
