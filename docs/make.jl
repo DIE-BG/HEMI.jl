@@ -20,12 +20,13 @@ makedocs(;
     pages=[
         "Acerca" => "index.md",
         "Inicio" => "Inicio.md",
+        "Guía rápida" => "guides/Guia-rapida.md",
         "API" => 
-            ["API.md",
-            "HEMI.md",
-            "CPIDataBase.md",
-            "InflationFunctions.md",
-            "InflationEvalTools.md"]
+            ["modules/API.md",
+            "modules/HEMI.md",
+            "modules/CPIDataBase.md",
+            "modules/InflationFunctions.md",
+            "modules/InflationEvalTools.md"]
     ],
 )
 
