@@ -24,6 +24,10 @@ module InflationFunctions
     export InflationTotalRebaseCPI
     include("total_cpi_rebase.jl")
 
+    ## Variación interanual IPC con cambio de base sintético 
+    export InflationTrimmedMeanEq
+    include("InflationTrimmedMeanEq.jl")
+
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
