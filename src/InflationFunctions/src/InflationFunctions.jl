@@ -5,7 +5,8 @@ Funciones para computar estimadores muestrales de inflación.
 """
 module InflationFunctions
 
-    using CPIDataBase
+    using Base: skip_deleted_floor!
+using CPIDataBase
     using Statistics
 
     ## Métodos a extender 
@@ -24,9 +25,13 @@ module InflationFunctions
     export InflationTotalRebaseCPI
     include("total_cpi_rebase.jl")
 
-    ## Variación interanual IPC con cambio de base sintético 
+    ## Media Truncada Equiponderada 
     export InflationTrimmedMeanEq
     include("InflationTrimmedMeanEq.jl")
+
+    ## Media Truncada Ponderada 
+    export InflationTrimmedMeanWeighted
+    include("InflationTrimmedMeanWeighted.jl")
 
 
     ## Desarrollo 
