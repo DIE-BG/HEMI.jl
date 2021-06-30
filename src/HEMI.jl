@@ -1,3 +1,8 @@
+"""
+    HEMI
+
+Módulo envolvente que carga los paquetes y datos utilizados en todo el proyecto.
+"""
 module HEMI
 
     using Reexport

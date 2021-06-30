@@ -311,7 +311,7 @@ version = "1.12.0+1"
 
 [[HEMI]]
 deps = ["BenchmarkTools", "Bootstrap", "CPIDataBase", "CSV", "Chain", "DaemonMode", "DataFrames", "DataFramesMeta", "Dates", "DependentBootstrap", "Distributions", "DrWatson", "InflationEvalTools", "InflationFunctions", "JLD2", "LaTeXStrings", "MAT", "OnlineStats", "Plots", "PrettyTables", "ProgressMeter", "Reexport", "StaticArrays", "Statistics", "StatsBase", "TerminalPager"]
-path = "C:\\Users\\RRCP\\Documents\\Julia\\HEMI"
+path = ".."
 uuid = "e7656710-d5c8-11eb-389b-4b79a3cea986"
 version = "0.1.0"
 

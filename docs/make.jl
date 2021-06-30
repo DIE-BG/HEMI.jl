@@ -17,11 +17,14 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        "Inicio" => "index.md",
-        "API" => "API.md",
-        "CPIDataBase" => "CPIDataBase.md",
-        "InflationFunctions" => "InflationFunctions.md",
-        "InflationEvalTools" => "InflationEvalTools.md",
+        "Acerca" => "index.md",
+        "Inicio" => "Inicio.md",
+        "API" => 
+            ["API.md",
+            "HEMI.md",
+            "CPIDataBase.md",
+            "InflationFunctions.md",
+            "InflationEvalTools.md"]
     ],
 )
 
