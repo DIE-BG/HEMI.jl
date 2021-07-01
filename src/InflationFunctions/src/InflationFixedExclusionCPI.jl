@@ -34,6 +34,8 @@ end
 
 ## PARA DEFINIR COMO OPERA LA FUNCIÓN DE INFLACIÓN SOBRE COUNTRYSTRUCTURE 
 # OJO AQUI
+
+# Aplicar cada lista de exclusión con su base correspondiente en el CountryStructure
 function (inflfn::InflationFixedExclusionCPI)(cs::CountryStructure, ::CPIVarInterm) 
     # Acá se llama a inflfn(base), en donde base es de tipo VarCPIBase. Esta
     # es la función que debe definirse para cualquier medida de inflación.
