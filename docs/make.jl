@@ -32,5 +32,6 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/DIE-BG/HEMI",
-    push_preview = true
+    devbranch = "main",
+    push_preview = true 
 )
