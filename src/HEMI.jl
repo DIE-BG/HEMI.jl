@@ -20,6 +20,7 @@ module HEMI
         @load datafile gt00 gt10
         gtdata = UniformCountryStructure(gt00, gt10)
 
+        # Exportar datos del módulo 
         @show gtdata
         export gt00, gt10, gtdata
     else
