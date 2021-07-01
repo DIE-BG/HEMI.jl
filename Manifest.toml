@@ -176,7 +176,7 @@ uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 deps = ["DataFrames", "Distributions", "StatsBase", "TimeSeries"]
 git-tree-sha1 = "d3c068f90fd70d3d7df3d69eec9025694a11456f"
 repo-rev = "master"
-repo-url = "https://github.com/rafaelchp/DependentBootstrap.jl"
+repo-url = "https://github.com/r2cp/DependentBootstrap.jl"
 uuid = "191d1da1-0f37-5779-b8ea-a655caa0c150"
 version = "1.1.2"
 
