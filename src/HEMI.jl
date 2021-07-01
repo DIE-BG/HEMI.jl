@@ -1,3 +1,8 @@
+"""
+    HEMI
+
+Módulo envolvente que carga los paquetes y datos utilizados en todo el proyecto.
+"""
 module HEMI
 
     using Reexport
@@ -9,11 +14,16 @@ module HEMI
     @reexport using JLD2 
 
     ## Carga de datos de Guatemala
-    @info "Cargando datos de Guatemala" _module=Main
-    @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
-    gtdata = UniformCountryStructure(gt00, gt10)
+    datafile = datadir("guatemala", "gtdata32.jld2")
+    if isfile(datafile)
+        @info "Cargando datos de Guatemala" _module=Main
+        @load datafile gt00 gt10
+        gtdata = UniformCountryStructure(gt00, gt10)
 
-    @show gtdata
-    export gt00, gt10, gtdata
-
+        # Exportar datos del módulo 
+        @show gtdata
+        export gt00, gt10, gtdata
+    else
+        @warn "Correr el script de carga de datos antes de cargar paquete HEMI"
+    end
 end
