@@ -23,6 +23,8 @@ PROBLEMAS: los objetos base_ipc, w_exc, cpi_exc y varm_cpi_exc ¿debieran ser tu
 
 """
 function (inflfn::InflationFixedExclusionCPI)(cs::UniformCountryStructure)#, v_exc::NTuple{2,Vector{Int64}})
+    varm_cpi_exc00 = []
+    varm_cpi_exc10 = []
     # Iteración sobre la cantidad de bases en cs 
     for i in 1:length(cs.base)
     # Capitalizar los índices de precios a partir del objeto cs.VarCPIBase[i]
@@ -40,18 +42,12 @@ function (inflfn::InflationFixedExclusionCPI)(cs::UniformCountryStructure)#, v_e
     varm_cpi_exc =  varinterm(cpi_exc)
     # Guardar elementos
         if i == 1
-            base_ipc00 = base_ipc
-            w_exc00 = w_exc
-            cpi_exc00 = cpi_exc
             varm_cpi_exc00 = varm_cpi_exc 
         else
-            base_ipc10 = base_ipc
-            w_exc10 = w_exc
-            cpi_exc10 = cpi_exc
             varm_cpi_exc10 = varm_cpi_exc 
         end
     end
-    ((base_ipc00,w_exc00,cpi_exc00,varm_cpi_exc00),(base_ipc10,w_exc10,cpi_exc10,varm_cpi_exc10))
+    (varm_cpi_exc00, varm_cpi_exc10)
 end
 
 
