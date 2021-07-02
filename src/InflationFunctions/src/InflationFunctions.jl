@@ -5,8 +5,7 @@ Funciones para computar estimadores muestrales de inflación.
 """
 module InflationFunctions
 
-    using Base: skip_deleted_floor!
-using CPIDataBase
+    using CPIDataBase
     using Statistics
 
     ## Métodos a extender 

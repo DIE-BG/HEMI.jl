@@ -7,7 +7,7 @@ const SNTREND = ones(Float32, 600);
 
 # 82.500 μs (2 allocations: 102.27 KiB)
 function apply_trend(base::VarCPIBase, trend::AbstractVector)
-    vtrend =  @. base.v * ((base.v > 0) * trend + !(base.v > 0))
+    vtrend =  @. base.v .* ((base.v > 0) * trend + !(base.v > 0))
     VarCPIBase(vtrend, base.w, base.fechas, base.baseindex)
 end
 
