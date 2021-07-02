@@ -42,6 +42,10 @@ module InflationEvalTools
     include("param/param.jl")
 
 
+    ## Funciones de tendencia
+    export _get_ranges, TrendRandomWalk
+    include("trend/TrendFunction.jl")
+
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
     
