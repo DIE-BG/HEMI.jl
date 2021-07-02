@@ -23,8 +23,8 @@ Nos indica que medida se utiliza para una instancia.
 
 ejemplo:  
 
-julia> instancia = InflationTrimmedMeanWeighted(15.5,75.5)
-julia> measure_name(instancia)
+julia> instancia = InflationTrimmedMeanWeighted(15.5,75.5); \\
+julia> measure_name(instancia) \\
 "Media Truncada Ponderada (15.5 , 75.5)"
 """
 measure_name(inflfn::InflationTrimmedMeanWeighted) = "Media Truncada Ponderada (" * string(round(inflfn.l1, digits=2)) * " , " * string(round(inflfn.l2, digits=2)) * ")"
