@@ -20,26 +20,41 @@ measure_name(::InflationFixedExclusionCPI) = "Inflación de Exclusión Fija de G
 Define cómo opera InflationFixedExclusionCPI sobre un objeto de tipo CountryStructure, 
 con listas de exclusión para las bases 2000 y 2010.
 PROBLEMAS: los objetos base_ipc, w_exc, cpi_exc y varm_cpi_exc ¿debieran ser tuplas?, ¿Debó crearlas antes?
+
 """
-function (inflfn::InflationFixedExclusionCPI)(cs::UniformCountryStructure, v_exc)
+function (inflfn::InflationFixedExclusionCPI)(cs::UniformCountryStructure)#, v_exc::NTuple{2,Vector{Int64}})
     # Iteración sobre la cantidad de bases en cs 
     for i in 1:length(cs.base)
     # Capitalizar los índices de precios a partir del objeto cs.VarCPIBase[i]
-    base_ipc[i] = capitalize(cs.base[i].v, cs.base[i].baseindex)
+    base_ipc= capitalize(cs.base[i].v, cs.base[i].baseindex)
     # Copia de la lista original de pesos desde cs.base[i]
-    w_exc[i] = copy(cs.base[i].w)
+    w_exc = copy(cs.base[i].w)
     # Asignación de peso cero a los gastos básicos de la lista de exclusión (v_exc[i]) 
     # (j itera sobre los elementos de la lista de exclusión)
-        for j in inflfn.v_exc[i] w_exc[i][j] = 0.0 end
+        for j in inflfn.v_exc[i] w_exc[j] = 0.0 end
     # Renormalización de pesos
-    w_exc[i] = w_exc[i] / sum(w_exc[i])
+    w_exc = w_exc / sum(w_exc)
     # Obtener Ipc con exclusión 
-    cpi_exc[i] = sum(base_ipc[i].*w_exc[i]', dims=2)
+    cpi_exc = sum(base_ipc.*w_exc', dims=2)
     # Obtener variación intermensual
-    varm_cpi_exc[i] =  varinterm(cpi_exc[i])
+    varm_cpi_exc =  varinterm(cpi_exc)
+    # Guardar elementos
+        if i == 1
+            base_ipc00 = base_ipc
+            w_exc00 = w_exc
+            cpi_exc00 = cpi_exc
+            varm_cpi_exc00 = varm_cpi_exc 
+        else
+            base_ipc10 = base_ipc
+            w_exc10 = w_exc
+            cpi_exc10 = cpi_exc
+            varm_cpi_exc10 = varm_cpi_exc 
+        end
     end
- varm_cpi_exc 
+    ((base_ipc00,w_exc00,cpi_exc00,varm_cpi_exc00),(base_ipc10,w_exc10,cpi_exc10,varm_cpi_exc10))
 end
+
+
 ## PARA DEFINIR COMO OPERA LA FUNCIÓN DE INFLACIÓN SOBRE COUNTRYSTRUCTURE 
 # OJO AQUI
 
