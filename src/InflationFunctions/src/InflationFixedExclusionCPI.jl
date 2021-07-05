@@ -47,7 +47,7 @@ function (inflfn::InflationFixedExclusionCPI)(cs::UniformCountryStructure)#, v_e
             varm_cpi_exc10 = varm_cpi_exc 
         end
     end
-    (varm_cpi_exc00, varm_cpi_exc10)
+    vcat(varm_cpi_exc00, varm_cpi_exc10)
 end
 
 
