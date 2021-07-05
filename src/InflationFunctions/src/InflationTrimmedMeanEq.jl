@@ -1,3 +1,5 @@
+using Chain
+
 
 """
     InflationTrimmedMeanEq <: InflationFunction
@@ -40,7 +42,7 @@ measure_name(inflfn::InflationTrimmedMeanEq) = "Media Truncada Equiponderada (" 
     function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
 Define cómo opera InflationTrimmedMeanEq sobre un objeto de tipo VarCPIBase.
 """
-function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
+#= function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
     l1 = inflfn.l1
     l2 = inflfn.l2                                          
     leftPercentile, rightPercentile = min(l1, l2), max(l1, l2)   
@@ -54,6 +56,26 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
         temporal    = sort(temporal)                                        
         temporal    = temporal[q1:q2]                                       
         outVec[i]  = mean(temporal)                                       
+    end
+    return outVec
+end =#
+
+function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
+    l1 = inflfn.l1
+    l2 = inflfn.l2                                          
+    leftPercentile, rightPercentile = min(l1, l2), max(l1, l2)   
+    # determinanmos en donde tuncar                                 
+    q1    = Int(ceil(length(base.w) * leftPercentile / 100))                        
+    q2    = Int(floor(length(base.w) * rightPercentile / 100))                       
+    outVec   = Vector{T}(undef, size(base.v)[1]) 
+    # para cada t: ordenamos, truncamos y obtenemos la media.                      
+    for i in 1:size(base.v)[1]
+        outVec[i] = @chain begin
+            base.v[i,:]
+            sort(_)
+            _[q1:q2]
+            mean(_)
+        end                                                                            
     end
     return outVec
 end
