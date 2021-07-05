@@ -14,12 +14,13 @@ param_data = paramfn(gtdata)
 ## Función de tendencia de caminata aleatoria 
 trendfn = TrendRandomWalk()
 
-trended_data = trendfn(paramdata)
+trended_data = trendfn(param_data)
 # plot(infl_dates(trended_data), totalfn(param_data))
 plot(infl_dates(trended_data), totalfn(trended_data))
 
 ## Función de tendencia analítica 
-trendfn = TrendAnalytical(t -> 0.25t)
+trendfn = TrendAnalytical(t -> 1 + sin(2π*t/12))
 
-trended_data = trendfn(gtdata)
+trended_data = trendfn(param_data)
+# plot(infl_dates(trended_data), totalfn(param_data))
 plot(infl_dates(trended_data), totalfn(trended_data))

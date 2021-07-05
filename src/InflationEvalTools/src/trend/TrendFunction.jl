@@ -25,24 +25,35 @@ end
 
 
 # Cómo aplicar la función de tendencia sobre un CountryStructure
-function (trendfn::ArrayTrendFunction)(cs::CountryStructure)
-    trend = trendfn.trend
+function (trendfn::TrendFunction)(cs::CountryStructure)
+    # Obtener rango de índices para las bases del CountryStructure
     ranges = _get_ranges(cs)
-    # trends = map(r -> getindex(trend, r), ranges)
+    # Aplicar en cada base la función de tendencia. Se requiere definir para
+    # cualquier TrendFunction cómo operar sobre la tupla (::VarCPIBase,
+    # ::UnitRange)
     newbases = map(trendfn, cs.base, ranges)
+    # Construir un nuevo CountryStructure con las bases modificadas
     typeof(cs)(newbases)
 end
 
-# Cómo aplicar la función de tendencia sobre un VarCPIBase
-function (trendfn::ArrayTrendFunction)(base::VarCPIBase, range)
-    # Obtener el vector de tendencia 
-    trend = @view trendfn.trend[range]
+# Cómo aplicar la función de tendencia sobre un VarCPIBase con el rango de
+# índices `range`.
+function(trendfn::TrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
+    # Obtener el vector de tendencia del campo trend
+    trend::Vector{T} = trendfn(range)
     # Aplicar la tendencia sobre la matriz de variaciones intermensuales
-    vtrend =  @. base.v .* ((base.v > 0) * trend + !(base.v > 0))
+    vtrend =  @. base.v * ((base.v > 0) * trend + !(base.v > 0))
     # Crear un nuevo VarCPIBase con las nuevas variaciones intermensuales
     VarCPIBase(vtrend, base.w, base.fechas, base.baseindex)
+end 
+
+function (trendfn::ArrayTrendFunction)(range::UnitRange)
+    @view trendfn.trend[range]
 end
 
+function (trendfn::AnalyticalTrendFunction)(range::UnitRange)
+    trendfn.trend.(range)
+end
 
 ## Tendencia de caminata aleatoria 
 
@@ -50,3 +61,8 @@ Base.@kwdef struct TrendRandomWalk <: ArrayTrendFunction
     trend::Vector{Float32} = RWTREND
 end
 
+## Función de tendencia con función anónima
+
+struct TrendAnalytical{F} <: AnalyticalTrendFunction
+    trend::F
+end
