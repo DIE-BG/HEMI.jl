@@ -5,14 +5,14 @@
     InflationFixedExclusionCPI <: InflationFunction
 Función de inflación para computar la inflación de exclusión fija de gastos básicos.
 """
-Base.@kwdef struct InflationFixedExclusionCPIB <: InflationFunction
+Base.@kwdef struct InflationFixedExclusionCPIVarCPIBase <: InflationFunction
     # Tupla con vectores de gastos básicos a exlcuir en cada base 
     # (deberá tener la misma cantidad de vectores que bases en el CountryStructure)
     v_exc::Vector{Int} #Tuple{Vector{Int64}, Vector{Int64}}
 end
 
 # 2. Extender el método de nombre 
-measure_name(::InflationFixedExclusionCPI) = "Exclusión Fija de Gastos Básicos"
+measure_name(::InflationFixedExclusionCPI) = "Exclusión Fija de Gastos Básicos VarCPIBase"
 
 """
     (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase, v_exc)
@@ -21,7 +21,7 @@ con listas de exclusión para las bases 2000 y 2010.
 PROBLEMAS: los objetos base_ipc, w_exc, cpi_exc y varm_cpi_exc ¿debieran ser tuplas?, ¿Debó crearlas antes?
 
 """
-function (inflfn::InflationFixedExclusionCPIB)(base::VarCPIBase, inflfn.v_exc::Vector{Int})
+function (inflfn::InflationFixedExclusionCPIVarCPIBase)(base::VarCPIBase) #inflfn.v_exc::Vector{Int})
        
     # Capitalizar los índices de precios a partir del objeto base::VarCPIBase
     base_ipc= capitalize(base.v, base.baseindex)

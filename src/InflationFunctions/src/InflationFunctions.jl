@@ -28,6 +28,10 @@ module InflationFunctions
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
 
+    # Temporal
+    export InflationFixedExclusionCPIVarCPIBase
+    include("InflationFixedExclusionCPI-VarCPIBase.jl")
+
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
 
