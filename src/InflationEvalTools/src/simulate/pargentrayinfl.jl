@@ -10,7 +10,7 @@ const LOCAL_RNG = Random.MersenneTwister(0)
 # función de tendencia aplicar 
 
 """
-    pargentrayinfl(inflfn::F, csdata::CountryStructure, resamplefn::R, trendfn::T=TrendNoTrend(); K = 100, rndseed = 0, showprogress = true)
+    pargentrayinfl(inflfn::F, resamplefn::R, trendfn::T, csdata::CountryStructure; K = 100, rndseed = 0, showprogress = true)
 
 Computa `K` trayectorias de inflación utilizando la función de inflación
 `inflfn::`[`InflationFunction`](@ref), la función de remuestreo
@@ -73,5 +73,3 @@ function pargentrayinfl(inflfn::F, resamplefn::R, trendfn::T,
     # Retornar las trayectorias
     sdata(tray_infl)
 end
-
-
