@@ -1,6 +1,10 @@
 """
     InflationTrimmedMeanWeighted <: InflationFunction
 Función de inflación para computar la media truncada ponderada
+
+## Utilización
+    (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T
+Define cómo opera InflationTrimmedMeanWeighted sobre un objeto de tipo VarCPIBase.
 """
 Base.@kwdef struct InflationTrimmedMeanWeighted <: InflationFunction
     l1::Float32
@@ -35,10 +39,6 @@ julia> measure_name(mtfn)
 measure_name(inflfn::InflationTrimmedMeanWeighted) = "Media Truncada Ponderada (" * string(round(inflfn.l1, digits=2)) * " , " * string(round(inflfn.l2, digits=2)) * ")"
 
 
-"""
-    function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T
-Define cómo opera InflationTrimmedMeanWeighted sobre un objeto de tipo VarCPIBase.
-"""
 function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T     
     l1 = inflfn.l1
     l2 = inflfn.l2                                        

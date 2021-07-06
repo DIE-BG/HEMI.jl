@@ -1,14 +1,19 @@
-using Chain
+#using Chain
 
 
 """
     InflationTrimmedMeanEq <: InflationFunction
 Función de inflación para computar la media truncada equiponderada
+
+## Utilización
+    (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
+Define cómo opera InflationTrimmedMeanEq sobre un objeto de tipo VarCPIBase.
 """
 Base.@kwdef struct InflationTrimmedMeanEq <: InflationFunction
     l1::Float32
     l2::Float32
 end
+
 
 # Métodos para crear funciones de inflación a partir de enteros
 """
@@ -38,11 +43,8 @@ julia> measure_name(mtfn)
 """
 measure_name(inflfn::InflationTrimmedMeanEq) = "Media Truncada Equiponderada (" * string(round(inflfn.l1, digits=2)) * ", " * string(round(inflfn.l2, digits=2)) * ")"
 
-"""
-    function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
-Define cómo opera InflationTrimmedMeanEq sobre un objeto de tipo VarCPIBase.
-"""
-#= function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
+
+function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
     l1 = inflfn.l1
     l2 = inflfn.l2                                          
     leftPercentile, rightPercentile = min(l1, l2), max(l1, l2)   
@@ -58,9 +60,11 @@ Define cómo opera InflationTrimmedMeanEq sobre un objeto de tipo VarCPIBase.
         outVec[i]  = mean(temporal)                                       
     end
     return outVec
-end =#
+end 
 
-function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
+
+#=
+ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
     l1 = inflfn.l1
     l2 = inflfn.l2                                          
     leftPercentile, rightPercentile = min(l1, l2), max(l1, l2)   
@@ -79,5 +83,4 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
     end
     return outVec
 end
-
-
+ =#
