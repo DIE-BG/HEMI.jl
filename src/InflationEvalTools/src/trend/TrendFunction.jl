@@ -1,14 +1,24 @@
 """
     abstract type TrendFunction <: Function end
 Tipo abstracto para manejar las funciones de tendencia.
+
+## Utilización
+    (trendfn::TrendFunction)(cs::CountryStructure)
+Aplica la función de tendencia sobre un `CountryStructure` y devuelve un nuevo
+`CountryStructure`.
 """
 abstract type TrendFunction <: Function end
 
 
-"""
+""" 
     abstract type ArrayTrendFunction <: TrendFunction end
 Tipo para función de tendencia que almacena el vector de valores a aplicar a
 las variaciones intermensuales.
+
+## Utilización 
+    (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
+Especifica cómo aplicar la función de tendencia sobre un VarCPIBase con el rango de
+índices `range`.
 """
 abstract type ArrayTrendFunction <: TrendFunction end
 
@@ -21,21 +31,21 @@ Función de ayuda para obtener tupla de rangos de índices para hacer slicing de
 vectores de tendencia.
 """
 function _get_ranges(cs::CountryStructure) 
+    # Obtiene los períodos de cada base
     periods = map( base -> size(base.v, 1), cs.base)
+    # Genera un vector de rangos y llena cada rango con los índices que se
+    # forman con los elementos de periods
     ranges = Vector{UnitRange}(undef, length(periods))
     start = 0
     for i in eachindex(periods)
         ranges[i] = start + 1 : start + periods[i]
         start = periods[i]
     end
+    # Devuelve una tupla de rangos de índices 
     NTuple{length(cs.base), UnitRange{Int64}}(ranges)
 end
 
-"""
-    (trendfn::TrendFunction)(cs::CountryStructure)
-
-Especifica cómo aplicar una función de tendencia sobre un `CountryStructure`.
-"""
+# Aplicación general de TrendFunction sobre CountryStructure
 function (trendfn::TrendFunction)(cs::CountryStructure)
     # Obtener rango de índices para las bases del CountryStructure
     ranges = _get_ranges(cs)
@@ -50,12 +60,8 @@ end
 
 ## Implementación de aplicación de tendencia para ArrayTrendFunction
 
-"""
-    (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
-
-Especifica cómo aplicar la función de tendencia sobre un VarCPIBase con el rango de
-índices `range`.
-"""
+# Aplicación de ArrayTrendFunction, que almacena el vector de tendencia a ser
+# aplicado sobre un VarCPIBase
 function (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
     # Obtener el vector de tendencia del campo trend
     trend::Vector{T} = @view trendfn.trend[range]
@@ -95,8 +101,9 @@ Recibe los datos de un `CountryStructure` o un rango de índices para precomputa
 el vector de tendencia utlizando una función anónima.
 
 # Ejemplos: 
+
+Para crear una función de tendencia a partir de una función anónima: 
 ```julia-repl 
-# Crear una función de tendencia a partir de una función anónima.
 trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12))
 ```
 o bien: 
@@ -126,24 +133,27 @@ end
 """
     TrendNoTrend <: TrendFunction
 
-Tipo para representar una función de tendencia neutra. Es decir, esta función de
-tendencia mantiene los datos sin alteración. 
+Tipo concreto para representar una función de tendencia neutra. Es decir, esta
+función de tendencia mantiene los datos sin alteración. 
 
-# Ejemplos: 
+## Ejemplos: 
 ```julia-repl 
 # Crear una función de tendencia a partir de una función anónima.
 trendfn = TrendNoTrend()
 ```
 
+## Utilización 
+    (trendfn::TrendNoTrend)(cs::CountryStructure)
+Aplicación de tendencia TrendNoTrend sobre VarCPIBase. Se redefine este método
+para dejar invariante la base VarCPIBase
+```julia-repl 
+trendfn = TrendNoTrend() 
+trended_cs = trendfn(gtdata) 
+```
 """
 struct TrendNoTrend <: TrendFunction end
 
-"""
-    (trendfn::TrendNoTrend)(base::VarCPIBase, range::UnitRange)
-
-Aplicación de tendencia TrendNoTrend sobre VarCPIBase. Se redefine este método
-para dejar invariante la base VarCPIBase
-"""
-function (trendfn::TrendNoTrend)(base::VarCPIBase, range::UnitRange)
-    base
+# Se redefine para devolver el mismo CountryStructure sin alteración
+function (trendfn::TrendNoTrend)(cs::CountryStructure)
+    cs
 end 
