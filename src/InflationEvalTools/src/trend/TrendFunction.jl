@@ -26,11 +26,11 @@ abstract type ArrayTrendFunction <: TrendFunction end
 ## Implementación del comportamiento general de función de aplicación de tendencia  
 
 """
-    _get_ranges(cs::CountryStructure)
+    get_ranges(cs::CountryStructure)
 Función de ayuda para obtener tupla de rangos de índices para hacer slicing de los
 vectores de tendencia.
 """
-function _get_ranges(cs::CountryStructure) 
+function get_ranges(cs::CountryStructure) 
     # Obtiene los períodos de cada base
     periods = map( base -> size(base.v, 1), cs.base)
     # Genera un vector de rangos y llena cada rango con los índices que se
@@ -48,7 +48,7 @@ end
 # Aplicación general de TrendFunction sobre CountryStructure
 function (trendfn::TrendFunction)(cs::CountryStructure)
     # Obtener rango de índices para las bases del CountryStructure
-    ranges = _get_ranges(cs)
+    ranges = get_ranges(cs)
     # Aplicar en cada base la función de tendencia. Se requiere definir para
     # cualquier TrendFunction cómo operar sobre la tupla (::VarCPIBase,
     # ::UnitRange)
