@@ -117,12 +117,15 @@ struct TrendAnalytical{T} <: ArrayTrendFunction
     function TrendAnalytical(cs::CountryStructure, fnhandle::Function)
         # Obtener el número de períodos de las bases del CountryStructure
         p = periods(cs)
-
+        # Se crea un vector con la función mapeada en los períodos
         trend::Vector{eltype(cs)} = fnhandle.(1:p)
+        # Se retorna con el mismo tipo que el CountryStructure utilizado.
         new{eltype(cs)}(trend)
     end
     function TrendAnalytical(range::UnitRange, fnhandle::Function)
+        # Mapea una función en los elementos de un UnitRange 
         trend::Vector{Float32} = fnhandle.(range)
+        # Lo retorna en con el tipo Float32
         new{Float32}(trend)
     end
 
@@ -155,5 +158,6 @@ struct TrendNoTrend <: TrendFunction end
 
 # Se redefine para devolver el mismo CountryStructure sin alteración
 function (trendfn::TrendNoTrend)(cs::CountryStructure)
+    # Simplemente devuelve el CountryStructure
     cs
 end 
