@@ -1,5 +1,11 @@
 # InflationFixedExclusionCPI.jl - Función de inflación de exculsión fija de gastos básicos
 
+## Utilización
+"""
+    (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}) where T 
+Define cómo opera InflationFixedExclusionCPI sobre un objeto de tipo VarCPIBase, 
+con listas de exclusión para las bases 2000 y 2010.
+"""
 # 1. Definir un tipo
 """
     InflationFixedExclusionCPI <: InflationFunction
@@ -13,11 +19,7 @@ end
 # 2. Extender el método de nombre 
 measure_name(::InflationFixedExclusionCPI) = "Exclusión Fija de Gastos Básicos"
 
-"""
-    (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}) where T 
-Define cómo opera InflationFixedExclusionCPI sobre un objeto de tipo VarCPIBase, 
-con listas de exclusión para las bases 2000 y 2010.
-"""
+
 function (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}) where T 
     # Elección del vector a utilizar, basado en la cantidad de gastos básicos en la base (dim 2)
     if size(base.v)[2] == 218 exc = inflfn.v_exc[1] else exc = inflfn.v_exc[2] end   
@@ -36,8 +38,7 @@ function (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}) where T
     varm_cpi_exc =  varinterm(cpi_exc)
 end
 
-## PARA DEFINIR COMO OPERA LA FUNCIÓN DE INFLACIÓN SOBRE COUNTRYSTRUCTURE 
-# OJO AQUI
+##  PARA DEFINIR COMO OPERA LA FUNCIÓN DE INFLACIÓN SOBRE COUNTRYSTRUCTURE 
 
 # Aplicar cada lista de exclusión con su base correspondiente en el CountryStructure
 function (inflfn::InflationFixedExclusionCPI)(cs::CountryStructure, ::CPIVarInterm) 
