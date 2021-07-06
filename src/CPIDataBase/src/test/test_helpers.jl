@@ -1,13 +1,19 @@
 # test_helpers.jl - Funciones de ayuda para probar los tipos de este paquete 
 
-# Función para generar pesos aleatorios 
+"""
+    getrandomweights(T=Float32, G=218)
+Función para generar pesos aleatorios 
+"""
 function getrandomweights(T=Float32, G=218)
     w = rand(T, G)
     w = 100 * w / sum(w)
     w
 end
 
-# Función para generar fechas a partir de matriz de variaciones intermensuales
+"""
+    getbasedates(vmat, startdate=Date(2000, 12))
+Función para generar fechas a partir de matriz de variaciones intermensuales
+"""
 function getbasedates(vmat, startdate=Date(2000, 12))
     T = size(vmat, 1)
     startdate:Month(1):(startdate + Month(T-1))
@@ -27,7 +33,7 @@ function getzerobase(T_type=Float32, G=218, T_periods=120, startdate=Date(2001,1
 end
 
 """
-    getzerocountryst(T_type)
+    getzerocountryst(T_type=Float32)
 Obtiene un `UniformCountryStructure` cuyas variaciones intermensuales son todas
 iguales a cero en la configuración de períodos del IPC de Guatemala.
 """

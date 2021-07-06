@@ -1,3 +1,8 @@
+"""
+    HEMI
+
+Módulo envolvente que carga los paquetes y datos utilizados en todo el proyecto.
+"""
 module HEMI
 
     using Reexport
@@ -15,6 +20,7 @@ module HEMI
         @load datafile gt00 gt10
         gtdata = UniformCountryStructure(gt00, gt10)
 
+        # Exportar datos del módulo 
         @show gtdata
         export gt00, gt10, gtdata
     else
