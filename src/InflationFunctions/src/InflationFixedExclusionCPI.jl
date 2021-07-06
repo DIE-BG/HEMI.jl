@@ -22,6 +22,7 @@ InfExc(gt10, 2), cuando gt10 es un VarCPIBase para la base 2010 y su vector de e
 InfExc(gt00, 1), cuando gt00 es un VarCPIBase para la base 2000 y su vector de exclusión es el primero de la lista.
 InfExc(gtdata), cuando gtdata es un CountryStructure.
 """
+
 # Definir el tipo InflationFunction
 Base.@kwdef struct InflationFixedExclusionCPI{N} <: InflationFunction
     # Tupla con vectores de gastos básicos a exlcuir en cada base (tantos vectores como bases)
@@ -45,11 +46,11 @@ function (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}, i::Int) where
     w_exc = copy(base.w)
     # Asignación de peso cero a los gastos básicos de la lista de exclusión (exc = inflfn.v_exc[i]) 
     # (j itera sobre los elementos de la lista de exclusión)
-        for j in exc w_exc[j] = 0.0 end
+        for j in exc w_exc[j] = 0 end
     # Renormalización de pesos
     w_exc = w_exc / sum(w_exc)
     # Obtener Ipc con exclusión 
-    cpi_exc = sum(base_ipc.*w_exc', dims=2)
+    cpi_exc = base_ipc*w_exc
     # Obtener variación intermensual
     varm_cpi_exc =  varinterm(cpi_exc)
 end

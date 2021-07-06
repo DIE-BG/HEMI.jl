@@ -40,7 +40,7 @@ end
     @test all(traj_infl .≈ 0)
 end
 
-# Pruebas para Inflación de Exclusión Fija de Gastos Básicos
+## Pruebas para Inflación de Exclusión Fija de Gastos Básicos
 @testset "InflationFixedExclusionCPI" begin
     # Creación de vectores de exclusión de prueba
     exc00 = [10, 100, 200, 218]
@@ -60,7 +60,7 @@ end
     zero_base = getzerobase()
     m_traj_infl = simplefn(zero_base,1)
     # Probamos que el resumen intermensual sea igual a cero
-    @test all(m_traj_infl .≈ 0)
+    @test all(isapprox.(m_traj_infl, 0; atol = 0.0001))
 
     # Obtenemos un UniformCountryStructure con dos bases y todas las variaciones
     # intermensuales iguales a cero
@@ -72,5 +72,5 @@ end
     @test length(traj_infl) > length(m_traj_infl)
 
     # Probamos que la trayectoria de inflación sea igual a cero 
-    @test all(traj_infl .≈ 0)
+    @test all(isapprox.(traj_infl, 0; atol = 0.0001))
 end
