@@ -1,17 +1,25 @@
-# Tipo abstracto para manejar las funciones de tendencia
+"""
+    abstract type TrendFunction <: Function end
+Tipo abstracto para manejar las funciones de tendencia.
+"""
 abstract type TrendFunction <: Function end
 
-# Tipo para funcion "analítica": para especificar una función anónima de tendencia
-abstract type AnalyticalTrendFunction <: TrendFunction end
 
-# Tipo para función de tendencia almacenada en vector (para caminata aleatoria)
+"""
+    abstract type ArrayTrendFunction <: TrendFunction end
+Tipo para función de tendencia que almacena el vector de valores a aplicar a
+las variaciones intermensuales.
+"""
 abstract type ArrayTrendFunction <: TrendFunction end
 
 
-## Implementación para la función de aplicación de tendencia con vector 
+## Implementación del comportamiento general de función de aplicación de tendencia  
 
-# Función de ayuda para obtener vector de rangos para hacer slicing de los
-# vectores de tendencia.
+"""
+    _get_ranges(cs::CountryStructure)
+Función de ayuda para obtener tupla de rangos de índices para hacer slicing de los
+vectores de tendencia.
+"""
 function _get_ranges(cs::CountryStructure) 
     periods = map( base -> size(base.v, 1), cs.base)
     ranges = Vector{UnitRange}(undef, length(periods))
@@ -23,8 +31,11 @@ function _get_ranges(cs::CountryStructure)
     NTuple{length(cs.base), UnitRange{Int64}}(ranges)
 end
 
+"""
+    (trendfn::TrendFunction)(cs::CountryStructure)
 
-# Cómo aplicar la función de tendencia sobre un CountryStructure
+Especifica cómo aplicar una función de tendencia sobre un `CountryStructure`.
+"""
 function (trendfn::TrendFunction)(cs::CountryStructure)
     # Obtener rango de índices para las bases del CountryStructure
     ranges = _get_ranges(cs)
@@ -36,33 +47,103 @@ function (trendfn::TrendFunction)(cs::CountryStructure)
     typeof(cs)(newbases)
 end
 
-# Cómo aplicar la función de tendencia sobre un VarCPIBase con el rango de
-# índices `range`.
-function(trendfn::TrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
+
+## Implementación de aplicación de tendencia para ArrayTrendFunction
+
+"""
+    (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
+
+Especifica cómo aplicar la función de tendencia sobre un VarCPIBase con el rango de
+índices `range`.
+"""
+function (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) where T
     # Obtener el vector de tendencia del campo trend
-    trend::Vector{T} = trendfn(range)
-    # Aplicar la tendencia sobre la matriz de variaciones intermensuales
+    trend::Vector{T} = @view trendfn.trend[range]
+    # Aplicar la tendencia condicional sobre la matriz de variaciones
+    # intermensuales
     vtrend =  @. base.v * ((base.v > 0) * trend + !(base.v > 0))
     # Crear un nuevo VarCPIBase con las nuevas variaciones intermensuales
     VarCPIBase(vtrend, base.w, base.fechas, base.baseindex)
 end 
 
-function (trendfn::ArrayTrendFunction)(range::UnitRange)
-    @view trendfn.trend[range]
+
+## Definición del tipo para tendencia de caminata aleatoria 
+
+"""
+    TrendRandomWalk{T} <: ArrayTrendFunction
+
+Tipo para representar una función de tendencia de caminata aleatoria. Utiliza el
+vector de caminata aleatoria precalibrado en [`RWTREND`](@ref).
+
+# Ejemplo: 
+```julia-repl 
+# Crear la función de tendencia de caminata aleatoria
+trendfn = TrendRandomWalk()
+```
+"""
+Base.@kwdef struct TrendRandomWalk{T} <: ArrayTrendFunction
+    trend::Vector{T} = RWTREND
 end
 
-function (trendfn::AnalyticalTrendFunction)(range::UnitRange)
-    trendfn.trend.(range)
+## Definición del tipo para tendencia con función anónima
+
+"""
+    TrendAnalytical{T} <: ArrayTrendFunction
+
+Tipo para representar una función de tendencia definida por una función anónima.
+Recibe los datos de un `CountryStructure` o un rango de índices para precomputar
+el vector de tendencia utlizando una función anónima.
+
+# Ejemplos: 
+```julia-repl 
+# Crear una función de tendencia a partir de una función anónima.
+trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12))
+```
+o bien: 
+```julia-repl 
+trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12))
+```
+"""
+struct TrendAnalytical{T} <: ArrayTrendFunction
+    trend::Vector{T}
+
+    function TrendAnalytical(cs::CountryStructure, fnhandle::Function)
+        # Obtener el número de períodos de las bases del CountryStructure
+        p = periods(cs)
+
+        trend::Vector{eltype(cs)} = fnhandle.(1:p)
+        new{eltype(cs)}(trend)
+    end
+    function TrendAnalytical(range::UnitRange, fnhandle::Function)
+        trend::Vector{Float32} = fnhandle.(range)
+        new{Float32}(trend)
+    end
+
 end
 
-## Tendencia de caminata aleatoria 
+## Definición del tipo para función de tendencia neutra
 
-Base.@kwdef struct TrendRandomWalk <: ArrayTrendFunction
-    trend::Vector{Float32} = RWTREND
-end
+"""
+    TrendNoTrend <: TrendFunction
 
-## Función de tendencia con función anónima
+Tipo para representar una función de tendencia neutra. Es decir, esta función de
+tendencia mantiene los datos sin alteración. 
 
-struct TrendAnalytical{F} <: AnalyticalTrendFunction
-    trend::F
-end
+# Ejemplos: 
+```julia-repl 
+# Crear una función de tendencia a partir de una función anónima.
+trendfn = TrendNoTrend()
+```
+
+"""
+struct TrendNoTrend <: TrendFunction end
+
+"""
+    (trendfn::TrendNoTrend)(base::VarCPIBase, range::UnitRange)
+
+Aplicación de tendencia TrendNoTrend sobre VarCPIBase. Se redefine este método
+para dejar invariante la base VarCPIBase
+"""
+function (trendfn::TrendNoTrend)(base::VarCPIBase, range::UnitRange)
+    base
+end 

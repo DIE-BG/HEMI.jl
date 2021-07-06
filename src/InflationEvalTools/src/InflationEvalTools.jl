@@ -13,13 +13,6 @@ module InflationEvalTools
     using SharedArrays
     using Reexport
 
-    ## Funciones de aplicación de tendencia
-    export apply_trend
-    export RWTREND, SNTREND
-
-    include("trend/apply_trend.jl") 
-    
-
     ## Funciones de remuestreo de bases del IPC
     export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths
     export get_param_function, method_name
@@ -42,10 +35,14 @@ module InflationEvalTools
     include("param/param.jl")
 
 
-    ## Funciones de tendencia
-    export _get_ranges, TrendRandomWalk, TrendAnalytical
+    ## Funciones para aplicación de tendencia
+    export RWTREND
+    include("trend/RWTREND.jl") 
+    
+    export TrendRandomWalk, TrendAnalytical, TrendNoTrend
     include("trend/TrendFunction.jl")
 
+    
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
     
