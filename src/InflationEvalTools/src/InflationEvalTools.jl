@@ -7,6 +7,7 @@ inflación.
 module InflationEvalTools
 
     using Dates, CPIDataBase
+    using InflationFunctions
     using Random, Distributions
     using ProgressMeter
     using Distributed
@@ -15,7 +16,7 @@ module InflationEvalTools
 
     ## Funciones de remuestreo de bases del IPC
     export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths
-    export get_param_function, method_name
+    export get_param_function, method_name, method_tag
     
     # Métodos generales para funciones de remuestreo 
     include("resample/resample.jl")
@@ -31,12 +32,12 @@ module InflationEvalTools
 
     ## Métodos para obtener las bases de variaciones intermensuales paramétricas
     export param_gsbb_mod, param_sbb
-
     include("param/param.jl")
 
-    export InflationParameter
+    export InflationParameter, ParamTotalCPIRebase, ParamTotalCPI, ParamWeightedMean
     include("param/InflationParameter.jl")
 
+    
     ## Funciones para aplicación de tendencia
     export RWTREND
     include("trend/RWTREND.jl") 

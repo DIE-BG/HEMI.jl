@@ -19,9 +19,54 @@ function (param::AbstractInflationParameter)(cs::CountryStructure)
     # Aplicar la función de inflación para obtener la trayectoria paramétrica
     traj_infl_param = param.inflfn(param_data)
 
-    # Devolver la trayectoria paramétrica
+    # Devolver la trayectoria de inflación paramétrica
     traj_infl_param
 end
 
 # Redefinir un método Base.show para InflationParameter
-# to do...
+function Base.show(io::IO, param::AbstractInflationParameter)
+    println(io, typeof(param))
+    println(io, "|─> InflationFunction : " * measure_name(param.inflfn) )
+    println(io, "|─> ResampleFunction  : " * method_name(param.resamplefn) )
+end
+
+
+"""
+    DEFAULT_RESAMPLE_FN
+
+Define la funcón de remuestreo a utilizar por defecto en el ejercicio de simulación.
+"""
+const DEFAULT_RESAMPLE_FN = ResampleSBB(36)
+
+
+"""
+    ParamTotalCPIRebase()
+
+Función de ayuda para obtener la configuración del parámetro de inflación dado por la función de inflación del IPC con cambio de base sintético y el método de remuestreo por defecto.
+"""
+ParamTotalCPIRebase() = 
+    InflationParameter(InflationTotalRebaseCPI(60), DEFAULT_RESAMPLE_FN)
+
+# Función para obtener el parámetro con otra función de remuestreo 
+ParamTotalCPIRebase(resamplefn::ResampleFunction) = 
+    InflationParameter(InflationTotalRebaseCPI(60), resamplefn)
+
+
+"""
+    ParamTotalCPI()
+
+Función de ayuda para obtener la configuración del parámetro de inflación dado por la función de inflación del IPC y el método de remuestreo por defecto.
+"""
+ParamTotalCPI() = InflationParameter(InflationTotalCPI(), DEFAULT_RESAMPLE_FN)
+
+# Función para obtener el parámetro con otra función de remuestreo 
+ParamTotalCPI(resamplefn::ResampleFunction) = 
+    InflationParameter(InflationTotalCPI(), resamplefn)
+
+
+"""
+    ParamWeightedMean()
+
+Función de ayuda para obtener la configuración del parámetro de inflación dado por la media ponderada interanual y el método de remuestreo por defecto.
+"""
+ParamWeightedMean() = error("Este parámetro no está implementado aún")

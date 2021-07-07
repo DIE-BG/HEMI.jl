@@ -79,4 +79,11 @@ get_param_function(::ResampleFunction) =
     method_name(resamplefn::ResampleFunction)
 Función para obtener el nombre del método de remuestreo.
 """
-method_name(resamplefn::ResampleFunction) = string(nameof(resamplefn))
+method_name(::ResampleFunction) = error("Se debe redefinir el nombre del método de remuestreo")
+
+"""
+    method_tag(resamplefn::ResampleFunction)
+Función para obtener una etiqueta del método de remuestreo.
+"""
+method_tag(resamplefn::ResampleFunction) = string(nameof(resamplefn))
+
