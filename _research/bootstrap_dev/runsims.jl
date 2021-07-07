@@ -1,5 +1,5 @@
 using DrWatson
-@quickactivate "HEMI"
+@quickactivate "bootstrap_dev"
 
 # Ejecutar simulaciones en base 2000
 run(`julia bootstrap_methods.jl 2000`)

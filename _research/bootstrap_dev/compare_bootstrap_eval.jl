@@ -1,6 +1,12 @@
 # Script de comparación de evaluación con diferentes métodos de remuestreo 
 using DrWatson
-@quickactivate :HEMI
+@quickactivate "bootstrap_dev"
+
+## Cargar datos 
+using HEMI
+@load projectdir("..", "..", "data", "guatemala", "gtdata32.jld2") gt00 gt10
+gtdata = UniformCountryStructure(gt00, gt10)
+
 
 # Cargar paquetes de remuestreo y evaluación 
 using Dates, CPIDataBase
