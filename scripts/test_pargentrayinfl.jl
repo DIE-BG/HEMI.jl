@@ -39,10 +39,8 @@ using Test
 using Plots
 
 # Obtener la trayectoria paramétrica de inflación 
-paramfn = get_param_function(resamplefn)
-param_data = paramfn(gtdata)
-param_inflfn = InflationTotalRebaseCPI()
-param_tray_infl = param_inflfn(param_data)
+param = InflationParameter(InflationTotalRebaseCPI(), resamplefn)
+param_tray_infl = param(gtdata)
 
 # Obtener la trayectoria promedio de inflación en el muestreo
 mean_tray_infl = vec(mean(tray_infl, dims=3))

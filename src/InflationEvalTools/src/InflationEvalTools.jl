@@ -34,6 +34,8 @@ module InflationEvalTools
 
     include("param/param.jl")
 
+    export InflationParameter
+    include("param/InflationParameter.jl")
 
     ## Funciones para aplicación de tendencia
     export RWTREND

@@ -1,0 +1,27 @@
+## Definiciones para obtener un parámetro de inflación 
+
+# Tipo abstracto para representar los parámetros de inflación 
+abstract type AbstractInflationParameter{F <: InflationFunction, R <: ResampleFunction} end 
+
+# Tipo concreto para representar un parámetro de inflación computado con la función de inflación `inflfn` y el método de remuestreo `resamplefn`.
+Base.@kwdef struct InflationParameter{F, R} <: AbstractInflationParameter{F, R}
+    inflfn::F = InflationTotalRebaseCPI()
+    resamplefn::R = ResampleSBB(36)
+end
+
+# Método para obtener la trayectoria paramétrica a partir de un CountryStructure
+function (param::AbstractInflationParameter)(cs::CountryStructure)
+    # Obtener la función para obtener los datos paramétricos (promedio) del método de remuestreo
+    paramfn = get_param_function(param.resamplefn)
+    # Computar un CountryStructure con datos paramétricos (promedio) 
+    param_data = paramfn(cs)
+
+    # Aplicar la función de inflación para obtener la trayectoria paramétrica
+    traj_infl_param = param.inflfn(param_data)
+
+    # Devolver la trayectoria paramétrica
+    traj_infl_param
+end
+
+# Redefinir un método Base.show para InflationParameter
+# to do...
