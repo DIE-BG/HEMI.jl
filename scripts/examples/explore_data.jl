@@ -1,12 +1,13 @@
 # # Cargar y explorar las estructuras de datos del IPC
 
-# Cargamos DrWatson y activamos el proyecto
+# Cargamos DrWatson y activamos el proyecto. Esto a su vez, carga los datos del
+# IPC de Guatemala en las variables `gt00`, `gt10` y `gtdata`. Las primeras dos
+# representan las bases del IPC 2000 y 2010. La estructura `gtdata` representa
+# una colección de bases del IPC, la cual conforma la estructura del IPC del
+# país (`gtdata` es de tipo `UniformCountryStructure`, el cual es un tipo
+# concreto del tipo `CountryStructure`).
 using DrWatson
 @quickactivate :HEMI 
-
-# Cargamos los datos del IPC de Guatemala
-using JLD2
-@load datadir("guatemala", "gtdata32.jld2") gt00 gt10
 
 # Veamos la estructura de gt00: 
 gt00

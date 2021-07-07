@@ -12,7 +12,7 @@ examples = ["explore_data.jl"]
 
 for example in examples
     example_path = joinpath(EXAMPLES_DIR, example)
-    Literate.markdown(example_path, OUTPUT_DIR, execute=true, documenter=true)
+    Literate.markdown(example_path, OUTPUT_DIR, documenter=true)
 end
 
 example_pages = [
