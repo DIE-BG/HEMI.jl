@@ -114,6 +114,8 @@ trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12))
 struct TrendAnalytical{T} <: ArrayTrendFunction
     trend::Vector{T}
 
+    # Método constructor para obtener la cantidad de períodos a computar de un
+    # CountryStructure
     function TrendAnalytical(cs::CountryStructure, fnhandle::Function)
         # Obtener el número de períodos de las bases del CountryStructure
         p = periods(cs)
@@ -122,6 +124,7 @@ struct TrendAnalytical{T} <: ArrayTrendFunction
         # Se retorna con el mismo tipo que el CountryStructure utilizado.
         new{eltype(cs)}(trend)
     end
+    # Método constructor a partir de rango de períodos
     function TrendAnalytical(range::UnitRange, fnhandle::Function)
         # Mapea una función en los elementos de un UnitRange 
         trend::Vector{Float32} = fnhandle.(range)
@@ -134,7 +137,7 @@ end
 ## Definición del tipo para función de tendencia neutra
 
 """
-    TrendNoTrend <: TrendFunction
+    TrendIdentity <: TrendFunction
 
 Tipo concreto para representar una función de tendencia neutra. Es decir, esta
 función de tendencia mantiene los datos sin alteración. 
@@ -142,22 +145,22 @@ función de tendencia mantiene los datos sin alteración.
 ## Ejemplos: 
 ```julia-repl 
 # Crear una función de tendencia a partir de una función anónima.
-trendfn = TrendNoTrend()
+trendfn = TrendIdentity()
 ```
 
 ## Utilización 
-    (trendfn::TrendNoTrend)(cs::CountryStructure)
-Aplicación de tendencia TrendNoTrend sobre VarCPIBase. Se redefine este método
+    (trendfn::TrendIdentity)(cs::CountryStructure)
+Aplicación de tendencia TrendIdentity sobre VarCPIBase. Se redefine este método
 para dejar invariante la base VarCPIBase
 ```julia-repl 
-trendfn = TrendNoTrend() 
+trendfn = TrendIdentity() 
 trended_cs = trendfn(gtdata) 
 ```
 """
-struct TrendNoTrend <: TrendFunction end
+struct TrendIdentity <: TrendFunction end
 
 # Se redefine para devolver el mismo CountryStructure sin alteración
-function (trendfn::TrendNoTrend)(cs::CountryStructure)
+function (trendfn::TrendIdentity)(cs::CountryStructure)
     # Simplemente devuelve el CountryStructure
     cs
 end 

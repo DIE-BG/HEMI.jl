@@ -42,7 +42,7 @@ module InflationEvalTools
     export RWTREND
     include("trend/RWTREND.jl") 
     
-    export TrendRandomWalk, TrendAnalytical, TrendNoTrend
+    export TrendRandomWalk, TrendAnalytical, TrendIdentity
     include("trend/TrendFunction.jl")
 
     

@@ -48,13 +48,13 @@ plot(infl_dates(trended_data), totalfn(trended_data))
 
 # ## Función de tendencia que no aplica tendencia 
 # Para utilizar la función que no aplica tendencia, debemos generar
-# una instancia de la función `TrendNoTrend`: 
-trendfn = TrendNoTrend() 
+# una instancia de la función `TrendIdentity`: 
+trendfn = TrendIdentity() 
 
 # Posteriormente, esta instancia es llamable sobre objetos de tipo
 # `CountryStructure`, por lo que, para aplicar la función de tendencia hacemos: 
 trended_data = trendfn(param_data)
 
 # Veamos una gráfica de la trayectoria paramétrica al aplicar
-# la no-tendencia: 
+# la función de tendencia identidad: 
 plot(infl_dates(trended_data), totalfn(trended_data))
