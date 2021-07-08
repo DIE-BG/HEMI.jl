@@ -1,9 +1,16 @@
 ## Definiciones para obtener un parámetro de inflación 
 
-# Tipo abstracto para representar los parámetros de inflación 
+"""
+Tipo abstracto para representar los parámetros de inflación 
+"""
 abstract type AbstractInflationParameter{F <: InflationFunction, R <: ResampleFunction} end 
 
-# Tipo concreto para representar un parámetro de inflación computado con la función de inflación `inflfn` y el método de remuestreo `resamplefn`.
+"""
+Tipo concreto para representar un parámetro de inflación computado con la
+función de inflación `inflfn` y el método de remuestreo `resamplefn`.
+
+Ver también: [`ParamTotalCPIRebase`](@ref), [`ParamTotalCPI`](@ref), [`ParamWeightedMean`](@ref)
+"""
 Base.@kwdef struct InflationParameter{F, R} <: AbstractInflationParameter{F, R}
     inflfn::F = InflationTotalRebaseCPI()
     resamplefn::R = ResampleSBB(36)

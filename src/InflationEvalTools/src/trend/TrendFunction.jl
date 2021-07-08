@@ -144,14 +144,15 @@ función de tendencia mantiene los datos sin alteración.
 
 ## Ejemplos: 
 ```julia-repl 
-# Crear una función de tendencia a partir de una función anónima.
+# Crear una función de tendencia neutra. 
 trendfn = TrendIdentity()
 ```
 
 ## Utilización 
     (trendfn::TrendIdentity)(cs::CountryStructure)
-Aplicación de tendencia TrendIdentity sobre VarCPIBase. Se redefine este método
-para dejar invariante la base VarCPIBase
+
+    Aplicación de tendencia TrendIdentity sobre VarCPIBase. Se redefine este método
+para dejar invariante la base VarCPIBase. 
 ```julia-repl 
 trendfn = TrendIdentity() 
 trended_cs = trendfn(gtdata) 
