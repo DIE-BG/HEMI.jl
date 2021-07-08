@@ -1,15 +1,19 @@
 using DrWatson
-@quickactivate :HEMI
+@quickactivate "bootstrap_dev"
 
+using HEMI
 using InflationEvalTools: scramblevar
 using DependentBootstrap
 using Bootstrap
 using CSV, DataFrames
 using JLD2
-# using Revise 
+
+## Cargar datos 
+@load projectdir("..", "..", "data", "guatemala", "gtdata32.jld2") gt00 gt10
+gtdata = UniformCountryStructure(gt00, gt10)
 
 ## Funciones para investigación de remuestreo
-includet(projectdir("_research", "bootstrap_dev", "helper_functions.jl"))
+Revise.includet(projectdir("helper_functions.jl"))
 
 ## Obtener argumentos de consola
 basearg = !isempty(ARGS) ? ARGS[1] : "2000"

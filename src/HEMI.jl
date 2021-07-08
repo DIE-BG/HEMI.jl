@@ -15,6 +15,7 @@ module HEMI
 
     ## Carga de datos de Guatemala
     datafile = datadir("guatemala", "gtdata32.jld2")
+    @show datafile
     if isfile(datafile)
         @info "Cargando datos de Guatemala" _module=Main
         @load datafile gt00 gt10

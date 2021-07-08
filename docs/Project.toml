@@ -1,6 +1,8 @@
 [deps]
 CPIDataBase = "e4c88d09-b53c-432a-84e8-7deb46235234"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 HEMI = "e7656710-d5c8-11eb-389b-4b79a3cea986"
 InflationEvalTools = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 InflationFunctions = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
