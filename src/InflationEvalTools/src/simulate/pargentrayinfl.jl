@@ -18,9 +18,9 @@ Computa `K` trayectorias de inflación utilizando la función de inflación
 `trendfn::`[`TrendFunction`](@ref) especificada. Se utilizan los datos en el
 `CountryStructure` dado en `csdata`.
 
-Implementa el cómputo distribuido en procesos utilizando `@distributed`. Esto
-requiere que el paquete haya sido cargado en todos los procesos de cómputo. Por
-ejemplo: 
+A diferencia de la función [`gentrayinfl`](@ref), esta función implementa el
+cómputo distribuido en procesos utilizando `@distributed`. Esto requiere que el
+paquete haya sido cargado en todos los procesos de cómputo. Por ejemplo: 
 
 ```julia 
 using Distributed
@@ -31,7 +31,12 @@ addprocs(4, exeflags="--project")
 end
 ```
 
-Para lograr la reproducibilidad entre diferentes corridas de la función, y de esta forma, generar trayectorias de inflación con diferentes metodologías utilizando los mismos remuestreos, se fija la semilla de generación de acuerdo con el número de iteración en la simulación. Para controlar el inicio de la generación de trayectorias se utiliza como parámetro de desplazamiento el valor `rndseed`. 
+Para lograr la reproducibilidad entre diferentes corridas de la función, y de
+esta forma, generar trayectorias de inflación con diferentes metodologías
+utilizando los mismos remuestreos, se fija la semilla de generación de acuerdo
+con el número de iteración en la simulación. Para controlar el inicio de la
+generación de trayectorias se utiliza como parámetro de desplazamiento el valor
+`rndseed`. 
 """
 function pargentrayinfl(inflfn::F, resamplefn::R, trendfn::T, 
     csdata::CountryStructure; 
