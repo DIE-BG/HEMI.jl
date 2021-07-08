@@ -21,6 +21,10 @@ module InflationFunctions
     export InflationPercentileEq
     include("InflationPercentileEq.jl")
 
+    ## Percentiles ponderados
+    export InflationPercentileWeighted
+    include("InflationPercentileWeighted.jl")
+
     ## Variación interanual IPC con cambio de base sintético 
     export InflationTotalRebaseCPI
     include("total_cpi_rebase.jl")

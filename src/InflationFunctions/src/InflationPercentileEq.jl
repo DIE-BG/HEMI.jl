@@ -1,4 +1,6 @@
-# InflationPercentileEq.jl - Definición de percentiles equiponderados (llamado antes percentiles_eq.jl)
+# Inflación de Percentiles Equiponderados
+
+# InflationPercentileEq.jl - Definición de percentiles equiponderados
 
 ## Percentil equiponderado
 
@@ -23,6 +25,7 @@ function (inflfn::InflationPercentileEq)(base::VarCPIBase{T}) where T
 
     # Obtener el percentil k de la distribución intermensual 
     rows = size(base.v, 1)
+    
     k_interm = Vector{T}(undef, rows)
     Threads.@threads for r in 1:rows
         row = @view base.v[r, :]
