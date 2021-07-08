@@ -32,7 +32,6 @@ makedocs(;
     doctest = false, 
     pages=[
         "Acerca" => "index.md",
-        "Inicio" => "Inicio.md",
         "Guía rápida" => "guides/Guia-rapida.md",
         "Ejemplos" => example_pages,
         "API" => 

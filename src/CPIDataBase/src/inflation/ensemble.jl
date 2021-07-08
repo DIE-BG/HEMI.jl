@@ -1,11 +1,18 @@
 # ensemble.jl - Ensemble measures to compute more than one measure at a time
 
-# Tipo abstracto para conformar conjuntos de medidas de inflación
+"""
+    EnsembleInflationFunction <: InflationFunction
+
+Tipo abstracto para conformar conjuntos de medidas de inflación
+"""
 abstract type EnsembleInflationFunction <: InflationFunction end
 
 ## EnsembleFunction
 
-# Tipo para representar conjuntos de medidas de inflación
+"""
+    EnsembleFunction{N} <: EnsembleInflationFunction
+Función de inflación para computar un conjunto de `N` de medidas de inflación.
+"""
 struct EnsembleFunction{N} <: EnsembleInflationFunction
     functions::NTuple{N, F where {F <: InflationFunction}} 
 end
@@ -34,6 +41,11 @@ end
 ## CombinationFunction
 
 # Tipo para representar combinaciones lineales de conjuntos de medidas
+"""
+    CombinationFunction{N, W} <: EnsembleInflationFunction
+Función de inflación para computar un promedio ponderado de un conjunto de `N`
+de medidas de inflación con tipo del vector de ponderaciones `W`.
+"""
 struct CombinationFunction{N, W} <: EnsembleInflationFunction  
     ensemble::EnsembleFunction{N}
     weights::W
@@ -54,6 +66,10 @@ function num_measures(combfn::CombinationFunction; get_components = false)
 end 
 
 # Ponderaciones
+"""
+    weights(combfn::CombinationFunction)
+Devuelve el vector de ponderaciones de una [`CombinationFunction`](@ref).
+"""
 weights(combfn::CombinationFunction) = getfield(combfn, :weights)
 
 # Nombres de medidas
