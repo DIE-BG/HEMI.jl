@@ -8,11 +8,7 @@ using Distributed
 addprocs(4, exeflags="--project")
 
 # Cargar los paquetes utilizados en todos los procesos
-@everywhere begin
-    using HEMI 
-    using InflationFunctions
-    using InflationEvalTools
-end 
+@everywhere using HEMI 
 
 # ## Generar trayectorias de inflación 
 
