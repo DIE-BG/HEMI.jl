@@ -7,6 +7,7 @@ module InflationFunctions
 
     using CPIDataBase
     using Statistics
+    using SparseArrays
 
     ## Métodos a extender 
     import CPIDataBase: measure_name, measure_tag
@@ -27,6 +28,13 @@ module InflationFunctions
     ## Exclusión Fija de gastos básicos
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
+
+
+    ## Subyacente MAI (muestra ampliada implícitamente)
+    export V
+    export vposition
+    export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
+    include("InflationCoreMai.jl")
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
