@@ -25,7 +25,7 @@ function (param::AbstractInflationParameter)(cs::CountryStructure)
     # Computar un CountryStructure con datos paramétricos (promedio) 
     param_data = paramfn(cs)
     # Aplicamos la tendencia
-    trended_data = param.trendfn(param_data)           #NOTA : REVISAR ESTA LINEA
+    trended_data = param.trendfn(param_data)    
     # Aplicar la función de inflación para obtener la trayectoria paramétrica
     traj_infl_param = param.inflfn(trended_data)
 
@@ -38,7 +38,7 @@ function Base.show(io::IO, param::AbstractInflationParameter)
     println(io, typeof(param))
     println(io, "|─> InflationFunction : " * measure_name(param.inflfn) )
     println(io, "|─> ResampleFunction  : " * method_name(param.resamplefn) )
-    println(io, "|─> TrendFunction     : " * method_name(param.trendfn) )
+    println(io, "|─> TrendFunction     : " * summary(param.trendfn) )
 end
 
 
