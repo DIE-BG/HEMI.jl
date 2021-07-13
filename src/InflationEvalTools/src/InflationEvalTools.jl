@@ -45,6 +45,9 @@ using Dates, CPIDataBase
     export InflationParameter, ParamTotalCPIRebase, ParamTotalCPI, ParamWeightedMean
     include("param/InflationParameter.jl")
 
+    # Tipos para configuración de simulaciones
+    export AbstractConfig, SimConfig, CrossEvalConfig
+    include("config/SimConfig.jl")
     
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
@@ -53,8 +56,7 @@ using Dates, CPIDataBase
     include("simulate/pargentrayinfl.jl") 
 
 
-    # Tipos para configuración de simulaciones
-    include("config/SimConfig.jl")
+
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")

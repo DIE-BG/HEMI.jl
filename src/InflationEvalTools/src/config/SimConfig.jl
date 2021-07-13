@@ -3,29 +3,45 @@ using DrWatson
 
 #using InflationEvalTools
 
-## Crear el tipo y extender definiciones 
-# abstract type SimConfig{} end
-abstract type AbstractConfig{F, R, T} end
+# Tipo Abstracto para contenedores de parámetros de Simulación
+abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
-# Tipos para los vectores de fechas
-# const DATETYPE = StepRange{Date, Month}
+# Tipo para representar los parámetros necesarios para generar la simulación de la forma que se hizo hasta 2020
 
-# Tipo para representar los parámetros necesarios para generar la simulación
-# Hasta 2019
-struct SimConfig{F , R , T} <:AbstractConfig{F, R, T} #Base.@kwdef 
-    inflfn::InflationFunction
-    resamplefn::ResampleFunction
-    trendfn::TrendFunction
-    nsim::Int
-    #final_date::DATETYPE   
+Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
+    # Función de Inflación
+    inflfn::F
+    # Función de remuestreo
+    resamplefn::R
+    # Función de Tendencia
+    trendfn::T
+    # Cantidad de Simulaciones
+    nsim::Int  
 end
 
-#CrossEvalConfig
+# Tipo para representar los parámetros necesarios para generar la simulación con períodos de evaluación dentro de la muestra
+Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
+    # Función de Inflación
+    inflfn::F
+    # Función de remuestreo
+    resamplefn::R
+    # Función de Tendencia
+    trendfn::T
+    # Cantidad de simulaciones
+    nsim::Int
+    # Último mes de set de "entrenamiento"
+    train_date::Date   
+    # Tamaño del período de evaluación en meses 
+    eval_size::Int 
+end
+
 
 # Configuraciones necesarias para mostrar nombres de funciones en savename
-# Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
-# Base.string(inflfn::ResampleFunction) = method_name(inflfn)
+Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
+Base.string(resamplefn::ResampleFunction) = method_name(resamplefn)
+Base.string(trendfn::TrendFunction) = method_name(trendfn)
+
 
 # # Extender definición de tipos permitidos para simulación
-# DrWatson.default_allowed(::SimConfig) = (Real, String, Symbol, TimeType, Function)
-# DrWatson.default_prefix(::SimConfig) = "HEMI"
+DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function) #Real, 
+DrWatson.default_prefix(::AbstractConfig) = "HEMI"
