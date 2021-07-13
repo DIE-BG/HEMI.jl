@@ -110,15 +110,15 @@ Tipo para representar una función de tendencia definida por una función anóni
 Recibe los datos de un `CountryStructure` o un rango de índices para precomputar
 el vector de tendencia utlizando una función anónima.
 
-# Ejemplos: 
+## Ejemplos: 
 
 Para crear una función de tendencia a partir de una función anónima: 
 ```julia-repl 
-trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12))
+trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal")
 ```
 o bien: 
 ```julia-repl 
-trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12))
+trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12), "Tendencia sinusoidal")
 ```
 """
 struct TrendAnalytical{T} <: ArrayTrendFunction
@@ -127,7 +127,7 @@ struct TrendAnalytical{T} <: ArrayTrendFunction
 
     # Método constructor para obtener la cantidad de períodos a computar de un
     # CountryStructure
-    function TrendAnalytical(cs::CountryStructure, fnhandle::Function, name)
+    function TrendAnalytical(cs::CountryStructure, fnhandle::Function, name::String)
         # Obtener el número de períodos de las bases del CountryStructure
         p = periods(cs)
         # Se crea un vector con la función mapeada en los períodos
@@ -136,7 +136,7 @@ struct TrendAnalytical{T} <: ArrayTrendFunction
         new{eltype(cs)}(trend, name)
     end
     # Método constructor a partir de rango de períodos
-    function TrendAnalytical(range::UnitRange, fnhandle::Function, name)
+    function TrendAnalytical(range::UnitRange, fnhandle::Function, name::String)
         # Mapea una función en los elementos de un UnitRange 
         trend::Vector{Float32} = fnhandle.(range)
         # Lo retorna en con el tipo Float32
