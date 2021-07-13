@@ -29,6 +29,9 @@ module InflationFunctions
     export InflationTotalRebaseCPI
     include("total_cpi_rebase.jl")
 
+    ## Exclusión Fija de gastos básicos
+    export InflationFixedExclusionCPI
+    include("InflationFixedExclusionCPI.jl")
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")

@@ -1,3 +1,8 @@
+"""
+    HEMI
+
+Módulo envolvente que carga los paquetes y datos utilizados en todo el proyecto.
+"""
 module HEMI
 
     using Reexport
@@ -8,6 +13,10 @@ module HEMI
     @reexport using Statistics
     @reexport using JLD2 
 
+    # Reexportar funciones de inflación y de evaluación 
+    @reexport using InflationFunctions
+    @reexport using InflationEvalTools
+
     ## Carga de datos de Guatemala
     datafile = datadir("guatemala", "gtdata32.jld2")
     @show datafile
@@ -17,6 +26,7 @@ module HEMI
         @load datafile gt00 gt10
         gtdata = UniformCountryStructure(gt00, gt10)
 
+        # Exportar datos del módulo 
         @show gtdata
         export gt00, gt10, gtdata
     else

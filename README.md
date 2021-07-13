@@ -1,6 +1,7 @@
 # Herramienta de evaluación de medidas de inflación (HEMI)
 
 [![Build Status](https://github.com/DIE-BG/HEMI/workflows/CI/badge.svg)](https://github.com/DIE-BG/HEMI/actions)
+[![Dev](https://img.shields.io/badge/docs-latest-blue.svg)](https://die-bg.github.io/HEMI/dev)
 
 Repositorio del proyecto de evaluación estadística de medidas de inflación
 subyacente de Guatemala empleando una metodología de simulación con
@@ -24,5 +25,3 @@ Para reproducir localmente este proyecto, haga lo siguiente:
 
 Este último comando instalará todos los paquetes necesarios para poder ejecutar
 los scripts y todo lo demás debería funcionar inmediatamente. 
-
-Inicio colaboración EMLF: 25/06/2021

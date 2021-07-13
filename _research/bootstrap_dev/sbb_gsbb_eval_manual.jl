@@ -3,7 +3,12 @@
 # Bootstrap
 
 using DrWatson
-@quickactivate :HEMI
+@quickactivate "bootstrap_dev"
+
+## Cargar datos 
+using HEMI
+@load projectdir("..", "..", "data", "guatemala", "gtdata32.jld2") gt00 gt10
+gtdata = UniformCountryStructure(gt00, gt10)
 
 using Distributed
 addprocs(4, exeflags="--project")
