@@ -52,7 +52,7 @@ end
 function run_batch(data, SimConfig, savepath, plotspath) 
 
     # Convertir SimConfig a Diccionario para usarlo en DrWatson (sim_params)
-
+        params = convert(SimConfig)
     # Ejecutar lote de simulaciones 
     for (i, params) in enumerate(sim_params)
         @info "Ejecutando simulación $i..."

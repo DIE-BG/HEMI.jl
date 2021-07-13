@@ -1,6 +1,6 @@
 # # Script de prueba para generar trayectorias de inflación de simulación
 using DrWatson
-@quickactivate :HEMI 
+@quickactivate "HEMI" 
 
 # Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -10,8 +10,6 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere begin
     using HEMI 
-    using InflationFunctions
-    using InflationEvalTools
 end 
 
 # ## Generar trayectorias de inflación 
