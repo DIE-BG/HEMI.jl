@@ -2,8 +2,6 @@
 using DrWatson
 @quickactivate :HEMI 
 
-using InflationFunctions
-using InflationEvalTools
 using Plots
 
 # Esta función se utiliza para generar la trayectoria paramétrica de inflación: 
@@ -34,9 +32,9 @@ plot(infl_dates(trended_data), totalfn(trended_data))
 # ## Función de tendencia analítica 
 # Para utilizar la función de tendencia de caminata aleatoria, debemos generar
 # una instancia de la función `TrendAnalytical`: 
-trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12))
+trendfn = TrendAnalytical(param_data, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal")
 # O también:
-trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12))
+trendfn = TrendAnalytical(1:periods(param_data), t -> 1 + sin(2π*t/12), "Tendencia sinusoidal")
 
 # Posteriormente, esta instancia es llamable sobre objetos de tipo
 # `CountryStructure`, por lo que, para aplicar la función de tendencia hacemos: 
@@ -46,9 +44,9 @@ trended_data = trendfn(param_data)
 plot(infl_dates(trended_data), totalfn(trended_data))
 
 
-# ## Función de tendencia que no aplica tendencia 
+# ## Función de tendencia identidad
 # Para utilizar la función que no aplica tendencia, debemos generar
-# una instancia de la función `TrendIdentity`: 
+# una instancia del tipo `TrendIdentity`: 
 trendfn = TrendIdentity() 
 
 # Posteriormente, esta instancia es llamable sobre objetos de tipo
@@ -58,3 +56,25 @@ trended_data = trendfn(param_data)
 # Veamos una gráfica de la trayectoria paramétrica al aplicar
 # la función de tendencia identidad: 
 plot(infl_dates(trended_data), totalfn(trended_data))
+
+
+
+# ## Función de tendencia exponencial
+# Para utilizar la función de tendencia con crecimiento exponencial, debemos generar
+# una instancia de la función `TrendExponential`: 
+trendfn = TrendExponential(gtdata, 0.02) 
+
+# Posteriormente, esta instancia es llamable sobre objetos de tipo
+# `CountryStructure`, por lo que, para aplicar la función de tendencia hacemos: 
+trended_data = trendfn(param_data)
+
+# Veamos una gráfica de la trayectoria paramétrica al aplicar
+# la función de tendencia identidad: 
+plot(infl_dates(trended_data), totalfn(trended_data))
+
+
+# ## Descripción de las funciones de tendencia 
+# Para acceder a una descripción de la función de tendencia podemos utilizar la
+# función `method_name`: 
+
+method_name(trendfn)

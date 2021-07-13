@@ -38,7 +38,7 @@ function Base.show(io::IO, param::AbstractInflationParameter)
     println(io, typeof(param))
     println(io, "|─> InflationFunction : " * measure_name(param.inflfn) )
     println(io, "|─> ResampleFunction  : " * method_name(param.resamplefn) )
-    println(io, "|─> TrendFunction     : " * summary(param.trendfn) )
+    println(io, "|─> TrendFunction     : " * method_name(param.trendfn) )
 end
 
 

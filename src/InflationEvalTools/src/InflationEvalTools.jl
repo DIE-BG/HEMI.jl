@@ -33,7 +33,7 @@ module InflationEvalTools
     export RWTREND
     include("trend/RWTREND.jl") 
     
-    export TrendRandomWalk, TrendAnalytical, TrendIdentity
+    export TrendRandomWalk, TrendAnalytical, TrendExponential, TrendIdentity
     include("trend/TrendFunction.jl")
 
     ## Métodos para obtener las bases de variaciones intermensuales paramétricas
