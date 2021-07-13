@@ -79,6 +79,10 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
     q2    = Int(floor(length(base.w) * l2 / 100))                       
     outVec   = Vector{T}(undef, periods(base)) 
     
+    if q1==0
+        q1=1
+    end
+    
     # para cada t: ordenamos, truncamos y obtenemos la media.                      
     for i in 1:periods(base)
         # Creamos una vista de cada fila: ahora temporal almacena una referencia
