@@ -22,18 +22,18 @@ cfat = cumsum(fat)
 cgat = cumsum(gat)
 
 # ## Percentiles equiponderados y ponderados con funciones de Julia
-N = 4
-p = (1:N-1) ./ N
+N = 5
+p = (0:N) ./ N
 
-quantile(gt00.v[1, :], [0, 0.25, 0.5, 0.75, 1.])
+quantile(gt00.v[1, :], p)
 
 wp = aweights(gt00.w)
-quantile(gt00.v[1, :], wp, [0, 0.25, 0.5, 0.75, 1.])
+quantile(gt00.v[1, :], wp, p)
 
 
 # ## Distribuciones de largo plazo 
 
-all_v = vcat(gt00.v[:], gt10.v[:])
+all_v = vcat(gt00.v[:], gt10.v[1:120, :][:])
 flp = ObservationsDistr(all_v, V)
 
 sum(flp), mean(flp)
@@ -42,14 +42,15 @@ sum(flp), mean(flp)
 FLP = cumsum(flp)
 FLP(0)
 
+quantile(FLP, p)
+
 # plot(flp.vspace, flp.distr, xlims=(-2, 5))
 # plot(FLP.vspace, FLP.(FLP.vspace), xlims=(-2, 5))
 
-all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 122)[:])
+all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
 glp = WeightsDistr(all_v, all_w, V)
 
 sum(glp), mean(glp)
-
 # mean(glp) es equivalente a 
 # mpm0 = gt00.v * gt00.w / 100
 # mpm1 = gt10.v * gt10.w / 100
@@ -58,6 +59,8 @@ sum(glp), mean(glp)
 
 GLP = cumsum(glp)
 GLP(0)
+
+quantile(GLP, p)
 
 # plot(glp.vspace, glp.distr, xlims=(-2, 5))
 # plot(GLP.vspace, GLP.(GLP.vspace), xlims=(-2, 5))
@@ -77,18 +80,28 @@ quantile(gt00.v[1, :], wp, [0, 0.25, 0.5, 0.75, 1.])
 quantile(cgat, [0, 0.25, 0.5, 0.75, 1.])
 
 
-# ## Algoritmo MAI 
+# ## Algoritmo MAI-G
 
-n = 40
+n = 5
+p = (0:n) ./ n
 
 # Distribución gat del mes
-gat = WeightsDistr(gt00.v[4, :], gt00.w, V)
+gat = WeightsDistr(gt00.v[2, :], gt00.w, V)
+sum(gat), mean(gat)
+
+# Verificamos los percentiles de la distribución gat
+cgat = cumsum(gat)
+pk_g = quantile(cgat, p)
+cgat.(pk_g)
+
+# Verificamos los percentiles de la distribución GLP
+GLP = cumsum(glp)
+pk_glp = quantile(GLP, p)
+GLP.(pk_g)
 
 # Renormalizar distribución 
 glpt = renorm_g_glp(gat, glp, n)
-
 sum(glpt), mean(glpt) 
-# Me quedé arreglando esta suma, que se aleja de 1 supongo que porque estoy incluyendo en la renormalización ambos límites, debo de cuidar que se sume epsilon al límite inferior o algo así, para no incluir doble... ?
 
 # Prueba con gráfica 
 cgat = cumsum(gat)
@@ -100,4 +113,14 @@ cglpt = cumsum(glpt)
 plot!(cglpt.vspace, cglpt.(cglpt.vspace), xlims=(-2, 5))
 hline!((1:n-1)/n)
 
-# renormalize!(glpt, -2, 0.5, 0.75)
+
+# ## MAI-G para toda la base 2000
+
+# Obtener distribución de cada período en la base 2000
+gdistr00 = WeightsDistr.(eachrow(gt00.v), Ref(gt00.w), Ref(V))
+
+# Renormalizar las distribuciones 
+glpt00 = renorm_g_glp.(gdistr00, Ref(glp), n)
+
+# Obtener la variación intermensual 
+mai_g = mean.(glpt00)
