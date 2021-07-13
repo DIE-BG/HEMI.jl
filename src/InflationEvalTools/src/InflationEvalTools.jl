@@ -6,7 +6,9 @@ inflación.
 """
 module InflationEvalTools
 
-    using Dates, CPIDataBase
+    using CPIDataBase: DATETYPE
+using Dates: DATEEPOCH
+using Dates, CPIDataBase
     using InflationFunctions
     using Random, Distributions
     using ProgressMeter
@@ -50,6 +52,9 @@ module InflationEvalTools
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
 
+
+    # Tipos para configuración de simulaciones
+    include("config/SimConfig.jl")
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
