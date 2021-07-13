@@ -13,8 +13,8 @@ abstract type AbstractConfig{F, R, T} end
 # Tipo para representar los parámetros necesarios para generar la simulación
 # Hasta 2019
 struct SimConfig{F , R , T} <:AbstractConfig{F, R, T} #Base.@kwdef 
-    inflfn::F
-    resamplefn::R
+    inflfn::InflationFunction
+    resamplefn::ResampleFunction
     trendfn::TrendFunction
     nsim::Int
     #final_date::DATETYPE   
