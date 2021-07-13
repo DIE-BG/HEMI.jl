@@ -21,6 +21,7 @@ module HEMI
     datafile = datadir("guatemala", "gtdata32.jld2")
     @show datafile
     if isfile(datafile)
+        #INFO
         @info "Cargando datos de Guatemala" _module=Main
         @load datafile gt00 gt10
         gtdata = UniformCountryStructure(gt00, gt10)
