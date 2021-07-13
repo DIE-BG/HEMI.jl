@@ -28,7 +28,13 @@ module InflationEvalTools
     include("resample/stationary_block_bootstrap.jl")
     # Método de remuestreo con Generalized Seasonal Block Bootstrap
     include("resample/generalized_seasonal_block_bootstrap.jl")
-
+    
+    ## Funciones para aplicación de tendencia
+    export RWTREND
+    include("trend/RWTREND.jl") 
+    
+    export TrendRandomWalk, TrendAnalytical, TrendExponential, TrendIdentity
+    include("trend/TrendFunction.jl")
 
     ## Métodos para obtener las bases de variaciones intermensuales paramétricas
     export param_gsbb_mod, param_sbb
@@ -36,14 +42,6 @@ module InflationEvalTools
 
     export InflationParameter, ParamTotalCPIRebase, ParamTotalCPI, ParamWeightedMean
     include("param/InflationParameter.jl")
-
-    
-    ## Funciones para aplicación de tendencia
-    export RWTREND
-    include("trend/RWTREND.jl") 
-    
-    export TrendRandomWalk, TrendAnalytical, TrendIdentity
-    include("trend/TrendFunction.jl")
 
     
     ## Funciones de generación de trayectorias
