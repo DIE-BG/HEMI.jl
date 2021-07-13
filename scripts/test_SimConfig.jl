@@ -18,5 +18,5 @@ config = SimConfig(totalfn, resamplefn, trendfn, 10000)
 configB = CrossEvalConfig(totalfn, resamplefn, trendfn, 1000, ff, sz)
 
 ## Mostrar el nombre generado por la configuración 
-savename(config)
-savename(configB)
+savename(config, connector=" | ", equals=" = ")
+savename(configB, connector=" | ", equals=" = ")
