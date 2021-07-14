@@ -53,14 +53,46 @@ function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T
     # ordenamos de acuerdo a variaciones, truncamos
     # renormalizamos para que los pesos sumen 1
     # sumamos el producto de variaciones con pesos
+
+    # Número de gastos básicos
+    g = size(base.v, 2)
+
+    # Reservar la memoria para cómputos de media truncada 
+    sort_ids = [zeros(Int, g) for _ in 1:Threads.nthreads()]
+    w_sorted_list = [zeros(T, g) for _ in 1:Threads.nthreads()]
+    w_sorted_renorm_list = [zeros(T, g) for _ in 1:Threads.nthreads()]
+
     Threads.@threads for i in 1:periods(base)
+        
+        # Obtener los vectores de cada hilo 
+        j = Threads.threadid() 
+        sort_idx = sort_ids[j]
+        w_sorted_acum = w_sorted_list[j]
+        w_sorted_renorm = w_sorted_renorm_list[j]
+
+        # Obtener índices de orden en sort_idx
         v_month = @view base.v[i, :]
-        sort_ids = sortperm(v_month)
-        w_sorted        = @view base.w[sort_ids]
-        w_sorted_acum   = cumsum(w_sorted)
-        f               = l1 .<= w_sorted_acum .<= l2
-        w_sorted_remorm = (w_sorted .* f) ./ sum(w_sorted .* f)
-        outVec[i]       = sum((@view v_month[sort_ids]) .* w_sorted_remorm)
+        sortperm!(sort_idx, v_month)
+
+        # Acumular las ponderaciones en w_sorted_acum
+        w_sorted = @view base.w[sort_idx]
+        cumsum!(w_sorted_acum, w_sorted)
+
+        # Poner a cero las ponderaciones fuera de límites 
+        @inbounds for x in 1:g 
+            if w_sorted_acum[x] < l1 || w_sorted_acum[x] > l2
+                w_sorted_acum[x] = 0
+            else
+                w_sorted_acum[x] = 1
+            end
+        end
+
+        # Renormalizar las ponderaciones dentro de los límites 
+        w_sorted_renorm .= (w_sorted .* w_sorted_acum) 
+        w_sorted_renorm ./= sum(w_sorted_renorm)
+
+        # Computar promedio ponderado de variaciones dentro de límites
+        @inbounds outVec[i] = sum((@view v_month[sort_idx]) .* w_sorted_renorm)
     end
     
     outVec
