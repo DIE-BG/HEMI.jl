@@ -1,27 +1,25 @@
 
 # Funciones para evaluación
 
-function evalsim(data_eval, config, period=36)
+function evalsim(data_eval::CountryStructure, config::AbstractConfig, period=36)
   
-    paramfn = get_param_function(config.resamplefn)
     # Obtener la trayectoria paramétrica de inflación 
-    data_param = paramfn(data_eval)
-    totalrebasefn = InflationTotalRebaseCPI(period = period)
-    tray_infl_pob = totalrebasefn(data_param)
+    param = ParamTotalCPIRebase(config.resamplefn, config.trendfn)
+    tray_infl_pob = param(data_eval)
 
-    @info "Evaluación de medida de inflación" config.inflfn config.resamplefn config.nsim #b Ksim
+    @info "Evaluación de medida de inflación" measure_name(config.inflfn) method_name(config.resamplefn) method_name(config.trendfn) config.nsim 
 
     # Generar las trayectorias de inflación de simulación 
     tray_infl = pargentrayinfl(config.inflfn, # función de inflación
-        config.resamplefn, # remuestreo SBB
-        config.trendfn, # sin tendencia 
-        data_eval, # datos de evaluación hasta dic-20
+        config.resamplefn, # función de remuestreo
+        config.trendfn, # función de tendencia
+        data_eval, # datos de evaluación 
         rndseed = 0, K=config.nsim)
     println()
 
-      # Métricas de evaluación 
+    # Métricas de evaluación 
     println()
-      std_sim_error = std((tray_infl .- tray_infl_pob) .^ 2) / sqrt(config.nsim)
+    std_sim_error = std((tray_infl .- tray_infl_pob) .^ 2) / sqrt(config.nsim)
     mse = mean( (tray_infl .- tray_infl_pob) .^ 2) 
     rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2))
     me = mean((tray_infl .- tray_infl_pob))
