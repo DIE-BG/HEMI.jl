@@ -49,9 +49,14 @@ mtfn = InflationTrimmedMeanEq(15, 95.5)
 # to-do...
 
 # Obtenemos una función de inflación con recortes ponderados
-mtwfn = InflationTrimmedMeanWeighted(15, 95.5)
+mtwfn = InflationTrimmedMeanWeighted(15, 97)
 
 @btime mtwfn(gt00); 
 ## 1.166 ms (1681 allocations: 1.75 MiB)
+# 2.576 ms (1561 allocations: 1.07 MiB) - últimos cambios @djgabrielm 
+# 1.979 ms (1201 allocations: 857.44 KiB) - con pequeñas mejoras 
+# 992.800 μs (1211 allocations: 858.56 KiB) - dos hilos 
+# 1.980 ms (1081 allocations: 739.31 KiB) - otra pequeña mejora 
+# 987.500 μs (1091 allocations: 740.44 KiB) - con dos hilos 
 
 # mejorar un poco esta implementación 

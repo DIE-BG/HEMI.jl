@@ -1,10 +1,12 @@
 
 """
     InflationTrimmedMeanEq <: InflationFunction
+
 Función de inflación para computar la media truncada equiponderada
 
 ## Utilización
-    (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
+    function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
+
 Define cómo opera InflationTrimmedMeanEq sobre un objeto de tipo VarCPIBase.
 
 ### Ejemplo 
@@ -64,8 +66,11 @@ julia> measure_name(mtfn)
 "Media Truncada Equiponderada (15.5 , 75.5)"
 ```
 """
-measure_name(inflfn::InflationTrimmedMeanEq) = "Media Truncada Equiponderada (" * string(round(inflfn.l1, digits=2)) * ", " * string(round(inflfn.l2, digits=2)) * ")"
-
+function measure_name(inflfn::InflationTrimmedMeanEq) 
+    l1 = string(round(inflfn.l1, digits=2))
+    l2 = string(round(inflfn.l2, digits=2))
+    "Media Truncada Equiponderada (" * l1 * ", " * l2 * ")"
+end
 
 # Operación de InflationTrimmedMeanEq sobre VarCPIBase para obtener el resumen
 # intermensual de esta metodología
@@ -79,8 +84,8 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
     q2    = Int(floor(length(base.w) * l2 / 100))                       
     outVec   = Vector{T}(undef, periods(base)) 
     
-    if q1==0
-        q1=1
+    if q1 == 0
+        q1 = 1
     end
     
     # para cada t: ordenamos, truncamos y obtenemos la media.                      
