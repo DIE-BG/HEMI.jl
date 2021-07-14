@@ -45,3 +45,21 @@ Base.string(trendfn::TrendFunction) = method_name(trendfn)
 # # Extender definición de tipos permitidos para simulación
 DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function) #Real, 
 DrWatson.default_prefix(::AbstractConfig) = "HEMI"
+
+## método para convertir de AbstractConfig a Diccionario
+
+function convert_dict(config::AbstractConfig)
+    # Convert AbstractConfig a Diccionario
+    if typeof(config) == SimConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)}
+
+        dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, :nsim => config.nsim)     
+    
+    elseif typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
+
+        dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, 
+                    :nsim => config.nsim, :train_date => config.train_date, :eval_size => config.eval_size)    
+    
+    end
+    dict
+end
+

@@ -47,6 +47,7 @@ using Dates, CPIDataBase
 
     # Tipos para configuración de simulaciones
     export AbstractConfig, SimConfig, CrossEvalConfig
+    export convert_dict
     include("config/SimConfig.jl")
     
     ## Funciones de generación de trayectorias
@@ -55,7 +56,9 @@ using Dates, CPIDataBase
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
 
-
+    ## Funciones de Evaluación  
+    export evalsim
+    include("simulate/simutils.jl")
 
 
     ## Funciones en desarrollo 
