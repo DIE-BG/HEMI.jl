@@ -44,6 +44,12 @@ mtfn = InflationTrimmedMeanEq(15, 95.5)
 # Aunque hay una ligera mejora en tiempo, al reducir la utilización de memoria a
 # ≈1/3, el algoritmo es más eficiente al ser llamado N-mil veces. 
 
+# ## Prueba con dos hilos
+# Al cambiar el algoritmo para utilizar dos hilos, se obtiene una considerable mejora.
+
+@btime mtfn($gt00); 
+## 285.100 μs (492 allocations: 131.08 KiB)
+
 
 # ## Pruebas sobre InflationTrimmedMeanWeighted
 # to-do...
@@ -58,5 +64,6 @@ mtwfn = InflationTrimmedMeanWeighted(15, 97)
 # 992.800 μs (1211 allocations: 858.56 KiB) - dos hilos 
 # 1.980 ms (1081 allocations: 739.31 KiB) - otra pequeña mejora 
 # 987.500 μs (1091 allocations: 740.44 KiB) - con dos hilos 
+# 838.900 μs (500 allocations: 144.91 KiB) - prueba mas reciente
 
 # mejorar un poco esta implementación 

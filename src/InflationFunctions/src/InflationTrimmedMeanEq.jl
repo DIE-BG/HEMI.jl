@@ -80,16 +80,17 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
     l2 = inflfn.l2                                          
     
     # Determinamos en dónde truncar
-    q1    = Int(ceil(length(base.w) * l1 / 100))                        
-    q2    = Int(floor(length(base.w) * l2 / 100))                       
-    outVec   = Vector{T}(undef, periods(base)) 
+    q1      = Int(ceil(length(base.w) * l1 / 100))                        
+    q2      = Int(floor(length(base.w) * l2 / 100))                       
+    outVec  = Vector{T}(undef, periods(base)) 
     
     if q1 == 0
         q1 = 1
     end
-    
+
     # para cada t: ordenamos, truncamos y obtenemos la media.                      
-    for i in 1:periods(base)
+    Threads.@threads for i in 1:periods(base)
+
         # Creamos una vista de cada fila: ahora temporal almacena una referencia
         # a la fila de base.v, sin crear nueva memoria
         temporal = @view base.v[i,:]
@@ -103,9 +104,8 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
         
         # Por lo que la siguiente operación es la de obtener el promedio entre
         # dichas posiciones, sin reservar nueva memoria
-        outVec[i]  = mean(@view sorted[q1:q2])                                       
+        @inbounds outVec[i]  = mean(@view sorted[q1:q2])                                         
     end
-    
     return outVec
 end 
 
