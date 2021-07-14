@@ -29,43 +29,41 @@ function evalsim(data_eval::CountryStructure, config::AbstractConfig, period=36)
     mse, std_sim_error, rmse, me, tray_infl
 end
 
-function makesim(data, config)
+function makesim(data, params::Dict)
      # Obtener parámetros de simulación 
-    
+    config = dict_config(params) 
     
      # Ejecutar la simulación y obtener los resultados 
     mse, std_sim_error, rmse, me, tray_infl = evalsim(data, config)
 
     # Agregar resultados a diccionario 
-    results = copy(config)
-    results["mse_dist"] = mse_dist
-    results["mse"] = mse
-    results["std_mse"] = std_mse
-    results["std_sim_error"] = std_sim_error
-    results["rmse"] = rmse
-    results["me"] = me
+    results = copy(params)
+    results[:mse] = mse
+    results[:std_sim_error] = std_sim_error
+    results[:rmse] = rmse
+    results[:me] = me
 
     return results, tray_infl 
 end
 
-function run_batch(data, SimConfig, savepath, plotspath) 
+# function run_batch(data, SimConfig, savepath, plotspath) 
 
-    # Convertir SimConfig a Diccionario para usarlo en DrWatson (sim_params)
-        params = convert(SimConfig)
-    # Ejecutar lote de simulaciones 
-    for (i, params) in enumerate(sim_params)
-        @info "Ejecutando simulación $i..."
-        results = makesim(data, params, path=plotspath)
+#     # Convertir SimConfig a Diccionario para usarlo en DrWatson (sim_params)
+#         params = convert(SimConfig)
+#     # Ejecutar lote de simulaciones 
+#     for (i, params) in enumerate(sim_params)
+#         @info "Ejecutando simulación $i..."
+#         results = makesim(data, params, path=plotspath)
 
-        # Guardar los resultados 
-        filename = savename("eval", SimConfig, "jld2")
-        # Results para collect_results 
-        wsave(joinpath(savepath, filename), results)
-        # Trayectorias de inflación (ojo con la carpeta)
-        wsave(joinpath(savepath, filename), tray_infl)
-    end
+#         # Guardar los resultados 
+#         filename = savename("eval", SimConfig, "jld2")
+#         # Results para collect_results 
+#         wsave(joinpath(savepath, filename), results)
+#         # Trayectorias de inflación (ojo con la carpeta)
+#         wsave(joinpath(savepath, filename), tray_infl)
+#     end
 
-end
+# end
 
 
 ## Función para convertir diccionario a AbstractConfig

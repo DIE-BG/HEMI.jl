@@ -38,22 +38,13 @@ gtdata_eval = gtdata[Date(2020, 12)]
 
 evalsim(gtdata_eval, configA)
 
-makesim(gtdata_eval, configA)
-
-##
-gsbb_perc_params = Dict(
-    "infl_method" => "percentil", 
-    "resample_method" => "gsbb", 
-    "k" => collect(60:80), 
-    "b" => 0, 
-    "Ksim" => [10_000, 125_000]
-) |> dict_list
+## Convertir de Diccionario a AbstractConfig
 
 dict_prueba = Dict(
     :inflfn => totalfn, 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10_000)
+    :nsim => 1000)
 
 dict_pruebaB = Dict(
     :inflfn => totalfn, 
@@ -63,8 +54,8 @@ dict_pruebaB = Dict(
     :train_date => ff,
     :eval_size => sz)
 
-    
-    configD = SimConfig(dict_prueba[:inflfn], dict_prueba[:resamplefn], dict_prueba[:trendfn], dict_prueba[:nsim])    
-
     configD_a = dict_config(dict_prueba)
     configE = dict_config(dict_pruebaB)
+
+    dict_out, tray_inflacion = makesim(gtdata_eval, dict_prueba)
+    dict_out
