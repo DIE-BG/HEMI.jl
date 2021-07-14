@@ -7,6 +7,7 @@ module InflationFunctions
 
     using CPIDataBase
     using Statistics
+    using StatsBase
     using SparseArrays
 
     ## Métodos a extender 
@@ -34,7 +35,8 @@ module InflationFunctions
     export V
     export vposition, renormalize!, renorm_g_glp
     export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
-    include("InflationCoreMai.jl")
+    include("mai/TransversalDistr.jl")
+    include("mai/InflationCoreMai.jl")
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")

@@ -81,8 +81,9 @@ quantile(cgat, [0, 0.25, 0.5, 0.75, 1.])
 
 
 # ## Algoritmo MAI-G
+##
 
-n = 5
+n = 40
 p = (0:n) ./ n
 
 # Distribución gat del mes
@@ -115,7 +116,7 @@ hline!((1:n-1)/n)
 
 
 # ## MAI-G para toda la base 2000
-
+## 
 # Obtener distribución de cada período en la base 2000
 gdistr00 = WeightsDistr.(eachrow(gt00.v), Ref(gt00.w), Ref(V))
 

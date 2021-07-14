@@ -1,0 +1,1 @@
+## Función de inflación subyacente MAI (muestra ampliada implícitamente)

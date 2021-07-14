@@ -1,8 +1,11 @@
-# Función de inflación subyacente MAI (muestra ampliada implícitamente)
+# Definiciones para distribuciones dispersas de variaciones intermensuales
+# utilizadas en el cómputo de la medida de inflación subyacente MAI (muestra
+# ampliada implícitamente)
 
 # Grilla de variaciones intermensuales
 const V = range(-100, 100, step=0.01f0) # -100:0.01:100
 
+# Constante de normalización para ponderaciones 
 const WN = 1
 
 # Función de posición en grilla discreta vspace. Esta función requiere que la
@@ -11,6 +14,7 @@ function vposition(v, vspace)
 	v0 = (length(vspace) + 1) ÷ 2
 	eps = step(vspace) 
 	pos = v0 + round(Int, v / eps)
+    pos 
 end
 
 # Tipo abstracto para representar las distribuciones empíricas, dispersas o
@@ -53,7 +57,7 @@ function WeightsDistr(v::AbstractVector{T}, w::AbstractVector{T}, vspace) where 
     WeightsDistr(distr, vspace)
 end
 
-# Distribución acumulada (sin diferenciar?) 
+# Distribución transversal acumulada 
 struct AccumulatedDistr{T} <: TransversalDistr{T}
     distr::SparseVector{T, Int}
     vspace::StepRangeLen{T, Float64, Float64}
@@ -85,14 +89,14 @@ function Base.show(io::IO, tdistr::TransversalDistr)
 end
 
 
-## Métodos para distribuciones transversales 
+## Extendiendo métodos para distribuciones transversales 
 
-# Obtener el promedio
+# Obtener el promedio simple o ponderado según la distribución
 function Statistics.mean(tdistr::TransversalDistr) 
     tdistr.vspace' * tdistr.distr / WN
 end
 
-# Suma de la distribución
+# Suma de los valores en la distribución
 Base.sum(tdistr::TransversalDistr) = sum(tdistr.distr)
 
 # Obtener valor distribución en una variación intermensual 
@@ -104,7 +108,7 @@ function (tdistr::TransversalDistr)(v::Real)
 end
 
 
-## Métodos para distribución acumulada
+## Extendiendo métodos para distribuciones acumuladas
 
 # Obtener distribución acumulada de distribución dispersa
 function Base.cumsum(tdistr::TransversalDistr)
@@ -115,12 +119,14 @@ end
 
 # Obtener valor de distribución acumulada en una variación intermensual 
 function (tdistr::AccumulatedDistr{T})(v::Real) where T
+    # Obtener posición en la grilla 
     vpos = vposition(v, tdistr.vspace)
     
+    # Obtener índice de última variacióni intermensual guardada que sea mayor o
+    # igual a la buscada
     l = findlast(vpos .>= tdistr.distr.nzind)
     l === nothing && return zero(T)
     m = tdistr.distr.nzval[l]
-    
     m
 end
 
@@ -165,24 +171,20 @@ Statistics.quantile(cdistr::AccumulatedDistr, p::AbstractVector{T} where T <: Re
 # Renormalización de distribución g con distribución glp utilizando n segmentos
 function renorm_g_glp(g, glp, n)
 
-    # Percentiles con n segmentos 
+    # Percentiles con n segmentos y precisión
     p = (0:n) ./ n
+    ε = step(glp.vspace)
     
     # Obtener distribuciones acumuladas
     G = cumsum(g)
     GLP = cumsum(glp)
-
     # Obtener los percentiles de los n segmentos
     q_g = quantile(G, p)
     q_glp = quantile(GLP, p)
 
-    r̲, r̄ = InflationFunctions.get_special_segment(q_g, q_glp)
-    segments = union(1:r̲, r̄:n+1)
-
-    # Precisión ε
-    ε = step(glp.vspace)
-
-    @sync @info "Percentiles" q_g q_glp ε segments
+    # Obtener lista de segmentos para renormalizar
+    segments = get_segments(q_g, q_glp, n)
+    @debug "Percentiles y segmentos" q_g q_glp ε segments
 
     # Crear una copia de la distribución glp 
     glpₜ = deepcopy(glp)
@@ -197,8 +199,8 @@ function renorm_g_glp(g, glp, n)
         vl = i == length(segments) ? max(q_g[k], q_glp[k]) : q_g[k]
         norm_c = (G(vl) - G(v1)) / (GLP(vl) - GLP(v1))
 
-        isnan(norm_c) && continue # error("Error en normalización")
-        @info "Renormalizando segmento $i" t k q_g[t] q_g[k] norm_c
+        isnan(norm_c)&& continue # error("Error en normalización")
+        # @debug "Renormalizando segmento $i" t k q_g[t] q_g[k] norm_c
 
         # Si es el primer segmento, incluir el límite inferior.
         # De lo contrario, renormalizar a partir de la siguiente posición en la
@@ -227,7 +229,7 @@ function renormalize!(tdistr::TransversalDistr, a, b, k)
 end
 
 # Función para obtener segmento especial de renormalización 
-function get_special_segment(q_cp, q_lp)
+function get_segments(q_cp, q_lp, n)
     # Obtener número de percentiles que conforman segmento especial en la
     # disribución de largo plazo
     k̄ = findfirst(q_lp .> 0)
@@ -242,5 +244,6 @@ function get_special_segment(q_cp, q_lp)
     r̲ = min(k̲, s̲)
     r̄ = max(k̄, s̄)
     
-    r̲, r̄
+    # Devolver lista de segmentos para renormalizar
+    union(1:r̲, r̄:n+1)
 end
