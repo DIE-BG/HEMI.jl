@@ -1,7 +1,6 @@
-#using DrWatson: Dates
+# SimConfig.jl - Definición de tipos contenedores para parámetros de simulación
 using DrWatson
-
-#using InflationEvalTools
+import Base: show, summary
 
 # Tipo Abstracto para contenedores de parámetros de Simulación
 abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
@@ -40,6 +39,21 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
+
+# Base.showaxis
+function show(io::IO, config::AbstractConfig)
+
+        println(io, "|─> ", sprint(show, string("Función de Inflación:"," ",measure_tag(config.inflfn))))
+        println(io, "|─> ", sprint(show, string("Función de Remuestreo:"," ",method_tag(config.resamplefn))))
+        println(io, "|─> ", sprint(show, string("Función de Tendencia:"," ",method_tag(config.trendfn))))
+        println(io, "|─> ", sprint(show, string("Cantidad de Simuaciones:", " ", config.nsim)))
+        if typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
+            println(io, "|─> ", sprint(show, string("Fin Set de entrenamiento:", " ", config.train_date)))
+            println(io, "|─> ", sprint(show, string("Meses de evaluación:", " ", config.eval_size)))
+        end
+end
+
+
 
 
 # # Extender definición de tipos permitidos para simulación
