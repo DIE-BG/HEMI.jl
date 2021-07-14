@@ -63,13 +63,13 @@ DrWatson.default_prefix(::AbstractConfig) = "HEMI"
 ## método para convertir de AbstractConfig a Diccionario
 
 function convert_dict(config::AbstractConfig)
-    # Convert AbstractConfig a Diccionario
+   
     if typeof(config) == SimConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)}
-
+        # Convertir SimConfig a Diccionari
         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, :nsim => config.nsim)     
     
     elseif typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
-
+        # Convertir CrossEvalConfig a Diccionario
         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, 
                     :nsim => config.nsim, :train_date => config.train_date, :eval_size => config.eval_size)    
     
