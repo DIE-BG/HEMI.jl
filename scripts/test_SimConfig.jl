@@ -1,8 +1,9 @@
-## 
+# # Script de prueba para tipos que especifican variantes de simulación
 using DrWatson
-# @quickactivate HEMI 
-##
-# using HEMI
+@quickactivate "HEMI"
+
+# ## Cargamos paquete de evaluación
+using HEMI
 
 
 ## Obtener un ejemplo 

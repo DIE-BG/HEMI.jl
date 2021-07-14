@@ -38,12 +38,12 @@ end
 
 # Configuraciones necesarias para mostrar nombres de funciones en savename
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
-Base.string(resamplefn::ResampleFunction) = method_name(resamplefn)
-Base.string(trendfn::TrendFunction) = method_name(trendfn)
+Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
+Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 
 
 # # Extender definición de tipos permitidos para simulación
-DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function) #Real, 
+DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function, Real) 
 DrWatson.default_prefix(::AbstractConfig) = "HEMI"
 
 ## método para convertir de AbstractConfig a Diccionario
