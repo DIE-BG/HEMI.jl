@@ -25,7 +25,7 @@ using Dates, CPIDataBase
 
     # Método de remuestreo de remuestreo utilizando selección de mismos meses de
     # ocurrencia
-    include("resample/scramblevar.jl")
+    include("resample/ResampleScrambleVarMonths.jl")
     # Método de remuestreo con Stationary Block Bootstrap
     include("resample/ResampleSBB.jl")
     # Método de remuestreo con Generalized Seasonal Block Bootstrap modificado
