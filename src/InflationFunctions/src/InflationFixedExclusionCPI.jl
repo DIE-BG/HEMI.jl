@@ -105,3 +105,6 @@ function (inflfn::InflationFixedExclusionCPI)(cs::CountryStructure, ::CPIVarInte
     vm = mapfoldl(i -> inflfn(cs.base[i],i), vcat, 1:l)
     vm
 end
+
+# Cambio en el measure_tag para mostrar la cantidad de elementos excluidos en cada base
+# measure_tag(inflfn::InflationFixedExclusionCPI) = string("Exc. fija (00,10): ", length(inflfn.v_exc[1]),",", length(inflfn.v_exc[2]))

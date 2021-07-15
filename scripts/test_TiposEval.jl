@@ -166,7 +166,7 @@ scramble_perc_params = Dict(
     "Ksim" => [10_000, 125_000]) |> dict_list
 
 # sim_params = vcat(scramble_perc_params)
-sim_params = vcat(gsbb_perc_params, sbb_perc_params, gsbb_total_params, sbb_total_params)
+sim_params = vcat(gsbb_perc_params, gsbb_total_params, sbb_total_params)#sbb_perc_params, 
 # sim_params = vcat(gsbb_total_params, sbb_total_params)
 
 

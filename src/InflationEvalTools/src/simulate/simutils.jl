@@ -1,7 +1,7 @@
 
 # Funciones para evaluación
 
-function evalsim(data_eval::CountryStructure, config::AbstractConfig, period=36)
+function evalsim(data_eval::CountryStructure, config::SimConfig)
   
     # Obtener la trayectoria paramétrica de inflación 
     param = ParamTotalCPIRebase(config.resamplefn, config.trendfn)
@@ -29,14 +29,15 @@ function evalsim(data_eval::CountryStructure, config::AbstractConfig, period=36)
     mse, std_sim_error, rmse, me, tray_infl
 end
 
-function makesim(data, params::Dict)
+function makesim(data, config:::AbstractConfig)#params::Dict)
      # Obtener parámetros de simulación 
-    config = dict_config(params) 
+    # config = dict_config(params) 
     
      # Ejecutar la simulación y obtener los resultados 
     mse, std_sim_error, rmse, me, tray_infl = evalsim(data, config)
 
     # Agregar resultados a diccionario 
+    params=(struct2dict(config))
     results = copy(params)
     results[:mse] = mse
     results[:std_sim_error] = std_sim_error
@@ -46,24 +47,23 @@ function makesim(data, params::Dict)
     return results, tray_infl 
 end
 
-# function run_batch(data, SimConfig, savepath, plotspath) 
+function run_batch(data, sim_params, savepath)#, plotspath) 
 
-#     # Convertir SimConfig a Diccionario para usarlo en DrWatson (sim_params)
-#         params = convert(SimConfig)
-#     # Ejecutar lote de simulaciones 
-#     for (i, params) in enumerate(sim_params)
-#         @info "Ejecutando simulación $i..."
-#         results = makesim(data, params, path=plotspath)
+    # Ejecutar lote de simulaciones 
+    for (i, params) in enumerate(sim_params)
+        @info "Ejecutando simulación $i..."
+        
+        results = makesim(data, params)
 
-#         # Guardar los resultados 
-#         filename = savename("eval", SimConfig, "jld2")
-#         # Results para collect_results 
-#         wsave(joinpath(savepath, filename), results)
-#         # Trayectorias de inflación (ojo con la carpeta)
-#         wsave(joinpath(savepath, filename), tray_infl)
-#     end
+        # Guardar los resultados 
+        filename = savename(params, "jld2")
+        # Results para collect_results 
+        wsave(joinpath(savepath, filename), results)
+        # Trayectorias de inflación (ojo con la carpeta)
+        wsave(joinpath(savepath, filename), tray_infl)
+    end
 
-# end
+end
 
 
 ## Función para convertir diccionario a AbstractConfig

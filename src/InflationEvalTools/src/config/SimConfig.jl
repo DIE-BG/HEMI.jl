@@ -60,20 +60,21 @@ end
 DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function, Real) 
 DrWatson.default_prefix(::AbstractConfig) = "HEMI"
 
-## método para convertir de AbstractConfig a Diccionario
+## método para convertir de AbstractConfig a Diccionario 
+# Esto lo hace la función struct2dict() de DrWatson
 
-function convert_dict(config::AbstractConfig)
+# function convert_dict(config::AbstractConfig)
    
-    if typeof(config) == SimConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)}
-        # Convertir SimConfig a Diccionari
-        dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, :nsim => config.nsim)     
+#     if typeof(config) == SimConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)}
+#         # Convertir SimConfig a Diccionari
+#         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, :nsim => config.nsim)     
     
-    elseif typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
-        # Convertir CrossEvalConfig a Diccionario
-        dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, 
-                    :nsim => config.nsim, :train_date => config.train_date, :eval_size => config.eval_size)    
+#     elseif typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
+#         # Convertir CrossEvalConfig a Diccionario
+#         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, 
+#                     :nsim => config.nsim, :train_date => config.train_date, :eval_size => config.eval_size)    
     
-    end
-    dict
-end
+#     end
+#     dict
+# end
 
