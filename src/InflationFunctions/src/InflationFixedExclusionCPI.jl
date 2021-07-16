@@ -75,7 +75,7 @@ InflationFixedExclusionCPI(v_exc...) = InflationFixedExclusionCPI(v_exc)
 
 # Extender el método de nombre y de tag
 measure_name(inflfn::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos" * string(inflfn.v_exc)
-measure_tag(inflfn::InflationFixedExclusionCPI) = "FxExCPI" * string(" ",length(inflfn.v_exc[1])," ",length(inflfn.v_exc[2]))
+measure_tag(inflfn::InflationFixedExclusionCPI) = "FxExCPI " * string(hash(inflfn.v_exc)) #string(" ",length(inflfn.v_exc[1])," ",length(inflfn.v_exc[2]))
 
 # Cómputo del resumen intermensual utilizando la lista de exclusión i
 function (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}, i::Int) where T 

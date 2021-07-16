@@ -124,4 +124,3 @@ plot(collect(60:80), df.mse)
 plot!(title = " MSE Percentiles Equiponderados", 
         xlabel= "Percentil", ylabel = "MSE")
 
-
