@@ -6,18 +6,17 @@ using DrWatson
 using HEMI
 
 
-## Obtener un ejemplo 
-
 # Datos hasta diciembre 2020
 gtdata_eval = gtdata[Date(2020, 12)]
 
-## Parámetros de simulación
+## Definición de Parámetros de simulación
 
 # Funciones de inflación
 # Inflación Total
 totalfn = InflationTotalCPI()
 # Percentil Equiponderado
 percEq = InflationPercentileEq(80)
+percPond = InflationPercentileWeighted(20)
 # Exclusión Fija 
 excOpt00 = [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
 excOpt10 = [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]
@@ -32,12 +31,12 @@ trendfn = TrendRandomWalk()
 # sz = 24
 
 
-## Crear una configuraciones de pruebaa 
+## Creación de configuraciones de prueba usando objetos AbstractConfig.
 configA = SimConfig(totalfn, resamplefn, trendfn, 1000)
 configB = SimConfig(fxEx, resamplefn, trendfn, 1000)
 configC = SimConfig(percEq, resamplefn, trendfn, 1000)
 
-## Función savename (DrWatson), para mnombres de archivos de resultados 
+## Creación de nombres para almacenar archivos (función savename de DrWatson)
 savename(configA, connector=" | ", equals=" = ")
 savename(configB, connector=" | ", equals=" = ")
 savename(configC, connector=" | ", equals=" = ")
@@ -85,7 +84,7 @@ dict_pruebaC = Dict(
 
 ## FUNCIONES 
 
-# 1. Prueba de función evalsim (). 
+# 1. Prueba de función evalsim(). 
 # Esta función recibe un CountryStructure y un AbstractConfig.
 # Esta función realiza todos los cálculos asociados a la evaluación.
 
@@ -94,24 +93,35 @@ dict_pruebaC = Dict(
 # 2. Prueba de Función MakeSim 
 # Esta función recibe un CountryStructure y un AbstractConfig
 # Realiza los cálculos por medio de la función evalsim y devuelve un diccionario con las métricas de evaluación y un "cubo" con las trayectorias de inflación.
-    dict_out, tray_inflacion = makesim(gtdata_eval, configA)
+    dict_out, tray_inflacion = makesim(gtdata_eval, configB)
     dict_out
 
 
 # 3. Función run_batch
-## Esta función recibe un CountryStructure y un vector con diccionarios con parámetros de evaluación 
+## Esta función recibe un CountryStructure, un vector con diccionarios con parámetros de evaluación y una ruta para almacenar los resultados.
 
-# Por ejemplo, podemos concatenar dict_prueba (percentiles) y dict_pruebaC (Exclusión Fija)
-sims = vcat(dict_prueba, dict_pruebaC)
+# Por ejemplo, podemos concatenar dict_prueba (percentiles), dict_pruebaB (Inflación Total) y dict_pruebaC (Exclusión Fija)
+sims = vcat(dict_prueba, dict_pruebaB, dict_pruebaC)
 
 # Paths de prueba
 savepath = "C:\\Users\\MJGM\\Desktop\\prueba"
-savepath2 = "C:\\Users\\MJGM\\Desktop\\prueba2"
 
-
+# Prueba de run_batch unicamente con el vector de configuraciones para los percentiles del 60 al 80
 run_batch(gtdata_eval, dict_prueba, savepath)
 
 
+## revisión de resultados
+# La función collect_results recoje todos los resultados almacenados en savepath y los almacena en un DataFrame
 df = collect_results(savepath)
 
-sort!(df, "mse")
+minimum(df[!,"mse"])
+
+sorted_df = sort(df, "mse")
+
+using Plots
+
+plot(collect(60:80), df.mse)
+plot!(title = " MSE Percentiles Equiponderados", 
+        xlabel= "Percentil", ylabel = "MSE")
+
+

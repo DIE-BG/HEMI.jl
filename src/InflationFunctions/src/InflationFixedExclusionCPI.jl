@@ -73,8 +73,9 @@ end
 # Ampliación para que reciba solo los vectores, no necesariamente como una tupla.
 InflationFixedExclusionCPI(v_exc...) = InflationFixedExclusionCPI(v_exc)
 
-# Extender el método de nombre 
-measure_name(::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos"
+# Extender el método de nombre y de tag
+measure_name(inflfn::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos" * string(inflfn.v_exc)
+measure_tag(inflfn::InflationFixedExclusionCPI) = "FxExCPI" * string(" ",length(inflfn.v_exc[1])," ",length(inflfn.v_exc[2]))
 
 # Cómputo del resumen intermensual utilizando la lista de exclusión i
 function (inflfn::InflationFixedExclusionCPI)(base::VarCPIBase{T}, i::Int) where T 
@@ -106,5 +107,4 @@ function (inflfn::InflationFixedExclusionCPI)(cs::CountryStructure, ::CPIVarInte
     vm
 end
 
-# Cambio en el measure_tag para mostrar la cantidad de elementos excluidos en cada base
-# measure_tag(inflfn::InflationFixedExclusionCPI) = string("Exc. fija (00,10): ", length(inflfn.v_exc[1]),",", length(inflfn.v_exc[2]))
+

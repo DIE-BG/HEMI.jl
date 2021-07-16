@@ -18,7 +18,6 @@ function evalsim(data_eval::CountryStructure, config::SimConfig)
     println()
 
     # Métricas de evaluación 
-    println()
     std_sim_error = std((tray_infl .- tray_infl_pob) .^ 2) / sqrt(config.nsim)
     mse = mean( (tray_infl .- tray_infl_pob) .^ 2) 
     rmse = mean( sqrt.((tray_infl .- tray_infl_pob) .^ 2))
@@ -54,7 +53,7 @@ function run_batch(data, sim_params, savepath)
         results, tray_infl = makesim(data, config)
 
         # Guardar los resultados 
-        filename = savename(config, "jld2", connector=" - ", equals=" = ")
+        filename = savename(config, "jld2", connector= " - ", equals=" = ")
         # Results para collect_results 
         wsave(joinpath(savepath, filename), tostringdict(results))
         # Trayectorias de inflación (ojo con la carpeta)

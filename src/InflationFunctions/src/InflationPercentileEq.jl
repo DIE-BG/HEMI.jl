@@ -89,6 +89,7 @@ julia> measure_name(percEqfn)
 ```
 """
 measure_name(inflfn::InflationPercentileEq) = "Percentil equiponderado " * string(round(100inflfn.k, digits=2))
+measure_tag(inflfn::InflationPercentileEq) = "PEQ " * string(round(100inflfn.k, digits=2))
 
 # Las funciones sobre VarCPIBase resumen en variaciones intermensuales
 function (inflfn::InflationPercentileEq)(base::VarCPIBase{T}) where T 
