@@ -29,10 +29,8 @@ function evalsim(data_eval::CountryStructure, config::SimConfig)
     mse, std_sim_error, rmse, me, tray_infl
 end
 
-function makesim(data, config:::AbstractConfig)#params::Dict)
-     # Obtener parámetros de simulación 
-    # config = dict_config(params) 
-    
+function makesim(data, config::AbstractConfig)
+        
      # Ejecutar la simulación y obtener los resultados 
     mse, std_sim_error, rmse, me, tray_infl = evalsim(data, config)
 
@@ -47,20 +45,20 @@ function makesim(data, config:::AbstractConfig)#params::Dict)
     return results, tray_infl 
 end
 
-function run_batch(data, sim_params, savepath)#, plotspath) 
+function run_batch(data, sim_params, savepath)
 
     # Ejecutar lote de simulaciones 
     for (i, params) in enumerate(sim_params)
         @info "Ejecutando simulación $i..."
-        
-        results = makesim(data, params)
+        config = dict_config(params) 
+        results, tray_infl = makesim(data, config)
 
         # Guardar los resultados 
-        filename = savename(params, "jld2")
+        filename = savename(config, "jld2", connector=" - ", equals=" = ")
         # Results para collect_results 
-        wsave(joinpath(savepath, filename), results)
+        wsave(joinpath(savepath, filename), tostringdict(results))
         # Trayectorias de inflación (ojo con la carpeta)
-        wsave(joinpath(savepath, filename), tray_infl)
+        wsave(joinpath(savepath, filename),"tray_infl", tray_infl)
     end
 
 end

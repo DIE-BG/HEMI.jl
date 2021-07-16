@@ -57,7 +57,7 @@ using Dates, CPIDataBase
     include("simulate/pargentrayinfl.jl") 
 
     ## Funciones de Evaluación  
-    export evalsim, makesim, dict_config #run_batch
+    export evalsim, makesim, dict_config, run_batch
     include("simulate/simutils.jl")
 
 
