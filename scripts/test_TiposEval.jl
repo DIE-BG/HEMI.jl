@@ -8,7 +8,8 @@
 # transversal de variaciones intermensuales. 
 
 using DrWatson
-@quickactivate "bootstrap_dev"
+@quickactivate :HEMI
+# @quickactivate "bootstrap_dev"
 
 ## Cargar datos 
 using HEMI
@@ -29,13 +30,13 @@ end
 gtdata_eval = gtdata[Date(2020, 12)]
 
 
-
 ## Funciones para generar lote de simulaciones con DrWatson
 
 # Los argumentos son strings o numéricos y dentro de la función se generan los
 # valores y tipos adecuados para llevar a cabo la simulación 
 function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125_000, plotspath = nothing, period = 36)
     # Configurar la función de inflación 
+    # ampliar para el resto de funciones de inflación o mejorar método de selección
     if infl_method == "total"
         inflfn = InflationTotalCPI() 
     elseif infl_method == "percentil"
@@ -44,6 +45,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
 
     # Configurar el método de remuestreo y función para obtener variaciones
     # intermensuales paramétricas
+    # idem?
     if resample_method == "sbb"
         resamplefn = ResampleSBB(b)
     elseif resample_method == "gsbb"
@@ -101,6 +103,7 @@ results = evalsim(gtdata_eval, "total", "sbb", 64, 36, Ksim = 10000, period = 60
 
 function makesim(data, params::Dict; path = nothing)
     # Obtener parámetros de simulación 
+    # ¿De donde vienen? 
     @unpack infl_method, resample_method, k, b, Ksim = params
 
     # Ejecutar la simulación y obtener los resultados 
@@ -197,7 +200,7 @@ using DataFrames
 
 # Obtener los resultados del directorio de simulaciones 
 df = collect_results(savepath)
-
+ 
 ## Inspeccionar el DataFrame
 select(df, Not(:mse_dist))
 

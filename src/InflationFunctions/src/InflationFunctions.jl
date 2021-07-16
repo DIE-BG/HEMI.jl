@@ -7,6 +7,7 @@ module InflationFunctions
 
     using CPIDataBase
     using Statistics
+    using StatsBase
 
     ## Métodos a extender 
     import CPIDataBase: measure_name, measure_tag
@@ -18,7 +19,11 @@ module InflationFunctions
 
     ## Percentiles equiponderados
     export InflationPercentileEq
-    include("percentiles_eq.jl")
+    include("InflationPercentileEq.jl")
+
+    ## Percentiles ponderados
+    export InflationPercentileWeighted
+    include("InflationPercentileWeighted.jl")
 
     ## Variación interanual IPC con cambio de base sintético 
     export InflationTotalRebaseCPI
@@ -31,6 +36,10 @@ module InflationFunctions
     ## Media Truncada Ponderada 
     export InflationTrimmedMeanWeighted
     include("InflationTrimmedMeanWeighted.jl")
+
+    ## Exclusión Fija de gastos básicos
+    export InflationFixedExclusionCPI
+    include("InflationFixedExclusionCPI.jl")
 
 
     ## Desarrollo 

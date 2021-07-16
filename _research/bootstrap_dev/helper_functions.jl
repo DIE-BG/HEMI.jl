@@ -3,7 +3,9 @@
 
 using LinearAlgebra, Distributions
 using ProgressMeter
+using StatsBase
 using OnlineStats
+using Plots
 
 ## Obtener residuos de las variaciones intermensuales promedio
 function monthavg(vmat)

@@ -13,9 +13,15 @@ module HEMI
     @reexport using Statistics
     @reexport using JLD2 
 
+    # Reexportar funciones de inflación y de evaluación 
+    @reexport using InflationFunctions
+    @reexport using InflationEvalTools
+
     ## Carga de datos de Guatemala
     datafile = datadir("guatemala", "gtdata32.jld2")
+    @show datafile
     if isfile(datafile)
+        #INFO
         @info "Cargando datos de Guatemala" _module=Main
         @load datafile gt00 gt10
         gtdata = UniformCountryStructure(gt00, gt10)
