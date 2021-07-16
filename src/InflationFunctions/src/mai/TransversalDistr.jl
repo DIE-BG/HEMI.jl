@@ -2,9 +2,6 @@
 # utilizadas en el cómputo de la medida de inflación subyacente MAI (muestra
 # ampliada implícitamente)
 
-# Grilla de variaciones intermensuales
-const V = range(-100, 100, step=0.01f0) # -100:0.01:100
-
 # Constante de normalización para ponderaciones 
 const WN = 1
 
@@ -91,6 +88,16 @@ end
 
 ## Extendiendo métodos para distribuciones transversales 
 
+# Método para sumar dos distribuciones f o g. 
+# ¡Supone que a y b tienen el mismo vspace!
+function Base.:+(a::TransversalDistr, b::TransversalDistr)
+    # Combinar los vectores de distribución y normalizar
+    sparsedistr = (a.distr + b.distr) / 2
+    # Obtener el tipo concreto para la distribución 
+    TypeDistr = typeof(a)
+    TypeDistr(sparsedistr, a.vspace)
+end
+
 # Obtener el promedio simple o ponderado según la distribución
 function Statistics.mean(tdistr::TransversalDistr) 
     tdistr.vspace' * tdistr.distr / WN
@@ -166,84 +173,42 @@ Statistics.quantile(cdistr::AccumulatedDistr, p::AbstractVector{T} where T <: Re
 
 
 
-## Funciones para renormalización y cómputo de MAI
+## Métodos para generar distribuciones a partir de VarCPIBase y CountryStructure
+# ... to do
 
-# Renormalización de distribución g con distribución glp utilizando n segmentos
-function renorm_g_glp(g, glp, n)
+function ObservationsDistr(base::VarCPIBase{T}, vspace) where T
 
-    # Percentiles con n segmentos y precisión
-    p = (0:n) ./ n
-    ε = step(glp.vspace)
+    # Obtener años completos en la base
+    full_years = periods(base) ÷ 12
+
+    v = view(base.v[1:12*full_years, :], :)
+
+    # Obtener posiciones de variaciones en vspace
+    vpos = vposition.(v, Ref(vspace))
+    # Obtener las ponderaciones 
+    l = length(v)
+    w = ones(T, l) * T(WN / l)
     
-    # Obtener distribuciones acumuladas
-    G = cumsum(g)
-    GLP = cumsum(glp)
-    # Obtener los percentiles de los n segmentos
-    q_g = quantile(G, p)
-    q_glp = quantile(GLP, p)
-
-    # Obtener lista de segmentos para renormalizar
-    segments = get_segments(q_g, q_glp, n)
-    @debug "Percentiles y segmentos" q_g q_glp ε segments
-
-    # Crear una copia de la distribución glp 
-    glpₜ = deepcopy(glp)
-
-    # Renormalizar cada segmento
-    for i in 2:length(segments)
-        k = segments[i]
-        t = segments[i-1]
-
-        # Renormalizar el segmento 
-        v1 = i == 2 ? min(q_g[t], q_glp[t]) : q_g[t]
-        vl = i == length(segments) ? max(q_g[k], q_glp[k]) : q_g[k]
-        norm_c = (G(vl) - G(v1)) / (GLP(vl) - GLP(v1))
-
-        isnan(norm_c)&& continue # error("Error en normalización")
-        # @debug "Renormalizando segmento $i" t k q_g[t] q_g[k] norm_c
-
-        # Si es el primer segmento, incluir el límite inferior.
-        # De lo contrario, renormalizar a partir de la siguiente posición en la
-        # grilla
-        if i == 2
-            renormalize!(glpₜ, v1, vl, norm_c)
-        else
-            renormalize!(glpₜ, v1 + ε, vl, norm_c)
-        end
-    end
-
-    # Devolver la distribución renormalizada
-    glpₜ
+    # # Obtener distribución dispersa
+    distr = sparsevec(vpos, w, length(vspace))
+    ObservationsDistr(distr, vspace)
 end
 
-# Función para renormalizar segmento dado entre dos variaciones intermensuales a y b
-# por el valor k
-function renormalize!(tdistr::TransversalDistr, a, b, k)
-    # Obtener índices de variaciones a y b en vspace
-    ia = vposition(a, tdistr.vspace)
-    ib = vposition(b, tdistr.vspace)
 
-    # Renormalizar el vector de distribución subyacente 
-    @views tdistr.distr[ia:ib] .*= k
-    nothing
-end
+# function WeightsDistr(base::VarCPIBase{T}, vspace) where T
 
-# Función para obtener segmento especial de renormalización 
-function get_segments(q_cp, q_lp, n)
-    # Obtener número de percentiles que conforman segmento especial en la
-    # disribución de largo plazo
-    k̄ = findfirst(q_lp .> 0)
-    k̲ = findlast(q_lp .< 0)
+#     # Obtener años completos en la base
+#     full_years = periods(base) ÷ 12
+
+#     v = view(base.v[1:12*full_years, :], :)
+
+#     # Obtener posiciones de variaciones en vspace
+#     vpos = vposition.(v, Ref(vspace))
+#     # Obtener las ponderaciones 
+#     l = length(v)
+#     w = ones(T, l) * T(WN / l)
     
-    # Obtener número de percentiles que conforman segmento especial en la
-    # disribución del mes o ventana
-    s̄ = findfirst(q_cp .> 0)
-    s̲ = findlast(q_cp .< 0)
-    
-    # Obtener los números comunes
-    r̲ = min(k̲, s̲)
-    r̄ = max(k̄, s̄)
-    
-    # Devolver lista de segmentos para renormalizar
-    union(1:r̲, r̄:n+1)
-end
+#     # # Obtener distribución dispersa
+#     distr = sparsevec(vpos, w, length(vspace))
+#     ObservationsDistr(distr, vspace)
+# end

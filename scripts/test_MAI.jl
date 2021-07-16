@@ -101,7 +101,7 @@ pk_glp = quantile(GLP, p)
 GLP.(pk_g)
 
 # Renormalizar distribución 
-glpt = renorm_g_glp(gat, glp, n)
+glpt = renorm_g_glp(cgat, GLP, glp, n)
 sum(glpt), mean(glpt) 
 
 # Prueba con gráfica 
@@ -125,3 +125,9 @@ glpt00 = renorm_g_glp.(gdistr00, Ref(glp), n)
 
 # Obtener la variación intermensual 
 mai_g = mean.(glpt00)
+
+
+# ## Instanciar función de inflación 
+
+# maifn = InflationCoreMai(MaiF(4))
+maifn = InflationCoreMai([MaiF(4), MaiG(4), MaiF(5), MaiG(5)])

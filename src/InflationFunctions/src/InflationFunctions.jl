@@ -36,6 +36,7 @@ module InflationFunctions
     export vposition, renormalize!, renorm_g_glp
     export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
     include("mai/TransversalDistr.jl")
+    include("mai/renormalize.jl")
     include("mai/InflationCoreMai.jl")
 
     ## Desarrollo 
