@@ -17,7 +17,7 @@ using Dates, CPIDataBase
     using Reexport
 
     ## Funciones de remuestreo de bases del IPC
-    export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths
+    export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths, ResampleGSBBMod
     export get_param_function, method_name, method_tag
     
     # Métodos generales para funciones de remuestreo 
@@ -25,11 +25,14 @@ using Dates, CPIDataBase
 
     # Método de remuestreo de remuestreo utilizando selección de mismos meses de
     # ocurrencia
-    include("resample/scramblevar.jl")
+    include("resample/ResampleScrambleVarMonths.jl")
     # Método de remuestreo con Stationary Block Bootstrap
-    include("resample/stationary_block_bootstrap.jl")
-    # Método de remuestreo con Generalized Seasonal Block Bootstrap
-    include("resample/generalized_seasonal_block_bootstrap.jl")
+    include("resample/ResampleSBB.jl")
+    # Método de remuestreo con Generalized Seasonal Block Bootstrap modificado
+    # para 300 observaciones de salida
+    include("resample/ResampleGSBBMod.jl")
+    # Método de remuestreo con Generalized Seasonal Block Bootstrap 
+    include("resample/ResampleGSBB.jl")
     
     ## Funciones para aplicación de tendencia
     export RWTREND

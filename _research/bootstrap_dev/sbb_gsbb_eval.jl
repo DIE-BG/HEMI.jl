@@ -47,7 +47,7 @@ function evalsim(data_eval, infl_method, resample_method, k=70, b=12; Ksim = 125
     if resample_method == "sbb"
         resamplefn = ResampleSBB(b)
     elseif resample_method == "gsbb"
-        resamplefn = ResampleGSBB() 
+        resamplefn = ResampleGSBBMod() 
     elseif resample_method == "scramble"
         resamplefn = ResampleScrambleVarMonths() 
     end 
