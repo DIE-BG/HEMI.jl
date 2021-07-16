@@ -112,6 +112,6 @@ savepath2 = "C:\\Users\\MJGM\\Desktop\\prueba2"
 run_batch(gtdata_eval, dict_prueba, savepath)
 
 
-
 df = collect_results(savepath)
-#df2 = collect_results(savepath2)
+
+sort!(df, "mse")

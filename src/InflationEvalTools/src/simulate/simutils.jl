@@ -58,7 +58,7 @@ function run_batch(data, sim_params, savepath)
         # Results para collect_results 
         wsave(joinpath(savepath, filename), tostringdict(results))
         # Trayectorias de inflación (ojo con la carpeta)
-        wsave(joinpath(savepath, filename),"tray_infl", tray_infl)
+        wsave(joinpath(string(savepath, "\\tray_infl"), filename),"tray_infl", tray_infl)
     end
 
 end

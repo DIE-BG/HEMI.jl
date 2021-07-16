@@ -36,14 +36,14 @@ end
 
 
 # Configuraciones necesarias para mostrar nombres de funciones en savename
-Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
+Base.string(inflfn::InflationFunction) = measure_name(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 
 # Base.showaxis
 function show(io::IO, config::AbstractConfig)
 
-        println(io, "|─> ", sprint(show, string("Función de Inflación:"," ",measure_tag(config.inflfn))))
+        println(io, "|─> ", sprint(show, string("Función de Inflación:"," ",measure_name(config.inflfn))))
         println(io, "|─> ", sprint(show, string("Función de Remuestreo:"," ",method_tag(config.resamplefn))))
         println(io, "|─> ", sprint(show, string("Función de Tendencia:"," ",method_tag(config.trendfn))))
         println(io, "|─> ", sprint(show, string("Cantidad de Simuaciones:", " ", config.nsim)))
