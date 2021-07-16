@@ -6,9 +6,9 @@ inflación.
 """
 module InflationEvalTools
 
-    using CPIDataBase: DATETYPE
-using Dates: DATEEPOCH
-using Dates, CPIDataBase
+    using DrWatson 
+    using Dates
+    using CPIDataBase
     using InflationFunctions
     using Random, Distributions
     using ProgressMeter

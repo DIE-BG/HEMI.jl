@@ -6,6 +6,9 @@ end
 
 measure_name(::InflationTotalRebaseCPI) = "Variación interanual IPC con CB"
 
+# Parámetros
+params(totalrebasefn::InflationTotalRebaseCPI) = (totalrebasefn.period, )
+
 # Computar variación intermensual resumen de medida de inflación aplicando
 # metodología de cambio de base sintético
 function (totalrebasefn::InflationTotalRebaseCPI)(base::VarCPIBase)

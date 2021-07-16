@@ -10,7 +10,7 @@ module InflationFunctions
     using StatsBase
 
     ## Métodos a extender 
-    import CPIDataBase: measure_name, measure_tag
+    import CPIDataBase: measure_name, measure_tag, params
 
     
     ## Media simple interanual 

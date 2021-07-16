@@ -2,8 +2,12 @@
 using DrWatson
 @quickactivate "HEMI"
 
+# ## Computación paralela 
+using Distributed
+addprocs(4, exeflags="--project")
+
 # ## Cargamos paquete de evaluación
-using HEMI
+@everywhere using HEMI
 
 
 # Datos hasta diciembre 2020
@@ -35,6 +39,8 @@ trendfn = TrendRandomWalk()
 configA = SimConfig(totalfn, resamplefn, trendfn, 1000)
 configB = SimConfig(fxEx, resamplefn, trendfn, 1000)
 configC = SimConfig(percEq, resamplefn, trendfn, 1000)
+# configC = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
+
 
 ## Creación de nombres para almacenar archivos (función savename de DrWatson)
 savename(configA, connector=" | ", equals=" = ")
@@ -74,12 +80,13 @@ dict_pruebaC = Dict(
         :trendfn => trendfn,
         :nsim => 1000) |> dict_list
 
-# Función dict_config para pasar de Diccionario a AbstractConfig, se utilizará dentro de la función run_batch, 
-# previo a darle la información a la información a la función makesim.
+# Función dict_config para pasar de Diccionario a AbstractConfig, se utilizará
+# dentro de la función run_batch, previo a darle la información a la información
+# a la función makesim.
 
-    configD_a = dict_config(dict_prueba)
-    configC_a = dict_config(dict_pruebaC)
-    configE = dict_config(dict_pruebaB)
+configD_a = dict_config.(dict_prueba)
+configC_a = dict_config.(dict_pruebaC)
+configE = dict_config.(dict_pruebaB)
 
 
 ## FUNCIONES 
@@ -88,30 +95,35 @@ dict_pruebaC = Dict(
 # Esta función recibe un CountryStructure y un AbstractConfig.
 # Esta función realiza todos los cálculos asociados a la evaluación.
 
-    evalsim(gtdata_eval, configA)
+evalsim(gtdata_eval, configA)
 
 # 2. Prueba de Función MakeSim 
 # Esta función recibe un CountryStructure y un AbstractConfig
 # Realiza los cálculos por medio de la función evalsim y devuelve un diccionario con las métricas de evaluación y un "cubo" con las trayectorias de inflación.
-    dict_out, tray_inflacion = makesim(gtdata_eval, configB)
-    dict_out
+results, tray_infl = makesim(gtdata_eval, configA)
+results
 
 
-# 3. Función run_batch
-## Esta función recibe un CountryStructure, un vector con diccionarios con parámetros de evaluación y una ruta para almacenar los resultados.
+# 3. Función run_batch 
 
-# Por ejemplo, podemos concatenar dict_prueba (percentiles), dict_pruebaB (Inflación Total) y dict_pruebaC (Exclusión Fija)
+# Esta función recibe un CountryStructure, un vector con diccionarios con
+# parámetros de evaluación y una ruta para almacenar los resultados.
+
+# Por ejemplo, podemos concatenar dict_prueba (percentiles), dict_pruebaB
+# (Inflación Total) y dict_pruebaC (Exclusión Fija)
 sims = vcat(dict_prueba, dict_pruebaB, dict_pruebaC)
 
 # Paths de prueba
-savepath = "C:\\Users\\MJGM\\Desktop\\prueba"
+savepath = datadir("results", "testSimConfig")
 
-# Prueba de run_batch unicamente con el vector de configuraciones para los percentiles del 60 al 80
+# Prueba de run_batch unicamente con el vector de configuraciones para los
+# percentiles del 60 al 80
 run_batch(gtdata_eval, dict_prueba, savepath)
 
 
-## revisión de resultados
-# La función collect_results recoje todos los resultados almacenados en savepath y los almacena en un DataFrame
+# ## Revisión de resultados
+# La función collect_results recoje todos los resultados almacenados en savepath
+# y los almacena en un DataFrame
 df = collect_results(savepath)
 
 minimum(df[!,"mse"])
@@ -120,7 +132,8 @@ sorted_df = sort(df, "mse")
 
 using Plots
 
-plot(collect(60:80), df.mse)
-plot!(title = " MSE Percentiles Equiponderados", 
-        xlabel= "Percentil", ylabel = "MSE")
+scatter(60:80, df.mse, 
+    label = " MSE Percentiles equiponderados", 
+    legend = :topleft, 
+    xlabel= "Percentil equiponderado", ylabel = "MSE")
 
