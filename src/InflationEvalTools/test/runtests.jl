@@ -13,6 +13,7 @@ using Test
     @test @isdefined TrendAnalytical
     @test @isdefined TrendRandomWalk
     @test @isdefined TrendIdentity
+    @test @isdefined TrendExponential
     
     # Se exportan funciones para parámetros 
     param_functions = (ParamTotalCPIRebase, ParamTotalCPI, ParamWeightedMean)
@@ -35,19 +36,21 @@ end
     
     trend_functions = (
         TrendRandomWalk(), 
-        TrendAnalytical(cst, t -> 1 + 0.5sin(2π*t/12)), 
-        TrendIdentity())
+        TrendAnalytical(cst, t -> 1 + 0.5sin(2π*t/12), "Tendencia sinusoidal"), 
+        TrendIdentity(), 
+        TrendExponential(cst))
 
-    for trendfn in trend_functions
+        LIM_FACTOR = 3
+
+        for trendfn in trend_functions
 
         @show trendfn
-
 
         # Por el momento, todas las funciones, excepto TrendIdentity, tienen el
         # campo trend para guardar los valores de tendencia 
         if hasproperty(trendfn, :trend)
-            # Revisar que todos los factores de tendencia estén entre 0 y 2
-            @test all(0 .< trendfn.trend .< 2)
+            # Revisar que todos los factores de tendencia estén entre 0 y LIM_FACTOR
+            @test all(0 .< trendfn.trend .< LIM_FACTOR)
         end
 
         # Revisar la operación sobre CountryStructure

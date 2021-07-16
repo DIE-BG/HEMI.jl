@@ -6,7 +6,9 @@ inflación.
 """
 module InflationEvalTools
 
-    using Dates, CPIDataBase
+    using CPIDataBase: DATETYPE
+using Dates: DATEEPOCH
+using Dates, CPIDataBase
     using InflationFunctions
     using Random, Distributions
     using ProgressMeter
@@ -28,7 +30,13 @@ module InflationEvalTools
     include("resample/stationary_block_bootstrap.jl")
     # Método de remuestreo con Generalized Seasonal Block Bootstrap
     include("resample/generalized_seasonal_block_bootstrap.jl")
-
+    
+    ## Funciones para aplicación de tendencia
+    export RWTREND
+    include("trend/RWTREND.jl") 
+    
+    export TrendRandomWalk, TrendAnalytical, TrendExponential, TrendIdentity
+    include("trend/TrendFunction.jl")
 
     ## Métodos para obtener las bases de variaciones intermensuales paramétricas
     export param_gsbb_mod, param_sbb
@@ -38,20 +46,15 @@ module InflationEvalTools
     include("param/InflationParameter.jl")
 
     
-    ## Funciones para aplicación de tendencia
-    export RWTREND
-    include("trend/RWTREND.jl") 
-    
-    export TrendRandomWalk, TrendAnalytical, TrendIdentity
-    include("trend/TrendFunction.jl")
-
-    
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
     
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
 
+
+    # Tipos para configuración de simulaciones
+    include("config/SimConfig.jl")
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
