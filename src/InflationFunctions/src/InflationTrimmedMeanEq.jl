@@ -72,6 +72,12 @@ function measure_name(inflfn::InflationTrimmedMeanEq)
     "Media Truncada Equiponderada (" * l1 * ", " * l2 * ")"
 end
 
+# Etiqueta 
+function measure_tag(inflfn::InflationTrimmedMeanEq)
+    l1 = string(round(inflfn.l1, digits=2))
+    l2 = string(round(inflfn.l2, digits=2))
+    "MTEq-(" * l1 * "," * l2 * ")"
+end
 
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
 CPIDataBase.params(inflfn::InflationTrimmedMeanEq) = (inflfn.l1, inflfn.l2)

@@ -44,6 +44,13 @@ function measure_name(inflfn::InflationTrimmedMeanWeighted)
     "Media Truncada Ponderada (" * l1 * ", " * l2 * ")"
 end
 
+# Etiqueta 
+function measure_tag(inflfn::InflationTrimmedMeanWeighted)
+    l1 = string(round(inflfn.l1, digits=2))
+    l2 = string(round(inflfn.l2, digits=2))
+    "MTWeighted-(" * l1 * "," * l2 * ")"
+end
+
 
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
 CPIDataBase.params(inflfn::InflationTrimmedMeanWeighted) = (inflfn.l1, inflfn.l2)
