@@ -3,25 +3,33 @@
 """
     abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
-Tipo abstracto para representar variantes de simulación que utilizan, en general, una función de inflación 
-[`InflationFunction`](@ref), una función de remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
+`SimConfig` es un tipo abstracto para representar variantes de simulación que utilizan, en
+general, una función de inflación [`InflationFunction`](@ref), una función de
+remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
 [`TrendFunction`](@ref). Contiene el esquema general de la simulación.
+"""
+abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
-## Utilización
+"""
+    SimConfig{F, R, T} <:AbstractConfig{F, R, T}
 
-[`SimConfig`] tipo abstracto que contiene una configuración base para generar simulaciones utilizando
-todos los datos como set de entrenamiento. Recibe una función de inflación [`InflationFunction`](@ref), 
-una función de remuestreo [`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref),
-y la cantidad de simulaciones deseadas [`nsim`].
+Tipo concreto que contiene una configuración base para generar simulaciones
+utilizando todos los datos como set de entrenamiento. Recibe una función de
+inflación [`InflationFunction`](@ref), una función de remuestreo
+[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), y
+la cantidad de simulaciones deseadas [`nsim`].
 
 ## Ejemplo
-Considerando las siguientes instancias de funciones de inflación, remuestreo y tendencia:
+Considerando las siguientes instancias de funciones de inflación, remuestreo y
+tendencia:
 
+```julia
 percEq = InflationPercentileEq(80)
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
+```
 
-Generamos una configuración del tipo SimConfig con 1000 simulaciones
+Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
 ```julia-repl 
 julia> config = SimConfig(percEq, resamplefn, trendfn, 1000)
@@ -29,36 +37,7 @@ julia> config = SimConfig(percEq, resamplefn, trendfn, 1000)
 |─> Función de remuestreo: ResampleSBB-36
 |─> Función de tendencia : TrendRandomWalk
 ```
-
-[`CrossEvalConfig`] tipo abstracto que contiene una configuración base para generar simulaciones utilizando
-una muestra de los datos como set de entrenamiento y un período de n meses como período de evaluación . 
-Recibe una función de inflación [`InflationFunction`](@ref), una función de remuestreo [`ResampleFunction`](@ref), 
-una función de Tendencia [`TrendFunction`](@ref), la cantidad de simulaciones deseadas [`nsim`], el último mes del
-set de entrenamiento [`train_date`] y el tamaño del período de evaluación en meses [`eval_size`].
-
-## Ejemplo
-
-Considerando las mismas funciones de inflación, remuestreo y tendencia
-percEq = InflationPercentileEq(80)
-resamplefn = ResampleSBB(36)
-trendfn = TrendRandomWalk()
-
-Generamos una configuración del tipo SimConfig con 1000 simulaciones y utilizando el fin de set de entrenamiento
-hasta diciembre de 2012 y 24 meses de evaluación.
-
-```julia-repl 
-julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
-|─> Función de inflación : PercEq-80.0
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
-|─> Fin set de entrenamiento: 2012-12-01
-|─> Meses de evaluación     : 24
-```
 """
-
-abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
-
-
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Inflación
     inflfn::F
@@ -71,6 +50,41 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
 end
 
 
+"""
+    CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
+
+`CrossEvalConfig` es un tipo concreto que contiene una configuración base para
+generar simulaciones utilizando una muestra de los datos como set de
+entrenamiento y un período de n meses como período de evaluación . Recibe una
+función de inflación [`InflationFunction`](@ref), una función de remuestreo
+[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), la
+cantidad de simulaciones deseadas [`nsim`], el último mes del set de
+entrenamiento [`train_date`] y el tamaño del período de evaluación en meses
+[`eval_size`].
+
+## Ejemplo
+
+Considerando las mismas funciones de inflación, remuestreo y tendencia: 
+
+```julia 
+percEq = InflationPercentileEq(80)
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+```
+
+Generamos una configuración del tipo SimConfig con 1000 simulaciones y
+utilizando el fin de set de entrenamiento hasta diciembre de 2012 y 24 meses de
+evaluación.
+
+```julia-repl 
+julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
+|─> Función de inflación : PercEq-80.0
+|─> Función de remuestreo: ResampleSBB-36
+|─> Función de tendencia : TrendRandomWalk
+|─> Fin set de entrenamiento: 2012-12-01
+|─> Meses de evaluación     : 24
+```
+"""
 Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Inflación
     inflfn::F
@@ -93,7 +107,7 @@ Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
-
+    println(io, typeof(config))
     println(io, "|─> ", "Función de inflación : ", measure_tag(config.inflfn))
     println(io, "|─> ", "Función de remuestreo: ", method_tag(config.resamplefn))
     println(io, "|─> ", "Función de tendencia : ", method_tag(config.trendfn))

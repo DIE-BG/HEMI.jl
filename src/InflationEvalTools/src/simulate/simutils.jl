@@ -1,3 +1,4 @@
+# Esta función puede evaluar solo una medida de inflación
 """
     evalsim(data_eval::CountryStructure, config::SimConfig)
 
@@ -77,11 +78,11 @@ function evalsim(data_eval::CountryStructure, config::SimConfig)
     rmse = mean(sqrt.(sq_err_dist))
     mae = mean(abs.(err_dist))
     me = mean(err_dist)
-    # correlación, to-do...
-    @info "Métricas de evaluación:" mse std_sim_error rmse me mae
+    corr = mean(cor.(eachslice(tray_infl, dims=3), Ref(tray_infl_pob)))[1]
+    @info "Métricas de evaluación:" mse std_sim_error rmse me mae corr
 
     # Devolver estos valores
-    mse, std_sim_error, rmse, me, mae, tray_infl
+    mse, std_sim_error, rmse, me, mae, corr, tray_infl
 end
 
 # Función para obtener diccionario de resultados y trayectorias a partir de un
@@ -137,7 +138,7 @@ Dict{Symbol, Any} with 11 entries:
 function makesim(data, config::AbstractConfig)
         
      # Ejecutar la simulación y obtener los resultados 
-    mse, std_sim_error, rmse, me, mae, tray_infl = evalsim(data, config)
+    mse, std_sim_error, rmse, me, mae, corr, tray_infl = evalsim(data, config)
 
     # Agregar resultados a diccionario 
     results = struct2dict(config)
@@ -146,6 +147,7 @@ function makesim(data, config::AbstractConfig)
     results[:rmse] = rmse
     results[:me] = me
     results[:mae] = mae
+    results[:corr] = corr
     results[:measure] = CPIDataBase.measure_name(config.inflfn)
     results[:params] = CPIDataBase.params(config.inflfn)
 

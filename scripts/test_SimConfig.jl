@@ -149,8 +149,8 @@ scatter(60:80, df.mse,
     legend = :topleft, 
     xlabel= "Percentil equiponderado", ylabel = "MSE")
 
-
-# Ejemplo del flujo de trabajo para generar una evaluación
+##
+# ## Ejemplo del flujo de trabajo para generar una evaluación
 
 # 1. Definir los parámetros de evaluación. 
 
@@ -184,3 +184,13 @@ scatter(60:80, df_pw.mse,
     label = " MSE Percentiles equiponderados", 
     legend = :topleft, 
     xlabel= "Percentil equiponderado", ylabel = "MSE")
+
+
+##
+# ## Ejemplo de evaluación con búsqueda de parámetros 
+
+config = SimConfig(InflationPercentileEq(69), ResampleSBB(36), TrendRandomWalk(), 10_000)
+
+results = evalsim(gtdata_eval, config)
+
+## Terminar ejemplo con NLopt u Optim...
