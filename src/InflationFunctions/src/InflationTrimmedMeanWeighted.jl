@@ -44,7 +44,13 @@ function measure_name(inflfn::InflationTrimmedMeanWeighted)
     "Media Truncada Ponderada (" * l1 * ", " * l2 * ")"
 end
 
-# Resumen intermensual obtenido de VarCPIBase
+
+# Extendemos `params`, que devuelve los parámetros de la medida de inflación
+CPIDataBase.params(inflfn::InflationTrimmedMeanWeighted) = (inflfn.l1, inflfn.l2)
+
+
+# Operación de InflationTrimmedMeanWeighted sobre VarCPIBase para obtener el
+# resumen intermensual de esta metodología
 function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T     
     l1 = inflfn.l1
     l2 = inflfn.l2
