@@ -149,3 +149,38 @@ scatter(60:80, df.mse,
     legend = :topleft, 
     xlabel= "Percentil equiponderado", ylabel = "MSE")
 
+
+# Ejemplo del flujo de trabajo para generar una evaluación
+
+# 1. Definir los parámetros de evaluación. 
+
+# Asumimos que queremos evaluar los percentiles ponderados del 50 al 80. 
+# Generamos el diccionario con los parámetros de evaluación.
+# utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
+# Funciones de remuestreo y tendencia
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+# la función de inflación, la instanciamos dentro del diccionario.
+
+dict_percW = Dict(
+    :inflfn => InflationPercentileWeighted.(50:80), 
+    :resamplefn => resamplefn, 
+    :trendfn => trendfn,
+    :nsim => 1000) |> dict_list
+
+
+# 2. Definimos el folder para almacenar los resultados 
+savepath_pw = datadir("results", "PercWeigthed")
+
+# 3. Usamos run_batch, para gnenerar la evluación de los percentiles del 50 al 80
+run_batch(gtdata_eval, dict_percW, savepath_pw)
+
+# 4. Revisión de resultados, usando collect_results
+df_pw = collect_results(savepath_pw)
+
+# revisión gráfica
+scatter(60:80, df_pw.mse, 
+    ylims = (0, 15),
+    label = " MSE Percentiles equiponderados", 
+    legend = :topleft, 
+    xlabel= "Percentil equiponderado", ylabel = "MSE")
