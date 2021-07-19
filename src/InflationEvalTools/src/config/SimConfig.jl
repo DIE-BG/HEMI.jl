@@ -1,9 +1,63 @@
 # SimConfig.jl - Definición de tipos contenedores para parámetros de simulación
 
-# Tipo Abstracto para contenedores de parámetros de Simulación
+"""
+    abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
+
+Tipo abstracto para representar variantes de simulación que utilizan, en general, una función de inflación 
+[`InflationFunction`](@ref), una función de remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
+[`TrendFunction`](@ref). Contiene el esquema general de la simulación.
+
+## Utilización
+
+[`SimConfig`] tipo abstracto que contiene una configuración base para generar simulaciones utilizando
+todos los datos como set de entrenamiento. Recibe una función de inflación [`InflationFunction`](@ref), 
+una función de remuestreo [`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref),
+y la cantidad de simulaciones deseadas [`nsim`].
+
+## Ejemplo
+Considerando las siguientes instancias de funciones de inflación, remuestreo y tendencia:
+
+percEq = InflationPercentileEq(80)
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+
+Generamos una configuración del tipo SimConfig con 1000 simulaciones
+
+```julia-repl 
+julia> config = SimConfig(percEq, resamplefn, trendfn, 1000)
+|─> Función de inflación : PercEq-80.0
+|─> Función de remuestreo: ResampleSBB-36
+|─> Función de tendencia : TrendRandomWalk
+```
+
+[`CrossEvalConfig`] tipo abstracto que contiene una configuración base para generar simulaciones utilizando
+una muestra de los datos como set de entrenamiento y un período de n meses como período de evaluación . 
+Recibe una función de inflación [`InflationFunction`](@ref), una función de remuestreo [`ResampleFunction`](@ref), 
+una función de Tendencia [`TrendFunction`](@ref), la cantidad de simulaciones deseadas [`nsim`], el último mes del
+set de entrenamiento [`train_date`] y el tamaño del período de evaluación en meses [`eval_size`].
+
+## Ejemplo
+
+Considerando las mismas funciones de inflación, remuestreo y tendencia
+percEq = InflationPercentileEq(80)
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+
+Generamos una configuración del tipo SimConfig con 1000 simulaciones y utilizando el fin de set de entrenamiento
+hasta diciembre de 2012 y 24 meses de evaluación.
+
+```julia-repl 
+julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
+|─> Función de inflación : PercEq-80.0
+|─> Función de remuestreo: ResampleSBB-36
+|─> Función de tendencia : TrendRandomWalk
+|─> Fin set de entrenamiento: 2012-12-01
+|─> Meses de evaluación     : 24
+```
+"""
+
 abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
-# Tipo para representar los parámetros necesarios para generar la simulación de la forma que se hizo hasta 2020
 
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Inflación
@@ -16,7 +70,7 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     nsim::Int  
 end
 
-# Tipo para representar los parámetros necesarios para generar la simulación con períodos de evaluación dentro de la muestra
+
 Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Inflación
     inflfn::F
@@ -32,13 +86,12 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     eval_size::Int = 24
 end
 
-
-# Configuraciones necesarias para mostrar nombres de funciones en savename
+# Configuraciones para mostrar nombres de funciones en savename
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 
-# Base.show
+# Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
 
     println(io, "|─> ", "Función de inflación : ", measure_tag(config.inflfn))
@@ -51,9 +104,7 @@ function Base.show(io::IO, config::AbstractConfig)
 end
 
 
-
-
-# # Extender definición de tipos permitidos para simulación
+# Extensión de tipos permitidos para simulación en DrWatson
 DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function, Real) 
 DrWatson.default_prefix(::AbstractConfig) = "HEMI"
 

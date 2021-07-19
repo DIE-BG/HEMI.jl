@@ -2,15 +2,16 @@
 using DrWatson
 @quickactivate "HEMI"
 
-# ## Computación paralela 
+# Cargar el módulo de Distributed para computación paralela
 using Distributed
+# Agregar procesos trabajadores
 addprocs(4, exeflags="--project")
 
-# ## Cargamos paquete de evaluación
+# Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
 
-# Datos hasta diciembre 2020
+# CountryStructure con datos hasta diciembre de 2020
 gtdata_eval = gtdata[Date(2020, 12)]
 
 ## Definición de Parámetros de simulación
@@ -31,29 +32,32 @@ resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
 # Otros parametros (para CrossEvalConfig)
-# ff = Date(2020, 12)
-# sz = 24
+ff = Date(2020, 12)
+sz = 24
 
 
 ## Creación de configuraciones de prueba usando objetos AbstractConfig.
+
 configA = SimConfig(totalfn, resamplefn, trendfn, 1000)
 configB = SimConfig(fxEx, resamplefn, trendfn, 1000)
 configC = SimConfig(percEq, resamplefn, trendfn, 1000)
-# configC = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
+configC = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
 
 
-## Creación de nombres para almacenar archivos (función savename de DrWatson)
+# Algunas utilidades relacionadas con los objetos AbstractConfig
+# Creación de nombres para almacenar archivos (función savename de DrWatson)
 savename(configA, connector=" | ", equals=" = ")
 savename(configB, connector=" | ", equals=" = ")
 savename(configC, connector=" | ", equals=" = ")
 
-## Conversión de AbstractConfig a Diccionario (función de DrWatson)
-
+# Conversión de AbstractConfig a Diccionario (función de DrWatson)
 dic_a = struct2dict(configA)
 dic_b = struct2dict(configB)
 dic_c = struct2dict(configC)
 
 ## Ejemplos de creacion de diccionarios para Evaluación
+# Estos diccionarios contienen n vectores, en donde cada uno contiene una parametrización de simulación, 
+# la cual posteriormente es convertida a un objeto AbstractConfig y utilizada para generar una simulación.
 
 # Diccionario de prueba 1: utilizando la función dict_list (DrWatson), 
 # crea un vector con 21 diccionarios con todas las opciones de percentiles desde el 60 hasta el 80
@@ -61,7 +65,7 @@ dict_prueba = Dict(
     :inflfn => InflationPercentileEq.(60:80), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 1000) |> dict_list
+    :nsim => 100) |> dict_list
 
 # Diccionario de prueba 2: utilizando dict_list (DrWatson), 
 # Este ejemplo crea un vector con un único diccionario con la función de inflación total instanciada al inicio de este script
@@ -80,8 +84,9 @@ dict_pruebaC = Dict(
         :trendfn => trendfn,
         :nsim => 1000) |> dict_list
 
-# Función dict_config para pasar de Diccionario a AbstractConfig, se utilizará
-# dentro de la función run_batch, previo a darle la información a la información
+
+# la función dict_config nos permite convertir un Diccionario a un objeto AbstractConfig, 
+# se utiliza dentro de la función run_batch, previo a darle la información a la información
 # a la función makesim.
 
 configD_a = dict_config.(dict_prueba)
@@ -89,20 +94,22 @@ configC_a = dict_config.(dict_pruebaC)
 configE = dict_config.(dict_pruebaB)
 
 
-## FUNCIONES 
+## FUNCIONES DE EVALUACIÓN
 
-# 1. Prueba de función evalsim(). 
+# 1. Función evalsim(). 
 # Esta función recibe un CountryStructure y un AbstractConfig.
-# Esta función realiza todos los cálculos asociados a la evaluación.
+# Esta función realiza todos los cálculos asociados a la evaluación y devuelve las métricas de 
+# evaulación y las trayectorias simuladas.
 
 evalsim(gtdata_eval, configA)
 
-# 2. Prueba de Función MakeSim 
-# Esta función recibe un CountryStructure y un AbstractConfig
-# Realiza los cálculos por medio de la función evalsim y devuelve un diccionario con las métricas de evaluación y un "cubo" con las trayectorias de inflación.
+# 2. Función MakeSim 
+# Esta función recibe un CountryStructure y un AbstractConfig. 
+# Realiza los cálculos de evaluación por medio de la función evalsim y devuelve un diccionario con 
+# las métricas de evaluación y un "cubo" con las trayectorias de inflación.
+
 results, tray_infl = makesim(gtdata_eval, configA)
 results
-
 
 # 3. Función run_batch 
 
@@ -111,9 +118,10 @@ results
 
 # Por ejemplo, podemos concatenar dict_prueba (percentiles), dict_pruebaB
 # (Inflación Total) y dict_pruebaC (Exclusión Fija)
+
 sims = vcat(dict_prueba, dict_pruebaB, dict_pruebaC)
 
-# Paths de prueba
+# Path para almacenamiento de resultados.
 savepath = datadir("results", "testSimConfig")
 
 # Prueba de run_batch unicamente con el vector de configuraciones para los
@@ -121,15 +129,19 @@ savepath = datadir("results", "testSimConfig")
 run_batch(gtdata_eval, dict_prueba, savepath)
 
 
-# ## Revisión de resultados
+# Revisión de resultados
 # La función collect_results recoje todos los resultados almacenados en savepath
 # y los almacena en un DataFrame
+
 df = collect_results(savepath)
 
+# Revisamos el elemento del DataFrame con el valor mínimo de mse
 minimum(df[!,"mse"])
 
+# Podemos ordenar el DataFrame respecto al mse.
 sorted_df = sort(df, "mse")
 
+# Revisión gráfica: ScaterPlot con valores de mse 
 using Plots
 
 scatter(60:80, df.mse, 
