@@ -29,9 +29,18 @@ module InflationFunctions
     export InflationTotalRebaseCPI
     include("total_cpi_rebase.jl")
 
+    ## Media Truncada Equiponderada 
+    export InflationTrimmedMeanEq
+    include("InflationTrimmedMeanEq.jl")
+
+    ## Media Truncada Ponderada 
+    export InflationTrimmedMeanWeighted
+    include("InflationTrimmedMeanWeighted.jl")
+
     ## Exclusión Fija de gastos básicos
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
+
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
