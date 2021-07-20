@@ -80,7 +80,7 @@ function measure_tag(inflfn::InflationTrimmedMeanEq)
 end
 
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
-CPIDataBase.params(inflfn::InflationTrimmedMeanEq) = (inflfn.l1, inflfn.l2)
+#CPIDataBase.params(inflfn::InflationTrimmedMeanEq) = (inflfn.l1, inflfn.l2)
 
 
 # Operación de InflationTrimmedMeanEq sobre VarCPIBase para obtener el resumen

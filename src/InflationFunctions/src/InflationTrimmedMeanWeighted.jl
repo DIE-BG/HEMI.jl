@@ -53,7 +53,7 @@ end
 
 
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
-CPIDataBase.params(inflfn::InflationTrimmedMeanWeighted) = (inflfn.l1, inflfn.l2)
+#CPIDataBase.params(inflfn::InflationTrimmedMeanWeighted) = (inflfn.l1, inflfn.l2)
 
 
 # Operación de InflationTrimmedMeanWeighted sobre VarCPIBase para obtener el
