@@ -25,7 +25,7 @@ totalfn(gtdata_dic20)
 resample_sbb = ResampleSBB(25)
 
 # Función de remuestreo Generalized Seasonal BB
-resample_gsbb = ResampleGSBB()
+resample_gsbb = ResampleGSBBMod()
 
 ## Prueba de remuestreo de CountryStructure
 bootsample = resample_sbb(gtdata_dic20)

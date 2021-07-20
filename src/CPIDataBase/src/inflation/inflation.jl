@@ -41,6 +41,17 @@ como parámetro en archivos de resultados de evaluación.
 measure_tag(inflfn::InflationFunction) = string(nameof(inflfn))
 
 
+# Método para obtener parámetros 
+"""
+    params(inflfn::InflationFunction)
+Método para obtener parámetros de la función de inflación. Devuelve una tupla
+con el conjunto de parámetros utilizado por la función de inflación `inflfn`.
+Este método debe redefinirse en las nuevas medidas de inflación si estas están
+parametrizadas.
+"""
+params(inflfn::InflationFunction) = (nothing, )
+
+
 ## Tipos para resultados, utilizados para el despacho de métodos
 "Tipo abstracto para manejar el despacho de las funciones de inflación"
 abstract type CPIResult end

@@ -15,6 +15,9 @@ función de remuestreo, se deben extender los siguientes métodos:
 """
 abstract type ResampleFunction <: Function end
 
+
+## Métodos de remuestreo para CountryStructure y VarCPIBase
+
 """
     function (resamplefn::ResampleFunction)(cs::CountryStructure, rng = Random.GLOBAL_RNG)
 Define el comportamiento general de función de remuestreo sobre CountryStructure. 
@@ -61,15 +64,31 @@ function (resamplefn::ResampleFunction)(base::VarCPIBase, rng = Random.GLOBAL_RN
 end
 
 
-# Se define que cada función de remuestreo debe realizar la implementación de
-# una función para obtener un CountryStructure con objetos VarCPIBase que
-# contengan las variaciones intermensuales promedio (o paramétricas) que
-# permitan construir la trayectoria paramétrica de inflación para el método de
-# remuestreo. 
 
 """
     get_param_function(::ResampleFunction)
-Función para obtener de una función de remuestreo la función que permite obtener las variaciones intermensuales promedio (o paramétricas), que finalmente sirven para construir la trayectoria paramétrica de inflación de la metodología de remuestreo. 
+
+Cada función de remuestreo debe realizar la implementación de una función para
+obtener un `CountryStructure` con objetos `VarCPIBase` que contengan las
+variaciones intermensuales promedio (o paramétricas) que permitan construir la
+trayectoria paramétrica de inflación de acuerdo con el método de remuestreo dado
+en `ResampleFunction`.
+
+Esta función devuelve la función de obtención de datos paramétricos. 
+
+## Ejemplo 
+```julia
+# Obtener la función de remuestreo 
+resamplefn = ResampleSBB(36)
+...
+
+# Obtener su función para obtener los datos paramétricos 
+paramdatafn = get_param_function(resamplefn)
+# Obtener CountryStructure de datos paramétricos 
+paramdata = paramdatafn(gtdata)
+```
+
+Ver también: [`param_sbb`](@ref)
 """
 get_param_function(::ResampleFunction) = 
     error("Se debe especificar una función para obtener el parámetro de esta función de remuestreo")
