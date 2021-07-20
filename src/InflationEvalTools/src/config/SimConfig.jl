@@ -3,7 +3,7 @@
 """
     abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
-`SimConfig` es un tipo abstracto para representar variantes de simulación que utilizan, en
+`AbstractConfig` es un tipo abstracto para representar variantes de simulación que utilizan, en
 general, una función de inflación [`InflationFunction`](@ref), una función de
 remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
 [`TrendFunction`](@ref). Contiene el esquema general de la simulación.

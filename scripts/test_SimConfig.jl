@@ -181,7 +181,7 @@ df_pw = collect_results(savepath_pw)
 # revisión gráfica
 scatter(60:80, df_pw.mse, 
     ylims = (0, 15),
-    label = " MSE Percentiles equiponderados", 
+    label = " MSE Percentiles Ponderados", 
     legend = :topleft, 
     xlabel= "Percentil equiponderado", ylabel = "MSE")
 
