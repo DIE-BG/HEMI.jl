@@ -19,7 +19,7 @@ gtdata_eval = gtdata[Date(2020, 12)]
 # Funciones de inflación
 # Inflación Total
 totalfn = InflationTotalCPI()
-# Percentil Equiponderado
+# Percentiles
 percEq = InflationPercentileEq(80)
 percPond = InflationPercentileWeighted(20)
 # Exclusión Fija 
@@ -108,7 +108,7 @@ evalsim(gtdata_eval, configA)
 # Realiza los cálculos de evaluación por medio de la función evalsim y devuelve un diccionario con 
 # las métricas de evaluación y un "cubo" con las trayectorias de inflación.
 
-results, tray_infl = makesim(gtdata_eval, configA)
+results, tray_infl = makesim(gtdata_eval, configB)
 results
 
 # 3. Función run_batch 
@@ -159,18 +159,19 @@ scatter(60:80, df.mse,
 # utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
 # Funciones de remuestreo y tendencia
 resamplefn = ResampleSBB(36)
+resamplefn2 = ResampleScrambleVarMonths()
 trendfn = TrendRandomWalk()
 # la función de inflación, la instanciamos dentro del diccionario.
 
 dict_percW = Dict(
     :inflfn => InflationPercentileWeighted.(50:80), 
-    :resamplefn => resamplefn, 
+    :resamplefn => [resamplefn2],
     :trendfn => trendfn,
-    :nsim => 1000) |> dict_list
+    :nsim => 100) |> dict_list
 
 
 # 2. Definimos el folder para almacenar los resultados 
-savepath_pw = datadir("results", "PercWeigthed")
+savepath_pw = datadir("results", "PercWeigthed-scramble")
 
 # 3. Usamos run_batch, para gnenerar la evluación de los percentiles del 50 al 80
 run_batch(gtdata_eval, dict_percW, savepath_pw)
