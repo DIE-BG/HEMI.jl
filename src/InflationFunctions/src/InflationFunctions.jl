@@ -27,7 +27,7 @@ module InflationFunctions
 
     ## Variación interanual IPC con cambio de base sintético 
     export InflationTotalRebaseCPI
-    include("total_cpi_rebase.jl")
+    include("InflationTotalRebaseCPI.jl")
 
     ## Media Truncada Equiponderada 
     export InflationTrimmedMeanEq

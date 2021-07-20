@@ -21,7 +21,7 @@ module InflationEvalTools
     export get_param_function, method_name, method_tag
     
     # Métodos generales para funciones de remuestreo 
-    include("resample/resample.jl")
+    include("resample/ResampleFunction.jl")
 
     # Método de remuestreo de remuestreo utilizando selección de mismos meses de
     # ocurrencia
