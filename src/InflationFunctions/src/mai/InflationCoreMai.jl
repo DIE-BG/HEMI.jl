@@ -46,19 +46,19 @@ function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
     # vlast = lastbase.v[1 : 12*T_lp, :];
     # all_v = vcat(cs[1][:], vlast[:])
 
-    gt00 = cs[1]
-    gt10 = cs[2]
-    all_v = vcat(gt00.v[:], gt10.v[1:120, :][:])
-    all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
+    # gt00 = cs[1]
+    # gt10 = cs[2]
+    # all_v = vcat(gt00.v[:], gt10.v[1:120, :][:])
+    # all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
 
-    flp = ObservationsDistr(all_v, vspace)
-    glp = WeightsDistr(all_v, all_w, vspace)
+    # flp = ObservationsDistr(all_v, vspace)
+    # glp = WeightsDistr(all_v, all_w, vspace)
 
-    # flp_bases = ObservationsDistr.(cs.base, Ref(vspace))
-    # glp_bases = WeightsDistr.(cs.base, Ref(vspace))
+    flp_bases = ObservationsDistr.(cs.base, Ref(vspace))
+    glp_bases = WeightsDistr.(cs.base, Ref(vspace))
 
-    # flp = sum(flp_bases)
-    # glp = sum(glp_bases)
+    flp = sum(flp_bases)
+    glp = sum(glp_bases)
 
     # Obtener distribuciones acumuladas
     FLP = cumsum(flp)

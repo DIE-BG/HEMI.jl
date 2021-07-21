@@ -43,3 +43,18 @@ mai_m = inflfn(gtdata, CPIVarInterm())
 
 mai_tray_infl = inflfn(gtdata)
 
+
+## Prueba de generación de trayectorias 
+
+using Distributed
+addprocs(4, exeflags="--project")
+
+@everywhere using HEMI 
+
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+
+inflfn = InflationCoreMai(V, MaiF(5))
+inflfn = InflationTotalCPI()
+
+tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, gtdata; K=1_000)
