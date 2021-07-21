@@ -31,12 +31,15 @@ mai_m = inflfn(gtdata, CPIVarInterm())
 
 mai_tray_infl = inflfn(gtdata)
 
+using BenchmarkTools
 
+@btime inflfn($gtdata);
 
 ## Función de inflación 
 inflfn = InflationCoreMai(V, MaiF(5))
 
 mai_m = inflfn(gtdata, CPIVarInterm())
+@profview inflfn(gtdata, CPIVarInterm())
 
 mai_tray_infl = inflfn(gtdata)
 

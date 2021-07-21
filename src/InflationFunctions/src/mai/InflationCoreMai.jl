@@ -80,7 +80,7 @@ function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP,
     Threads.@threads for t in 1:periods(base)
         # Computar distribución g y acumularla 
         g = WeightsDistr((@view base.v[t, :]), base.w, inflfn.vspace)
-        g_acum = cumsum(g)
+        g_acum = cumsum!(g)
         glpt = renorm_g_glp(g_acum, GLP, glp, method.n)
 
         mai_m[t] = mean(glpt)
@@ -96,10 +96,10 @@ function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, FLP,
 
     # Utilizar la glp y (FLP, GLP) para computar el resumen intermensual por
     # metodología de inflación subyacente MAI-F
-    Threads.@threads for t in 1:periods(base)
+    for t in 1:periods(base)
         # Computar distribución f y acumularla 
         f = ObservationsDistr((@view base.v[t, :]), inflfn.vspace)
-        f_acum = cumsum(f)
+        f_acum = cumsum!(f)
         flpt = renorm_f_flp(f_acum, FLP, GLP, glp, method.n)
 
         mai_m[t] = mean(flpt)

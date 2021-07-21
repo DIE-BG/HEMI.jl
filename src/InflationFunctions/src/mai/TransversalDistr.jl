@@ -122,6 +122,14 @@ function Base.cumsum(tdistr::TransversalDistr)
         tdistr.vspace) 
 end
 
+function Base.cumsum!(tdistr::TransversalDistr)
+    v_values = tdistr.distr.nzval
+    cumsum!(v_values, v_values)
+    AccumulatedDistr(
+        sparsevec(tdistr.distr.nzind, v_values, tdistr.distr.n), 
+        tdistr.vspace)
+end
+
 # Obtener valor de distribución acumulada en una variación intermensual 
 function (tdistr::AccumulatedDistr{T})(v::Real) where T
     # Obtener posición en la grilla 
