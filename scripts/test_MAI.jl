@@ -118,10 +118,10 @@ hline!((1:n-1)/n)
 # ## MAI-G para toda la base 2000
 ## 
 # Obtener distribución de cada período en la base 2000
-gdistr00 = WeightsDistr.(eachrow(gt00.v), Ref(gt00.w), Ref(V))
+gdistr00 = cumsum.(WeightsDistr.(eachrow(gt00.v), Ref(gt00.w), Ref(V)))
 
 # Renormalizar las distribuciones 
-glpt00 = renorm_g_glp.(gdistr00, Ref(glp), n)
+glpt00 = renorm_g_glp.(gdistr00, Ref(GLP), Ref(glp), n)
 
 # Obtener la variación intermensual 
 mai_g = mean.(glpt00)
@@ -130,4 +130,4 @@ mai_g = mean.(glpt00)
 # ## Instanciar función de inflación 
 
 # maifn = InflationCoreMai(MaiF(4))
-maifn = InflationCoreMai([MaiF(4), MaiG(4), MaiF(5), MaiG(5)])
+# maifn = InflationCoreMai([MaiF(4), MaiG(4), MaiF(5), MaiG(5)])

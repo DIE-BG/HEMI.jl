@@ -19,9 +19,9 @@ end
 abstract type TransversalDistr{T <: AbstractFloat} end
 		
 # Distribución de observaciones 
-struct ObservationsDistr{T} <: TransversalDistr{T}
+struct ObservationsDistr{T, R} <: TransversalDistr{T}
     distr::SparseVector{T, Int}
-    vspace::StepRangeLen{T, Float64, Float64}
+    vspace::StepRangeLen{T, R, R}
 end
 
 function ObservationsDistr(v::AbstractVector{T}, vspace) where T
@@ -37,9 +37,9 @@ function ObservationsDistr(v::AbstractVector{T}, vspace) where T
 end
 
 # Distribución de ponderaciones 
-struct WeightsDistr{T} <: TransversalDistr{T}
+struct WeightsDistr{T, R} <: TransversalDistr{T}
     distr::SparseVector{T, Int}
-    vspace::StepRangeLen{T, Float64, Float64}
+    vspace::StepRangeLen{T, R, R}
 end
 
 function WeightsDistr(v::AbstractVector{T}, w::AbstractVector{T}, vspace) where T
@@ -55,9 +55,9 @@ function WeightsDistr(v::AbstractVector{T}, w::AbstractVector{T}, vspace) where 
 end
 
 # Distribución transversal acumulada 
-struct AccumulatedDistr{T} <: TransversalDistr{T}
+struct AccumulatedDistr{T, R} <: TransversalDistr{T}
     distr::SparseVector{T, Int}
-    vspace::StepRangeLen{T, Float64, Float64}
+    vspace::StepRangeLen{T, R, R}
 end
 
 # Función para mostrar
