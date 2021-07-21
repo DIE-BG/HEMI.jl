@@ -1,11 +1,11 @@
 ## Función de inflación subyacente MAI (muestra ampliada implícitamente)
 
 ## Grilla de variaciones intermensuales
-# const V = range(-200, 200, step=0.01f0) # -100:0.01:100
-const V = StepRangeLen(
-    Base.TwicePrecision(-100f0, -100f0), 
-    Base.TwicePrecision(0f0, 0.01f0), 
-    40001)
+const V = range(-200, 200, step=0.01f0) # -100:0.01:100
+# const V = StepRangeLen(
+#     Base.TwicePrecision(-100f0, -100f0), 
+#     Base.TwicePrecision(0f0, 0.01f0), 
+#     40001)
 
 ## Algoritmos de cómputo MAI
 
