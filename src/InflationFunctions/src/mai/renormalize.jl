@@ -1,5 +1,6 @@
 ## Funciones para renormalización y cómputo de MAI
 
+## MAI-G
 # Renormalización de distribución g con distribución glp utilizando n segmentos
 function renorm_g_glp(G, GLP, glp, n)
 
@@ -7,16 +8,13 @@ function renorm_g_glp(G, GLP, glp, n)
     p = (0:n) ./ n
     ε = step(glp.vspace)
     
-    # Obtener distribuciones acumuladas
-    # G = cumsum(g)
-    # GLP = cumsum(glp)
     # Obtener los percentiles de los n segmentos
     q_g = quantile(G, p)
     q_glp = quantile(GLP, p)
 
     # Obtener lista de segmentos para renormalizar
     segments = get_segments(q_g, q_glp, n)
-    @debug "Percentiles y segmentos" q_g q_glp ε segments
+    # @debug "Percentiles y segmentos" q_g q_glp ε segments
 
     # Crear una copia de la distribución glp 
     glpₜ = deepcopy(glp)
@@ -31,7 +29,7 @@ function renorm_g_glp(G, GLP, glp, n)
         vl = i == length(segments) ? max(q_g[k], q_glp[k]) : q_g[k]
         norm_c = (G(vl) - G(v1)) / (GLP(vl) - GLP(v1))
 
-        isnan(norm_c)&& continue # error("Error en normalización")
+        isnan(norm_c) && continue 
         # @debug "Renormalizando segmento $i" t k q_g[t] q_g[k] norm_c
 
         # Si es el primer segmento, incluir el límite inferior.
@@ -47,6 +45,61 @@ function renorm_g_glp(G, GLP, glp, n)
     # Devolver la distribución renormalizada
     glpₜ
 end
+
+## MAI-F
+# Renormalización de distribución f con distribución flp utilizando n segmentos
+function renorm_f_flp(F, FLP, GLP, glp, n)
+
+    # Percentiles con n segmentos y precisión
+    p = (0:n) ./ n
+    ε = step(glp.vspace)
+    
+    # Obtener distribuciones acumuladas
+    # Obtener los percentiles de los n segmentos
+    q_f = quantile(F, p)
+    q_flp = quantile(FLP, p)
+
+    # Obtener lista de segmentos para renormalizar
+    segments = get_segments(q_f, q_flp, n)
+    # @debug "Percentiles y segmentos" q_g q_flp ε segments
+
+    # Crear una copia de la distribución glp 
+    flpₜ = deepcopy(glp)
+
+    # Renormalizar cada segmento
+    S = length(segments)
+
+    for i in 2:S
+        k = segments[i]
+        t = segments[i-1]
+
+        # Renormalizar el segmento 
+        v1_num = i == 2 ? min(q_f[t], q_flp[t]) : q_flp[t]
+        vl_num = i == S ? max(q_f[k], q_flp[k]) : q_flp[k]
+        
+        v1 = i == 2 ? min(q_f[t], q_flp[t]) : q_f[t]
+        vl = i == S ? max(q_f[k], q_flp[k]) : q_f[k]
+        norm_c = (GLP(vl_num) - GLP(v1_num)) / (GLP(vl) - GLP(v1))
+
+        isnan(norm_c) && continue
+        # @debug "Renormalizando segmento $i" t k q_g[t] q_g[k] norm_c
+
+        # Si es el primer segmento, incluir el límite inferior.
+        # De lo contrario, renormalizar a partir de la siguiente posición en la
+        # grilla
+        if i == 2
+            renormalize!(flpₜ, v1, vl, norm_c)
+        else
+            renormalize!(flpₜ, v1 + ε, vl, norm_c)
+        end
+    end
+
+    # Devolver la distribución renormalizada
+    flpₜ
+end
+
+
+## Funciones auxiliares
 
 # Función para renormalizar segmento dado entre dos variaciones intermensuales a y b
 # por el valor k

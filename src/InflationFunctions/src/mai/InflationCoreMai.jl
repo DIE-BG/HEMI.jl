@@ -2,12 +2,9 @@
 
 ## Grilla de variaciones intermensuales
 const V = range(-200, 200, step=0.01f0) # -100:0.01:100
-# const V = StepRangeLen(
-#     Base.TwicePrecision(-100f0, -100f0), 
-#     Base.TwicePrecision(0f0, 0.01f0), 
-#     40001)
 
 ## Algoritmos de cómputo MAI
+
 
 abstract type AbstractMaiMethod end 
 
@@ -16,24 +13,31 @@ struct MaiG <: AbstractMaiMethod
     n::Int
 end
 
-Base.string(::MaiG) = "(" * string(n) * ", G)"
+# Algoritmo de cómputo de MAI-F con n segmentos
+struct MaiF <: AbstractMaiMethod
+    n::Int
+end
+
+Base.string(method::MaiG) = "(G," * string(method.n) * ")"
+Base.string(method::MaiF) = "(F," * string(method.n) * ")"
 
 
 
 ## Definición de la función de inflación 
-#=
-Base.@kwdef struct InflationCoreMai <: InflationFunction
-    vspace::StepRangeLen{T<:AbstractFloat, B, B} where {T,B} = V
+
+Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B} <: InflationFunction
+    vspace::StepRangeLen{T, B, B} = V
     method::AbstractMaiMethod = MaiG(4)
 end
 
 # Nombre de la medida 
-measure_name(inflfn::InflationCoreMai) = "MAI " + string(inflfn.method)
+measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
 
 # Operación sobre CountryStructure para obtener variaciones intermensuales de la
 # estructura de país
 function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
 
+    # method = inflfn.method
     vspace = inflfn.vspace
 
     # Computar flp y glp 
@@ -50,17 +54,57 @@ function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
     flp = ObservationsDistr(all_v, vspace)
     glp = WeightsDistr(all_v, all_w, vspace)
 
+    # flp_bases = ObservationsDistr.(cs.base, Ref(vspace))
+    # glp_bases = WeightsDistr.(cs.base, Ref(vspace))
+
+    # flp = sum(flp_bases)
+    # glp = sum(glp_bases)
+
     # Obtener distribuciones acumuladas
     FLP = cumsum(flp)
     GLP = cumsum(glp)
 
-
+    # Llamar al método de cómputo de inflación intermensual
+    vm_fn = base -> inflfn(base, inflfn.method, glp, FLP, GLP)
+    vm = mapfoldl(vm_fn, vcat, cs.base)
+    vm
 end
 
 # Variaciones intermensuales resumen con método de MAI-G
-function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG) where T
+function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP, GLP) where T
 
-    
+    mai_m = Vector{T}(undef, periods(base))
+
+    # Utilizar la glp y la GLP para computar el resumen intermensual por
+    # metodología de inflación subyacente MAI-G
+    Threads.@threads for t in 1:periods(base)
+        # Computar distribución g y acumularla 
+        g = WeightsDistr((@view base.v[t, :]), base.w, inflfn.vspace)
+        g_acum = cumsum(g)
+        glpt = renorm_g_glp(g_acum, GLP, glp, method.n)
+
+        mai_m[t] = mean(glpt)
+    end
+
+    mai_m
 end
 
-=#
+# Variaciones intermensuales resumen con método de MAI-F
+function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, FLP, GLP) where T
+
+    mai_m = Vector{T}(undef, periods(base))
+
+    # Utilizar la glp y (FLP, GLP) para computar el resumen intermensual por
+    # metodología de inflación subyacente MAI-F
+    Threads.@threads for t in 1:periods(base)
+        # Computar distribución f y acumularla 
+        f = ObservationsDistr((@view base.v[t, :]), inflfn.vspace)
+        f_acum = cumsum(f)
+        flpt = renorm_f_flp(f_acum, FLP, GLP, glp, method.n)
+
+        mai_m[t] = mean(flpt)
+    end
+
+    mai_m
+end
+

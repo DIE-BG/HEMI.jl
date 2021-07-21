@@ -5,6 +5,12 @@ using HEMI
 using StatsBase
 using Plots
 
+## Prueba con datos de 64 bits
+
+# gt00_64, gt10_64 = load(datadir("guatemala", "gtdata.jld2"), "gt00", "gt10")
+# gtdata_64 = UniformCountryStructure(gt00_64, gt10_64)
+
+## 
 # ## Distribuciones fat y gat de un mes particular 
 fat = ObservationsDistr(gt00.v[1, :], V)
 
@@ -83,11 +89,11 @@ quantile(cgat, [0, 0.25, 0.5, 0.75, 1.])
 # ## Algoritmo MAI-G
 ##
 
-n = 40
+n = 5
 p = (0:n) ./ n
 
 # Distribución gat del mes
-gat = WeightsDistr(gt00.v[2, :], gt00.w, V)
+gat = WeightsDistr(gt00.v[1, :], gt00.w, V)
 sum(gat), mean(gat)
 
 # Verificamos los percentiles de la distribución gat
@@ -98,7 +104,7 @@ cgat.(pk_g)
 # Verificamos los percentiles de la distribución GLP
 GLP = cumsum(glp)
 pk_glp = quantile(GLP, p)
-GLP.(pk_g)
+GLP.(pk_glp)
 
 # Renormalizar distribución 
 glpt = renorm_g_glp(cgat, GLP, glp, n)
@@ -113,6 +119,29 @@ plot!(GLP.vspace, GLP.(GLP.vspace), xlims=(-2, 5))
 cglpt = cumsum(glpt)
 plot!(cglpt.vspace, cglpt.(cglpt.vspace), xlims=(-2, 5))
 hline!((1:n-1)/n)
+
+
+## Algoritmo MAI-F
+
+n = 40
+p = (0:n) ./ n
+
+# for jt = 1:5
+jt = 1
+
+# Distribución fat del mes
+fat = ObservationsDistr(gt00.v[jt, :], V)
+sum(fat), mean(fat)
+
+cfat = cumsum(fat)
+
+flpt = renorm_f_flp(cfat, FLP, GLP, glp, n)
+sum(flpt), mean(flpt) 
+
+println(mean(flpt))
+# @enter renorm_f_flp(cfat, FLP, GLP, glp, n)
+
+# end
 
 
 # ## MAI-G para toda la base 2000

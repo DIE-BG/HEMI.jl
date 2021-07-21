@@ -37,8 +37,10 @@ module InflationFunctions
 
     ## Subyacente MAI (muestra ampliada implícitamente)
     export V
-    export vposition, renormalize!, renorm_g_glp
+    export vposition, renormalize!, renorm_g_glp, renorm_f_flp
     export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
+    export MaiG, MaiF
+    export InflationCoreMai
     include("mai/TransversalDistr.jl")
     include("mai/renormalize.jl")
     include("mai/InflationCoreMai.jl")

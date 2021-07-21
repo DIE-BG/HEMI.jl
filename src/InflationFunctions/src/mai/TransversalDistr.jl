@@ -29,8 +29,7 @@ function ObservationsDistr(v::AbstractVector{T}, vspace) where T
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
     l = length(v)
-    w = ones(T, l) * T(WN / l)
-    
+    w = WN * ones(T, l) / l
     # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))
     ObservationsDistr(distr, vspace)
@@ -47,7 +46,6 @@ function WeightsDistr(v::AbstractVector{T}, w::AbstractVector{T}, vspace) where 
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
     l = length(v)
-    
     w = WN * w / sum(w)
     # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))
@@ -174,10 +172,8 @@ Statistics.quantile(cdistr::AccumulatedDistr, p::AbstractVector{T} where T <: Re
 
 
 ## Métodos para generar distribuciones a partir de VarCPIBase y CountryStructure
-# ... to do
 
 function ObservationsDistr(base::VarCPIBase{T}, vspace) where T
-
     # Obtener años completos en la base
     full_years = periods(base) ÷ 12
 
@@ -187,7 +183,7 @@ function ObservationsDistr(base::VarCPIBase{T}, vspace) where T
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
     l = length(v)
-    w = ones(T, l) * T(WN / l)
+    w = WN * ones(T, l) / l
     
     # # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))
@@ -195,20 +191,19 @@ function ObservationsDistr(base::VarCPIBase{T}, vspace) where T
 end
 
 
-# function WeightsDistr(base::VarCPIBase{T}, vspace) where T
+function WeightsDistr(base::VarCPIBase{T}, vspace) where T
+    # Obtener años completos en la base
+    full_years = periods(base) ÷ 12
 
-#     # Obtener años completos en la base
-#     full_years = periods(base) ÷ 12
+    v = view(base.v[1:12*full_years, :], :)
+    weights = repeat(base.w', 12*full_years)
 
-#     v = view(base.v[1:12*full_years, :], :)
-
-#     # Obtener posiciones de variaciones en vspace
-#     vpos = vposition.(v, Ref(vspace))
-#     # Obtener las ponderaciones 
-#     l = length(v)
-#     w = ones(T, l) * T(WN / l)
+    # Obtener posiciones de variaciones en vspace
+    vpos = vposition.(v, Ref(vspace))
+    # Obtener las ponderaciones 
+    w = WN * (@view weights[:]) / sum(weights)
     
-#     # # Obtener distribución dispersa
-#     distr = sparsevec(vpos, w, length(vspace))
-#     ObservationsDistr(distr, vspace)
-# end
+    # # Obtener distribución dispersa
+    distr = sparsevec(vpos, w, length(vspace))
+    WeightsDistr(distr, vspace)
+end
