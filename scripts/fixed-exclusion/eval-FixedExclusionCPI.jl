@@ -16,7 +16,6 @@ ref: https://github.com/DIE-BG/EMI/blob/master/%2BEMI/%2Bexclusion_fija/exclusio
  - DAMP alimentos y energéticos
  - DAMP energéticos 
  - DIE Todo alimentos y energéticos
- - DIE Exclusión óptima por volatilidad
 
 """
 ## Elementos generales evaluación
