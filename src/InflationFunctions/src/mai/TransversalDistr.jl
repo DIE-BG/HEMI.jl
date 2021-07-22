@@ -169,12 +169,12 @@ function Statistics.quantile(cdistr::AccumulatedDistr{T}, p::Real) where T
         q_p = cdistr.vspace[cdistr_inds[i_p + 1]] - ε
     end
 
-    q_p
+    q_p::T
 end
 
 # Definición para cómputo de varios percentiles a la vez
-Statistics.quantile(cdistr::AccumulatedDistr, p::AbstractVector{T} where T <: Real) = 
-    quantile.(Ref(cdistr), p)
+Statistics.quantile(cdistr::AccumulatedDistr{T}, p::AbstractVector) where T = 
+    quantile.(Ref(cdistr), p)::Vector{T}
 
 
 

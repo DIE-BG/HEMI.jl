@@ -6,7 +6,6 @@ using InflationFunctions
 
 using Test
 using BenchmarkTools
-# using StatsBase
 using Plots
 
 
@@ -29,7 +28,7 @@ sum(glp), mean(glp)
 
 
 ## Función de inflación MAI-G
-inflfn = InflationCoreMai(V, MaiG(10))
+inflfn = InflationCoreMai(MaiG(10))
 
 mai_m = inflfn(gtdata, CPIVarInterm())
 mai_tray_infl = inflfn(gtdata)
@@ -38,7 +37,7 @@ mai_tray_infl = inflfn(gtdata)
 
 
 ## Función de inflación MAI-F
-inflfn = InflationCoreMai(V, MaiF(20))
+inflfn = InflationCoreMai(MaiF(20))
 
 mai_m = inflfn(gtdata, CPIVarInterm())
 mai_tray_infl = inflfn(gtdata)
@@ -56,7 +55,7 @@ mai_g = mai_m[:, 2:2:end]
 ## MAI-G
 
 mai_g_jl = mapreduce(hcat, [4,5,10,20,40]) do n 
-    inflfn = InflationCoreMai(V, MaiG(n))
+    inflfn = InflationCoreMai(MaiG(n))
     inflfn(gtdata, CPIVarInterm())
 end
 
@@ -122,7 +121,7 @@ addprocs(4, exeflags="--project")
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
-inflfn = InflationCoreMai(V, MaiF(5))
+inflfn = InflationCoreMai(MaiF(5))
 
 @time tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, gtdata; K=1_000);
 # 27.550400 seconds (347.59 k allocations: 20.012 MiB, 0.05% gc time, 0.46% compilation time)

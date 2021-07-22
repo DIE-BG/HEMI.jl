@@ -25,17 +25,22 @@ Base.string(method::MaiF) = "(F," * string(method.n) * ")"
 
 ## Definición de la función de inflación 
 
-Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B} <: InflationFunction
+Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B, M} <: InflationFunction
     vspace::StepRangeLen{T, B, B} = V
-    method::AbstractMaiMethod = MaiG(4)
+    method::M = MaiG(4)
 end
+
+# Constructor de conveniencia para especificar V por defecto 
+InflationCoreMai(method::AbstractMaiMethod) = InflationCoreMai(V, method)
 
 # Nombre de la medida 
 measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
+measure_tag(inflfn::InflationCoreMai) = string(nameof(inflfn)) * string(inflfn.method)
+
 
 # Operación sobre CountryStructure para obtener variaciones intermensuales de la
 # estructura de país
-function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
+function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm) where T
 
     # Grilla de variaciones, número de segmentos, cuantiles
     vspace = inflfn.vspace
@@ -44,6 +49,7 @@ function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
     
     # Computar flp y glp, tomando en cuenta observaciones de años completos en
     # la última base del CountryStructure
+    # Revisar paquete CatViews para ahorrar un poco más de memoria, to-do...
     lastbase = cs.base[end]
     T_lp = periods(lastbase) ÷ 12
     v_last = view(lastbase.v[1 : 12*T_lp, :], :)
@@ -72,8 +78,8 @@ function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
     FLP = cumsum(flp)
     GLP = cumsum(glp)
 
-    q_glp = quantile(GLP, p)
-    q_flp = quantile(FLP, p)
+    q_glp::Vector{T} = quantile(GLP, p)
+    q_flp::Vector{T} = quantile(FLP, p)
 
     # Llamar al método de cómputo de inflación intermensual
     vm_fn = base -> inflfn(base, inflfn.method, glp, FLP, GLP, q_glp, q_flp)
