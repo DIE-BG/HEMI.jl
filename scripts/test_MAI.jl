@@ -143,6 +143,10 @@ println(mean(flpt))
 
 # end
 
+# Probar algoritmo de renormalización más eficiente en memoria 
+q_flp = quantile(FLP, p)
+InflationFunctions.renorm_f_flp2(cfat, FLP, GLP, glp, q_flp, n)
+
 
 # ## MAI-G para toda la base 2000
 ## 

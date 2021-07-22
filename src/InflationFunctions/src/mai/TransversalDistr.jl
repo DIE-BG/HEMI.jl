@@ -45,7 +45,6 @@ function WeightsDistr(v::AbstractVector{T}, w::AbstractVector{T}, vspace) where 
     # Obtener posiciones de variaciones en vspace
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
-    l = length(v)
     w = WN * w / sum(w)
     # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))

@@ -37,8 +37,11 @@ measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
 # estructura de país
 function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
 
-    # method = inflfn.method
+    n = inflfn.method.n
     vspace = inflfn.vspace
+
+    p = (0:n) / n
+    
 
     # Computar flp y glp 
     # lastbase = cs.base[end]
@@ -64,14 +67,17 @@ function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
     FLP = cumsum(flp)
     GLP = cumsum(glp)
 
+    q_glp = quantile(GLP, p)
+    q_flp = quantile(FLP, p)
+
     # Llamar al método de cómputo de inflación intermensual
-    vm_fn = base -> inflfn(base, inflfn.method, glp, FLP, GLP)
+    vm_fn = base -> inflfn(base, inflfn.method, glp, FLP, GLP, q_glp, q_flp)
     vm = mapfoldl(vm_fn, vcat, cs.base)
     vm
 end
 
 # Variaciones intermensuales resumen con método de MAI-G
-function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP, GLP) where T
+function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP, GLP, q_glp, q_flp) where T
 
     mai_m = Vector{T}(undef, periods(base))
 
@@ -81,28 +87,28 @@ function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP,
         # Computar distribución g y acumularla 
         g = WeightsDistr((@view base.v[t, :]), base.w, inflfn.vspace)
         g_acum = cumsum!(g)
-        glpt = renorm_g_glp(g_acum, GLP, glp, method.n)
 
-        mai_m[t] = mean(glpt)
+        # Computar resumen intermensual basado en glpₜ
+        mai_m[t] = renorm_g_glp2(g_acum, GLP, glp, q_glp, method.n)
     end
 
     mai_m
 end
 
 # Variaciones intermensuales resumen con método de MAI-F
-function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, FLP, GLP) where T
+function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, FLP, GLP, q_glp, q_flp) where T
 
     mai_m = Vector{T}(undef, periods(base))
 
     # Utilizar la glp y (FLP, GLP) para computar el resumen intermensual por
     # metodología de inflación subyacente MAI-F
-    for t in 1:periods(base)
+    Threads.@threads for t in 1:periods(base)
         # Computar distribución f y acumularla 
         f = ObservationsDistr((@view base.v[t, :]), inflfn.vspace)
         f_acum = cumsum!(f)
-        flpt = renorm_f_flp(f_acum, FLP, GLP, glp, method.n)
-
-        mai_m[t] = mean(flpt)
+        
+        # Computar resumen intermensual basado en flpₜ
+        mai_m[t] = renorm_f_flp2(f_acum, FLP, GLP, glp, q_flp, method.n)
     end
 
     mai_m

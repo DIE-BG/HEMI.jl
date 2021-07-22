@@ -2,6 +2,7 @@
 
 ## MAI-G
 # Renormalización de distribución g con distribución glp utilizando n segmentos
+# Esta función devuelve la distribución glpₜ (tiene menor desempeño)
 function renorm_g_glp(G, GLP, glp, n)
 
     # Percentiles con n segmentos y precisión
@@ -46,8 +47,75 @@ function renorm_g_glp(G, GLP, glp, n)
     glpₜ
 end
 
+# Renormalización de distribución g con distribución glp utilizando n segmentos.
+# Esta función no devuelve la distribución glpₜ
+function renorm_g_glp2(G::AccumulatedDistr{T}, GLP, glp, q_glp, n) where T
+
+    # Percentiles con n segmentos y precisión
+    p = (0:n) / n
+    ε = step(glp.vspace)
+    
+    # Obtener los percentiles de los n segmentos
+    q_g = quantile(G, p)
+
+    # Obtener lista de segmentos para renormalizar
+    segments = get_segments(q_g, q_glp, n)
+
+    e_glpt::T = zero(T)
+
+    # Renormalizar cada segmento
+    @inbounds for i in 2:length(segments)
+        k = segments[i]
+        t = segments[i-1]
+
+        # Renormalizar el segmento       
+        if i == 2
+            v1 = min(q_g[t], q_glp[t])
+        else
+            v1 = q_g[t]
+        end
+
+        if i == length(segments)
+            vl = max(q_g[k], q_glp[k])
+        else
+            vl = q_g[k]
+        end
+
+        # Constante de normalización
+        norm_c = (G(vl) - G(v1)) / (GLP(vl) - GLP(v1))
+
+        (isnan(norm_c) || isinf(norm_c)) && continue 
+
+        # Si es el primer segmento, incluir el límite inferior. De lo contrario,
+        # renormalizar a partir de la siguiente posición en la grilla
+        if i == 2
+            e_glpt += renorm_sum(glp, v1, vl, norm_c)
+        else
+            e_glpt += renorm_sum(glp, v1 + ε, vl, norm_c)
+        end
+    end
+
+    # Devolver el promedio ponderado de la distribución renormalizada
+    e_glpt
+end
+
+# Función para computar la suma ponderada de renormalización del segmento dado
+# entre dos variaciones intermensuales a y b por el valor k
+function renorm_sum(tdistr::TransversalDistr, a, b, k)
+    # Obtener índices de variaciones a y b en vspace
+    ia = vposition(a, tdistr.vspace)
+    ib = vposition(b, tdistr.vspace)
+
+    # Renormalizar el vector de distribución subyacente y obtener la suma ponderada
+    s = sum(view(tdistr.distr, ia:ib) .* tdistr.vspace[ia:ib]) * k
+    s
+end
+
+
 ## MAI-F
-# Renormalización de distribución f con distribución flp utilizando n segmentos
+
+# Renormalización de distribución f con distribución flp utilizando n segmentos. 
+# Esta función devuelve la distribución flpₜ y por lo tanto, tiene menor desempeño.
 function renorm_f_flp(F, FLP, GLP, glp, n)
 
     # Percentiles con n segmentos y precisión
@@ -96,6 +164,67 @@ function renorm_f_flp(F, FLP, GLP, glp, n)
 
     # Devolver la distribución renormalizada
     flpₜ
+end
+
+# Renormalización de distribución f con distribución flp utilizando n segmentos. 
+# Esta función no devuelve la distribución flpₜ
+function renorm_f_flp2(F::AccumulatedDistr{T}, FLP, GLP, glp, q_flp, n) where T
+
+    # Percentiles con n segmentos y precisión
+    p = (0:n) / n
+    ε = step(glp.vspace)
+    
+    # Obtener los percentiles de los n segmentos
+    q_f = quantile(F, p)
+
+    # Obtener lista de segmentos para renormalizar
+    segments = get_segments(q_f, q_flp, n)
+
+    # Renormalizar cada segmento
+    e_flpt::T = zero(T)
+    S = length(segments)
+
+    for i in 2:S
+        k = segments[i]
+        t = segments[i-1]
+
+        # Renormalizar el segmento 
+        # v1_num = i == 2 ? min(q_f[t], q_flp[t]) : q_flp[t]
+        # vl_num = i == S ? max(q_f[k], q_flp[k]) : q_flp[k]
+        
+        # v1 = i == 2 ? min(q_f[t], q_flp[t]) : q_f[t]
+        # vl = i == S ? max(q_f[k], q_flp[k]) : q_f[k]
+        
+        if i == 2
+            v1 = v1_num = min(q_f[t], q_flp[t])
+        else
+            v1 = q_f[t]
+            v1_num = q_flp[t]
+        end
+
+        if i == S
+            vl = vl_num = max(q_f[k], q_flp[k])
+        else
+            vl = q_f[k]
+            vl_num = q_flp[k]
+        end
+
+        # Constante de normalización
+        norm_c = (GLP(vl_num) - GLP(v1_num)) / (GLP(vl) - GLP(v1))
+
+        (isnan(norm_c) || isinf(norm_c)) && continue
+
+        # Si es el primer segmento, incluir el límite inferior. De lo contrario,
+        # renormalizar a partir de la siguiente posición en la grilla
+        if i == 2
+            e_flpt += renorm_sum(glp, v1, vl, norm_c)
+        else
+            e_flpt += renorm_sum(glp, v1 + ε, vl, norm_c)
+        end
+    end
+
+    # Devolver el promedio ponderado de la distribución renormalizada
+    e_flpt
 end
 
 
