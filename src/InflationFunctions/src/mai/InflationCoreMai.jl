@@ -37,33 +37,38 @@ measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
 # estructura de país
 function (inflfn::InflationCoreMai)(cs::CountryStructure, ::CPIVarInterm)
 
-    n = inflfn.method.n
+    # Grilla de variaciones, número de segmentos, cuantiles
     vspace = inflfn.vspace
-
+    n::Int = inflfn.method.n
     p = (0:n) / n
     
+    # Computar flp y glp, tomando en cuenta observaciones de años completos en
+    # la última base del CountryStructure
+    lastbase = cs.base[end]
+    T_lp = periods(lastbase) ÷ 12
+    v_last = view(lastbase.v[1 : 12*T_lp, :], :)
+    v_first = map(base -> view(base.v, :), cs.base[1:end-1])
+    all_v = vcat(v_first..., v_last)
+    # Ponderaciones de toda la base
+    w_first = map(base -> view(repeat(base.w', periods(base)), :), cs.base[1:end-1])
+    w_last = view(repeat(lastbase.w', 12*T_lp), :)
+    all_w = vcat(w_first..., w_last)
 
-    # Computar flp y glp 
-    # lastbase = cs.base[end]
-    # T_lp = periods(lastbase) ÷ 12
-    # vlast = lastbase.v[1 : 12*T_lp, :];
-    # all_v = vcat(cs[1][:], vlast[:])
+    flp = ObservationsDistr(all_v, vspace)
+    glp = WeightsDistr(all_v, all_w, vspace)
 
-    # gt00 = cs[1]
-    # gt10 = cs[2]
-    # all_v = vcat(gt00.v[:], gt10.v[1:120, :][:])
-    # all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
+    # Intuitivamente, las distribuciones de largo plazo podrían computarse más
+    # sencillamente de esta forma. Sin embargo, parece que hay problemas de
+    # precisión en los vectores dispersos al agregar las distribuciones de cada
+    # base de esta manera. Por lo que se computan las distribuciones de largo
+    # plazo con el código de arriba.
 
-    # flp = ObservationsDistr(all_v, vspace)
-    # glp = WeightsDistr(all_v, all_w, vspace)
+    # flp_bases = ObservationsDistr.(cs.base, Ref(vspace))
+    # glp_bases = WeightsDistr.(cs.base, Ref(vspace))
+    # flp = sum(flp_bases)
+    # glp = sum(glp_bases)
 
-    flp_bases = ObservationsDistr.(cs.base, Ref(vspace))
-    glp_bases = WeightsDistr.(cs.base, Ref(vspace))
-
-    flp = sum(flp_bases)
-    glp = sum(glp_bases)
-
-    # Obtener distribuciones acumuladas
+    # Obtener distribuciones acumuladas y sus percentiles 
     FLP = cumsum(flp)
     GLP = cumsum(glp)
 
