@@ -22,7 +22,7 @@ module InflationFunctions
 
     ## Método de medias móviles
     export InflationMovingAverage
-    include("InflationMovingAverageFunction.jl")
+    include("InflationMovingAverage.jl")
 
 
     ## Percentiles equiponderados
