@@ -142,3 +142,34 @@ end
     # Probamos que la trayectoria de inflación sea igual a cero 
     @test all(traj_infl .≈ 0)
 end
+
+@testset "InflationDynamicExclusion" begin
+    # Instanciar un tipo 
+    dynExfn = InflationDynamicExclusion(2,2)
+    @test dynExfn isa InflationDynamicExclusion
+
+    # Probar que esté definido el método para obtener su nombre 
+    @test measure_name(dynExfn) isa String
+    @test measure_tag(dynExfn) isa String
+
+    # Probar con bases del IPC con variaciones intermensuales iguales a cero.
+    # Estas pruebas ayudan a verificar que la función de inflación se pueda
+    # llamar sobre los tipos correctos 
+   
+    zero_base = getzerobase()
+    m_traj_infl = dynExfn(zero_base)
+    # Probamos que el resumen intermensual sea igual a cero
+    @test all(m_traj_infl .≈ 0)
+
+    # Obtenemos un UniformCountryStructure con dos bases y todas las variaciones
+    # intermensuales iguales a cero
+    zero_cst = getzerocountryst()
+    traj_infl = dynExfn(zero_cst)
+    
+    # Probamos que la trayectoria de inflación sea más larga que el resumen
+    # intermensual de una sola base 
+    @test length(traj_infl) > length(m_traj_infl)
+
+    # Probamos que la trayectoria de inflación sea igual a cero 
+    @test all(traj_infl .≈ 0)
+end
