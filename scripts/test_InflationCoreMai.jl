@@ -37,7 +37,7 @@ mai_tray_infl = inflfn(gtdata)
 
 
 ## Función de inflación MAI-F
-inflfn = InflationCoreMai(MaiF(20))
+inflfn = InflationCoreMai(MaiF(5))
 
 mai_m = inflfn(gtdata, CPIVarInterm())
 mai_tray_infl = inflfn(gtdata)

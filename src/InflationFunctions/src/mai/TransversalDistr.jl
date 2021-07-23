@@ -29,7 +29,7 @@ function ObservationsDistr(v::AbstractVector{T}, vspace) where T
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
     l = length(v)
-    w = WN * ones(T, l) / l
+    w = WN * one(T) / l
     # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))
     ObservationsDistr(distr, vspace)
@@ -190,7 +190,7 @@ function ObservationsDistr(base::VarCPIBase{T}, vspace) where T
     vpos = vposition.(v, Ref(vspace))
     # Obtener las ponderaciones 
     l = length(v)
-    w = WN * ones(T, l) / l
+    w = WN * one(T) / l
     
     # # Obtener distribución dispersa
     distr = sparsevec(vpos, w, length(vspace))
