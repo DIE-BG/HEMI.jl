@@ -3,7 +3,7 @@
 #InflationDynamicExclusion.jl - Definición de exclusión dinámica
 
 """
-InflationDynamicExclusion <: InflationFunction
+    InflationDynamicExclusion <: InflationFunction
 
 Función para computar la inflación de exclusión dinámica dado el factor inferior (`lower_factor`) y factor superior (`upper_factor`).
 
@@ -37,7 +37,6 @@ julia>dynExfn(gtdata) #gtdata es de tipo UniformCountryStructure
  1.1091232
 ```
 """
-
 Base.@kwdef struct InflationDynamicExclusion <: InflationFunction
     lower_factor::Float32
     upper_factor::Float32
@@ -55,7 +54,6 @@ julia> measure_name(dynExfn)
 "Inflación de exclusión dinámica (2.0, 2.0)"
 ```
 """
-
 function CPIDataBase.measure_name(inflfn::InflationDynamicExclusion)
     round_lower_factor, round_upper_factor = string.(
         round.(
@@ -77,7 +75,6 @@ julia> measure_tag(dynExfn)
 "DynEx(2.0,2.0)"
 ```
 """
-
 function CPIDataBase.measure_tag(inflfn::InflationDynamicExclusion)
     round_lower_factor, round_upper_factor = string.(
         round.(
@@ -95,7 +92,7 @@ function (inflfn::InflationDynamicExclusion)(base::VarCPIBase)
     std_v = std(base.v, dims = 2)
     mean_v = mean(base.v, dims = 2)
 
-    dynEx_filter = mean_v - (lower_factor .* std_v) .< base.v .< mean_v + (upper_factor .* std_v)
+    dynEx_filter = mean_v - (lower_factor .* std_v) .<= base.v .<= mean_v + (upper_factor .* std_v)
 
     dynEx_w = base.w' .* dynEx_filter
     dynEx_w = dynEx_w ./ sum(dynEx_w, dims = 2)
@@ -103,5 +100,5 @@ function (inflfn::InflationDynamicExclusion)(base::VarCPIBase)
     dynEx_v = sum(
         base.v .* dynEx_w,
         dims = 2
-    )
+    ) |> vec
 end
