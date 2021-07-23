@@ -1,7 +1,6 @@
 # #Inflación media ponderada
-# InflationWeightedMean.jl - Función de inflación media ponderada
+# InflationWeightedMean.jl - Función de inflación media ponderada interanual 
 
-# 1. Definir un tipo
 """
     InflationWeightedMean <: InflationFunction
 Función de inflación para computar la media ponderada.
@@ -12,10 +11,10 @@ end
 # 2. Extender el método de nombre 
 measure_name(::InflationWeightedMean) = "Media ponderada interanual"
 
-"""
-    function (inflfn::InflationWeightedMean)(base::VarCPIBase)
-Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
-"""
+# Etiqueta para guardado de archivos
+measure_tag(::InflationWeightedMean) = "WeightedMean"
+
+# Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
 function (inflfn::InflationWeightedMean)(base::VarCPIBase{T}) where T
     #Obtener el indice correspondiente a las variaciones intermensuales
     indmat = capitalize(base.v)

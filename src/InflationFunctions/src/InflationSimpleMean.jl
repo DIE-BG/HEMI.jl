@@ -1,7 +1,6 @@
 # #Inflación de media simple
-# InflationSimpleMean.jl - Función de inflación de media media_simple
+# InflationSimpleMean.jl - Función de inflación de media simple interanual
 
-# 1. Definir un tipo
 """
     InflationSimpleMean <: InflationFunction
 Función de inflación para computar la media simple interanual.
@@ -15,10 +14,7 @@ measure_name(::InflationSimpleMean) = "Media simple interanual"
 # Etiqueta para guardado de archivos
 measure_tag(::InflationSimpleMean) = "SimpleMean"
 
-"""
-    function (inflfn::InflationSimpleMean)(base::VarCPIBase)
-Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
-"""
+# Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
 function (inflfn::InflationSimpleMean)(base::VarCPIBase{T}) where T
     #Obtener el indice correspondiente a las variaciones intermensuales
     indmat = capitalize(base.v)
