@@ -84,6 +84,9 @@ function CPIDataBase.measure_tag(inflfn::InflationDynamicExclusion)
     "DynEx($(round_lower_factor),$(round_upper_factor))"
 end
 
+# Extendemos `params`, que devuelve los parámetros de la medida de inflación
+CPIDataBase.params(inflfn::InflationDynamicExclusion) = (inflfn.lower_factor, inflfn.upper_factor)
+
 # Las funciones sobre VarCPIBase resumen en variaciones intermensuales
 function (inflfn::InflationDynamicExclusion)(base::VarCPIBase)
     lower_factor = inflfn.lower_factor
