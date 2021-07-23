@@ -4,10 +4,13 @@
     InflationMovingAverage{F <: InflationFunction} <: InflationFunction
 Función de inflación que computa el promedio móvil de `k` períodos de la
 trayectoria interanual de la medida de inflación `inflfn` almacenada. 
+
 ## Ejemplo
+
 Para computar la media móvil de 6 meses de la variación interanual del IPC: 
 ```julia-repl 
 julia> inflfn = InflationMovingAverage(InflationTotalCPI(), 6)
+(::InflationMovingAverage{InflationTotalCPI}) (generic function with 5 methods)
 ```
 """
 struct InflationMovingAverage{F <: InflationFunction} <: InflationFunction
