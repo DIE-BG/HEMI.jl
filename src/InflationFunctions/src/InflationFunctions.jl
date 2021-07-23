@@ -41,7 +41,7 @@ module InflationFunctions
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
 
-    ## Exclusión Fija de gastos básicos
+    ## Exclusión dinámica
     export InflationDynamicExclusion
     include("InflationDynamicExclusion.jl")
 
