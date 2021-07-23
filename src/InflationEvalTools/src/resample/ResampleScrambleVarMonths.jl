@@ -54,3 +54,6 @@ la función interna `scramblevar`.
 (resamplefn::ResampleScrambleVarMonths)(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG) = 
     scramblevar(vmat, rng)
 
+# Definir el nombre y la etiqueta del método de remuestreo 
+method_name(resamplefn::ResampleScrambleVarMonths) = "Bootstrap IID por meses de ocurrencia"
+method_tag(resamplefn::ResampleScrambleVarMonths) = string(nameof(resamplefn))

@@ -111,6 +111,7 @@ function Base.show(io::IO, config::AbstractConfig)
     println(io, "|─> ", "Función de inflación : ", measure_tag(config.inflfn))
     println(io, "|─> ", "Función de remuestreo: ", method_tag(config.resamplefn))
     println(io, "|─> ", "Función de tendencia : ", method_tag(config.trendfn))
+    println(io, "|─> ", "Simulaciones         : ", config.nsim)
     if config isa CrossEvalConfig 
         println(io, "|─> ", "Fin set de entrenamiento: ", config.train_date)
         println(io, "|─> ", "Meses de evaluación     : ", config.eval_size)
