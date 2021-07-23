@@ -10,7 +10,7 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 using DataFrames
-using Plots
+using Plots, CSV
 
 """
 ref: https://github.com/DIE-BG/EMI/blob/master/%2BEMI/%2Bexclusion_fija/exclusion_alternativas.m
@@ -39,10 +39,9 @@ trendfn = TrendRandomWalk()
 
 ## BASE 2000 
 ## Cálculo de volatilidad histórica por gasto básico
-# Volatilidad = desviación estándar de la variación intermensual por cada gasto básico 
+# Volatilidad = desviación estándar de la variación interanual por cada gasto básico 
 
-
-estd = std(gtdata_00[1].v, dims=1)
+estd = std(varinteran(capitalize(gt00.v)), dims=1)
 
 df = DataFrame(num = collect(1:218), Desv = vec(estd))
 
@@ -52,12 +51,13 @@ vec_v = sorted_std[!,:num]
 
 # Creación de vectores de exclusión
 # Se crearán 20 vectores para la exploración inicial
-v_ecx = []
-for i in 1:50#length(vec_v)
+v_exc = []
+for i in 1:length(vec_v)
    exc = vec_v[1:i]
-   v_exc = append!(v_ecx, [exc])
+   append!(v_exc, [exc])
 end
 
+v_exc
 
 ## Creación de diccionario para simulación y savepath
 # Exploración inicial con 10000 simulaciones
@@ -78,10 +78,24 @@ run_batch(gtdata_00, FxEx_00, savepath)
 
 dfExc_00 = collect_results(savepath)
 
-sort_00 = sort(dfExc_00, "mse")
+exclusiones =  getindex.(map(x -> length.(x), dfExc_00[!,:params]),1)
+dfExc_00[!,:exclusiones] = exclusiones 
+dfExc_00 = sort(dfExc_00, :exclusiones)
 
-scatter(1:length(v_exc), dfExc_00.mse, 
-    ylims = (0, 15),
+# Primera prueba
+# a = collect(sort_00[1,:params])
+# a = a[1]
+# a = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188];
+# con los 2018
+# a = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
+# sort_00[1,:mse]
+# 5.995067f0
+
+mseplot = plot(dfExc_00[!,:mse], 
+    title = " Óptimización Base 2000",
     label = " MSE Exclusión fija Óptima Base 2000", 
     legend = :topleft, 
-    xlabel= "Longitud del vector de exclusión", ylabel = "MSE")
+    xlabel= "Gastos Básicos Excluidos", ylabel = "MSE")
+
+plot!([26],seriestype="vline", label = "Mínimo en 26 exclusiones")
+# savefig("plot base2000")
