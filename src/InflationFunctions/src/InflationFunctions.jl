@@ -15,7 +15,16 @@ module InflationFunctions
     
     ## Media simple interanual 
     export InflationSimpleMean
-    include("simple_mean.jl")
+    include("InflationSimpleMean.jl")
+
+    ## Media ponderada interanual 
+    export InflationWeightedMean
+    include("InflationWeightedMean.jl")
+
+    ## Método de medias móviles
+    export InflationMovingAverage
+    include("InflationMovingAverage.jl")
+
 
     ## Percentiles equiponderados
     export InflationPercentileEq
