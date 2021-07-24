@@ -214,3 +214,29 @@ function WeightsDistr(base::VarCPIBase{T}, vspace) where T
     distr = sparsevec(vpos, w, length(vspace))
     WeightsDistr(distr, vspace)
 end
+
+
+## RecipesBase
+
+@recipe function plot(tdistr::TransversalDistr)
+    
+    # Etiqueta
+    if tdistr isa ObservationsDistr
+        lbl = "Distribución de observaciones f"
+    elseif tdistr isa WeightsDistr
+        lbl = "Distribución de pesos g"
+    else 
+        lbl = "Distribución acumulada"
+    end
+    label --> lbl
+    legend --> :topleft
+
+    # Tipo de gráfica 
+    # ptype = tdistr isa AccumulatedDistr ? :line : :bar
+    # seriestype --> ptype
+
+    # Límites
+    xlims --> (-10, 20)
+
+    tdistr.vspace, tdistr.(tdistr.vspace)
+end
