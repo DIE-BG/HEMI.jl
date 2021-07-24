@@ -35,19 +35,13 @@ end
 
 # Definición de la función de remuestreo por ocurrencia de meses
 """
-    struct ScrambleVarMonths <: ResampleFunction end
+    ResampleScrambleVarMonths <: ResampleFunction
+
 Define una función de remuestreo para remuestrear las series de tiempo por los
 mismos meses de ocurrencia. El muestreo se realiza de manera independiente para 
 serie de tiempo en las columnas de una matriz. 
 """
-struct ScrambleVarMonths <: ResampleFunction end
-
-# Nombre estándar para funciones de remuestreo Resample
-"""
-    ResampleScrambleVarMonths
-Alias para [`InflationEvalTools.ScrambleVarMonths`](@ref)
-"""
-const ResampleScrambleVarMonths = ScrambleVarMonths
+struct ResampleScrambleVarMonths <: ResampleFunction end
 
 # Definir cuál es la función para obtener bases paramétricas 
 get_param_function(::ResampleScrambleVarMonths) = param_sbb
@@ -60,3 +54,6 @@ la función interna `scramblevar`.
 (resamplefn::ResampleScrambleVarMonths)(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG) = 
     scramblevar(vmat, rng)
 
+# Definir el nombre y la etiqueta del método de remuestreo 
+method_name(resamplefn::ResampleScrambleVarMonths) = "Bootstrap IID por meses de ocurrencia"
+method_tag(resamplefn::ResampleScrambleVarMonths) = string(nameof(resamplefn))

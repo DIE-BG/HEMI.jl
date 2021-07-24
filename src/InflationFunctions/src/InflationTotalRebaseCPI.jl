@@ -4,7 +4,13 @@ Base.@kwdef struct InflationTotalRebaseCPI <: InflationFunction
     period::Int = 60 # períodos para realizar el cambio de base sintético
 end
 
-measure_name(::InflationTotalRebaseCPI) = "Variación interanual IPC con CB"
+# Nombre de la medida
+measure_name(::InflationTotalRebaseCPI) = "Variación interanual IPC con cambio de base sintético"
+# Etiqueta 
+measure_tag(::InflationTotalRebaseCPI) = "TotalRebaseCPI"
+
+# Parámetros
+params(totalrebasefn::InflationTotalRebaseCPI) = (totalrebasefn.period, )
 
 # Computar variación intermensual resumen de medida de inflación aplicando
 # metodología de cambio de base sintético

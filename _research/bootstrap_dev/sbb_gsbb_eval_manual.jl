@@ -32,7 +32,7 @@ percfn = InflationPercentileEq(64)
 resample_sbb = ResampleSBB(36)
 
 # Función de remuestreo Generalized Stational Block Bootstrap 
-resample_gsbb = ResampleGSBB()
+resample_gsbb = ResampleGSBBMod()
 
 # Función de inflación para trayectoria paramétrica 
 totalrebasefn = InflationTotalRebaseCPI()

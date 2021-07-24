@@ -33,6 +33,13 @@ method_name(::TrendFunction) = error("Se debe redefinir el nombre de la función
 ## Implementación del comportamiento general de función de aplicación de tendencia  
 
 """
+    method_tag(trendfn::TrendFunction)
+Función para obtener una etiqueta de la función de tendencia.
+"""
+method_tag(trendfn::TrendFunction) = string(nameof(trendfn))
+
+
+"""
     get_ranges(cs::CountryStructure)
 Función de ayuda para obtener tupla de rangos de índices para hacer slicing de los
 vectores de tendencia.

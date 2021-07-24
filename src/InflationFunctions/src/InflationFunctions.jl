@@ -12,12 +12,21 @@ module InflationFunctions
     using RecipesBase
 
     ## Métodos a extender 
-    import CPIDataBase: measure_name, measure_tag
+    import CPIDataBase: measure_name, measure_tag, params
 
     
     ## Media simple interanual 
     export InflationSimpleMean
-    include("simple_mean.jl")
+    include("InflationSimpleMean.jl")
+
+    ## Media ponderada interanual 
+    export InflationWeightedMean
+    include("InflationWeightedMean.jl")
+
+    ## Método de medias móviles
+    export InflationMovingAverage
+    include("InflationMovingAverage.jl")
+
 
     ## Percentiles equiponderados
     export InflationPercentileEq
@@ -29,22 +38,33 @@ module InflationFunctions
 
     ## Variación interanual IPC con cambio de base sintético 
     export InflationTotalRebaseCPI
-    include("total_cpi_rebase.jl")
+    include("InflationTotalRebaseCPI.jl")
+
+    ## Media Truncada Equiponderada 
+    export InflationTrimmedMeanEq
+    include("InflationTrimmedMeanEq.jl")
+
+    ## Media Truncada Ponderada 
+    export InflationTrimmedMeanWeighted
+    include("InflationTrimmedMeanWeighted.jl")
 
     ## Exclusión Fija de gastos básicos
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
 
-
     ## Subyacente MAI (muestra ampliada implícitamente)
-    export V
-    export vposition, renormalize!, renorm_g_glp, renorm_f_flp
-    export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
+    # export V
+    # export vposition, renormalize!, renorm_g_glp, renorm_f_flp
+    # export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
     export MaiG, MaiF
     export InflationCoreMai
     include("mai/TransversalDistr.jl")
     include("mai/renormalize.jl")
     include("mai/InflationCoreMai.jl")
+
+    ## Exclusión dinámica
+    export InflationDynamicExclusion
+    include("InflationDynamicExclusion.jl")
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
