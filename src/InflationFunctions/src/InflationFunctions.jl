@@ -53,9 +53,6 @@ module InflationFunctions
     include("InflationFixedExclusionCPI.jl")
 
     ## Subyacente MAI (muestra ampliada implícitamente)
-    # export V
-    # export vposition, renormalize!, renorm_g_glp, renorm_f_flp
-    # export TransversalDistr, ObservationsDistr, WeightsDistr, AccumulatedDistr
     export MaiG, MaiF
     export InflationCoreMai
     include("mai/TransversalDistr.jl")
