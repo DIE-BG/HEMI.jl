@@ -37,8 +37,8 @@ gtdata_10 = gtdata[Date(2020, 12)]
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
-v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
-# v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
+# v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 
 ## BASE 2000 
 ## Cálculo de volatilidad histórica por gasto básico
@@ -72,9 +72,9 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
+    :nsim => 125000) |> dict_list
 
-savepath = datadir("fixed-exclusion","Base2010-10K-00_Original")    
+savepath = datadir("fixed-exclusion","Base2010-125K")    
 
 ## lote de simulación 
 
