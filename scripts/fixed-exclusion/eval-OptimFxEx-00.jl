@@ -15,7 +15,7 @@ using Plots, CSV
 """
 ref: https://github.com/DIE-BG/EMI/blob/master/%2BEMI/%2Bexclusion_fija/exclusion_alternativas.m
 1. Evaluación de medidas de exclusión fija 
- - DIE Exclusión óptima
+ - Exclusión óptima
 Procedimiento general:
  - Base 2000
   - Definición de volatilidad para los 218 gastos básicos
@@ -78,18 +78,24 @@ run_batch(gtdata_00, FxEx_00, savepath)
 
 dfExc_00 = collect_results(savepath)
 
+# Para ordenamiento por cantidad de exclusiones 
 exclusiones =  getindex.(map(x -> length.(x), dfExc_00[!,:params]),1)
 dfExc_00[!,:exclusiones] = exclusiones 
+# Ordenamiento por cantidad de exclusiones
 dfExc_00 = sort(dfExc_00, :exclusiones)
 
+# DF ordenado por MSE
 sort_00 = sort(dfExc_00, :mse)
-# Primera prueba
-# a = collect(sort_00[1,:params])
-# a = a[1]
-# a = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
-# sort_00[1,:mse]
-# 5.995067f0
 
+## Exctracción de vector de exclusión 
+a = collect(sort_00[1,:params])
+exc00 = a[1]
+# a = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
+# Menor MSE
+sort_00[1,:mse]
+#5.995067f0
+
+## Revisión gráfica 
 mseplot = plot(dfExc_00[!,:mse], 
     title = " Óptimización Base 2000",
     label = " MSE Exclusión fija Óptima Base 2000", 

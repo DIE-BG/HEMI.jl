@@ -25,7 +25,7 @@ trendfn = TrendRandomWalk()
 
 # Inflación Inflation total
 tot = InflationTotalCPI()
-Infl_total = tot(gtdata_eval)
+Infl_total = tot(gtdata)
 ## Vectores de exclusión por medida
 # 1. Alimentos y energéticos variante 1 (11)
 
