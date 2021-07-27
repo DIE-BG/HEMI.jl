@@ -71,7 +71,7 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
+    :nsim => 125000) |> dict_list
 
 savepath = datadir("fixed-exclusion","Base2010")    
 
@@ -93,7 +93,8 @@ sort_10 = sort(dfExc_10, :mse)
 # a = a[2]
 # a = [29, 46, 39, 31, 116]
 # sort_10[1,:mse]
-# 4.2655616f0
+# 4.2655616f0 con 10,000
+# 4.254165f0 con 125,000 
 
 
 mseplot = plot(dfExc_10[1:50,:mse], 
