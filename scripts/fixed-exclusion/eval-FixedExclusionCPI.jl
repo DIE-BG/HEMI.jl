@@ -27,23 +27,23 @@ trendfn = TrendRandomWalk()
 tot = InflationTotalCPI()
 Infl_total = tot(gtdata_eval)
 ## Vectores de exclusión por medida
-# 1. Alimentos y energéticos variante 1
+# 1. Alimentos y energéticos variante 1 (11)
 
 exc_ae1 = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
 
-# 2.Energéticos
+# 2.Energéticos (11)
 exc_e  = ([104, 159], vcat(116, collect(184:186)))
 
-# 3. Todo alimentos y energéticos
+# 3. Todo alimentos y energéticos (9)
 exc_ae2 = (vcat(collect(1:62), 104, 159), vcat(collect(1:74), collect(116:118), collect(184:186)))
 
-# 4. Excluión fija óptima
+# 4. Excluión fija óptima (9)
 opt00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 opt10 = [29, 46, 39, 31, 116]
 exc_opt = (opt00, opt10)
 
 ## Creación de diccionario para simulación y savepath
-list = [exc_damp1, exc_damp2, exc_die1, exc_opt_die]
+list = [exc_ae1, exc_e, exc_ae2, exc_opt]
 
 sim_FxEx = Dict(
     :inflfn => InflationFixedExclusionCPI.(list), 
@@ -52,7 +52,7 @@ sim_FxEx = Dict(
     :nsim => 125000) |> dict_list
 
 
-savepath = datadir("fixed-exclusion","Medidas-base")
+savepath = datadir("fixed-exclusion","Medidas-base-125K")
 
 ## lote de simulación 
 
