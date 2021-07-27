@@ -15,7 +15,7 @@ using Plots, CSV
 """
 ref: https://github.com/DIE-BG/EMI/blob/master/%2BEMI/%2Bexclusion_fija/exclusion_alternativas.m
 1. Evaluación de medidas de exclusión fija 
- - DIE Exclusión óptima
+ - Exclusión óptima
 Procedimiento general:
  - Base 2000
   - Definición de volatilidad para los 218 gastos básicos
@@ -37,10 +37,10 @@ gtdata_10 = gtdata[Date(2020, 12)]
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
-# v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+# Vector de exclusión óptimo para base 2000
 v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 
-## BASE 2000 
+## BASE 2010 
 ## Cálculo de volatilidad histórica por gasto básico
 # Volatilidad = desviación estándar de la variación interanual por cada gasto básico 
 
@@ -53,7 +53,7 @@ sorted_std = sort(df, "Desv", rev=true)
 vec_v = sorted_std[!,:num]
 
 # Creación de vectores de exclusión
-# Se crearán 20 vectores para la exploración inicial
+# Se crearán 278 vectores para la exploración inicial
 
 v_exc = []
 tot = []
@@ -84,16 +84,21 @@ run_batch(gtdata_10, FxEx_00, savepath)
 
 dfExc_10 = collect_results(savepath)
 
+# Para ordenamiento por cantidad de exclusiones 
 exclusiones =  getindex.(map(x -> length.(x)[2], dfExc_10[!,:params]),1)
 dfExc_10[!,:exclusiones] = exclusiones 
+# Ordenamiento por cantidad de exclusiones
 dfExc_10 = sort(dfExc_10, :exclusiones)
 
+# DF ordenado por MSE
 sort_10 = sort(dfExc_10, :mse)
-# Obtención de exlcusiones
-# a = collect(sort_10[1,:params])
-# a = a[2]
+
+## Exctracción de vector de exclusión 
+a = collect(sort_10[1,:params])
+exc10 = a[2]
 # a = [29, 46, 39, 31, 116]
-# sort_10[1,:mse]
+# Menor MSE
+sort_10[1,:mse]
 # 4.2655616f0 con 10,000 ([29, 46, 39, 31, 116])
 # 4.254165f0 con 125,000 ([29, 46, 39, 31, 116])
 # 5.093933f0 con vector de exclusión 2000 sin cambios respecto de evaluación 2019. ([29, 46, 39, 31, 116])
