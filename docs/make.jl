@@ -10,9 +10,14 @@ EXAMPLES_DIR = joinpath(@__DIR__, "..", "scripts", "examples")
 OUTPUT_DIR   = joinpath(@__DIR__, "src", "generated")
 examples = ["explore_data.jl"]
 
+# Función para preprocesar y remover secciones de vscode
+function preprocess(content)
+    return replace(content, r"^##$."ms => "")
+end
+
 for example in examples
     example_path = joinpath(EXAMPLES_DIR, example)
-    Literate.markdown(example_path, OUTPUT_DIR, documenter=true)
+    Literate.markdown(example_path, OUTPUT_DIR, documenter=true, preprocess=preprocess)
 end
 
 example_pages = [
