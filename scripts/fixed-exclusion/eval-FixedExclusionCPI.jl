@@ -23,6 +23,9 @@ gtdata_eval = gtdata[Date(2020, 12)]
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
+# Inflación Inflation total
+tot = InflationTotalCPI()
+Infl_total = tot(gtdata_eval)
 ## Vectores de exclusión por medida
 # 1. DAMP alimentos y energéticos
 
@@ -60,23 +63,26 @@ run_batch(gtdata_eval, sim_FxEx, savepath)
 FxEx_base = collect_results(savepath)
 
 ## Trayectorias
-damp1 = InflationFixedExclusionCPI(exc_damp1)
-damp2 = InflationFixedExclusionCPI(exc_damp2)
-die1 = InflationFixedExclusionCPI(exc_die1)
-die2 = InflationFixedExclusionCPI(exc_opt_die)
+damp1 = InflationFixedExclusionCPI(exc_damp1)(gtdata_eval)
+damp2 = InflationFixedExclusionCPI(exc_damp2)(gtdata_eval)
+die1 = InflationFixedExclusionCPI(exc_die1)(gtdata_eval)
+die2 = InflationFixedExclusionCPI(exc_opt_die)(gtdata_eval)
 param = InflationTotalRebaseCPI() 
-param_tray_infl = param(gtdata)
+param_tray_infl = param(gtdata_eval)
 
 damp_ae = damp1(gtdata)
 damp_e = damp2(gtdata)
 die_ae = die1(gtdata)
 die_opt = die2(gtdata)
 
+saveplot = plotsdir("fixed-exclusion", "Medidas-Base")
+
 using Plots
-plot(die_opt, label = "DIE optima") 
-plot!(die_ae, label= "DIE Alim y Energ")  
-plot!(damp_ae, label = "DAMP Alim y Energ")
-plot!(damp_e, label = "DAMP Energ")  
+tray_plot = plot(die2, label = "DIE Exclusión Fija Óptima") 
+plot!(die1, label= "DIE Alim y Energ")  
+plot!(damp1, label = "DAMP Alim y Energ")
+plot!(damp2, label = "DAMP Energ")  
+plot!(Infl_total, label = "Inflación Total")
 plot!(param_tray_infl, label="Parámetro")
     
-    savefig("plots//fixed-exclusion//TRAYECTORIAS")
+savefig(tray_plot,saveplot)
