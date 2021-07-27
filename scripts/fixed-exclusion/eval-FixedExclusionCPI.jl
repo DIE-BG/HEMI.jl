@@ -13,9 +13,9 @@ addprocs(4, exeflags="--project")
 """
 ref: https://github.com/DIE-BG/EMI/blob/master/%2BEMI/%2Bexclusion_fija/exclusion_alternativas.m
 1. Evaluación de medidas de exclusión fija 
- - DAMP alimentos y energéticos
- - DAMP energéticos 
- - DIE Todo alimentos y energéticos
+ - Alimentos y energéticos variante 1
+ - Energéticos 
+ - Alimentos y energéticos variante 2
 
 """
 ## Elementos generales evaluación
@@ -27,20 +27,20 @@ trendfn = TrendRandomWalk()
 tot = InflationTotalCPI()
 Infl_total = tot(gtdata_eval)
 ## Vectores de exclusión por medida
-# 1. DAMP alimentos y energéticos
+# 1. Alimentos y energéticos variante 1
 
-exc_damp1 = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
+exc_ae1 = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
 
-# 2. DAMP energéticos
-exc_damp2 = ([104, 159], vcat(116, collect(184:186)))
+# 2.Energéticos
+exc_e  = ([104, 159], vcat(116, collect(184:186)))
 
-# 3. DIE todo alimentos y energéticos
-exc_die1 = (vcat(collect(1:62), 104, 159), vcat(collect(1:74), collect(116:118), collect(184:186)))
+# 3. Todo alimentos y energéticos
+exc_ae2 = (vcat(collect(1:62), 104, 159), vcat(collect(1:74), collect(116:118), collect(184:186)))
 
-# 4. DIE excluión fija óptima
+# 4. Excluión fija óptima
 opt00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 opt10 = [29, 46, 39, 31, 116]
-exc_opt_die = (opt00, opt10)
+exc_opt = (opt00, opt10)
 
 ## Creación de diccionario para simulación y savepath
 list = [exc_damp1, exc_damp2, exc_die1, exc_opt_die]
@@ -49,7 +49,7 @@ sim_FxEx = Dict(
     :inflfn => InflationFixedExclusionCPI.(list), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
+    :nsim => 125000) |> dict_list
 
 
 savepath = datadir("fixed-exclusion","Medidas-base")
@@ -62,27 +62,23 @@ run_batch(gtdata_eval, sim_FxEx, savepath)
 
 FxEx_base = collect_results(savepath)
 
-## Trayectorias
-damp1 = InflationFixedExclusionCPI(exc_damp1)(gtdata_eval)
-damp2 = InflationFixedExclusionCPI(exc_damp2)(gtdata_eval)
-die1 = InflationFixedExclusionCPI(exc_die1)(gtdata_eval)
-die2 = InflationFixedExclusionCPI(exc_opt_die)(gtdata_eval)
+## Trayectorias hasta Febrero 2021
+AE_v1 = InflationFixedExclusionCPI(exc_ae1)(gtdata)
+Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
+AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
+Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 param = InflationTotalRebaseCPI() 
-param_tray_infl = param(gtdata_eval)
+param_tray_infl = param(gtdata)
 
-damp_ae = damp1(gtdata)
-damp_e = damp2(gtdata)
-die_ae = die1(gtdata)
-die_opt = die2(gtdata)
 
 saveplot = plotsdir("fixed-exclusion", "Medidas-Base")
 
 using Plots
-tray_plot = plot(die2, label = "DIE Exclusión Fija Óptima") 
-plot!(die1, label= "DIE Alim y Energ")  
-plot!(damp1, label = "DAMP Alim y Energ")
-plot!(damp2, label = "DAMP Energ")  
+tray_plot = plot(Opt, label = "Exclusión Fija Óptima") 
+plot!(AE_v1, label= "Alimentos y Energéticos variante 1")  
+plot!(Energ, label = "Energéticos")
+plot!(AE_v2, label = "Alimentos y Energéticos variante 2")  
 plot!(Infl_total, label = "Inflación Total")
-plot!(param_tray_infl, label="Parámetro")
+plot!(param_tray_infl, label="Inflación Parámetro")
     
 savefig(tray_plot,saveplot)

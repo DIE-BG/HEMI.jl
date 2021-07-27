@@ -25,7 +25,7 @@ Procedimiento general:
   - Una vez optimizada la base 2000, se procede con el mismo procedimiento para la base completa, optimizando el 
     vector de exclusión de la base 2010, dejando fijo el de la base 2000 encontrado en la primera sección.
 
-Vectores de exclusión actuales
+Vectores de exclusión Evaluación 2019
 
 Base 2000: [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
 Base 2010: [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]} 
