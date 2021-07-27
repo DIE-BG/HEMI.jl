@@ -25,7 +25,7 @@ Procedimiento general:
   - Una vez optimizada la base 2000, se procede con el mismo procedimiento para la base completa, optimizando el 
     vector de exclusión de la base 2010, dejando fijo el de la base 2000 encontrado en la primera sección.
 
-Vectores de exclusión actuales
+Vectores de exclusión Evaluación 2019
 
 Base 2000: [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
 Base 2010: [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]} 
@@ -37,7 +37,8 @@ gtdata_10 = gtdata[Date(2020, 12)]
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
-v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
+v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+# v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 
 ## BASE 2000 
 ## Cálculo de volatilidad histórica por gasto básico
@@ -71,9 +72,9 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 125000) |> dict_list
+    :nsim => 10000) |> dict_list
 
-savepath = datadir("fixed-exclusion","Base2010")    
+savepath = datadir("fixed-exclusion","Base2010-10K-00_Original")    
 
 ## lote de simulación 
 
@@ -88,13 +89,14 @@ dfExc_10[!,:exclusiones] = exclusiones
 dfExc_10 = sort(dfExc_10, :exclusiones)
 
 sort_10 = sort(dfExc_10, :mse)
-# Primera prueba
+# Obtención de exlcusiones
 # a = collect(sort_10[1,:params])
 # a = a[2]
 # a = [29, 46, 39, 31, 116]
 # sort_10[1,:mse]
-# 4.2655616f0 con 10,000
-# 4.254165f0 con 125,000 
+# 4.2655616f0 con 10,000 ([29, 46, 39, 31, 116])
+# 4.254165f0 con 125,000 ([29, 46, 39, 31, 116])
+# 5.093933f0 con vector de exclusión 2000 sin cambios respecto de evaluación 2019. ([29, 46, 39, 31, 116])
 
 
 mseplot = plot(dfExc_10[1:50,:mse], 
