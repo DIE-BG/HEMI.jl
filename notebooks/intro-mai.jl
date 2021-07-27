@@ -417,11 +417,11 @@ En el período $t$, $E(v^{(b)}_t)$ es exactamente la media ponderada (MPm) de la
 - Esta media ponderada también se puede computar como el producto escalar entre el vector con la función de densidad $g_t$ y el vector de grilla de variaciones intermensuales $V_\varepsilon$.
 """
 
-# ╔═╡ 3524c263-3adb-418a-8be8-30b378445b08
-mean(g) 
-
 # ╔═╡ 3e46fc96-7114-431b-aed1-20f1f1252780
 sum(gt00.v[1, :] .* gt00.w) / 100
+
+# ╔═╡ 3524c263-3adb-418a-8be8-30b378445b08
+mean(g) 
 
 # ╔═╡ 748134bc-3856-44f3-9a85-f4e126ff8c0d
 md"""
@@ -479,11 +479,11 @@ El promedio ponderado de las variaciones intermensuales $E(v^{(b)}_t)$ en el per
 
 """
 
-# ╔═╡ da0dee29-0cd7-420f-a20a-768945529fa7
-mean(f) 
-
 # ╔═╡ 7c5c8db1-7c27-4bd0-ac57-5613e0ac829f
 mean(gt00.v[1, :])
+
+# ╔═╡ da0dee29-0cd7-420f-a20a-768945529fa7
+mean(f) 
 
 # ╔═╡ 948d7192-facb-4e3f-80ed-fb62ab1bbc3b
 md"""
@@ -505,30 +505,34 @@ md"""
 - Se incluyen solamente **años completos** en la historia.
 
 - Puede considerarse un reflejo del comportamiento histórico de las variaciones intermensuales de los índices de precios de los gastos básicos en Guatemala y por lo tanto, **no se encuentra asociada a un período en particular**.
-	
+
+Implementación: 
 - La función de densidad *glp* se conforma utilizando todas las variaciones intermensuales de las bases 2000 y 2010 del IPC. 
 
-- Considere que es posible construir una sola "ventana" $V^{*}$ que contenga todas las variaciones intermensuales de las bases del IPC 2000 y 2010, cuyas ponderaciones asociadas sean $W^{*}$.
+- Considere una sola "ventana" $V^{*}$ que contenga todas las variaciones intermensuales de las bases del IPC 2000 y 2010, cuyas ponderaciones asociadas sean $W^{*}$.
 
 - La función *glp* se construye utilizando el algoritmo de la distribución $g_t$, *mutatis mutandis*, con la ventana $V^{*}$ y el vector $W^{*}$ como entradas. 
-
-Mostrar en Julia su construcción y una gráfica de cómo se ve la distribución de largo plazo.
 """
 
 # ╔═╡ f71f0d24-8236-4a12-80d1-738e53ea0e12
 begin
-	all_v = vcat(gt00.v[:], gt10.v[1:120, :][:])
-	all_w = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
-	glp = WeightsDistr(all_v, all_w, V)
+	V_star = vcat(gt00.v[:], gt10.v[1:120, :][:])
+	W_star = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
+	glp = WeightsDistr(V_star, W_star, V)
 end
 
-# ╔═╡ cc80b7f9-ecb3-442e-a4cb-aa59d71ece26
+# ╔═╡ d0f22c65-f172-4e83-ad79-c75d6c46d571
 # with_terminal() do 
-# 	println(glp)
+# 	print(glp)
 # end
 
 # ╔═╡ eae96716-47ae-410e-adbc-bc863b9832c9
 plot(glp, xlims=(-1,2), seriestype=:bar, linealpha=0, label = "glp")
+
+# ╔═╡ e81a2a75-373c-41b5-8a4c-57608c4b12f9
+md"""
+La densidad de la variación intermensual cero es: 
+"""
 
 # ╔═╡ d591df05-1ac3-4081-9261-ef9ffb7c66d3
 glp(0)
@@ -536,9 +540,10 @@ glp(0)
 # ╔═╡ 7a3b0421-5d0a-47e3-8de8-0557979f3975
 md"""
 
-De forma similar con la función $g_t$, si la función $\mathrm{glp}(v)$ se interpreta como la función muestral de densidad de probabilidad de las variaciones intermensuales $v_{t,x}$ correspondientes a la ventana $V^{*}$ que contiene el histórico de variaciones intermensuales, entonces su valor esperado $E(v)$ es exactamente el promedio de la medias ponderadas en todos los períodos de la ventana $V^{*}$.
+De forma similar con la función $g_t$, si la función $\mathrm{glp}(v)$ se interpreta como la función de densidad de probabilidad de las variaciones intermensuales $v_{t,x}$ correspondientes a la ventana $V^{*}$ que contiene el histórico de variaciones intermensuales, entonces su valor esperado $E(v)$ es exactamente el promedio de la medias ponderadas en todos los períodos de la ventana $V^{*}$.
 
 - Al utilizar una ventana $V^{*}$ de observaciones históricas, su valor esperado $E(v)$ es exactamente el promedio de la medias ponderadas (MPm) en todos los períodos de la ventana $V^{*}$.
+
 $$\begin{split}
 E(v) & = glp\cdot v_\varepsilon^\prime = \sum_{v_i \in V_{\varepsilon}} v_i\,glp(v_i) \\
 & = \frac{1}{T_{2000} + T^*_{2010}} \sum_{b}\sum_{t=1}^{T_b}\sum_x w^{(b)}_x v^{(b)}_{t,x} \\
@@ -586,7 +591,7 @@ md"""
 """
 
 # ╔═╡ 87b845e0-e778-4ac3-ac4f-f9e2252ea20c
-flp = ObservationsDistr(all_v, V)
+flp = ObservationsDistr(V_star, V)
 
 # ╔═╡ f7e63c15-11aa-4aa7-946f-d489c700df7f
 # with_terminal() do 
@@ -595,6 +600,11 @@ flp = ObservationsDistr(all_v, V)
 
 # ╔═╡ a3bac26b-10a5-451a-82c2-2b730aef9346
 plot(flp, xlims=(-1,2), seriestype=:bar, linealpha=0)
+
+# ╔═╡ 1631b796-78e7-400e-9575-6494a63a7873
+md"""
+La densidad de la variación intermensual cero es:
+"""
 
 # ╔═╡ 9170753e-b5a3-4ee2-8e0d-b343c316a74c
 flp(0)
@@ -615,7 +625,7 @@ entonces su valor esperado $E(v)$ es exactamente el promedio de la medias equipo
 mean(flp)
 
 # ╔═╡ 490d77ff-3c79-4cfd-85c9-9d7688be9291
-mean(all_v)
+mean(V_star)
 
 # ╔═╡ 90c5a65b-d3a6-4d60-9953-81e718524548
 md"""
@@ -626,7 +636,7 @@ md"""
 FLP = cumsum(flp) 
 
 # ╔═╡ df737c62-2754-46e0-818e-2b365c6c906b
-plot(FLP, xlims=(-2,5))
+plot(FLP, xlims=(-2, 5))
 
 # ╔═╡ 4bccbf09-7a05-444d-aa60-7ff3766748e8
 md"""
@@ -643,7 +653,7 @@ end
 md"""
 ## Percentiles de las distribuciones
 
-- La inflación subyacente MAI se computa utilizando diferentes percentiles de las distribuciones $f_t$ y $g_t$, así como los percentiles de las distribuciones *flp* y *glp*. 
+- La inflación subyacente MAI se computa utilizando diferentes cuantiles de las distribuciones $f_t$ y $g_t$, así como los percentiles de las distribuciones *flp* y *glp*. 
 
 - En particular, es posible computar una inflación intermensual $\mathrm{MAI}_{i}$, representada por $\bar{v}_{\mathrm{MAI}, t}^{(i)}$, utilizando $i$ segmentos de las distribuciones de variaciones intermensuales de cada mes, de acuerdo con la definición siguiente.
 
@@ -672,15 +682,21 @@ which(quantile, (AccumulatedDistr, Real))
 quantile(FLP, 0.5) 
 
 # ╔═╡ 99dd9a8f-2266-4ab9-94d9-61043811fabd
-quantile(FLP, 0:0.2:1)
+q_flp = quantile(FLP, 0:0.2:1)
 
 # ╔═╡ 39f116e8-e5c1-439b-9cf9-f15a50d15cb6
 md"""
 
-- Note que $q_{y,0}^{(i)}$ representa el percentil $0$, que corresponde a la mínima variación intermensual en el dominio de la función de densidad $\mathbf{y}$. Similarmente, $q_{y,i}^{(i)}$ corresponde a la máxima variación intermensual en el dominio de la función de densidad $\mathbf{y}$.
+- Note que $q_{y,0}^{(i)}$ representa el percentil $0$, que corresponde a la mínima variación intermensual en el dominio de la función de densidad $\mathbf{y}$. Similarmente, $q_{y,i}^{(i)}$ corresponde a la máxima variación intermensual en el dominio de la función de densidad $\mathbf{y}$.  
 
-- En la función de densidad acumulada $\mathbf{Y}$, permiten que$$Y \left( q_{y,0}^{(i)} \right) = 0, \quad Y \left( q_{y,i}^{(i)} \right) = 1,$$
+
+- En la función de densidad acumulada $\mathbf{Y}$, permiten que 
+
+$$Y \left( q_{y,0}^{(i)} - \varepsilon \right) = 0, \quad Y \left( q_{y,i}^{(i)} \right) = 1,$$
 """
+
+# ╔═╡ 2f18642b-a8e8-47de-a549-428953baf704
+FLP(q_flp[1] - 0.01), FLP(q_flp[end])
 
 # ╔═╡ c215620e-a5ea-47bd-b49b-8d8d89ed659c
 md"""
@@ -689,14 +705,14 @@ md"""
 - La inflación subyacente MAI se obtiene a través de un proceso estadístico que involucra a las distribuciones $f_t$ y $g_t$, así como a las distribuciones de largo plazo *flp* y *glp*.  
 
 
-- Dicho proceso permite reponderar las variaciones intermensuales de un determinado período, tomando en cuenta la baja ocurrencia histórica de los valores extremos.
+- Dicho proceso permite **reponderar las variaciones intermensuales de un determinado período**, tomando en cuenta la baja ocurrencia histórica de los valores extremos.
 		
-- De esta manera, suaviza variaciones intermensuales asociadas a una ventana, obteniendo una versión suavizada (filtrada) del ritmo inflacionario.
+- De esta manera, suaviza variaciones intermensuales asociadas a una ventana, obteniendo una versión suavizada (*filtrada*) del ritmo inflacionario.
 """
 
 # ╔═╡ 8446f083-253a-4e1e-9ad4-58932d4ca102
 md"""
-- El cómputo utiliza como *parámetro* el número de percentiles $i$ de las distribuciones muestrales $f_t$ y $g_t$. Así como la distribución, o posiciones, de los percentiles también podrían considerarse hiperparámetros.
+- El cómputo utiliza como *parámetro* el número de percentiles $i$ de las distribuciones muestrales $f_t$ y $g_t$. Así como la distribución, o posiciones, de los cuantiles utilizados también podrían considerarse como parámetros.
 
 
 - La inflación intermensual $\mathrm{MAI}_{i}$, representada por $\bar{v}_{\mathrm{MAI}, t}^{(i)}$, divide las distribuciones $f_t$ y $g_t$ en $i$ segmentos, indicados por los percentiles $q_{f_{t},k}^{(i)}$ y $q_{g_{t},k}^{(i)}$, definidos anteriormente.
@@ -707,6 +723,8 @@ md"""
 
 # ╔═╡ 62076d20-0fa4-42ed-97cb-a4b693074786
 md"""
+### Ritmo inflacionario 
+
 - En cada período, la inflación intermensual $\mathrm{MAI}_{i}$ se obtiene como:
 
 $$\bar{v}_{\mathrm{MAI}, t}^{(i)} = (1-\alpha)\,\bar{v}_{\mathrm{MAI}, f,t}^{(i)} + \alpha\,\bar{v}_{\mathrm{MAI}, f,t}^{(i)}$$
@@ -714,21 +732,33 @@ $$\bar{v}_{\mathrm{MAI}, t}^{(i)} = (1-\alpha)\,\bar{v}_{\mathrm{MAI}, f,t}^{(i)
 - El componente $\bar{v}_{\mathrm{MAI}, f,t}^{(i)}$ se obtiene a través de la distribución $f_t$ normalizada con las distribuciones LP.
 		
 - El componente $\bar{v}_{\mathrm{MAI}, g,t}^{(i)}$ se obtiene a través de la distribución $g_t$ normalizada con las distribuciones LP.
-		
-- Actualmente, $\alpha = \frac{1}{2}$ e $i \in \left\lbrace 4,5,10,20,40\right\rbrace$.
-		
-Es decir, actualmente es un promedio simple de las medidas basadas en cuartiles, quintiles, deciles, en porciones de densidad del $5\%$ y en porciones de densidad del $2.5\%$.
-"""
-
-# ╔═╡ 1b4b4ccf-2c66-4699-be6f-5be9900ba354
-md"""
-Finalmente, podemos computar la inflación MAI en versión interanual, actualizando un índice de base mensual y obteniendo la variación interanual:
+	
+- Para computar el ritmo inflacionario, se encadena el resumen intermensual y se computa el estimador de inflación MAI en versión interanual obteniendo la variación interanual:
 
 $$\begin{split}
 \pi_{\mathrm{MAI}, t} = & \frac{I_{\mathrm{MAI},t} - I_{\mathrm{MAI},t-1}}{I_{\mathrm{MAI},t-1}} \\
 = & \prod_{j=t-11}^{t} \left(1 + \bar{v}_{\mathrm{MAI}, j}\right)  - 1
 \end{split}$$
+"""
 
+# ╔═╡ c9270e0a-9248-4e36-bafa-af51dda1a166
+md"""
+Del año 2018 a 2020 se utilizó $\alpha = \frac{1}{2}$ e $i \in \left\lbrace 4,5,10,20,40\right\rbrace$. Es decir, un promedio simple de las medidas basadas en cuartiles, quintiles, deciles, en porciones de densidad del $5\%$ y en porciones de densidad del $2.5\%$.
+"""
+
+# ╔═╡ da9539eb-ecf3-415b-8add-8bcb6414561d
+md"""
+
+### Combinación lineal de variantes
+
+A partir del año 2021 se utiliza una combinación lineal de las variantes en términos de ritmo inflacionario: 
+
+$$\begin{aligned}
+  \pi_{\text{MAI},t} = \, & a_{f,4}\pi_{\text{MAI},f,4,t} + a_{f,5}\pi_{\text{MAI},f,5,t} + a_{f,10}\pi_{\text{MAI},f,10,t} + a_{f,20}\pi_{\text{MAI},f,20,t} + a_{f,40}\pi_{\text{MAI},f,40,t} \\
+  ~ & \; + a_{g,4}\pi_{\text{MAI},f,4,t} + a_{g,5}\pi_{\text{MAI},f,5,t} + a_{g,10}\pi_{\text{MAI},f,10,t} + a_{g,20}\pi_{\text{MAI},f,20,t} + a_{g,40}\pi_{\text{MAI},f,40,t}
+\end{aligned}$$
+
+Los ponderadores $\mathbf{a}$ se encuentran con la metodología de la HEMI. Esto lo veremos con detalle más adelante. Primero necesitamos construir el estimador interanual.
 """
 
 # ╔═╡ d6d13501-4b14-40e4-bcb3-1c16843eef20
@@ -764,8 +794,18 @@ md"""
 ### Algoritmo de cómputo
 """
 
+# ╔═╡ ce5d1861-c998-4b85-8fec-ee7c9132fbf4
+md"""
+Escogemos el número de segmentos a utilizar para el proceso de normalización: 
+"""
+
 # ╔═╡ 3aa89f7c-f526-4e37-847a-660cb9c899cf
 n = 5
+
+# ╔═╡ 84902e13-3c42-4d69-af7d-8531d6352991
+md"""
+También escogemos las posiciones a utilizar para renormalizar las funciones de densidad. Por ahora, utilizamos los que dividen en partes iguales el espacio de cuantiles $[0,1]$. 
+"""
 
 # ╔═╡ a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
 p = (0:n) / n
@@ -794,8 +834,8 @@ md"""
 		
 - De tal forma que:
 $$\begin{split}
-\underline{s} = & \arg\max_s \,q_{g_{t},s}^{(i)} \,, \quad \text{sujeto a} \quad q_{g_{t},s}^{(i)} < 0 \\
-\overline{s} = & \arg\min_s \,q_{g_{t},s}^{(i)} \,, \quad \text{sujeto a} \quad q_{g_{t},s}^{(i)} > 0
+\underline{s} = & \,\arg\max_s \,q_{g_{t},s}^{(i)} \,, \quad \text{sujeto a} \quad q_{g_{t},s}^{(i)} < 0 \\
+\overline{s} = & \,\arg\min_s \,q_{g_{t},s}^{(i)} \,, \quad \text{sujeto a} \quad q_{g_{t},s}^{(i)} > 0
 \end{split}$$
 """
 
@@ -819,8 +859,9 @@ md"""
 	
 - Considere el conjunto de segmentos $I = \left\lbrace0, 1, \ldots, \underline{r}, \ldots, \overline{r}, \ldots, i\right\rbrace$. 
 - Y sea el conjunto de segmentos contenidos en el segmento especial $R = \left\lbrace \underline{r}+1, \ldots, \overline{r}-1 \right\rbrace$, definido alrededor de la variación intermensual cero.
-		
-- Entonces, el conjunto de segmentos a normalizar está dado por: $I-R = \left\lbrace0, 1, \ldots, \underline{r}, \overline{r}, \ldots, i\right\rbrace$. 
+- Entonces, el conjunto de segmentos a normalizar está dado por: 
+
+$$I-R = \left\lbrace0, 1, \ldots, \underline{r}, \overline{r}, \ldots, i\right\rbrace$$ 
 """
 
 # ╔═╡ 8226ffbb-802e-4577-9ecd-57875dd395bd
@@ -841,9 +882,20 @@ Note que en el primer y último segmento, las expresiones requerirán evaluar la
 
 # ╔═╡ b95b2374-9cd1-4583-bbfb-b02ec7e251e9
 md"""
-Notar que si $k=0$ o $k=i$, el intervalo de normalización debe modificarse apropiadamente: 
+Notar que si $k=0$ o $k=i$, los límites del intervalo de normalización deben modificarse apropiadamente: 
 - Si $k=0$: 
-$$q_{g,k}^{(i)} = min()$$
+$$q_{g,0}^{(i)} \triangleq \min(q_{g,0}^{(i)}, q_{glp,0}^{(i)})$$
+
+- Si $k=i$: 
+$$q_{g,i}^{(i)} \triangleq \max(q_{g,k}^{(i)}, q_{glp,k}^{(i)})$$
+"""
+
+# ╔═╡ e870fbb6-a0e4-4374-bfd3-0da630cbc596
+md"""
+
+### Ejemplo de renormalización
+
+A continuación se lleva a cabo la renormalización del primer segmento de la distribución. *Nota: esto podría incluir al segmento especial, dependiendo del valor de $n$*.
 """
 
 # ╔═╡ cc17dfa5-8302-49b2-ae4f-26f84e05ded3
@@ -867,7 +919,14 @@ begin
 	plot(Gt, label="Gt")
 	plot!(GLP, label="GLP")
 	plot!(GLPt_1, label="GLPt", xlims=(-5, 5))
+	hline!([p[segments[2]]], linealpha=0.5, color=:black, label=false)
+	# xlims!(-0.1, 0.7)
 end
+
+# ╔═╡ f47dd797-8d70-436f-8075-8b133f5137c8
+md"""
+Ahora, renormalizamos la distribución hasta el segundo segmento.
+"""
 
 # ╔═╡ 3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # Renormalizar el segundo segmento 
@@ -889,6 +948,25 @@ begin
 	plot(Gt, label="Gt")
 	plot!(GLP, label="GLP")
 	plot!(GLPt_2, label="GLPt", xlims=(-5, 5))
+	hline!([p[segments[3]]], linealpha=0.5, color=:black, label=false)
+	# xlims!(0.5, 2)
+end
+
+# ╔═╡ 80482a7e-eaa1-499f-b14d-266be0b8867a
+md"""
+Y continuamos de esta forma hasta renormalizar toda la distribución. Este proceso de renormalización es automatizado con la función `renorm_g_glp`. 
+
+*Nota: También existe una función de mayor desempeño, utilizada en la definición de `InflationCoreMai`*.
+"""
+
+# ╔═╡ 585c4ec5-b880-4e9f-be45-b9c86d891d78
+begin
+	glpₜ = renorm_g_glp(Gt, GLP, glp, n)
+	GLPt = cumsum(glpₜ) 
+	
+	plot(Gt, label="Gt")
+	plot!(GLP, label="GLP")
+	plot!(GLPt, label="GLPt", xlims=(-5, 5))
 end
 
 # ╔═╡ 4d336858-d661-46f5-8927-c9901d2eef3f
@@ -899,6 +977,9 @@ $$\overline{v}_{\mathrm{MAI}, g, t}^{(i)} = glp_{t}\cdot v_\varepsilon^\prime = 
 
 Como resultado de este proceso de normalización, los percentiles de la función de densidad de largo plazo normalizada son iguales a los de la función de densidad $g_t$, esto es: $q_{glp_{t}, k}^{(i)} = q_{g_{t}, k}^{(i)}$.
 """
+
+# ╔═╡ 662a3104-9f4f-4547-acc9-2c1782da499e
+mean(glpₜ) 
 
 # ╔═╡ 0edcdd2e-8b00-4c15-8076-8be69e83d1d4
 md"""
@@ -950,8 +1031,16 @@ $$flp_{t}(v) =   glp\left(v\right) \, \frac{GLP\left(q_{flp, k}^{\left(i\right)}
 - En el segmento especial, en el cual $k = \overline{r}$, la normalización se hace sobre todo el segmento indicado por los percentiles $\underline{r}$ y $\overline{r}$, esto es:
 
 $$flp_{t}(v) =   glp\left(v\right) \, \frac{GLP\left(q_{flp, \overline{r}}^{\left(i\right)}\right) - GLP\left(q_{flp, \underline{r}}^{\left(i\right)}\right)}{GLP\left(q_{f_{t}, \overline{r}}^{\left(i\right)}\right) - GLP\left(q_{f_{t}, \underline{r}}^{\left(i\right)}\right)}, \quad q_{f_{t}, \underline{r}}^{\left(i\right)} < v \leq q_{f_{t}, \overline{r}}^{\left(i\right)}.$$
+"""
 
-Note que en el primer y último segmento, las expresiones requerirán evaluar las funciones de densidad cuando $k=0$ y $k=i$, y por lo tanto, se debe garantizar que las funciones de densidad acumulada correspondan a la evaluación de los valores mínimo y máximo en el conjunto $V_\varepsilon$.
+# ╔═╡ eece39ce-8282-4c3b-a5e8-882b2fd111e4
+md"""
+Notar que si $k=0$ o $k=i$, los límites del intervalo de normalización deben modificarse apropiadamente: 
+- Si $k=0$: 
+$$q_{g,0}^{(i)} \triangleq \min(q_{g,0}^{(i)}, q_{glp,0}^{(i)})$$
+
+- Si $k=i$: 
+$$q_{g,i}^{(i)} \triangleq \max(q_{g,k}^{(i)}, q_{glp,k}^{(i)})$$
 """
 
 # ╔═╡ 3e47548d-2cf9-4840-ba22-0e0c168f7851
@@ -959,6 +1048,122 @@ md"""
 En este caso, normalizar utilizando los percentiles de la distribución de ocurrencias $f_t$ y la función de densidad *glp*, permite que la densidad acumulada en la distribución normalizada $flp_{t}$ en el segmento $k$ sea la acumulada por la densidad acumulada $GLP$ en el segmento indicado por los percentiles de la función de densidad de ocurrencias de largo plazo, esto es:
 
 $$FLP_t(q_{f_{t}, k}^{(i)}) - FLP_t(q_{f_{t}, k-1}^{(i)}) = GLP(q_{flp, k}^{(i)}) - GLP(q_{flp, k-1}^{(i)})$$
+"""
+
+# ╔═╡ c6b1a8ce-451d-4b55-9e3f-7e981620538b
+md"""
+### Ejemplo de renormalización 
+"""
+
+# ╔═╡ f2a71207-971e-49a8-b753-42df3c8b1ad6
+begin
+	flpₜ = renorm_f_flp(Ft, FLP, GLP, glp, n)
+	FLPt = cumsum(flpₜ) 
+	
+	plot(Ft, label="Ft")
+	plot!(FLP, label="FLP")
+	plot!(FLPt, label="FLPt", xlims=(-5, 5))
+end
+
+# ╔═╡ 550e5092-dc74-457b-9b24-8d514d1aa59f
+mean(flpₜ)
+
+# ╔═╡ f6ab278a-a298-46fd-9593-74021119ef18
+md"""
+## Función de inflación de la HEMI
+
+Se introduce a continuación la función de inflación (`InflationFunction`) desarrollada en la HEMI.
+
+Construimos una función de inflación para computar con metodología de renormalización F y **cuartiles** de la distribución de variaciones intermensuales => MAI (F, 4)
+"""
+
+# ╔═╡ 23f0267f-9d06-4cc8-a993-850f4c6392b7
+inflfn = InflationCoreMai(MaiF(4))
+
+# ╔═╡ f2522946-2628-4ea3-82e2-8b32ed9caab9
+md"""
+Para computar la trayectoria de inflación, aplicamos directamente sobre `CountryStructure`
+"""
+
+# ╔═╡ d3362097-7398-4f93-aa3e-36a20a7e96ef
+tray_infl = inflfn(gtdata)
+
+# ╔═╡ f1a142c8-55f1-4ed9-af01-bd79be1d9482
+md"""
+Para graficar las trayectorias, podemos utilizar esta receta: 
+"""
+
+# ╔═╡ 17a9a9a6-1afd-4eaa-a4a7-dbc73045ff89
+# plot(inflfn, gtdata, legend=:topright)
+
+# ╔═╡ 206ab3a9-d9d9-4815-9eaf-91e3fa32843a
+md"""
+Veamos las variantes de inflación subyacente MAI por método y número de segmentos: 
+"""
+
+# ╔═╡ 1adce1ea-8ef0-4509-ad05-d93b1ece4d47
+begin
+	methods = vcat(
+		[MaiF(i) for i in (4, 5, 10, 20, 40)], 
+		[MaiG(i) for i in (4, 5, 10, 20, 40)])
+	
+	inflfns = InflationCoreMai.(methods)
+	
+	plt1 = plot()
+	for fn in inflfns
+		plot!(plt1, fn, gtdata, legend=:topright)
+	end
+	plt1
+end
+
+# ╔═╡ b860dc45-8921-4183-85c6-44599892cbe0
+md"""
+## Optimización de la combinación lineal de trayectorias con la HEMI 
+
+$$\begin{aligned}
+  \text{MAI}_{t} = \, & a_{f,4}\text{MAI}_{f,4,t} + a_{f,5}\text{MAI}_{f,5,t} + a_{f,10}\text{MAI}_{f,10,t} + a_{f,20}\text{MAI}_{f,20,t} + a_{f,40}\text{MAI}_{f,40,t} \\
+  ~ & \; + a_{g,4}\text{MAI}_{f,4,t} + a_{g,5}\text{MAI}_{f,5,t} + a_{g,10}\text{MAI}_{f,10,t} + a_{g,20}\text{MAI}_{f,20,t} + a_{g,40}\text{MAI}_{f,40,t}
+\end{aligned}$$
+
+Con la trayectoria combinada $\text{MAI}_{t}$, se plantea un problema de optimización libre con respecto al $\overline{\text{MSE}}$ promedio obtenido del proceso de evaluación con criterios básicos. Para la combinación anterior, se puede notar que, dadas las realizaciones de las trayectorias, el estadístico de error cuadrático medio es función de los ponderadores de la combinación lineal:
+
+$$\overline{\text{MSE}}(\mathbf{a}) = \frac{1}{T\,K}\sum_{k=1}^{K}\sum_{t=1}^{T} \left( \text{MAI}_{t}^{(k)}(\mathbf{a}) - \pi_t \right)^2$$ 
+
+en donde: 
+- el vector $\mathbf{a}$ representa las ponderaciones para cada una de las variantes de las medidas MAI. En particular, se utiliza el siguiente ordenamiento para los ponderadores: 
+
+$$\mathbf{a} = \left[ a_{f,4}, a_{g,4}, a_{f,5}, a_{g,5}, a_{f,10}, a_{g,10}, a_{f,20}, a_{g,20}, a_{f,40}, a_{g,40}\right]^T$$
+
+- El índice $k$ representa el número de realización en el ejercicio de simulación, respecto de un total de $K$ realizaciones.
+
+- Y $\pi_t$ representa la trayectoria de inflación paramétrica en el período $t$. El total de períodos está dado por $T$.
+
+La función que representa el valor esperado del error cuadrático medio $\overline{\text{MSE}}(\mathbf{a})$, es estrictamente convexa en los ponderadores $a_{f,i}$ y $a_{g,i}$, y por lo tanto, se deriva analíticamente una solución global, dada por la solución al sistema de ecuaciones obtenido a través de las condiciones de primer orden: 
+
+$$\left[\begin{matrix}
+\overline{\text{MAI}_{f,4}^{2}} & \overline{\text{MAI}_{f,4}\,\text{MAI}_{g,4}} & \ldots & \overline{\text{MAI}_{f,4}\,\text{MAI}_{g,40}} \\
+\overline{\text{MAI}_{f,4}\,\text{MAI}_{g,4}} & \overline{\text{MAI}_{g,4}^{2}} & \ldots & \overline{\text{MAI}_{g,4}\,\text{MAI}_{g,40}} \\
+\vdots & \vdots & \ddots  & \vdots \\
+\overline{\text{MAI}_{f,4}\,\text{MAI}_{g,40}} & \overline{\text{MAI}_{g,4}\,\text{MAI}_{g,40}} & \ldots & \overline{\text{MAI}_{g,40}^{2}}
+\end{matrix}\right] 
+\left[\begin{matrix} 
+a_{f,4} \\ 
+a_{g,4} \\
+\vdots \\
+a_{f,40} \\
+a_{g,40} \\
+\end{matrix}\right] = 
+\left[\begin{matrix} 
+\overline{\pi\,\text{MAI}_{f,4}} \\ 
+\overline{\pi\,\text{MAI}_{g,4}} \\ 
+\vdots \\ 
+\overline{\pi\,\text{MAI}_{f,40}} \\ 
+\overline{\pi\,\text{MAI}_{g,40}} \\ 
+\end{matrix}\right]$$
+
+en donde, por ejemplo, $\overline{\text{MAI}_{f,4}\,\text{MAI}_{g,4}}$ representa el promedio a través del tiempo y realizaciones del producto de las trayectorias de inflación subyacente MAI con cuartiles que utilizan la distribución de ocurrencias y con la distribución ponderada de ocurrencias, es decir: 
+
+$$\overline{\text{MAI}_{f,4}\,\text{MAI}_{g,4}} = \frac{1}{T\,K}\sum_{k=1}^{K}\sum_{t=1}^{T} \text{MAI}_{f,4,t}^{(k)}\,\text{MAI}_{g,4,t}^{(k)}$$
 """
 
 # ╔═╡ c51b6e67-06ec-4e54-930c-5abc956bf237
@@ -971,9 +1176,6 @@ md"""
 		
 - Para llevar a cabo el cómputo, ¿sería posible utilizar percentiles no igualmente espaciados entre sí?
 """
-
-# ╔═╡ a92aca49-9b7c-48f2-97c2-ba1e3d0aabaf
-
 
 # ╔═╡ dcee00f6-c94a-4e9f-ba27-b61e09097bea
 md"""
@@ -1034,8 +1236,8 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═416e4983-035f-4185-b28c-d28be1b10cae
 # ╠═0b6f340f-5007-4351-bcd8-4f280880cf16
 # ╟─b1974f1f-f6e1-41f3-8e79-66bc1662de6a
-# ╠═3524c263-3adb-418a-8be8-30b378445b08
 # ╠═3e46fc96-7114-431b-aed1-20f1f1252780
+# ╠═3524c263-3adb-418a-8be8-30b378445b08
 # ╟─748134bc-3856-44f3-9a85-f4e126ff8c0d
 # ╠═2b2638c1-a7a5-49ea-a612-979474d7d7b4
 # ╠═2975fb0e-2a6f-4867-b3b0-eb69d3128a2e
@@ -1045,15 +1247,16 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═640e9426-996a-4fac-8de4-36daacd0f5ac
 # ╠═2e28138e-b50d-4345-9e7d-ab9a5804e073
 # ╟─7652d811-ca5e-43ff-ae0b-ede97c7c6986
-# ╠═da0dee29-0cd7-420f-a20a-768945529fa7
 # ╠═7c5c8db1-7c27-4bd0-ac57-5613e0ac829f
+# ╠═da0dee29-0cd7-420f-a20a-768945529fa7
 # ╟─948d7192-facb-4e3f-80ed-fb62ab1bbc3b
 # ╠═ad923e3b-92ff-4670-9dd5-25022e54df85
 # ╠═341c042d-e622-41e4-93be-62472a27efb8
 # ╟─342e77e1-a763-48f8-9f83-2e4396db6656
 # ╠═f71f0d24-8236-4a12-80d1-738e53ea0e12
-# ╟─cc80b7f9-ecb3-442e-a4cb-aa59d71ece26
+# ╠═d0f22c65-f172-4e83-ad79-c75d6c46d571
 # ╠═eae96716-47ae-410e-adbc-bc863b9832c9
+# ╟─e81a2a75-373c-41b5-8a4c-57608c4b12f9
 # ╠═d591df05-1ac3-4081-9261-ef9ffb7c66d3
 # ╟─7a3b0421-5d0a-47e3-8de8-0557979f3975
 # ╠═e33f1222-8f29-4591-9db9-dee8938a306f
@@ -1063,8 +1266,9 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═8bb62d79-96f2-4e54-b834-4cef0256c8f4
 # ╟─37d28a04-b2dc-4402-9bec-56ecc27b5550
 # ╠═87b845e0-e778-4ac3-ac4f-f9e2252ea20c
-# ╟─f7e63c15-11aa-4aa7-946f-d489c700df7f
+# ╠═f7e63c15-11aa-4aa7-946f-d489c700df7f
 # ╠═a3bac26b-10a5-451a-82c2-2b730aef9346
+# ╟─1631b796-78e7-400e-9575-6494a63a7873
 # ╠═9170753e-b5a3-4ee2-8e0d-b343c316a74c
 # ╟─670c5227-49ed-479f-9fa4-0ad97f87a05c
 # ╠═4a7870fb-9be4-4f72-a54e-1d144f5794b2
@@ -1073,7 +1277,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═3b73f01d-ef58-4a45-8eac-1c1b8ad4c4bb
 # ╠═df737c62-2754-46e0-818e-2b365c6c906b
 # ╟─4bccbf09-7a05-444d-aa60-7ff3766748e8
-# ╠═7c755659-4209-4714-936e-28a6d8965669
+# ╟─7c755659-4209-4714-936e-28a6d8965669
 # ╟─5ee20275-eecf-4738-a018-f96024bf6ba6
 # ╟─8be9921e-4535-4cf8-b6f3-5939dbd37598
 # ╟─272d4be4-33af-44df-a313-befb89cb4515
@@ -1081,14 +1285,18 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═88acf18f-7709-4ba0-b6bf-da77f032dedd
 # ╠═99dd9a8f-2266-4ab9-94d9-61043811fabd
 # ╟─39f116e8-e5c1-439b-9cf9-f15a50d15cb6
+# ╠═2f18642b-a8e8-47de-a549-428953baf704
 # ╟─c215620e-a5ea-47bd-b49b-8d8d89ed659c
 # ╟─8446f083-253a-4e1e-9ad4-58932d4ca102
 # ╟─62076d20-0fa4-42ed-97cb-a4b693074786
-# ╟─1b4b4ccf-2c66-4699-be6f-5be9900ba354
+# ╟─c9270e0a-9248-4e36-bafa-af51dda1a166
+# ╟─da9539eb-ecf3-415b-8add-8bcb6414561d
 # ╟─d6d13501-4b14-40e4-bcb3-1c16843eef20
 # ╟─4e9d615c-f16d-42d7-a798-b95156a28559
 # ╟─41a183d6-5db7-4854-9bd6-c388f033e2f7
+# ╟─ce5d1861-c998-4b85-8fec-ee7c9132fbf4
 # ╠═3aa89f7c-f526-4e37-847a-660cb9c899cf
+# ╟─84902e13-3c42-4d69-af7d-8531d6352991
 # ╠═a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
 # ╟─2b78811f-d59e-4ac3-9dee-a0c07cb44731
 # ╠═e615d881-4a52-4943-8138-17b399ef35f1
@@ -1098,18 +1306,35 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─b2744061-113e-4348-b7bb-efcc0bb01de8
 # ╠═8226ffbb-802e-4577-9ecd-57875dd395bd
 # ╟─0fdf271c-b7ad-482f-affc-0845049c4f8f
-# ╠═b95b2374-9cd1-4583-bbfb-b02ec7e251e9
-# ╟─cc17dfa5-8302-49b2-ae4f-26f84e05ded3
-# ╟─96586a48-e779-4ba0-91d7-35f3aeb67666
+# ╟─b95b2374-9cd1-4583-bbfb-b02ec7e251e9
+# ╟─e870fbb6-a0e4-4374-bfd3-0da630cbc596
+# ╠═cc17dfa5-8302-49b2-ae4f-26f84e05ded3
+# ╠═96586a48-e779-4ba0-91d7-35f3aeb67666
+# ╟─f47dd797-8d70-436f-8075-8b133f5137c8
 # ╠═3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # ╟─1c432a8a-e83c-430e-a1ea-cda63206df44
+# ╟─80482a7e-eaa1-499f-b14d-266be0b8867a
+# ╠═585c4ec5-b880-4e9f-be45-b9c86d891d78
 # ╟─4d336858-d661-46f5-8927-c9901d2eef3f
+# ╠═662a3104-9f4f-4547-acc9-2c1782da499e
 # ╟─0edcdd2e-8b00-4c15-8076-8be69e83d1d4
 # ╟─f6b5ce08-4bb1-42ab-9272-42790b33704e
 # ╟─4ebb2e7e-95c9-4ba5-a4f7-344f7f2e706c
 # ╟─957b95ff-6a71-4fc0-84c7-ef26a25cf51f
+# ╟─eece39ce-8282-4c3b-a5e8-882b2fd111e4
 # ╟─3e47548d-2cf9-4840-ba22-0e0c168f7851
+# ╟─c6b1a8ce-451d-4b55-9e3f-7e981620538b
+# ╠═f2a71207-971e-49a8-b753-42df3c8b1ad6
+# ╠═550e5092-dc74-457b-9b24-8d514d1aa59f
+# ╟─f6ab278a-a298-46fd-9593-74021119ef18
+# ╠═23f0267f-9d06-4cc8-a993-850f4c6392b7
+# ╟─f2522946-2628-4ea3-82e2-8b32ed9caab9
+# ╠═d3362097-7398-4f93-aa3e-36a20a7e96ef
+# ╟─f1a142c8-55f1-4ed9-af01-bd79be1d9482
+# ╠═17a9a9a6-1afd-4eaa-a4a7-dbc73045ff89
+# ╟─206ab3a9-d9d9-4815-9eaf-91e3fa32843a
+# ╟─1adce1ea-8ef0-4509-ad05-d93b1ece4d47
+# ╟─b860dc45-8921-4183-85c6-44599892cbe0
 # ╟─c51b6e67-06ec-4e54-930c-5abc956bf237
-# ╟─a92aca49-9b7c-48f2-97c2-ba1e3d0aabaf
 # ╟─dcee00f6-c94a-4e9f-ba27-b61e09097bea
 # ╠═d722fbf0-eb4f-11eb-2fef-b19a7566ba31

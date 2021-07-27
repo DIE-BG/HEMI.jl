@@ -66,4 +66,7 @@ module InflationFunctions
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
 
+    ## Recetas para Gráficas
+    include("recipes/plotrecipes.jl")
+
 end
