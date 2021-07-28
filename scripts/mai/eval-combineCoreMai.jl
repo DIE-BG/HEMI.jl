@@ -66,6 +66,12 @@ tray_infl_pob = param(gtdata_eval)
 # de inflación MAI 
 a_optim = combination_weights(tray_infl_mai, tray_infl_pob)
 
+# Ejercicio de combinación sin la variante F-40
+# tray_infl_nof40 = tray_infl_mai[:, [1,2,3,4,6,7,8,9,10], :]
+# a_optimsens = combination_weights(tray_infl_nof40, tray_infl_pob)
+# tray_infl_maisens = sum(tray_infl_nof40 .* a_optimsens', dims=2)
+# metrics_sens = eval_metrics(tray_infl_maisens, tray_infl_pob)
+
 a_df = DataFrame(measure = mai_names, weight = a_optim)
 
 # Gráfica de ponderadores 
@@ -74,6 +80,7 @@ bar(a_df.measure, a_df.weight,
     xrotation=45)
 savefig(plotsdir(plotspath, "opt_weights_mai"))
 
+##
 # ## Evaluación de combinación lineal óptima 
 
 tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)

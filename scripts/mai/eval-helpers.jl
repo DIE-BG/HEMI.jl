@@ -28,6 +28,7 @@ function eval_metrics(tray_infl, tray_infl_pob)
     err_dist = tray_infl .- tray_infl_pob
     sq_err_dist = err_dist .^ 2
     
+    K = size(tray_infl, 3)
     mse = mean(sq_err_dist) 
     std_sim_error = std(sq_err_dist) / sqrt(K)
     

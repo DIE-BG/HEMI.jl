@@ -40,10 +40,10 @@ run_batch(gtdata_eval, config_mai, savepath)
 
 ## 
 # ## Revisión de resultados, utilizando `collect_results`
-df_mai = collect_results(savepath)
-
 using DataFrames
 using Chain
+df_mai = collect_results(savepath)
+
 
 df_results = @chain df_mai begin 
     select(:measure, :mse, :std_sim_error, :rmse, :me, :mae,)

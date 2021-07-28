@@ -817,9 +817,6 @@ md"""
 Escogemos el número de segmentos a utilizar para el proceso de normalización: 
 """
 
-# ╔═╡ 3aa89f7c-f526-4e37-847a-660cb9c899cf
-# n = 5
-
 # ╔═╡ 84902e13-3c42-4d69-af7d-8531d6352991
 md"""
 También escogemos las posiciones a utilizar para renormalizar las funciones de densidad. Por ahora, utilizamos los que dividen en partes iguales el espacio de cuantiles $[0,1]$. 
@@ -943,21 +940,21 @@ segments = get_segments(q_g, q_glp, n)
 # ╔═╡ cc17dfa5-8302-49b2-ae4f-26f84e05ded3
 # Renormalizar el primer segmento 
 begin
-	local k = segments[2]
+	local k = segments[2] 
 	local k₋₁ = segments[1]
 	
-	glpt_1 = deepcopy(glp); 
+	glpt_1 = deepcopy(glp) 
 	q_g0 = min(q_g[k₋₁], q_glp[k₋₁])
 	
 	# Constante de normalización
 	local c_norm = (Gt(q_g[k]) - Gt(q_g0)) / (GLP(q_g[k]) - GLP(q_g0))
 	renormalize!(glpt_1, q_g0, q_g[k], c_norm)
-	GLPt_1 = cumsum(glpt_1)
 	c_norm
 end
 
 # ╔═╡ 96586a48-e779-4ba0-91d7-35f3aeb67666
 begin
+	GLPt_1 = cumsum(glpt_1)
 	plot(Gt, label="Gt")
 	plot!(GLP, label="GLP")
 	plot!(GLPt_1, label="GLPt", xlims=(-5, 5))
@@ -965,11 +962,14 @@ begin
 	# xlims!(-0.1, 0.7)
 end
 
+# ╔═╡ 2efdd051-3847-4fae-a24b-7a8d87cbbd97
+segments
+
 # ╔═╡ 3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # Renormalizar el segundo segmento 
 begin
-	local k = segments[3]
-	local k₋₁ = segments[2]
+	local k = segments[3] # 4
+	local k₋₁ = segments[2] # 3
 	
 	glpt_2 = deepcopy(glpt_1); 
 
@@ -992,8 +992,8 @@ end
 # ╔═╡ 585c4ec5-b880-4e9f-be45-b9c86d891d78
 begin
 	glpₜ = renorm_g_glp(Gt, GLP, glp, n)
-	GLPt = cumsum(glpₜ) 
 	
+	GLPt = cumsum(glpₜ) 
 	plot(Gt, label="Gt")
 	plot!(GLP, label="GLP")
 	plot!(GLPt, label="GLPt", xlims=(-5, 5))
@@ -1076,6 +1076,7 @@ md"""
 **Paso 5.** Renormalizar todos los segmentos indicados por el conjunto $I-R$.
 	
 - Para todos los segmentos $k \in I-R$ (excepto para $k = 0$ o $k = \overline{r}$) la función de densidad $flp_{t}$ en el segmento $k$ estaría dada por:
+
 $$flp_{t}(v) =   glp\left(v\right) \, \frac{GLP\left(q_{flp, k}^{\left(i\right)}\right) - GLP\left(q_{flp, k-1}^{\left(i\right)}\right)}{GLP\left(q_{f_{t}, k}^{\left(i\right)}\right) - GLP\left(q_{f_{t}, k-1}^{\left(i\right)}\right)}, \quad q_{f_{t}, k-1}^{\left(i\right)} < v \leq q_{f_{t}, k}^{\left(i\right)}.$$
 - En el segmento especial, en el cual $k = \overline{r}$, la normalización se hace sobre todo el segmento indicado por los percentiles $\underline{r}$ y $\overline{r}$, esto es:
 
@@ -1107,8 +1108,8 @@ md"""
 # ╔═╡ f2a71207-971e-49a8-b753-42df3c8b1ad6
 begin
 	flpₜ = renorm_f_flp(Ft, FLP, GLP, glp, n)
-	FLPt = cumsum(flpₜ) 
 	
+	FLPt = cumsum(flpₜ) 
 	plot(Ft, label="Ft")
 	plot!(FLP, label="FLP")
 	plot!(FLPt, label="FLPt", xlims=(-5, 5))
@@ -1235,7 +1236,7 @@ Se configuran opciones para mostrar este cuaderno.
 
 # ╔═╡ Cell order:
 # ╟─ec957b42-5a6f-46be-986d-e7b99cfda80d
-# ╟─0f5e97c1-2125-4766-99fc-fda1f71bb391
+# ╠═0f5e97c1-2125-4766-99fc-fda1f71bb391
 # ╟─4b605b91-44df-49cf-8c0c-8566e30cc598
 # ╟─928289db-c42e-4a55-bb04-bac4b33ae379
 # ╟─137b9a66-66fb-467a-a3af-20572f5286c2
@@ -1349,7 +1350,6 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─4e9d615c-f16d-42d7-a798-b95156a28559
 # ╟─41a183d6-5db7-4854-9bd6-c388f033e2f7
 # ╟─ce5d1861-c998-4b85-8fec-ee7c9132fbf4
-# ╠═3aa89f7c-f526-4e37-847a-660cb9c899cf
 # ╟─84902e13-3c42-4d69-af7d-8531d6352991
 # ╠═a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
 # ╠═289ec238-0633-4f1d-bc98-3494265a9570
@@ -1364,8 +1364,9 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─b95b2374-9cd1-4583-bbfb-b02ec7e251e9
 # ╟─e870fbb6-a0e4-4374-bfd3-0da630cbc596
 # ╠═cc17dfa5-8302-49b2-ae4f-26f84e05ded3
-# ╠═96586a48-e779-4ba0-91d7-35f3aeb67666
+# ╟─96586a48-e779-4ba0-91d7-35f3aeb67666
 # ╟─f47dd797-8d70-436f-8075-8b133f5137c8
+# ╠═2efdd051-3847-4fae-a24b-7a8d87cbbd97
 # ╠═3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # ╟─1c432a8a-e83c-430e-a1ea-cda63206df44
 # ╟─80482a7e-eaa1-499f-b14d-266be0b8867a
