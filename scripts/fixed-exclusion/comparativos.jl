@@ -25,60 +25,34 @@ Base 2010: [29, 46, 39, 31, 116]
 """
 
 ## Instancias generales
-gtdata_eval = gtdata[Date(2020, 12)]
+gtdata_10 = gtdata[Date(2020, 12)]
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
-# Óptima 2019
 opt00_19 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
 opt10_19 = [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]
 v_exc19  = (opt00_19, opt10_19)
-# Óptima 2020
+
 opt00_20  = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 opt10_20  = [29, 46, 39, 31, 116]
 v_exc20   = (opt00_20, opt10_20)
 
-# Otras combinaciones
-# sin cambiar la base 2000
-v_exc3 = (opt00_19, opt10_20)
-v_exc4 = (opt00_20, opt10_19)
 
-exc = vcat(v_exc19, v_exc20, v_exc3, v_exc4)
 ## Creación de diccionario para simulación y savepath
 # Exploración inicial con 10000 simulaciones
 
 FxEx_00 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(exc), 
+    :inflfn => InflationFixedExclusionCPI.(total), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
+    :nsim => 125000) |> dict_list
 
-savepath = datadir("results","fixed-exclusion","Combinaciones-10K")    
+savepath = datadir("fixed-exclusion","Base2010")    
 
 ## lote de simulación 
 
-run_batch(gtdata_eval, FxEx_00, savepath)
+run_batch(gtdata_10, FxEx_00, savepath)
 
 ## resultados
 
-dfExc = collect_results(savepath)
-sorted = sort(dfExc, :mse)
-
-gr = [sorted[1,:mse],sorted[2,:mse], sorted[3,:mse],sorted[4,:mse]]
-gr_l = ["Opt. Eval-20","00-20/10-19","00-19/10-20","Opt. Eval-19"]
-graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label="MSE", ylims=[0, 6], dpi=150)
-title!("Comparativo entre Medidas de Exclusión óptima")
-
-saveplot = plotsdir("fixed-exclusion", "Comparativo")
-savefig(graf,saveplot)
-
-
-## Evaluación inflación total
-# Inflación Inflation total
-tot = InflationTotalCPI()
-Infl_total = tot(gtdata)
-
-config = SimConfig(InflationTotalCPI(), ResampleSBB(36), TrendRandomWalk(), 125_000)
-results = makesim(gtdata_eval, config)
-results[:mse]
-
+dfExc_10 = collect_results(savepath)
