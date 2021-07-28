@@ -101,14 +101,18 @@ end
 
 # Función para computar la suma ponderada de renormalización del segmento dado
 # entre dos variaciones intermensuales a y b por el valor k
-function renorm_sum(tdistr::TransversalDistr, a, b, k)
+function renorm_sum(tdistr::TransversalDistr{T}, a, b, k) where T
     # Obtener índices de variaciones a y b en vspace
     ia = vposition(a, tdistr.vspace)
     ib = vposition(b, tdistr.vspace)
 
     # Renormalizar el vector de distribución subyacente y obtener la suma ponderada
-    s = sum(view(tdistr.distr, ia:ib) .* tdistr.vspace[ia:ib]) * k
-    s
+    s = zero(T)
+    @inbounds for j in ia:ib
+        s += tdistr.distr[j] * tdistr.vspace[j]
+    end
+    
+    s * k
 end
 
 

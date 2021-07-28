@@ -10,6 +10,8 @@ using Plots
 
 
 ## Distribuciones de largo plazo
+using InflationFunctions: V, WeightsDistr, ObservationsDistr, vposition
+
 glp00 = WeightsDistr(gt00, V)
 mean(glp00)
 glp10 = WeightsDistr(gt10, V)
@@ -31,6 +33,9 @@ sum(glp), mean(glp)
 inflfn = InflationCoreMai(MaiG(10))
 
 mai_m = inflfn(gtdata, CPIVarInterm())
+@btime inflfn($gtdata, CPIVarInterm())
+@profview inflfn(gtdata, CPIVarInterm())
+
 mai_tray_infl = inflfn(gtdata)
 
 @btime inflfn($gtdata);
