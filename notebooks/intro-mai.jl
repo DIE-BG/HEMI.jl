@@ -514,6 +514,10 @@ Implementación:
 - La función *glp* se construye utilizando el algoritmo de la distribución $g_t$, *mutatis mutandis*, con la ventana $V^{*}$ y el vector $W^{*}$ como entradas. 
 """
 
+# ╔═╡ 6c5bd5de-cb87-4a60-b407-fddf2c1cf931
+# Número de observaciones en V_star
+120*218 + 120*279
+
 # ╔═╡ f71f0d24-8236-4a12-80d1-738e53ea0e12
 begin
 	V_star = vcat(gt00.v[:], gt10.v[1:120, :][:])
@@ -522,9 +526,9 @@ begin
 end
 
 # ╔═╡ d0f22c65-f172-4e83-ad79-c75d6c46d571
-# with_terminal() do 
-# 	print(glp)
-# end
+with_terminal() do 
+	print(glp)
+end
 
 # ╔═╡ eae96716-47ae-410e-adbc-bc863b9832c9
 plot(glp, xlims=(-1,2), seriestype=:bar, linealpha=0, label = "glp")
@@ -557,9 +561,9 @@ mean(glp)
 
 # ╔═╡ 2d0aa4be-31d6-4712-b169-2ef25fa4afc2
 begin
-	# El valor anterior debe ser muy cercnano a mpm
+	# El valor anterior debe ser muy cercano a mpm
 	mpm0 = gt00.v * gt00.w / 100
-	mpm1 = gt10.v * gt10.w / 100
+	mpm1 = gt10.v[1:120, :] * gt10.w / 100
 	mpm = vcat(mpm0, mpm1)
 	mean(mpm)
 end
@@ -574,6 +578,9 @@ GLP = cumsum(glp)
 
 # ╔═╡ 8bb62d79-96f2-4e54-b834-4cef0256c8f4
 plot(GLP, xlims=(-2,5))
+
+# ╔═╡ bf70158e-81db-49e5-96d5-ccd5ecaa381c
+1 - GLP(0) 
 
 # ╔═╡ 37d28a04-b2dc-4402-9bec-56ecc27b5550
 md"""
@@ -594,9 +601,9 @@ md"""
 flp = ObservationsDistr(V_star, V)
 
 # ╔═╡ f7e63c15-11aa-4aa7-946f-d489c700df7f
-# with_terminal() do 
-# 	println(flp)
-# end
+with_terminal() do 
+	println(flp)
+end
 
 # ╔═╡ a3bac26b-10a5-451a-82c2-2b730aef9346
 plot(flp, xlims=(-1,2), seriestype=:bar, linealpha=0)
@@ -634,6 +641,11 @@ md"""
 
 # ╔═╡ 3b73f01d-ef58-4a45-8eac-1c1b8ad4c4bb
 FLP = cumsum(flp) 
+
+# ╔═╡ 2c457b05-c6ac-40df-b3aa-b9ba0f6f4171
+with_terminal() do 
+	println(FLP)
+end
 
 # ╔═╡ df737c62-2754-46e0-818e-2b365c6c906b
 plot(FLP, xlims=(-2, 5))
@@ -681,6 +693,9 @@ which(quantile, (AccumulatedDistr, Real))
 # ╔═╡ 88acf18f-7709-4ba0-b6bf-da77f032dedd
 quantile(FLP, 0.5) 
 
+# ╔═╡ 566dc8c2-7010-49a2-b9f6-958bc55e8778
+0:0.2:1 |> collect
+
 # ╔═╡ 99dd9a8f-2266-4ab9-94d9-61043811fabd
 q_flp = quantile(FLP, 0:0.2:1)
 
@@ -697,6 +712,9 @@ $$Y \left( q_{y,0}^{(i)} - \varepsilon \right) = 0, \quad Y \left( q_{y,i}^{(i)}
 
 # ╔═╡ 2f18642b-a8e8-47de-a549-428953baf704
 FLP(q_flp[1] - 0.01), FLP(q_flp[end])
+
+# ╔═╡ da1a532c-58c9-42fc-b112-a4baa23848e6
+FLP(q_flp[1] - 0.01)
 
 # ╔═╡ c215620e-a5ea-47bd-b49b-8d8d89ed659c
 md"""
@@ -809,6 +827,9 @@ También escogemos las posiciones a utilizar para renormalizar las funciones de 
 
 # ╔═╡ a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
 p = (0:n) / n
+
+# ╔═╡ 289ec238-0633-4f1d-bc98-3494265a9570
+collect(p)
 
 # ╔═╡ 2b78811f-d59e-4ac3-9dee-a0c07cb44731
 md"""
@@ -1253,6 +1274,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═ad923e3b-92ff-4670-9dd5-25022e54df85
 # ╠═341c042d-e622-41e4-93be-62472a27efb8
 # ╟─342e77e1-a763-48f8-9f83-2e4396db6656
+# ╠═6c5bd5de-cb87-4a60-b407-fddf2c1cf931
 # ╠═f71f0d24-8236-4a12-80d1-738e53ea0e12
 # ╠═d0f22c65-f172-4e83-ad79-c75d6c46d571
 # ╠═eae96716-47ae-410e-adbc-bc863b9832c9
@@ -1264,6 +1286,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─8251b8fb-f975-45bf-bf74-7a1f037c6c13
 # ╠═7f79d6a1-9e3a-4b8e-8478-bf1bc9257241
 # ╠═8bb62d79-96f2-4e54-b834-4cef0256c8f4
+# ╠═bf70158e-81db-49e5-96d5-ccd5ecaa381c
 # ╟─37d28a04-b2dc-4402-9bec-56ecc27b5550
 # ╠═87b845e0-e778-4ac3-ac4f-f9e2252ea20c
 # ╠═f7e63c15-11aa-4aa7-946f-d489c700df7f
@@ -1275,6 +1298,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═490d77ff-3c79-4cfd-85c9-9d7688be9291
 # ╟─90c5a65b-d3a6-4d60-9953-81e718524548
 # ╠═3b73f01d-ef58-4a45-8eac-1c1b8ad4c4bb
+# ╠═2c457b05-c6ac-40df-b3aa-b9ba0f6f4171
 # ╠═df737c62-2754-46e0-818e-2b365c6c906b
 # ╟─4bccbf09-7a05-444d-aa60-7ff3766748e8
 # ╟─7c755659-4209-4714-936e-28a6d8965669
@@ -1283,9 +1307,11 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─272d4be4-33af-44df-a313-befb89cb4515
 # ╠═e0047781-6cb3-4cee-a894-78acc5f33fb5
 # ╠═88acf18f-7709-4ba0-b6bf-da77f032dedd
+# ╠═566dc8c2-7010-49a2-b9f6-958bc55e8778
 # ╠═99dd9a8f-2266-4ab9-94d9-61043811fabd
 # ╟─39f116e8-e5c1-439b-9cf9-f15a50d15cb6
 # ╠═2f18642b-a8e8-47de-a549-428953baf704
+# ╠═da1a532c-58c9-42fc-b112-a4baa23848e6
 # ╟─c215620e-a5ea-47bd-b49b-8d8d89ed659c
 # ╟─8446f083-253a-4e1e-9ad4-58932d4ca102
 # ╟─62076d20-0fa4-42ed-97cb-a4b693074786
@@ -1298,6 +1324,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═3aa89f7c-f526-4e37-847a-660cb9c899cf
 # ╟─84902e13-3c42-4d69-af7d-8531d6352991
 # ╠═a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
+# ╠═289ec238-0633-4f1d-bc98-3494265a9570
 # ╟─2b78811f-d59e-4ac3-9dee-a0c07cb44731
 # ╠═e615d881-4a52-4943-8138-17b399ef35f1
 # ╟─afdbff35-7d0d-4d48-bcb5-66e422352d2c
