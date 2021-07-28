@@ -514,16 +514,16 @@ Implementación:
 - La función *glp* se construye utilizando el algoritmo de la distribución $g_t$, *mutatis mutandis*, con la ventana $V^{*}$ y el vector $W^{*}$ como entradas. 
 """
 
-# ╔═╡ 6c5bd5de-cb87-4a60-b407-fddf2c1cf931
-# Número de observaciones en V_star
-120*218 + 120*279
-
 # ╔═╡ f71f0d24-8236-4a12-80d1-738e53ea0e12
 begin
 	V_star = vcat(gt00.v[:], gt10.v[1:120, :][:])
 	W_star = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
 	glp = WeightsDistr(V_star, W_star, V)
 end
+
+# ╔═╡ 6c5bd5de-cb87-4a60-b407-fddf2c1cf931
+# Número de observaciones en V_star, en la muestra ampliada
+length(V_star)
 
 # ╔═╡ d0f22c65-f172-4e83-ad79-c75d6c46d571
 with_terminal() do 
@@ -818,18 +818,12 @@ Escogemos el número de segmentos a utilizar para el proceso de normalización:
 """
 
 # ╔═╡ 3aa89f7c-f526-4e37-847a-660cb9c899cf
-n = 5
+# n = 5
 
 # ╔═╡ 84902e13-3c42-4d69-af7d-8531d6352991
 md"""
 También escogemos las posiciones a utilizar para renormalizar las funciones de densidad. Por ahora, utilizamos los que dividen en partes iguales el espacio de cuantiles $[0,1]$. 
 """
-
-# ╔═╡ a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
-p = (0:n) / n
-
-# ╔═╡ 289ec238-0633-4f1d-bc98-3494265a9570
-collect(p)
 
 # ╔═╡ 2b78811f-d59e-4ac3-9dee-a0c07cb44731
 md"""
@@ -844,9 +838,6 @@ $$\begin{split}
 \end{split}$$ 
 """
 
-# ╔═╡ e615d881-4a52-4943-8138-17b399ef35f1
-q_glp = quantile(GLP, p) 
-
 # ╔═╡ afdbff35-7d0d-4d48-bcb5-66e422352d2c
 md"""
 **Paso 2.** En la función de densidad $g_{t}$ del período $t$, se deben encontrar también los percentiles que rodean a la variación intermensual cero.
@@ -859,9 +850,6 @@ $$\begin{split}
 \overline{s} = & \,\arg\min_s \,q_{g_{t},s}^{(i)} \,, \quad \text{sujeto a} \quad q_{g_{t},s}^{(i)} > 0
 \end{split}$$
 """
-
-# ╔═╡ fc22f2da-59c6-440f-aa2a-059f27f9e470
-q_g = quantile(Gt, p) 
 
 # ╔═╡ 2d7fc594-f3ca-4fc4-8b20-efd5d5925ff9
 md"""
@@ -884,9 +872,6 @@ md"""
 
 $$I-R = \left\lbrace0, 1, \ldots, \underline{r}, \overline{r}, \ldots, i\right\rbrace$$ 
 """
-
-# ╔═╡ 8226ffbb-802e-4577-9ecd-57875dd395bd
-segments = get_segments(q_g, q_glp, n) 
 
 # ╔═╡ 0fdf271c-b7ad-482f-affc-0845049c4f8f
 md"""
@@ -919,6 +904,42 @@ md"""
 A continuación se lleva a cabo la renormalización del primer segmento de la distribución. *Nota: esto podría incluir al segmento especial, dependiendo del valor de $n$*.
 """
 
+# ╔═╡ f47dd797-8d70-436f-8075-8b133f5137c8
+md"""
+Ahora, renormalizamos la distribución hasta el segundo segmento.
+"""
+
+# ╔═╡ 80482a7e-eaa1-499f-b14d-266be0b8867a
+md"""
+Y continuamos de esta forma hasta renormalizar toda la distribución. 
+"""
+
+# ╔═╡ 7424f3cd-94fc-46ba-a3b1-8fe74c5f5935
+md"""
+### Renormalización automática $glp_t$
+
+Este proceso de renormalización es automatizado con la función `renorm_g_glp`. *Nota: También existe una función de mayor desempeño, utilizada en la definición de `InflationCoreMai`*.
+
+Veamos cómo cambia la distribución $glp_t$ al renormalizar con diferentes números de segmentos.
+
+ $n=$ $(@bind n Slider(2:40, default=5, show_value=true))
+"""
+
+# ╔═╡ a01d5d57-e7c4-4d03-bf77-16bd0ae12dc6
+p = (0:n) / n
+
+# ╔═╡ 289ec238-0633-4f1d-bc98-3494265a9570
+collect(p)
+
+# ╔═╡ e615d881-4a52-4943-8138-17b399ef35f1
+q_glp = quantile(GLP, p) 
+
+# ╔═╡ fc22f2da-59c6-440f-aa2a-059f27f9e470
+q_g = quantile(Gt, p) 
+
+# ╔═╡ 8226ffbb-802e-4577-9ecd-57875dd395bd
+segments = get_segments(q_g, q_glp, n) 
+
 # ╔═╡ cc17dfa5-8302-49b2-ae4f-26f84e05ded3
 # Renormalizar el primer segmento 
 begin
@@ -944,11 +965,6 @@ begin
 	# xlims!(-0.1, 0.7)
 end
 
-# ╔═╡ f47dd797-8d70-436f-8075-8b133f5137c8
-md"""
-Ahora, renormalizamos la distribución hasta el segundo segmento.
-"""
-
 # ╔═╡ 3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # Renormalizar el segundo segmento 
 begin
@@ -973,13 +989,6 @@ begin
 	# xlims!(0.5, 2)
 end
 
-# ╔═╡ 80482a7e-eaa1-499f-b14d-266be0b8867a
-md"""
-Y continuamos de esta forma hasta renormalizar toda la distribución. Este proceso de renormalización es automatizado con la función `renorm_g_glp`. 
-
-*Nota: También existe una función de mayor desempeño, utilizada en la definición de `InflationCoreMai`*.
-"""
-
 # ╔═╡ 585c4ec5-b880-4e9f-be45-b9c86d891d78
 begin
 	glpₜ = renorm_g_glp(Gt, GLP, glp, n)
@@ -989,6 +998,15 @@ begin
 	plot!(GLP, label="GLP")
 	plot!(GLPt, label="GLPt", xlims=(-5, 5))
 end
+
+# ╔═╡ 081602ca-82cc-4072-a34a-0fd326d2d37a
+q_glp
+
+# ╔═╡ 9456a534-d6b4-4a8d-8d52-d5fa64c41c15
+q_g
+
+# ╔═╡ 6c5c71da-c68b-4bad-8146-2aa17ba13432
+segments
 
 # ╔═╡ 4d336858-d661-46f5-8927-c9901d2eef3f
 md"""
@@ -1001,6 +1019,16 @@ Como resultado de este proceso de normalización, los percentiles de la función
 
 # ╔═╡ 662a3104-9f4f-4547-acc9-2c1782da499e
 mean(glpₜ) 
+
+# ╔═╡ ce56fd18-c13c-41fe-8354-4966f30b3c7f
+md"""
+Como referencia, comparamos este resumen intermensual contra la media ponderada del mes: 
+
+$$\mathrm{MPm}_t = \sum_x w_x v_{t,x} =$$
+"""
+
+# ╔═╡ efe07e03-c5eb-4d22-be91-badd67fe8b33
+sum(Vt .* Wb) / 100
 
 # ╔═╡ 0edcdd2e-8b00-4c15-8076-8be69e83d1d4
 md"""
@@ -1274,8 +1302,8 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═ad923e3b-92ff-4670-9dd5-25022e54df85
 # ╠═341c042d-e622-41e4-93be-62472a27efb8
 # ╟─342e77e1-a763-48f8-9f83-2e4396db6656
-# ╠═6c5bd5de-cb87-4a60-b407-fddf2c1cf931
 # ╠═f71f0d24-8236-4a12-80d1-738e53ea0e12
+# ╠═6c5bd5de-cb87-4a60-b407-fddf2c1cf931
 # ╠═d0f22c65-f172-4e83-ad79-c75d6c46d571
 # ╠═eae96716-47ae-410e-adbc-bc863b9832c9
 # ╟─e81a2a75-373c-41b5-8a4c-57608c4b12f9
@@ -1341,9 +1369,15 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═3e9ef9dd-7b52-4429-a8f0-12f77b91d341
 # ╟─1c432a8a-e83c-430e-a1ea-cda63206df44
 # ╟─80482a7e-eaa1-499f-b14d-266be0b8867a
-# ╠═585c4ec5-b880-4e9f-be45-b9c86d891d78
+# ╟─7424f3cd-94fc-46ba-a3b1-8fe74c5f5935
+# ╟─585c4ec5-b880-4e9f-be45-b9c86d891d78
+# ╠═081602ca-82cc-4072-a34a-0fd326d2d37a
+# ╠═9456a534-d6b4-4a8d-8d52-d5fa64c41c15
+# ╠═6c5c71da-c68b-4bad-8146-2aa17ba13432
 # ╟─4d336858-d661-46f5-8927-c9901d2eef3f
 # ╠═662a3104-9f4f-4547-acc9-2c1782da499e
+# ╟─ce56fd18-c13c-41fe-8354-4966f30b3c7f
+# ╠═efe07e03-c5eb-4d22-be91-badd67fe8b33
 # ╟─0edcdd2e-8b00-4c15-8076-8be69e83d1d4
 # ╟─f6b5ce08-4bb1-42ab-9272-42790b33704e
 # ╟─4ebb2e7e-95c9-4ba5-a4f7-344f7f2e706c
@@ -1351,7 +1385,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─eece39ce-8282-4c3b-a5e8-882b2fd111e4
 # ╟─3e47548d-2cf9-4840-ba22-0e0c168f7851
 # ╟─c6b1a8ce-451d-4b55-9e3f-7e981620538b
-# ╠═f2a71207-971e-49a8-b753-42df3c8b1ad6
+# ╟─f2a71207-971e-49a8-b753-42df3c8b1ad6
 # ╠═550e5092-dc74-457b-9b24-8d514d1aa59f
 # ╟─f6ab278a-a298-46fd-9593-74021119ef18
 # ╠═23f0267f-9d06-4cc8-a993-850f4c6392b7
