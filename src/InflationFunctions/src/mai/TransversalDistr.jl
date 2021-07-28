@@ -151,7 +151,15 @@ function Statistics.quantile(cdistr::AccumulatedDistr{T}, p::Real) where T
 
     # Aplicar el algoritmo de percentil próximo para obtener índice de variación
     # intermensual correspondiente al cuantil p
-    i_p = argmin(abs.(sparse_cdistr .- p))
+    i_p = cdistr_inds[1]
+    mindist = one(T)
+    @inbounds for i in 1:length(sparse_cdistr)
+        dist = abs(sparse_cdistr[i] - p)
+        if dist < mindist 
+            mindist = dist
+            i_p = i
+        end
+    end
 
     # Obtener la variación intermensual asociada
     q_p = cdistr.vspace[cdistr_inds[i_p]]
