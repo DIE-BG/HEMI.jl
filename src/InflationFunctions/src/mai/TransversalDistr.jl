@@ -184,6 +184,12 @@ end
 Statistics.quantile(cdistr::AccumulatedDistr{T}, p::AbstractVector) where T = 
     quantile.(Ref(cdistr), p)::Vector{T}
 
+# Función de cómputo de percentiles in-place
+function Statistics.quantile!(q, cdistr::AccumulatedDistr, p)
+    for i in eachindex(p)
+        q[i] = quantile(cdistr, p[i])
+    end
+end
 
 
 ## Métodos para generar distribuciones a partir de VarCPIBase y CountryStructure
