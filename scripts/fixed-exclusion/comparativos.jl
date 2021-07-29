@@ -51,9 +51,9 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(exc), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 125000) |> dict_list
+    :nsim => 10000) |> dict_list
 
-savepath = datadir("fixed-exclusion","Combinaciones-125K")    
+savepath = datadir("results","fixed-exclusion","Combinaciones-10K")    
 
 ## lote de simulación 
 
@@ -72,4 +72,13 @@ title!("Comparativo entre Medidas de Exclusión óptima")
 saveplot = plotsdir("fixed-exclusion", "Comparativo")
 savefig(graf,saveplot)
 
+
+## Evaluación inflación total
+# Inflación Inflation total
+tot = InflationTotalCPI()
+Infl_total = tot(gtdata)
+
+config = SimConfig(InflationTotalCPI(), ResampleSBB(36), TrendRandomWalk(), 125_000)
+results = makesim(gtdata_eval, config)
+results[:mse]
 
