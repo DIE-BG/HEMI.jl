@@ -8,24 +8,53 @@ const V = range(-200, 200, step=0.01f0) # -100:0.01:100
 
 abstract type AbstractMaiMethod end 
 
-# Algoritmo de cómputo de MAI-G con n segmentos
-struct MaiG <: AbstractMaiMethod
+# Algoritmo de cómputo de MAI-G con n segmentos marcados en las posiciones p
+struct MaiG{P} <: AbstractMaiMethod
     n::Int
+    p::P
+
+    function MaiG(n, p)
+        length(p) == n+1 || error("Distribución de percentiles de tamaño incorrecto")
+        issorted(p) || error("Distribución de percentiles debe estar ordenada")
+        all(0 .<= p .<= 1) || error("Cuantiles deben estar entre cero y uno")
+        (first(p) == 0 && last(p) == 1) || error("Primer y último cuantil deben ser 0, 1")
+        new{typeof(p)}(n, p)
+    end
 end
 
-# Algoritmo de cómputo de MAI-F con n segmentos
-struct MaiF <: AbstractMaiMethod
+# Algoritmo de cómputo de MAI-F con n segmentos marcados en las posiciones p
+struct MaiF{P} <: AbstractMaiMethod
     n::Int
+    p::P
+
+    function MaiF(n, p)
+        length(p) == n+1 || error("Distribución de percentiles de tamaño incorrecto")
+        issorted(p) || error("Distribución de percentiles debe estar ordenada")
+        all(0 .<= p .<= 1) || error("Cuantiles deben estar entre cero y uno")
+        (first(p) == 0 && last(p) == 1) || error("Primer y último cuantil deben ser 0, 1")
+        new{typeof(p)}(n, p)
+    end
 end
 
-Base.string(method::MaiG) = "(G," * string(method.n) * ")"
-Base.string(method::MaiF) = "(F," * string(method.n) * ")"
+# Constructores para división equitativa de posiciones p
+MaiF(n::Int) = MaiF(n, (0:n)/n)
+MaiG(n::Int) = MaiG(n, (0:n)/n)
+MaiF(v::AbstractArray) = MaiF(length(v)-1, v)
+MaiG(v::AbstractArray) = MaiG(length(v)-1, v)
 
+function Base.string(method::AbstractMaiMethod)
+    algorithm = method isa MaiG ? "G" : "F"
+    if method.p isa StepRangeLen 
+        return "($algorithm," * string(method.n) * ")"
+    else
+        return "($algorithm," * string(method.n) * ", " * string(method.p) * ")"
+    end
+end
 
 
 ## Definición de la función de inflación 
 
-Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B, M} <: InflationFunction
+Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B, M <:AbstractMaiMethod} <: InflationFunction
     vspace::StepRangeLen{T, B, B} = V
     method::M = MaiG(4)
 end
@@ -53,8 +82,7 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm, met
 
     # Obtener distribuciones acumuladas y sus percentiles 
     GLP = cumsum(glp)
-    p = (0:method.n) / method.n
-    q_glp::Vector{T} = quantile(GLP, p)
+    q_glp::Vector{T} = quantile(GLP, method.p)
 
     # Llamar al método de cómputo de inflación intermensual
     vm_fn = base -> inflfn(base, inflfn.method, glp, GLP, q_glp)
@@ -63,10 +91,6 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm, met
 end
 
 function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm, method::MaiF) where T
-
-    # Grilla de variaciones, número de segmentos, cuantiles
-    p = (0:method.n) / method.n
-    
     # Intuitivamente, las distribuciones de largo plazo podrían computarse más
     # sencillamente de esta forma. Sin embargo, parece que hay problemas de
     # precisión en los vectores dispersos al agregar las distribuciones de cada
@@ -84,12 +108,11 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm, met
     flp = ObservationsDistr(V_star, inflfn.vspace)
     glp = WeightsDistr(V_star, W_star, inflfn.vspace)
 
-
     # Obtener distribuciones acumuladas y sus percentiles 
     FLP = cumsum(flp)
     GLP = cumsum(glp)
-    # q_glp::Vector{T} = quantile(GLP, p)
-    q_flp::Vector{T} = quantile(FLP, p)
+    # q_glp::Vector{T} = quantile(GLP, method.p)
+    q_flp::Vector{T} = quantile(FLP, method.p)
 
     # Llamar al método de cómputo de inflación intermensual
     vm_fn = base -> inflfn(base, inflfn.method, glp, GLP, q_flp)
@@ -145,12 +168,10 @@ function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, GLP,
         g_acum = cumsum!(g)
 
         # Computar percentiles de distribución g
-        n = method.n
-        p = (0:n) / n
-        quantile!(q_g, g_acum, p)
+        quantile!(q_g, g_acum, method.p)
 
         # Computar resumen intermensual basado en glpₜ
-        mai_m[t] = renorm_g_glp_perf(g_acum, GLP, glp, q_g, q_glp, n)
+        mai_m[t] = renorm_g_glp_perf(g_acum, GLP, glp, q_g, q_glp, method.n)
     end
 
     mai_m
@@ -175,9 +196,7 @@ function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, GLP,
         f_acum = cumsum!(f)
         
         # Computar percentiles de distribución f
-        n = method.n
-        p = (0:n) / n
-        quantile!(q_f, f_acum, p)
+        quantile!(q_f, f_acum, method.p)
 
         # Computar resumen intermensual basado en flpₜ
         mai_m[t] = renorm_f_flp_perf(f_acum, GLP, glp, q_f, q_flp, method.n)
