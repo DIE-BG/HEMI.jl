@@ -47,22 +47,6 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm) whe
     n::Int = inflfn.method.n
     p = (0:n) / n
     
-    # Computar flp y glp, tomando en cuenta observaciones de años completos en
-    # la última base del CountryStructure
-    # Revisar paquete CatViews para ahorrar un poco más de memoria, to-do...
-    lastbase = cs.base[end]
-    T_lp = periods(lastbase) ÷ 12
-    v_last = view(lastbase.v[1 : 12*T_lp, :], :)
-    v_first = map(base -> view(base.v, :), cs.base[1:end-1])
-    all_v = vcat(v_first..., v_last)
-    # Ponderaciones de toda la base
-    w_first = map(base -> view(repeat(base.w', periods(base)), :), cs.base[1:end-1])
-    w_last = view(repeat(lastbase.w', 12*T_lp), :)
-    all_w = vcat(w_first..., w_last)
-
-    flp = ObservationsDistr(all_v, vspace)
-    glp = WeightsDistr(all_v, all_w, vspace)
-
     # Intuitivamente, las distribuciones de largo plazo podrían computarse más
     # sencillamente de esta forma. Sin embargo, parece que hay problemas de
     # precisión en los vectores dispersos al agregar las distribuciones de cada
@@ -73,6 +57,14 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm) whe
     # glp_bases = WeightsDistr.(cs.base, Ref(vspace))
     # flp = sum(flp_bases)
     # glp = sum(glp_bases)
+    
+    # Computar flp y glp, tomando en cuenta observaciones de años completos en
+    # la última base del CountryStructure
+    V_star = _get_vstar(cs)
+    W_star = _get_wstar(cs)
+    flp = ObservationsDistr(V_star, vspace)
+    glp = WeightsDistr(V_star, W_star, vspace)
+
 
     # Obtener distribuciones acumuladas y sus percentiles 
     FLP = cumsum(flp)
@@ -87,20 +79,57 @@ function (inflfn::InflationCoreMai{T})(cs::CountryStructure, ::CPIVarInterm) whe
     vm
 end
 
+# Función de apoyo para obtener V_star, la ventana histórica con todas las
+# variaciones intermensuales. Utilizada para cómputos de distribuciones de largo
+# plazo 
+function _get_vstar(cs::CountryStructure)
+    # Revisar paquete CatViews para ahorrar un poco más de memoria, to-do...
+    lastbase = cs.base[end]
+    T_lp = periods(lastbase) ÷ 12
+    v_last = view(lastbase.v[1 : 12*T_lp, :], :)
+    v_first = map(base -> view(base.v, :), cs.base[1:end-1])
+    V_star = vcat(v_first..., v_last)
+    V_star
+end
+
+# Función de apoyo para obtener W_star, vector de ponderaciones asociado a las
+# variaciones intermensuales históricas
+function _get_wstar(cs::CountryStructure)
+    # Ponderaciones de toda la base
+    lastbase = cs.base[end]
+    T_lp = periods(lastbase) ÷ 12
+    w_first = map(base -> view(repeat(base.w', periods(base)), :), cs.base[1:end-1])
+    w_last = view(repeat(lastbase.w', 12*T_lp), :)
+    W_star = vcat(w_first..., w_last)
+    W_star
+end
+
+
 # Variaciones intermensuales resumen con método de MAI-G
 function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiG, glp, FLP, GLP, q_glp, q_flp) where T
 
     mai_m = Vector{T}(undef, periods(base))
+    q_g_list = [zeros(T, method.n+1) for _ in 1:Threads.nthreads()]
 
     # Utilizar la glp y la GLP para computar el resumen intermensual por
     # metodología de inflación subyacente MAI-G
     Threads.@threads for t in 1:periods(base)
+
+        # Obtener lista de percentiles para el hilo
+        j = Threads.threadid() 
+        q_g = q_g_list[j]
+
         # Computar distribución g y acumularla 
         g = WeightsDistr((@view base.v[t, :]), base.w, inflfn.vspace)
         g_acum = cumsum!(g)
 
+        # Computar percentiles de distribución g
+        n = method.n
+        p = (0:n) / n
+        quantile!(q_g, g_acum, p)
+
         # Computar resumen intermensual basado en glpₜ
-        mai_m[t] = renorm_g_glp2(g_acum, GLP, glp, q_glp, method.n)
+        mai_m[t] = renorm_g_glp_perf(g_acum, GLP, glp, q_g, q_glp, n)
     end
 
     mai_m
@@ -110,16 +139,27 @@ end
 function (inflfn::InflationCoreMai)(base::VarCPIBase{T}, method::MaiF, glp, FLP, GLP, q_glp, q_flp) where T
 
     mai_m = Vector{T}(undef, periods(base))
+    q_f_list = [zeros(T, method.n+1) for _ in 1:Threads.nthreads()]
 
     # Utilizar la glp y (FLP, GLP) para computar el resumen intermensual por
     # metodología de inflación subyacente MAI-F
     Threads.@threads for t in 1:periods(base)
+
+        # Obtener lista de percentiles para el hilo
+        j = Threads.threadid() 
+        q_f = q_f_list[j]
+
         # Computar distribución f y acumularla 
         f = ObservationsDistr((@view base.v[t, :]), inflfn.vspace)
         f_acum = cumsum!(f)
         
+        # Computar percentiles de distribución f
+        n = method.n
+        p = (0:n) / n
+        quantile!(q_f, f_acum, p)
+
         # Computar resumen intermensual basado en flpₜ
-        mai_m[t] = renorm_f_flp2(f_acum, FLP, GLP, glp, q_flp, method.n)
+        mai_m[t] = renorm_f_flp_perf(f_acum, GLP, glp, q_f, q_flp, method.n)
     end
 
     mai_m
