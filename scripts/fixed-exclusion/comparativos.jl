@@ -51,9 +51,9 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(exc), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
+    :nsim => 125000) |> dict_list
 
-savepath = datadir("fixed-exclusion","Combinaciones-10K")    
+savepath = datadir("fixed-exclusion","Combinaciones-125K")    
 
 ## lote de simulación 
 
@@ -66,7 +66,7 @@ sorted = sort(dfExc, :mse)
 
 gr = [sorted[1,:mse],sorted[2,:mse], sorted[3,:mse],sorted[4,:mse]]
 gr_l = ["Opt. Eval-20","00-20/10-19","00-19/10-20","Opt. Eval-19"]
-graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label="MSE", ylims=[0, 6])
+graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label="MSE", ylims=[0, 6], dpi=150)
 title!("Comparativo entre Medidas de Exclusión óptima")
 
 saveplot = plotsdir("fixed-exclusion", "Comparativo")
