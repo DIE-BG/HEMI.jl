@@ -52,7 +52,7 @@ sim_FxEx = Dict(
     :nsim => 125000) |> dict_list
 
 
-savepath = datadir("fixed-exclusion","Medidas-base-125K")
+savepath = datadir("results","fixed-exclusion","Medidas-base-125K")
 
 ## lote de simulación 
 
