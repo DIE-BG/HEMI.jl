@@ -72,7 +72,7 @@ param_tray_infl = param(gtdata)
 
 
 saveplot = plotsdir("fixed-exclusion", "Medidas-Base")
-plotrng = Date(2001, 12):Month(1):Date(2021, 2)
+plotrng = Date(2001, 12):Month(1):Date(2021, 6)
 using Plots
 tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
 title = "Medidas de Exclusión Fija", dpi=150) 
@@ -82,7 +82,7 @@ plot!(plotrng, AE_v2, label = "Alimentos y Energéticos variante 2")
 plot!(plotrng, Infl_total, label = "Inflación Total")
 plot!(plotrng, param_tray_infl, label="Inflación Parámetro")
 
-hspan!([3,5], color=[:gray])
-hline!([4],linestyle=:dash)
+hspan!([3,5], color=[:gray], alpha=0.25, label="")
+hline!([4], linestyle=:dash, color=[:black], label = "")
     
 savefig(tray_plot,saveplot)
