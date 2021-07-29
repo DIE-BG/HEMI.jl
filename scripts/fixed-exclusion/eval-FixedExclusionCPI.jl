@@ -86,3 +86,15 @@ hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
     
 savefig(tray_plot,saveplot)
+
+
+##
+sorteddf = sort(FxEx_base, :mse)
+
+gr = [sorteddf[1,:mse],sorteddf[2,:mse], sorteddf[3,:mse],sorteddf[4,:mse]]
+gr_l = ["Exc. Óptima","Alim y En. 9","Alim. y En. 11","Energéticos 11"]
+graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label="MSE", ylims=[0, 10], dpi=150)
+title!("Comparativo entre Medidas de Exclusión Fija")
+
+saveplot = plotsdir("fixed-exclusion", "Comparativo-ExFija")
+savefig(graf,saveplot)

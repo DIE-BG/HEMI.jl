@@ -44,7 +44,7 @@ v_exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160
 ## Cálculo de volatilidad histórica por gasto básico
 # Volatilidad = desviación estándar de la variación interanual por cada gasto básico 
 
-est_b = std(gt10.v |> capitalize |> varinteran, dims=1)
+est_10 = std(gt10.v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(estd))
 
