@@ -159,6 +159,7 @@ sort_1019[1,:mse]
 
 """
 Matlab con ResampleScrambleVarMonths -> [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184] (17 exclusiones)
+MSE (con esos vectores) = 0.64
 
 exclusiones Base 2010 =  [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
 MSE = 1.1399192f0
@@ -214,3 +215,61 @@ hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
 
 savefig("plots//fixed-exclusion//Eval-19//tray-opt-19")
+
+"""
+## Evaluación de medida obtenida en 2019
+Evaluación con mismos vectores de exclusión obtenidos en Matlab (MSE= 0.64)
+
+Base 2000: [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+Base 2010: [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184] 
+
+método de remuestreo:  ResampleScrambleVarMonths()
+inflación paramétrica: ParamTotalCPILegacyRebase()
+Función de tendencia:  TrendRandomWalk()
+
+
+resultados
+julia> results
+Dict{Symbol, Any} with 12 entries:
+  :trendfn       => TrendRandomWalk{Float32}(Float32[0.953769, 0.948405, 0.926209, 0.902285, 0.832036, 0.825772, 0.799508, 0.789099, 0.764708, 0.757526  …  
+  :params        => ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34,…  
+  :measure       => "Exclusión fija de gastos básicos([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 1…  
+  :resamplefn    => ResampleScrambleVarMonths()
+  :mae           => 0.991936
+  :me            => -0.893427
+  :nsim          => 125000
+  :rmse          => 0.991936
+  :inflfn        => InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186,…  
+  :mse           => 1.29644  <<<<<<<< ===========================
+  :std_sim_error => 0.00519673
+  :corr          => 0.976573
+
+"""
+
+e0019 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+e1019 =  [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]
+excoptmt = (e0019, e1019)
+
+config = SimConfig(InflationFixedExclusionCPI(e0019,e1019),resamplefn, trendfn, 125_000)
+
+results, tray = makesim(gtdata_10, config; 
+param_constructor_fn=ParamTotalCPILegacyRebase, 
+rndseed = 0)
+
+
+##
+
+opt_mt = InflationFixedExclusionCPI(excoptmt)(gtdata)
+opt_jl = InflationFixedExclusionCPI(exc_opt)(gtdata)
+tot = InflationTotalCPI()(gtdata)
+
+plotrng = Date(2001, 12):Month(1):Date(2021, 6)
+plot(plotrng, opt_mt, label ="Exc. Óptima Matlab", dpi=200)
+plot!(plotrng, opt_jl, label = "Exc. Óptima Julia")
+plot!(plotrng, tot, label = "Inflación Total", color = :black, linestyle = :dot)
+title!("Exclusión Fija Óptima")
+hspan!([3,5], color=[:gray], alpha=0.25, label="")
+hline!([4], linestyle=:dash, color=[:black], label = "")
+
+savefig("plots//fixed-exclusion//Eval-19//Comp-Tray-tot")
+
