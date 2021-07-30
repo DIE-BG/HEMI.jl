@@ -11,13 +11,13 @@ addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 # CountryStructure con datos hasta diciembre de 2020
-gtdata_eval = gtdata[Date(2020, 12)]
+gtdata_eval = gtdata[Date(2019, 12)]
 
 ##
 # ## Configuración para simulaciones
 
 # Funciones de remuestreo y tendencia
-resamplefn = ResampleSBB(36)
+resamplefn = ResampleScrambleVarMonths() # ResampleSBB(36)
 trendfn = TrendRandomWalk()
 
 variants = [4, 5, 10, 20, 40]
@@ -35,8 +35,10 @@ config_mai = Dict(
 # Definimos el folder para almacenar los resultados 
 savepath = datadir("results", "CoreMai")
 
+## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
-run_batch(gtdata_eval, config_mai, savepath)
+run_batch(gtdata_eval, config_mai, savepath, 
+    param_constructor_fn = ParamTotalCPILegacyRebase)
 
 ## 
 # ## Revisión de resultados, utilizando `collect_results`
@@ -46,7 +48,7 @@ df_mai = collect_results(savepath)
 
 
 df_results = @chain df_mai begin 
-    select(:measure, :mse, :std_sim_error, :rmse, :me, :mae,)
+    select(:measure, :resamplefn, :mse, :std_sim_error, :rmse, :me, :mae,)
     sort(:mse)
 end
 

@@ -17,13 +17,14 @@ legacy_param = InflationParameter(
 )
 
 # Función de ayuda para construcción automática en InflationEvalTools
-legacy_param = ParamTotalCPILegacyRebase()
+legacy_param = ParamTotalCPILegacyRebase(ResampleScrambleVarMonths(), TrendRandomWalk())
 
 
 ## Gráfica del parámetro 
 
 tray_infl_param = legacy_param(gtdata_eval)
-plot(infl_dates(gtdata_eval), tray_infl_param)
+plot(infl_dates(gtdata_eval), tray_infl_param, 
+    label="Trayectoria paramétrica")
 # ylims!(0, 20)
 
 

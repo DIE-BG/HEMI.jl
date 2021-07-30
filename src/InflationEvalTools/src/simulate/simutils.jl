@@ -59,6 +59,11 @@ function evalsim(data_eval::CountryStructure, config::SimConfig;
     rndseed = 0)
   
     # Obtener la trayectoria paramétrica de inflación 
+    # param = InflationParameter(
+    #     config.param_inflfn, 
+    #     config.resamplefn,
+    #     config.trendfn
+    # )
     param = param_constructor_fn(config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
