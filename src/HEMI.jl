@@ -18,18 +18,23 @@ module HEMI
     @reexport using InflationEvalTools
 
     ## Carga de datos de Guatemala
-    datafile = datadir("guatemala", "gtdata32.jld2")
-    @show datafile
-    if isfile(datafile)
-        #INFO
-        @info "Cargando datos de Guatemala" _module=Main
-        @load datafile gt00 gt10
-        gtdata = UniformCountryStructure(gt00, gt10)
+    export gt00, gt10, gtdata
+    
+    function __init__()
+        datafile = datadir("guatemala", "gtdata32.jld2")
+        @info "Ruta del archivo de datos" datafile
+        
+        # Si el archivo está presente, cargarlo 
+        if isfile(datafile)
+            # @info "Cargando datos de Guatemala"
+            global gt00, gt10 = load(datafile, "gt00", "gt10")
+            global gtdata = UniformCountryStructure(gt00, gt10)
 
-        # Exportar datos del módulo 
-        @show gtdata
-        export gt00, gt10, gtdata
-    else
-        @warn "Correr el script de carga de datos antes de cargar paquete HEMI"
+            # Exportar datos del módulo 
+            @info "Archivo de datos cargado" gtdata
+        else
+            @warn "Correr el script de carga de datos `load_data.jl` y ejecutar `HEMI.__init__()`"
+        end
     end
+    
 end
