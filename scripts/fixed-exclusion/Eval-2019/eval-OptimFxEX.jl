@@ -273,3 +273,6 @@ hline!([4], linestyle=:dash, color=[:black], label = "")
 
 savefig("plots//fixed-exclusion//Eval-19//Comp-Tray-tot")
 
+## 
+medidas = DataFrame( plotrng, Opt_mt = opt_mt, Opt_jl = opt_jl, Total = tot)
+
