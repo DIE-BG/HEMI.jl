@@ -93,7 +93,7 @@ plot!([13],seriestype="vline", label = "Mínimo en 13 exclusiones")
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2000-125K")
 
 """
-RESULTADOS BASE 2000
+###################  RESULTADOS BASE 2000
 
 Matlab -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 exclusiones)
 MSE = 0.777
@@ -182,7 +182,7 @@ exc10 = a[2]
 sort_1019[1,:mse]
 
 ## Revisión Gráfica
-mseplot = plot(collect(1:20),Exc_1019lp[!,:mse], xticks = 1:1:20
+mseplot = plot(collect(1:20),Exc_1019lp[!,:mse], xticks = 1:1:20,
     title = " Óptimización Base 2010",
     label = " MSE Exclusión fija Óptima Base 2010", 
     legend = :topleft, 
@@ -191,12 +191,12 @@ mseplot = plot(collect(1:20),Exc_1019lp[!,:mse], xticks = 1:1:20
 
 plot!([7],seriestype="vline", label = "Mínimo en 7 exclusiones")
 
-savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2010-125k
-")
+savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2010-125k")
 
 """
 
 ################################# RESULTADOS DE LA OPTIMIZACIÓN ################################# 
+######################################## PARA AMBAS BASES ####################################### 
 
 ###### Matlab #######
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 exclusiones)
@@ -285,8 +285,9 @@ método de remuestreo:  ResampleScrambleVarMonths()
 inflación paramétrica: ParamTotalCPILegacyRebase()
 Función de tendencia:  TrendRandomWalk()
 
-MSE MATLAB = 0.64
-MSE JULIA  = 1.29644
+MSE MATLAB                   = 0.64
+MSE JULIA (VECTORES MATLAB)  = 1.29644
+MSE JULIA (VECTORES JULIA)   = 1.1360317
 
 
 resultados
@@ -304,6 +305,8 @@ Dict{Symbol, Any} with 12 entries:
   :mse           => 1.29644  <<<<<<<< ===========================
   :std_sim_error => 0.00519673
   :corr          => 0.976573
+
+
 
 """
 
