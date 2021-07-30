@@ -54,10 +54,12 @@ Float32[6.1980247; 5.1128864; … ; 6.4607024; 5.8743]
 Float32[5.035937; 5.7404637; … ; 8.130074; 7.985401])
 ```
 """
-function evalsim(data_eval::CountryStructure, config::SimConfig)
+function evalsim(data_eval::CountryStructure, config::SimConfig; 
+    param_constructor_fn=ParamTotalCPIRebase, 
+    rndseed = 0)
   
     # Obtener la trayectoria paramétrica de inflación 
-    param = ParamTotalCPIRebase(config.resamplefn, config.trendfn)
+    param = param_constructor_fn(config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
     @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) simulaciones=config.nsim 
@@ -67,22 +69,16 @@ function evalsim(data_eval::CountryStructure, config::SimConfig)
         config.resamplefn, # función de remuestreo
         config.trendfn, # función de tendencia
         data_eval, # datos de evaluación 
-        rndseed = 0, K=config.nsim)
+        rndseed = rndseed, K=config.nsim)
     println()
 
     # Métricas de evaluación 
-    err_dist = tray_infl .- tray_infl_pob
-    sq_err_dist = err_dist .^ 2
-    mse = mean(sq_err_dist) 
-    std_sim_error = std(sq_err_dist) / sqrt(config.nsim)
-    rmse = mean(sqrt.(sq_err_dist))
-    mae = mean(abs.(err_dist))
-    me = mean(err_dist)
-    corr = mean(cor.(eachslice(tray_infl, dims=3), Ref(tray_infl_pob)))[1]
+    metrics = eval_metrics(tray_infl, tray_infl_pob)
+    @unpack mse, std_sim_error, rmse, me, mae, corr = metrics 
     @info "Métricas de evaluación:" mse std_sim_error rmse me mae corr
 
     # Devolver estos valores
-    mse, std_sim_error, rmse, me, mae, corr, tray_infl
+    metrics, tray_infl
 end
 
 # Función para obtener diccionario de resultados y trayectorias a partir de un
@@ -135,19 +131,20 @@ Dict{Symbol, Any} with 11 entries:
   :std_sim_error => 0.487723
 ```
 """
-function makesim(data, config::AbstractConfig)
+function makesim(data, config::AbstractConfig; 
+    param_constructor_fn=ParamTotalCPIRebase, 
+    rndseed = rndseed)
         
      # Ejecutar la simulación y obtener los resultados 
-    mse, std_sim_error, rmse, me, mae, corr, tray_infl = evalsim(data, config)
+    metrics, tray_infl = evalsim(data, config; 
+        param_constructor_fn = param_constructor_fn, 
+        rndseed = rndseed)
 
     # Agregar resultados a diccionario 
     results = struct2dict(config)
-    results[:mse] = mse
-    results[:std_sim_error] = std_sim_error
-    results[:rmse] = rmse
-    results[:me] = me
-    results[:mae] = mae
-    results[:corr] = corr
+    for (key, value) in metrics
+        results[key] = value
+    end
     results[:measure] = CPIDataBase.measure_name(config.inflfn)
     results[:params] = CPIDataBase.params(config.inflfn)
 
@@ -210,13 +207,19 @@ julia> df = collect_results(savepath)
                                                                                                          8 columns and 12 rows omitted
 ```
 """
-function run_batch(data, dict_list_params, savepath; savetrajectories = true)
+function run_batch(data, dict_list_params, savepath; 
+    savetrajectories = true, 
+    param_constructor_fn = ParamTotalCPIRebase, 
+    rndseed = 0)
 
     # Ejecutar lote de simulaciones 
     for (i, dict_params) in enumerate(dict_list_params)
-        @info "Ejecutando simulación $i..."
+        @info "Ejecutando simulación $i de $(length(dict_list_params))..."
         config = dict_config(dict_params) 
-        results, tray_infl = makesim(data, config)
+        results, tray_infl = makesim(data, config; 
+            param_constructor_fn=param_constructor_fn, 
+            rndseed = rndseed)
+        print("\n\n\n")
 
         # Guardar los resultados 
         filename = savename(config, "jld2", connector= " - ", equals=" = ")
@@ -232,6 +235,33 @@ end
 
 
 # Funciones de ayuda 
+
+"""
+    eval_metrics(tray_infl, tray_infl_pob)
+
+Función para obtener diccionario con estadísticos de evaluación.
+"""
+function eval_metrics(tray_infl, tray_infl_pob)
+    err_dist = tray_infl .- tray_infl_pob
+    sq_err_dist = err_dist .^ 2
+    
+    K = size(tray_infl, 3)
+    mse = mean(sq_err_dist) 
+    std_sim_error = std(sq_err_dist) / sqrt(K)
+    
+    rmse = mean(sqrt.(sq_err_dist)) # corregir acá para devolver promedio por realizaciones
+    mae = mean(abs.(err_dist))
+    me = mean(err_dist)
+    corr = mean(cor.(eachslice(tray_infl, dims=3), Ref(tray_infl_pob)))[1]
+
+    Dict(:mse => mse, :std_sim_error => std_sim_error, 
+        :rmse => rmse, 
+        :mae => mae, 
+        :me => me, 
+        :corr => corr)
+end
+
+
 """
     dict_config(params::Dict)
 
