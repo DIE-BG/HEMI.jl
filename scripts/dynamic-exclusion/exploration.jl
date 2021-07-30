@@ -55,12 +55,9 @@ run_batch(gtdata_eval, dict_config_dynEx, savepath)
 
 df = collect_results(savepath)
 df = df[.!isnan.(df.rmse), :]
+df = df[df.nsim .== 10_000, :]
 
-df_min = df[minimum(df.rmse) .=== df.rmse, :]
-# Revisamos el elemento del DataFrame con el valor mínimo de mse
-minimum(df[!,"mse"])
-# (0.42424244f0, 1.5151515f0)
+df.factor_inf = [df.params[i][1] for i in 1:size(df)[1]]
+df.factor_sup = [df.params[i][2] for i in 1:size(df)[1]]
 
-# Podemos ordenar el DataFrame respecto al mse.
-sorted_df = sort(df, "mse")
-
+CSV.write(datadir(savepath, "resultados_parse_2021-07-27.csv"), df)
