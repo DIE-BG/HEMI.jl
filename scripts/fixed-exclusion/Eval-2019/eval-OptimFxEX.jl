@@ -86,18 +86,20 @@ mseplot = plot(Exc_0019lp[2:end,:mse],
     label = " MSE Exclusión fija Óptima Base 2000", 
     legend = :topleft, 
     xlabel= "Gastos Básicos Excluidos", ylabel = "MSE",
-    dpi = 150) 
+    dpi = 200) 
 
 plot!([12],seriestype="vline", label = "Mínimo en 13 exclusiones")
 # saveplot = plotsdir("fixed-exclusion","Base2000")    
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2000")
 
 ##  base 2010
-
+    
 exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] 
 
 ##
-est_10 = std(gt10.v |> capitalize |> varinteran, dims=1)
+gtdata_10 = gtdata[Date(2019, 12)]
+
+est_10 = std(gtdata_10[2].v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(est_10))
 
@@ -119,7 +121,6 @@ end
 total
 
 ##
-gtdata_10 = gtdata[Date(2019, 12)]
 
 FxEx_10 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
@@ -159,8 +160,8 @@ sort_1019[1,:mse]
 """
 Matlab con ResampleScrambleVarMonths -> [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184] (17 exclusiones)
 
-exclusiones Base 2010 =  [29, 46, 39, 31, 116, 40, 186, 30, 35, 47, 197, 185, 196, 41, 184] (15 exclusiones)
-MSE = 1.0963f0
+exclusiones Base 2010 =  [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
+MSE = 1.1399192f0
 """
 ##
 mseplot = plot(Exc_1019lp[!,:mse], 
@@ -170,11 +171,46 @@ mseplot = plot(Exc_1019lp[!,:mse],
     xlabel= "Gastos Básicos Excluidos", ylabel = "MSE",
     dpi = 200)
 
-plot!([15],seriestype="vline", label = "Mínimo en 15 exclusiones")
+plot!([7],seriestype="vline", label = "Mínimo en 7 exclusiones")
 
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2010")
 
 
 ## Evaluación de medida 
+exc_opt = ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30])
+config = SimConfig(InflationFixedExclusionCPI(exc_opt),resamplefn, trendfn, 125_000)
 
-results = makesim()
+results, tray = makesim(gtdata_10, config; 
+param_constructor_fn=ParamTotalCPILegacyRebase, 
+rndseed = 0)
+
+"""
+Resultado Evaluación óptima
+julia> results
+Dict{Symbol, Any} with 12 entries:
+  :trendfn       => TrendRandomWalk{Float32}(Float32[0.953769, 0.948405, 0.926209, 0.902285, 0.832036, 0.825772, 0.799508, 0.789099, 0.764708, 0.757526  …  :params        => ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30])
+  :measure       => "Exclusión fija de gastos básicos([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30])"
+  :resamplefn    => ResampleScrambleVarMonths()
+  :mae           => 0.884287
+  :me            => -0.677169
+  :nsim          => 125000
+  :rmse          => 0.884287
+  :inflfn        => InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30]))
+  :mse           => 1.13603
+  :std_sim_error => 0.0056931
+  :corr          => 0.963256
+
+
+"""
+
+## Trayectoria
+
+inflfn = InflationFixedExclusionCPI(exc_opt)
+FxExOpt = inflfn(gtdata)
+plotrng = Date(2001, 12):Month(1):Date(2021, 6)
+plot(plotrng, FxExOpt, label="Exc. Óptima", dpi=200)
+title!("Exclusión Fija ótpima")
+hspan!([3,5], color=[:gray], alpha=0.25, label="")
+hline!([4], linestyle=:dash, color=[:black], label = "")
+
+savefig("plots//fixed-exclusion//Eval-19//tray-opt-19")
