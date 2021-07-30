@@ -46,6 +46,7 @@ module InflationEvalTools
     include("param/param.jl")
 
     export InflationParameter, ParamTotalCPIRebase, ParamTotalCPI, ParamWeightedMean
+    export ParamTotalCPILegacyRebase # parámetro evaluación 2019
     include("param/InflationParameter.jl")
 
     # Tipos para configuración de simulaciones
@@ -59,8 +60,8 @@ module InflationEvalTools
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
 
-    ## Funciones de Evaluación  
-    export evalsim, makesim, dict_config, run_batch
+    ## Funciones de evaluación  
+    export evalsim, makesim, dict_config, run_batch, eval_metrics
     include("simulate/simutils.jl")
 
 

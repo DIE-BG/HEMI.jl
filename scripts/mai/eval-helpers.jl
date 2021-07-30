@@ -23,23 +23,3 @@ function combination_weights(tray_infl, tray_infl_pob)
     a_optim 
 end
 
-# Función de estadísticos de evaluación
-function eval_metrics(tray_infl, tray_infl_pob)
-    err_dist = tray_infl .- tray_infl_pob
-    sq_err_dist = err_dist .^ 2
-    
-    K = size(tray_infl, 3)
-    mse = mean(sq_err_dist) 
-    std_sim_error = std(sq_err_dist) / sqrt(K)
-    
-    rmse = mean(sqrt.(sq_err_dist))
-    mae = mean(abs.(err_dist))
-    me = mean(err_dist)
-    corr = mean(cor.(eachslice(tray_infl, dims=3), Ref(tray_infl_pob)))[1]
-
-    Dict(:mse => mse, :std_sim_error => std_sim_error, 
-        :rmse => rmse, 
-        :mae => mae, 
-        :me => me, 
-        :corr => corr)
-end
