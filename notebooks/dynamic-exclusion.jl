@@ -93,7 +93,7 @@ begin
 			markeralpha = 0.9,
 		# Subplots Attributes
 			plot_title="Main title",
-			title = "Inverso del MSE del evaluación\n10,000 simulaciones",
+			title = "Inverso del MSE de evaluación\n10,000 simulaciones",
 			titlefontsize = 12,
 			annotations = (
 				df_min.factor_inf .+ 0.6, 
@@ -133,10 +133,10 @@ md"""
 # ╔═╡ 3b0f419f-bd16-4aec-ac34-9baf557c67cf
 begin
 	resumen = DataFrame()
-	resumen.Ejercicio = ["Exploratorio", "Optimización"]
-	resumen.MSE = [convert(Float64,df_min.mse[1]), convert(Float64, optim_result.minimum)]
-	resumen."Factor inferior" = [df_min.factor_inf[1], optim_result.minimizer[1]]
-	resumen."Factor superior" = [df_min.factor_sup[1], optim_result.minimizer[2]]
+	resumen.Ejercicio = ["Exploratorio", "Optimización", "Ejercicio de 2020", "Ejercicio equivalente a 2020"]
+	resumen.MSE = [convert(Float64,df_min.mse[1]), convert(Float64, optim_result.minimum), 0.29, 0.5729]
+	resumen."Factor inferior" = [df_min.factor_inf[1], optim_result.minimizer[1], 0.32, 0.28]
+	resumen."Factor superior" = [df_min.factor_sup[1], optim_result.minimizer[2], 1.73, 2.37]
 	resumen
 end
 
@@ -144,7 +144,7 @@ end
 #begin
 #	@chain "..\\scripts\\load_data.jl" include
 #	@chain "..\\src\\HEMI.jl" include
-#end
+#end;
 
 # ╔═╡ f3add5e9-14ab-409e-b4f0-93133b468cb2
 begin
@@ -153,13 +153,23 @@ begin
 		optim_result.minimizer[1], 
 		optim_result.minimizer[2]
 	)
+	dynExFn_2019 = InflationDynamicExclusion(
+		0.3222, 
+		1.7283
+	)
+	dynExFn_2019_2 = InflationDynamicExclusion(
+		0.28, 
+		2.37
+	)
 end;
 
 # ╔═╡ 2e46e241-f279-43e9-8c8c-d5f8dea03ff3
 begin
 	plotlyjs()
 	plot(totalFn, gtdata)
-	plot!(dynExFn, gtdata)
+	plot!(dynExFn_2019, gtdata, label = "Ejercicio de 2020 (0.32, 1.73)")
+	plot!(dynExFn_2019_2, gtdata, label = "Ejercicio equivalente a 2020 (0.28, 2.37)")
+	plot!(dynExFn, gtdata)	
 end
 
 # ╔═╡ Cell order:
