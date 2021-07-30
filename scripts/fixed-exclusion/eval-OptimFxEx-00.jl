@@ -34,7 +34,9 @@ Base 2010: [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]}
 
 ## Instancias generales
 gtdata_00 = gtdata[Date(2010, 12)]
-resamplefn = ResampleSBB(36)
+resample1 = ResampleSBB(36)
+resample2 = ResampleScrambleVarMonths()
+rsmpl = [resample1, resample2]
 trendfn = TrendRandomWalk()
 
 ## BASE 2000 
@@ -64,11 +66,11 @@ v_exc
 
 FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(v_exc), 
-    :resamplefn => resamplefn, 
+    :resamplefn => resample2, 
     :trendfn => trendfn,
-    :nsim => 125000) |> dict_list
+    :nsim => 125_000) |> dict_list
 
-savepath = datadir("fixed-exclusion","Base2000")    
+savepath = datadir("results","fixed-exclusion","Eval-19","Base2000-10k")    
 
 ## lote de simulación 
 
@@ -76,25 +78,36 @@ run_batch(gtdata_00, FxEx_00, savepath)
 
 ## resultados
 
-dfExc_00 = collect_results(savepath)
+Exc_0019 = collect_results(savepath)
 
 # Para ordenamiento por cantidad de exclusiones 
-exclusiones =  getindex.(map(x -> length.(x), dfExc_00[!,:params]),1)
-dfExc_00[!,:exclusiones] = exclusiones 
+exclusiones =  getindex.(map(x -> length.(x), Exc_0019[!,:params]),1)
+Exc_0019[!,:exclusiones] = exclusiones 
 # Ordenamiento por cantidad de exclusiones
-dfExc_00 = sort(dfExc_00, :exclusiones)
+Exc_0019 = sort(Exc_0019, :exclusiones)
 
 # DF ordenado por MSE
-sort_00 = sort(dfExc_00, :mse)
+sort_0019 = sort(Exc_0019, :mse)
 
 ## Exctracción de vector de exclusión 
-a = collect(sort_00[1,:params])
-exc00 = a[1]
-# a = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
-# Menor MSE
-sort_00[1,:mse]
-#5.995067f0
+a = collect(sort_0019[1,:params])
+# exc00 = a[1]
+sort_0019[1,:mse]
+"""
+# Vectores de exclusión
+Matlab con ResampleScrambleVarMonths -> [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
 
+Base 2000, con ResampleScrambleVarMonths() y param = ParamTotalCPIRebase(config.resamplefn, config.trendfn) 
+exclusiones -10k = [35, 30, 190, 36, 37, 40, 31, 104, 162] MSE = 1.6879272
+exclusiones-125k = [35, 30, 190, 36, 37, 40, 31, 104, 162] MSE = 1.6837343
+
+
+Base 2000 con ResampleSBB(36) y y param = ParamTotalCPIRebase(config.resamplefn, config.trendfn) 
+exclusiones-125k = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188] MSE = 5.995067f0
+(con 10k simulaciones queda igual, el MSE 5.98)
+
+
+"""
 ## Revisión gráfica 
 mseplot = plot(dfExc_00[!,:mse], 
     title = " Óptimización Base 2000",

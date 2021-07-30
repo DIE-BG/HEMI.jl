@@ -25,14 +25,6 @@ using DataFrames
 # ╔═╡ efce479b-3e7f-4e36-98fc-1292247d3147
 PlutoUI.TableOfContents(aside=true, title="Contenido", depth=2)
 
-# ╔═╡ 13438ae2-c455-4f98-a63e-30d689b247b6
-## Instancias generales
-begin
-gtdata_00 = gtdata[Date(2010, 12)]
-resamplefn = ResampleSBB(36)
-trendfn = TrendRandomWalk()
-end
-
 # ╔═╡ bc797138-a581-45f7-bcc2-f0f3665161f5
 begin
 md""" ## Evaluación de Medidas de Inflación 2020
@@ -133,13 +125,6 @@ end
 # ╔═╡ fdfc4ff6-85f5-4b0d-96d5-25749c15f199
 v_exc
 
-# ╔═╡ fbcf4923-f33c-48d2-a978-5613ef47b708
-FxEx_00 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(v_exc), 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :nsim => 125000) |> dict_list
-
 # ╔═╡ cfc2c2e0-d00d-41a8-8dfa-c3b3c9e0f817
 v_exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 
@@ -175,6 +160,9 @@ Correspondiente a los siguientes gastos básicos:
 
 """
 
+# ╔═╡ 02ea33d9-59f3-4217-9819-04174217fdd5
+md""" ### Algoritmo de creación de vectores de exclusión """
+
 # ╔═╡ 7a9b00d9-a743-42b2-ac9d-2417168b7e48
 est10 = std(gt10.v |> capitalize |> varinteran, dims=1)
 
@@ -203,17 +191,8 @@ end
 # ╔═╡ b115164a-97b7-4d78-b774-0db5f2cf0039
 total
 
-# ╔═╡ 21e9e51e-5c16-475e-ac70-e423d19161eb
-begin
-FxEx_10 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(total), 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :nsim => 10000) |> dict_list
-end
-
 # ╔═╡ 6f850efe-c063-4984-8e9b-58780bb53b35
-md""" ### Resultados preliminares """
+md""" ## Resultados preliminares """
 
 # ╔═╡ f1dbe1d8-062d-4312-8015-35ca79a7ae43
 md""" Luego del proceso de evaluación con 125,000 simulaciones para ambas bases, se obtuvieron los siguientes vectores de exclusión:
@@ -260,6 +239,30 @@ Disminuyó de 17 exclusiones a 5
 
 
 
+# ╔═╡ 13438ae2-c455-4f98-a63e-30d689b247b6
+## Instancias generales
+begin
+gtdata_00 = gtdata[Date(2010, 12)]
+resamplefn = ResampleSBB(36)
+trendfn = TrendRandomWalk()
+end
+
+# ╔═╡ fbcf4923-f33c-48d2-a978-5613ef47b708
+FxEx_00 = Dict(
+    :inflfn => InflationFixedExclusionCPI.(v_exc), 
+    :resamplefn => resamplefn, 
+    :trendfn => trendfn,
+    :nsim => 125000) |> dict_list
+
+# ╔═╡ 21e9e51e-5c16-475e-ac70-e423d19161eb
+begin
+FxEx_10 = Dict(
+    :inflfn => InflationFixedExclusionCPI.(total), 
+    :resamplefn => resamplefn, 
+    :trendfn => trendfn,
+    :nsim => 10000) |> dict_list
+end
+
 # ╔═╡ Cell order:
 # ╟─0b4777bd-43a2-4c68-8a52-c5d825f1da91
 # ╟─5bb46960-3351-495e-a774-11b1a7a16256
@@ -281,6 +284,7 @@ Disminuyó de 17 exclusiones a 5
 # ╠═cfc2c2e0-d00d-41a8-8dfa-c3b3c9e0f817
 # ╟─5f8fa39b-67a9-4773-ac30-7644cf1ba0cf
 # ╟─03a8ea51-a6dc-4d76-af98-b0a50db73255
+# ╟─02ea33d9-59f3-4217-9819-04174217fdd5
 # ╠═7a9b00d9-a743-42b2-ac9d-2417168b7e48
 # ╠═75ecec89-b4f2-4b02-bd11-b30360e353f2
 # ╠═e24fe38a-3b76-46d6-8353-e0d29746baaf
