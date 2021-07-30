@@ -1,4 +1,4 @@
-##
+## carga de paquetes
 using DrWatson
 @quickactivate "HEMI"
 
@@ -12,16 +12,17 @@ addprocs(4, exeflags="--project")
 using DataFrames
 using Plots, CSV
 
-##
+## Instancias generales
 
-gtdata_00 = gtdata[Date(2010, 12)]
 trendfn = TrendRandomWalk()
 # legacy_param = ParamTotalCPILegacyRebase()
 resamplefn = ResampleScrambleVarMonths() 
 
 
-##
+## Optimización Base 2000
+gtdata_00 = gtdata[Date(2010, 12)]
 
+## Creación de vector de de gastos básicos ordenados por volatilidad.
 estd = std(varinteran(capitalize(gt00.v)), dims=1)
 
 df = DataFrame(num = collect(1:218), Desv = vec(estd))
@@ -31,7 +32,7 @@ sorted_std = sort(df, "Desv", rev=true)
 vec_v = sorted_std[!,:num]
 
 # Creación de vectores de exclusión
-# Se crearán 20 vectores para la exploración inicial
+# Se crearán 100 vectores para la exploración inicial
 v_exc = []
 for i in 1:length(vec_v)-118
    exc = vec_v[1:i]
@@ -40,7 +41,8 @@ end
 
 v_exc
 
-##
+## creación de diccionarios y ruta para lote de simulación
+
 FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(v_exc), 
     :resamplefn => resamplefn, 
@@ -50,29 +52,31 @@ FxEx_00 = Dict(
 savepath = datadir("results","fixed-exclusion","Eval-19","Base2000-10k-lp")    
 
 
-##
+## Lote de simulación con 100 vectores de exclusión
+
 run_batch(gtdata_00, FxEx_00, savepath, 
     param_constructor_fn=ParamTotalCPILegacyRebase, 
     rndseed = 0)
 
-##
+## Recoleeción de datos desde ruta
 
 Exc_0019lp = collect_results(savepath)
 
-##
+## Análisis de resultados
 
-# Para ordenamiento por cantidad de exclusiones 
+# obtener longitud del vector de exclusión
 exclusiones =  getindex.(map(x -> length.(x), Exc_0019lp[!,:params]),1)
 Exc_0019lp[!,:exclusiones] = exclusiones 
+
 # Ordenamiento por cantidad de exclusiones
 Exc_0019lp = sort(Exc_0019lp, :exclusiones)
 
 # DF ordenado por MSE
 sort_0019 = sort(Exc_0019lp, :mse)
 
-## Exctracción de vector de exclusión 
+## Exctracción de vector de exclusión  y MSE
 a = collect(sort_0019[1,:params])
-sort_0019[!,:mse]
+sort_0019[1,:mse]
 """
 Matlab con ResampleScrambleVarMonths -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 exclusiones)
 
@@ -92,11 +96,12 @@ plot!([12],seriestype="vline", label = "Mínimo en 13 exclusiones")
 # saveplot = plotsdir("fixed-exclusion","Base2000")    
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2000")
 
-##  base 2010
-    
+##  Optimización Base 2010
+
+# Vector óptimo base 2000 encontrado en la primera sección
 exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] 
 
-##
+## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 gtdata_10 = gtdata[Date(2019, 12)]
 
 est_10 = std(gtdata_10[2].v |> capitalize |> varinteran, dims=1)
@@ -107,7 +112,8 @@ sorted_std = sort(df, "Desv", rev=true)
 
 vec_v = sorted_std[!,:num]
 
-##
+# Creación de vectores de exclusión
+# Se crearán 100 vectores para la exploración inicial
 v_exc = []
 tot = []
 total = []
@@ -120,7 +126,7 @@ end
 
 total
 
-##
+## creación de diccionarios y ruta para lote de simulación
 
 FxEx_10 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
@@ -131,26 +137,29 @@ FxEx_10 = Dict(
 
 savepath10 = datadir("results","fixed-exclusion","Eval-19","Base2010-10k-lp")    
 
-##
+## Lote de simulación
 run_batch(gtdata_10, FxEx_10, savepath10, 
     param_constructor_fn=ParamTotalCPILegacyRebase, 
     rndseed = 0)
 
 
-## resultados
+## Recolección de resultados desde ruta
 
 Exc_1019lp = collect_results(savepath10)
 
-# Para ordenamiento por cantidad de exclusiones 
+## Análisis de resultados
+
+# obtener longitud del vector de exclusión 
 exclusiones =  getindex.(map(x -> length.(x)[2], Exc_1019lp[!,:params]),1)
 Exc_1019lp[!,:exclusiones] = exclusiones 
+
 # Ordenamiento por cantidad de exclusiones
 Exc_1019lp = sort(Exc_1019lp, :exclusiones)
 
 # DF ordenado por MSE
 sort_1019 = sort(Exc_1019lp, :mse)
 
-## Exctracción de vector de exclusión 
+## Exctracción de vector de exclusión  y MSE
 a = collect(sort_1019[1,:params])
 exc10 = a[2]
 
@@ -158,13 +167,23 @@ exc10 = a[2]
 sort_1019[1,:mse]
 
 """
-Matlab con ResampleScrambleVarMonths -> [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184] (17 exclusiones)
-MSE (con esos vectores) = 0.64
 
-exclusiones Base 2010 =  [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
+################################# RESULTADOS DE LA OPTIMIZACIÓN ################################# 
+
+###### Matlab #######
+Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 exclusiones)
+Base 2010 -> [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184] (17 exclusiones)
+MSE = 0.64
+
+
+###### Julia ####### 
+ResampleScrambleVarMonths, ParamTotalCPILegacyRebase, TrendRandomWalk :
+Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 exclusiones)
+Base 2010 -> [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
 MSE = 1.1399192f0
+
 """
-##
+## Revisión Gráfica
 mseplot = plot(Exc_1019lp[!,:mse], 
     title = " Óptimización Base 2010",
     label = " MSE Exclusión fija Óptima Base 2010", 
@@ -177,16 +196,22 @@ plot!([7],seriestype="vline", label = "Mínimo en 7 exclusiones")
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2010")
 
 
-## Evaluación de medida 
+########### EVALUACIÓN COMPARATIVA DE EXCLUSIONES ÓPTIMAS MATLAB Y Julia con 125_000 #####################
+
+## Evaluación de exclusion óptima obtenida en Julia 
+# vectores óptimos Julia
 exc_opt = ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30])
+
+# Configuración de simulación
 config = SimConfig(InflationFixedExclusionCPI(exc_opt),resamplefn, trendfn, 125_000)
 
+# Simulación
 results, tray = makesim(gtdata_10, config; 
 param_constructor_fn=ParamTotalCPILegacyRebase, 
 rndseed = 0)
 
 """
-Resultado Evaluación óptima
+################### Resultado Evaluación óptima Julia #########################3
 julia> results
 Dict{Symbol, Any} with 12 entries:
   :trendfn       => TrendRandomWalk{Float32}(Float32[0.953769, 0.948405, 0.926209, 0.902285, 0.832036, 0.825772, 0.799508, 0.789099, 0.764708, 0.757526  …  :params        => ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193], [29, 31, 116, 39, 46, 40, 30])
@@ -216,8 +241,9 @@ hline!([4], linestyle=:dash, color=[:black], label = "")
 
 savefig("plots//fixed-exclusion//Eval-19//tray-opt-19")
 
+
+################ Evaluación de medida obtenida en 2019 utilizando Julia  ##########################
 """
-## Evaluación de medida obtenida en 2019
 Evaluación con mismos vectores de exclusión obtenidos en Matlab (MSE= 0.64)
 
 Base 2000: [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
@@ -226,6 +252,9 @@ Base 2010: [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 
 método de remuestreo:  ResampleScrambleVarMonths()
 inflación paramétrica: ParamTotalCPILegacyRebase()
 Función de tendencia:  TrendRandomWalk()
+
+MSE MATLAB = 0.64
+MSE JULIA  = 1.29644
 
 
 resultados
@@ -257,7 +286,12 @@ param_constructor_fn=ParamTotalCPILegacyRebase,
 rndseed = 0)
 
 
-##
+## comparación gráfica entre medidas obtenidas 
+
+"""
+Nota: Los valores de trayectoria de las inflaciones si son iguales en Matlab y en Julia.
+
+"""
 
 opt_mt = InflationFixedExclusionCPI(excoptmt)(gtdata)
 opt_jl = InflationFixedExclusionCPI(exc_opt)(gtdata)
@@ -273,6 +307,9 @@ hline!([4], linestyle=:dash, color=[:black], label = "")
 
 savefig("plots//fixed-exclusion//Eval-19//Comp-Tray-tot")
 
-## 
-medidas = DataFrame( plotrng, Opt_mt = opt_mt, Opt_jl = opt_jl, Total = tot)
+## Dataframe con series de tiempo
 
+medidas = DataFrame(fechas= string.(plotrng), optmt = opt_mt, optjl = opt_jl, total = tot)
+last(medidas, 25)
+
+# CSV.write("Datos.csv", last(medidas,25))
