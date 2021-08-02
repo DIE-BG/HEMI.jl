@@ -79,3 +79,12 @@ w = resamplefn(t)
 # Acá todos deben estar ordenados de 1 a 12 y cada 12 debe dar 0
 w .% 12 
 
+## Evaluación de MSE manual 
+
+tray_infl = pargentrayinfl(InflationTotalCPI(), resamplefn, trendfn, gtdata_eval; K=125_000)
+ 
+m_tray_infl = vec(mean(tray_infl, dims=3))
+plot(infl_dates(gtdata_eval), [m_tray_infl tray_infl_param])
+
+mse = mean((tray_infl .- tray_infl_param) .^ 2)
+@info "MSE" mse
