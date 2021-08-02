@@ -103,6 +103,19 @@ function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T
     outVec
 end
 
+InflationTrimmedMeanWeighted(factors::Tuple{Real, Real}) = InflationTrimmedMeanWeighted(
+    convert(Float32, factors[1]), 
+    convert(Float32, factors[2])
+)
+
+# Método para recibir argumentos como par en una lista.
+function (InflationTrimmedMeanWeighted)(factor_vec::Vector{<:Real})
+    length(factor_vec) != 2 && return @error "Dimensión incorrecta del vector"
+    InflationTrimmedMeanWeighted(
+        convert(Float32, factor_vec[1]),
+        convert(Float32, factor_vec[2])
+    )
+end
 
 
 

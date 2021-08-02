@@ -113,3 +113,18 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
     return outVec
 end 
 
+
+# Método para recibir argumentos como par en una tupla.
+InflationTrimmedMeanEq(factors::Tuple{Real, Real}) = InflationTrimmedMeanEq(
+    convert(Float32, factors[1]), 
+    convert(Float32, factors[2])
+)
+
+# Método para recibir argumentos como par en una lista.
+function (InflationTrimmedMeanEq)(factor_vec::Vector{<:Real})
+    length(factor_vec) != 2 && return @error "Dimensión incorrecta del vector"
+    InflationTrimmedMeanEq(
+        convert(Float32, factor_vec[1]),
+        convert(Float32, factor_vec[2])
+    )
+end
