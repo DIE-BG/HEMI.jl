@@ -15,8 +15,8 @@ gtdata_eval_legacy  = gtdata[Date(2019, 12)]
 Dates_gtdata        = Date("2001-12-01"):Month(1):Date("2021-06-01")
 Dates_eval          = Date("2001-12-01"):Month(1):Date("2020-12-01")
 Dates_legacy        = Date("2001-12-01"):Month(1):Date("2019-12-01")
-N_iter_1 = 10_000
-N_iter_2 = 125_000
+N_iter_1 = 1000
+N_iter_2 = 10_000
 trendfn = TrendRandomWalk()
 
 
