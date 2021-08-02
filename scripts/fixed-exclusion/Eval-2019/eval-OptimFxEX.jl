@@ -320,7 +320,7 @@ Nota: Los valores de trayectoria de las inflaciones si son iguales en Matlab y e
 opt_mt = InflationFixedExclusionCPI(excoptmt)(gtdata)
 opt_jl = InflationFixedExclusionCPI(exc_opt)(gtdata)
 tot = InflationTotalCPI()(gtdata)
-
+# plotly()
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
 plot(plotrng, opt_mt, label ="Exc. Óptima Matlab", dpi=200)
 plot!(plotrng, opt_jl, label = "Exc. Óptima Julia")
