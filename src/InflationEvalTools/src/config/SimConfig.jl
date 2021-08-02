@@ -8,7 +8,7 @@ general, una función de inflación [`InflationFunction`](@ref), una función de
 remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
 [`TrendFunction`](@ref). Contiene el esquema general de la simulación.
 """
-abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
+abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction, P<:InflationParameter} end
 
 """
     SimConfig{F, R, T} <:AbstractConfig{F, R, T}
