@@ -8,7 +8,7 @@ general, una función de inflación [`InflationFunction`](@ref), una función de
 remuestreo [`ResampleFunction`](@ref) y una función de Tendencia
 [`TrendFunction`](@ref). Contiene el esquema general de la simulación.
 """
-abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction, P<:InflationParameter} end
+abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:TrendFunction} end
 
 """
     SimConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -45,6 +45,8 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     resamplefn::R
     # Función de Tendencia
     trendfn::T
+    # Función de inflación paramétrica 
+    paramfn::InflationParameter
     # Cantidad de Simulaciones
     nsim::Int  
 end
@@ -92,6 +94,8 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     resamplefn::R
     # Función de Tendencia
     trendfn::T
+    # Función de inflación paramétrica 
+    paramfn::InflationParameter
     # Cantidad de simulaciones
     nsim::Int
     # Último mes de set de "entrenamiento"
@@ -104,14 +108,16 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
+Base.string(paramfn::InflationParameter) = method_tag(paramfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación : ", measure_tag(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo: ", method_tag(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia : ", method_tag(config.trendfn))
-    println(io, "|─> ", "Simulaciones         : ", config.nsim)
+    println(io, "|─> ", "Función de inflación  : ", measure_tag(config.inflfn))
+    println(io, "|─> ", "Función de remuestreo : ", method_tag(config.resamplefn))
+    println(io, "|─> ", "Función de tendencia  : ", method_tag(config.trendfn))
+    println(io, "|─> ", "Inflación paramétrica : ", method_tag(config.paramfn))
+    println(io, "|─> ", "Simulaciones          : ", config.nsim)
     if config isa CrossEvalConfig 
         println(io, "|─> ", "Fin set de entrenamiento: ", config.train_date)
         println(io, "|─> ", "Meses de evaluación     : ", config.eval_size)
