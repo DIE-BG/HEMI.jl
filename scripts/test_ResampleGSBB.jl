@@ -11,13 +11,13 @@ using Plots
 ## Obtener función de inflación y remuestreo 
 
 # inflfn = InflationTotalCPI()
-# inflfn = InflationTotalRebaseCPI() 
-inflfn = InflationSimpleMean() 
+inflfn = InflationTotalRebaseCPI() 
+# inflfn = InflationWeightedMean() 
 # inflfn = InflationPercentileEq(69)
 
 # resamplefn = ResampleGSBB(36)
-resamplefn = ResampleSBB(36)
-# resamplefn = ResampleScrambleVarMonths() 
+# resamplefn = ResampleSBB(36)
+resamplefn = ResampleScrambleVarMonths() 
 
 trendfn = TrendIdentity()
 # trendfn = TrendRandomWalk()
@@ -34,13 +34,17 @@ plot(infl_dates(gtdata), tray_infl_param, label="Paramétrica")
 
 ## Trayectorias de inflación 
 
-tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, gtdata; K = 25_000, rndseed=0)
+evalinflfn = InflationPercentileEq(71) 
 
+tray_infl = pargentrayinfl(evalinflfn, resamplefn, trendfn, gtdata; K = 25_000, rndseed=0)
+ 
 m_tray_infl = vec(mean(tray_infl, dims=3))
 
-mse = mean((tray_infl .- tray_infl_param) .^ 2)
+sq_error_dist = (tray_infl .- tray_infl_param) .^ 2
+mse = mean(sq_error_dist)
+mse_std_error = std(sq_error_dist) / sqrt(size(sq_error_dist, 3))
 mse_prom = mean((m_tray_infl - tray_infl_param) .^ 2)
-@info "MSE" mse mse_prom
+@info "MSE" mse mse_std_error mse_prom
 
 
 plot(infl_dates(gtdata), [m_tray_infl, tray_infl_param], 
@@ -72,8 +76,9 @@ hline!([mean(residmat[:, j])])
 
 
 ##
-avgmat = mean(gt00.v, dims=1)
-residmat = gt00.v .- avgmat
+historyavg_mat = mean(gt00.v, dims=1)
+monthavg_mat = InflationEvalTools.monthavg(gt00.v)
+residmat = gt00.v .- monthavg_mat
 
 plot(residmat[:, 1])
-hline!([avgmat[1]])
+hline!([monthavg_mat[1]])
