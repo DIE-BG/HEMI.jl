@@ -16,12 +16,13 @@ abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:T
 Tipo concreto que contiene una configuración base para generar simulaciones
 utilizando todos los datos como set de entrenamiento. Recibe una función de
 inflación [`InflationFunction`](@ref), una función de remuestreo
-[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), y
-la cantidad de simulaciones deseadas [`nsim`].
+[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), 
+una función de inflación de evaluación [`paramfn`] y la cantidad de simulaciones 
+deseadas [`nsim`].
 
 ## Ejemplo
-Considerando las siguientes instancias de funciones de inflación, remuestreo y
-tendencia:
+Considerando las siguientes instancias de funciones de inflación, remuestreo,
+tendencia e inflación de evaluación:
 
 ```julia
 percEq = InflationPercentileEq(80)
@@ -34,9 +35,12 @@ Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
 ```julia-repl 
 julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000)
-|─> Función de inflación : PercEq-80.0
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
+|─> Función de inflación     : PercEq-80.0
+|─> Función de remuestreo    : ResampleSBB-36
+|─> Función de tendencia     : TrendRandomWalk
+|─> Inflación paramétrica    : InflationTotalRebaseCPI
+|─> Simulaciones             : 1000
+
 ```
 """
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -67,7 +71,8 @@ entrenamiento [`train_date`] y el tamaño del período de evaluación en meses
 
 ## Ejemplo
 
-Considerando las mismas funciones de inflación, remuestreo y tendencia: 
+Considerando las mismas funciones de inflación, remuestreo, tendencia e
+inflación de evaluación: 
 
 ```julia 
 percEq = InflationPercentileEq(80)
@@ -76,17 +81,19 @@ trendfn = TrendRandomWalk()
 paramfn = InflationTotalRebaseCPI(60)
 ```
 
-Generamos una configuración del tipo SimConfig con 1000 simulaciones y
+Generamos una configuración del tipo CrossEvalConfig con 1000 simulaciones y
 utilizando el fin de set de entrenamiento hasta diciembre de 2012 y 24 meses de
 evaluación.
 
 ```julia-repl 
 julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2012, 12), 24)
-|─> Función de inflación : PercEq-80.0
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
-|─> Fin set de entrenamiento: 2012-12-01
-|─> Meses de evaluación     : 24
+|─> Función de inflación     : PercEq-80.0
+|─> Función de remuestreo    : ResampleSBB-36
+|─> Función de tendencia     : TrendRandomWalk
+|─> Inflación paramétrica    : InflationTotalRebaseCPI
+|─> Simulaciones             : 1000
+|─> Fin set de entrenamiento : 2012-12-01
+|─> Meses de evaluación      : 24
 ```
 """
 Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -110,8 +117,6 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
-# Base.string(paramfn::Any) = nameof(paramfn)
-# Base.string(paramfn::InflationParameter) = method_tag(paramfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
