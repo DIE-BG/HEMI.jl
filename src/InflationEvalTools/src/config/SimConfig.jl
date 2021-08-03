@@ -27,12 +27,13 @@ tendencia:
 percEq = InflationPercentileEq(80)
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
+paramfn = InflationWeightedMean()
 ```
 
 Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
 ```julia-repl 
-julia> config = SimConfig(percEq, resamplefn, trendfn, 1000)
+julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000)
 |─> Función de inflación : PercEq-80.0
 |─> Función de remuestreo: ResampleSBB-36
 |─> Función de tendencia : TrendRandomWalk
@@ -46,7 +47,7 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Tendencia
     trendfn::T
     # Función de inflación paramétrica 
-    paramfn::InflationParameter
+    paramfn::Any
     # Cantidad de Simulaciones
     nsim::Int  
 end
@@ -72,6 +73,7 @@ Considerando las mismas funciones de inflación, remuestreo y tendencia:
 percEq = InflationPercentileEq(80)
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
+paramfn = InflationTotalRebaseCPI(60)
 ```
 
 Generamos una configuración del tipo SimConfig con 1000 simulaciones y
@@ -79,7 +81,7 @@ utilizando el fin de set de entrenamiento hasta diciembre de 2012 y 24 meses de
 evaluación.
 
 ```julia-repl 
-julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
+julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2012, 12), 24)
 |─> Función de inflación : PercEq-80.0
 |─> Función de remuestreo: ResampleSBB-36
 |─> Función de tendencia : TrendRandomWalk
@@ -94,8 +96,8 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     resamplefn::R
     # Función de Tendencia
     trendfn::T
-    # Función de inflación paramétrica 
-    paramfn::InflationParameter
+    # # Función de inflación paramétrica 
+    paramfn::Any
     # Cantidad de simulaciones
     nsim::Int
     # Último mes de set de "entrenamiento"
@@ -108,19 +110,20 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
-Base.string(paramfn::InflationParameter) = method_tag(paramfn)
+# Base.string(paramfn::Any) = nameof(paramfn)
+# Base.string(paramfn::InflationParameter) = method_tag(paramfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación  : ", measure_tag(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo : ", method_tag(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia  : ", method_tag(config.trendfn))
-    println(io, "|─> ", "Inflación paramétrica : ", method_tag(config.paramfn))
-    println(io, "|─> ", "Simulaciones          : ", config.nsim)
+    println(io, "|─> ", "Función de inflación     : ", measure_tag(config.inflfn))
+    println(io, "|─> ", "Función de remuestreo    : ", method_tag(config.resamplefn))
+    println(io, "|─> ", "Función de tendencia     : ", method_tag(config.trendfn))
+    println(io, "|─> ", "Inflación paramétrica    : ", nameof(config.paramfn))
+    println(io, "|─> ", "Simulaciones             : ", config.nsim)
     if config isa CrossEvalConfig 
-        println(io, "|─> ", "Fin set de entrenamiento: ", config.train_date)
-        println(io, "|─> ", "Meses de evaluación     : ", config.eval_size)
+        println(io, "|─> ", "Fin set de entrenamiento : ", config.train_date)
+        println(io, "|─> ", "Meses de evaluación      : ", config.eval_size)
     end
 end
 
