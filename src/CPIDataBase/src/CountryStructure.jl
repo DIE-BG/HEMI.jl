@@ -44,7 +44,7 @@ MixedCountryStructure(bases::Vararg{VarCPIBase}) = MixedCountryStructure(bases)
 # Resumen y método para mostrar 
 
 function summary(io::IO, cst::CountryStructure)
-    datestart, dateend = _formatdate.((cst.base[begin].fechas[begin], cst.base[end].fechas[end]))
+    datestart, dateend = _formatdate.((cst.base[begin].dates[begin], cst.base[end].dates[end]))
     print(io, typeof(cst), ": ", datestart, "-", dateend)
 end
 
@@ -80,8 +80,8 @@ getindex(cst::CountryStructure, i::Int) = cst.base[i]
 # específica de una base
 function _base_index(cst, date, retfirst=true)
     for (b, base) in enumerate(cst.base)
-        fechas = base.fechas
-        dateindex = findfirst(fechas .== date)
+        dates = base.dates
+        dateindex = findfirst(dates .== date)
         if !isnothing(dateindex)
             return b, dateindex
         end
@@ -115,7 +115,7 @@ function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
         onlybase = bases[1]
         newbase = VarCPIBase(
             onlybase.v[start_index:final_index, :], 
-            copy(onlybase.w), onlybase.fechas[start_index:final_index], copy(onlybase.baseindex))
+            copy(onlybase.w), onlybase.dates[start_index:final_index], copy(onlybase.baseindex))
         
         return getunionalltype(cst)(newbase)
     else 
@@ -125,10 +125,10 @@ function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
         lastbase = bases[end]
         newstart = VarCPIBase(
             firstbase.v[start_index:end, :], 
-            copy(firstbase.w), firstbase.fechas[start_index:end], copy(firstbase.baseindex))
+            copy(firstbase.w), firstbase.dates[start_index:end], copy(firstbase.baseindex))
         newfinal = VarCPIBase(
             lastbase.v[begin:final_index, :], 
-            copy(lastbase.w), lastbase.fechas[begin:final_index], copy(lastbase.baseindex))
+            copy(lastbase.w), lastbase.dates[begin:final_index], copy(lastbase.baseindex))
         
         if final_base - start_base > 1
             # more than one base
@@ -151,7 +151,7 @@ end
 Devuelve una copia del `CountryStructure` hasta la fecha indicada por `finaldate`.
 """
 function getindex(cst::CountryStructure, finaldate::Date)
-    startdate = cst.base[1].fechas[1]
+    startdate = cst.base[1].dates[1]
     getindex(cst, startdate, finaldate)
 end
 
@@ -215,4 +215,4 @@ Fechas correspondientes a la trayectorias de inflación computadas a partir un
 `CountryStructure`.
 """
 infl_dates(cst::CountryStructure) = 
-    cst.base[begin].fechas[12]:Month(1):cst.base[end].fechas[end]
+    cst.base[begin].dates[12]:Month(1):cst.base[end].dates[end]
