@@ -51,7 +51,7 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Tendencia
     trendfn::T
     # Función de inflación paramétrica 
-    paramfn::Any
+    paramfn
     # Cantidad de Simulaciones
     nsim::Int  
 end
@@ -104,7 +104,7 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Tendencia
     trendfn::T
     # # Función de inflación paramétrica 
-    paramfn::Any
+    paramfn
     # Cantidad de simulaciones
     nsim::Int
     # Último mes de set de "entrenamiento"
@@ -117,18 +117,19 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
+# Base.string(paramfn) = measure_tag(paramfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación     : ", measure_tag(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo    : ", method_tag(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia     : ", method_tag(config.trendfn))
-    println(io, "|─> ", "Inflación paramétrica    : ", nameof(config.paramfn))
-    println(io, "|─> ", "Simulaciones             : ", config.nsim)
+    println(io, "|─> ", "Función de inflación               : ", measure_tag(config.inflfn))
+    println(io, "|─> ", "Función de remuestreo              : ", method_tag(config.resamplefn))
+    println(io, "|─> ", "Función de tendencia               : ", method_tag(config.trendfn))
+    println(io, "|─> ", "Método de Inflación paramétrica    : ", measure_tag(config.paramfn))
+    println(io, "|─> ", "Simulaciones                       : ", config.nsim)
     if config isa CrossEvalConfig 
-        println(io, "|─> ", "Fin set de entrenamiento : ", config.train_date)
-        println(io, "|─> ", "Meses de evaluación      : ", config.eval_size)
+        println(io, "|─> ", "Fin set de entrenamiento           : ", config.train_date)
+        println(io, "|─> ", "Meses de evaluación                : ", config.eval_size)
     end
 end
 

@@ -62,7 +62,7 @@ function evalsim(data_eval::CountryStructure, config::SimConfig;
     # param = param_constructor_fn(config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
-    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) simulaciones=config.nsim 
+    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim 
 
     # Generar las trayectorias de inflación de simulación 
     tray_infl = pargentrayinfl(config.inflfn, # función de inflación
@@ -132,12 +132,10 @@ Dict{Symbol, Any} with 11 entries:
 ```
 """
 function makesim(data, config::AbstractConfig; 
-    param_constructor_fn=ParamTotalCPIRebase, 
-    rndseed = rndseed)
+    rndseed = 0)
         
      # Ejecutar la simulación y obtener los resultados 
     metrics, tray_infl = evalsim(data, config; 
-        param_constructor_fn = param_constructor_fn, 
         rndseed = rndseed)
 
     # Agregar resultados a diccionario 
@@ -209,15 +207,13 @@ julia> df = collect_results(savepath)
 """
 function run_batch(data, dict_list_params, savepath; 
     savetrajectories = true, 
-    param_constructor_fn = ParamTotalCPIRebase, 
     rndseed = 0)
 
     # Ejecutar lote de simulaciones 
     for (i, dict_params) in enumerate(dict_list_params)
         @info "Ejecutando simulación $i de $(length(dict_list_params))..."
         config = dict_config(dict_params) 
-        results, tray_infl = makesim(data, config; 
-            param_constructor_fn=param_constructor_fn, 
+        results, tray_infl = makesim(data, config;
             rndseed = rndseed)
         print("\n\n\n")
 
@@ -269,9 +265,9 @@ Función para convertir diccionario a `AbstractConfig`.
 """
 function dict_config(params::Dict)
     # configD = SimConfig(dict_prueba[:inflfn], dict_prueba[:resamplefn], dict_prueba[:trendfn], dict_prueba[:nsim])
-    if length(params) == 4
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:nsim])
+    if length(params) == 5
+        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim])
     else
-        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:nsim], params[:train_date], params[:eval_size])        
+        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date], params[:eval_size])        
     end
 end
