@@ -165,12 +165,14 @@ scatter(60:80, df.mse,
 resamplefn = ResampleSBB(36)
 resamplefn2 = ResampleScrambleVarMonths()
 trendfn = TrendRandomWalk()
+paramfn = InflationTotalRebaseCPI(36, 2)
 # la función de inflación, la instanciamos dentro del diccionario.
 
 dict_percW = Dict(
     :inflfn => InflationPercentileWeighted.(50:80), 
     :resamplefn => [resamplefn2],
     :trendfn => trendfn,
+    :paramfn => paramfn,
     :nsim => 100) |> dict_list
 
 
@@ -192,10 +194,12 @@ scatter(60:80, df_pw.mse,
 
 
 ##
-# ## Ejemplo de evaluación con búsqueda de parámetros 
+# ## Ejemplo de evaluación con parámetros de evaluación 2019 
+# Datos a diciembre 2019
+gtdata_eval19 = gtdata[Date(2019, 12)]
 
-config = SimConfig(InflationPercentileEq(69), ResampleSBB(36), TrendRandomWalk(), 10_000)
+# Configuración para percentil equiponderado 69, Metodo de selección por meses, Caminata aleatoria e Inflación de evaluación con hasta 2 cambios de base.
+config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000)
 
-results = evalsim(gtdata_eval, config)
-
-## Terminar ejemplo con NLopt u Optim...
+results, tray_infl = evalsim(gtdata_eval19, config)
+results
