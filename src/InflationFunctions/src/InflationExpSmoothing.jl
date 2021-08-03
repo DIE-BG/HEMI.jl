@@ -3,13 +3,14 @@
 
 """
     InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
-Función de inflación que computa la inflación con decaimiento exponencial con  con el parámetro
-alpha (el parámetro del decaimiento ) de la trayectoria interanual de la medida de inflación
-`inflfn` almacenada. 
+Función de inflación que computa la inflación con decaimiento exponencial con el
+parámetro ```\\alpha`` (el parámetro del decaimiento ) de la trayectoria
+interanual dada por la medida de inflación `inflfn` almacenada. 
 
 ## Ejemplo
 
-Para computar la inflación con decaimiento exponencial de la variación interanual del IPC: 
+Para computar la inflación con decaimiento exponencial de la variación
+interanual del IPC: 
 ```julia-repl 
 julia> inflfn = InflationExpSmoothing(InflationTotalCPI(), 0.8)
 (::InflationExpSmoothing{InflationTotalCPI}) (generic function with 5 methods)
@@ -20,10 +21,12 @@ struct InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
     alpha::Float64
 end
 
+# Método de conveniencia para definir sobre parámetro de suavizamiento real
+# InflationExpSmoothing(inflfn::F, a::Real) where {F} = InflationExpSmoothing(F, convert(Float64, a))
+
 # Método que opera sobre CountryStructure: computa la trayectoria de inflación
 # con la función inflfn y luego computa el promedio con suavizamiento exponencial con el parámetro
 # alpha (el parámetro del decaimiento )
-
 function (esfn::InflationExpSmoothing)(cs::CountryStructure)
 
     # Cómputo usual de inflación
