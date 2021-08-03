@@ -170,8 +170,8 @@ dict_prueba = Dict(
     :paramfn => paramfn, 
     :nsim => 1000) |> dict_list`
 ``` 
-Una vez creado dict_prueba, podemos generar el paquete de simulación utilizando
-run_batch.
+Una vez creado `dict_prueba`, podemos generar el paquete de simulación utilizando
+`run_batch`.
 ```julia-repl 
 julia> run_batch(gtdata_eval, dict_prueba, savepath)
 ...
