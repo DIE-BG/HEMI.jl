@@ -15,17 +15,17 @@ gtdata_eval_legacy  = gtdata[Date(2019, 12)]
 Dates_gtdata        = Date("2001-12-01"):Month(1):Date("2021-06-01")
 Dates_eval          = Date("2001-12-01"):Month(1):Date("2020-12-01")
 Dates_legacy        = Date("2001-12-01"):Month(1):Date("2019-12-01")
-N_iter_1 = 1000
-N_iter_2 = 10_000
+N_iter_1 = 10_000
+N_iter_2 = 125_000
 trendfn = TrendRandomWalk()
 
 
-LIST = [[gtdata_eval, InflationTrimmedMeanEq, ResampleSBB(36), N_iter_1, ParamTotalCPIRebase, LinRange(25,65,41), LinRange(60,100,41)],
+LIST = [[gtdata_eval, InflationTrimmedMeanEq, ResampleSBB(36), N_iter_1, ParamTotalCPIRebase, LinRange(25,65,41), LinRange(70,100,31)],
         [gtdata_eval, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPIRebase, LinRange(25,65,41), LinRange(70,100,31)],
         [gtdata_eval, InflationTrimmedMeanWeighted, ResampleSBB(36), N_iter_1, ParamTotalCPIRebase, LinRange(18,58,41), LinRange(70,100,31)],
         [gtdata_eval, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPIRebase, LinRange(10,50,41), LinRange(70,100,31)],
-        [gtdata_eval_legacy, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase, LinRange(25,65,41), LinRange(70,100,31)],
-        [gtdata_eval_legacy, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase,  LinRange(0,40,41), LinRange(70,100,31)]
+        [gtdata_eval_legacy, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase, LinRange(5,45,41), LinRange(70,100,31)],
+        [gtdata_eval_legacy, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase,  LinRange(5,45,41), LinRange(70,100,31)]
 ]
 
 using Plots
@@ -51,10 +51,6 @@ function evalperc(k, inflationfunction,resamplefn, trendfn, evaldata; param_fn=P
     return 1_000_000_000
 end
 
-D = DataFrame(measure=InflationTrimmedMeanEq, optim=(0.0,0.0), mse=0.0, 
-                    dates="",  resample=ResampleSBB(36),  trend=TrendRandomWalk(),
-                    N_iter=1, param= ParamTotalCPIRebase)
-delete!(D,1)
 
 for k in 1:length(LIST)
      dataeval   = LIST[k][1]
@@ -117,7 +113,7 @@ for k in 1:length(LIST)
             ", "*string(Float64(sorted_df[1,:params][2]))*")\n MSE="*
             string(sorted_df[1,:mse]),
             legend = :bottomleft)
-    savefig(plot1, plotsdir("Trimmed_Mean", plotname))
+    savefig(plot1, plotsdir("Trimmed_Mean", plotname)) #Es necesario crear directorio Trimmed_Mean primero
     savefig(plot1, plotsdir("Trimmed_Mean", plotname2))
 
 initial_params = [sorted_df[1,:params][1], sorted_df[1,:params][2]]
@@ -128,12 +124,12 @@ f = x -> evalperc(x, LIST[k][2], resamplefn, trendfn, gtdata_eval; param_fn=LIST
 optres = optimize(f, lower_b, upper_b, initial_params, NelderMead(), Optim.Options(iterations=100, g_tol=1.0e-4))
 min_mse = optres.minimum
 min_params = optres.minimizer
-D2 = DataFrame(measure=LIST[k][2], optim=(min_params[1],min_params[2]), mse=min_mse, 
+D = DataFrame(measure=LIST[k][2], optim=(min_params[1],min_params[2]), mse=min_mse, 
                     dates=daterange,  resample=resamplefn,  trend=trendfn,
                      N_iter=N_iter_2, param=LIST[k][5])
 
-append!(D,D2)
-CSV.write(datadir("Trimmed_Mean","resultados.csv"),D)
+
+CSV.write(datadir("Trimmed_Mean","resultados$k.csv"),D)
 end
 
 
