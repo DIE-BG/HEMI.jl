@@ -47,9 +47,9 @@ configC = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2012,
 
 # Algunas utilidades relacionadas con los objetos AbstractConfig
 # Creación de nombres para almacenar archivos (función savename de DrWatson)
-savename(configA, connector=" | ", equals=" = ")
-savename(configB, connector=" | ", equals=" = ")
-savename(configC, connector=" | ", equals=" = ")
+savename(configA)
+savename(configB)
+savename(configC)
 
 # Conversión de AbstractConfig a Diccionario (función de DrWatson)
 dic_a = struct2dict(configA)
@@ -93,9 +93,9 @@ dict_pruebaC = Dict(
 # se utiliza dentro de la función run_batch, previo a darle la información a la información
 # a la función makesim.
 
-configD_a = dict_config.(dict_prueba)
-configC_a = dict_config.(dict_pruebaC)
-configE = dict_config.(dict_pruebaB)
+configD_a = dict_config(dict_prueba)
+configC_a = dict_config(dict_pruebaC)
+configE = dict_config(dict_pruebaB)
 
 
 ## FUNCIONES DE EVALUACIÓN
@@ -183,8 +183,10 @@ savepath_pw = datadir("results", "PercWeigthed-scramble")
 run_batch(gtdata_eval, dict_percW, savepath_pw)
 
 # 4. Revisión de resultados, usando collect_results
-df_pw = collect_results(savepath_pw)
+df_pw = collect_results(savepath_pw);
 
+using DataFrames
+select(df_pw, :measure, :mse)
 # revisión gráfica
 scatter(60:80, df_pw.mse, 
     ylims = (0, 15),

@@ -117,26 +117,37 @@ end
 Base.string(inflfn::InflationFunction) = measure_tag(inflfn)
 Base.string(resamplefn::ResampleFunction) = method_tag(resamplefn)
 Base.string(trendfn::TrendFunction) = method_tag(trendfn)
-# Base.string(paramfn) = measure_tag(paramfn)
 
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación               : ", measure_tag(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo              : ", method_tag(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia               : ", method_tag(config.trendfn))
-    println(io, "|─> ", "Método de Inflación paramétrica    : ", measure_tag(config.paramfn))
-    println(io, "|─> ", "Simulaciones                       : ", config.nsim)
+    println(io, "|─> ", "Función de inflación            : ", measure_name(config.inflfn))
+    println(io, "|─> ", "Función de remuestreo           : ", method_name(config.resamplefn))
+    println(io, "|─> ", "Función de tendencia            : ", method_name(config.trendfn))
+    println(io, "|─> ", "Método de inflación paramétrica : ", measure_name(config.paramfn))
+    println(io, "|─> ", "Número de simulaciones          : ", config.nsim)
     if config isa CrossEvalConfig 
-        println(io, "|─> ", "Fin set de entrenamiento           : ", config.train_date)
-        println(io, "|─> ", "Meses de evaluación                : ", config.eval_size)
+        println(io, "|─> ", "Fin set de entrenamiento        : ", config.train_date)
+        println(io, "|─> ", "Meses de evaluación             : ", config.eval_size)
     end
 end
 
 
 # Extensión de tipos permitidos para simulación en DrWatson
 DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function, Real) 
-DrWatson.default_prefix(::AbstractConfig) = "HEMI"
+DrWatson.default_prefix(::SimConfig) = "HEMI-SimConfig"
+DrWatson.default_prefix(::CrossEvalConfig) = "HEMI-CrossEvalConfig"
+
+# Definición de formato para guardado de archivos relacionados con la configuración
+DEFAULT_CONNECTOR = ", "
+DEFAULT_EQUALS = "="
+
+DrWatson.savename(conf::SimConfig, suffix::String = "jld2") = 
+    savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
+
+DrWatson.savename(conf::CrossEvalConfig, suffix::String = "jld2") = 
+    savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
+
 
 ## método para convertir de AbstractConfig a Diccionario 
 # Esto lo hace la función struct2dict() de DrWatson

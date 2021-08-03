@@ -1,6 +1,6 @@
 # Esta función puede evaluar solo una medida de inflación
 """
-    evalsim(data_eval::CountryStructure, config::SimConfig)
+    evalsim(data_eval::CountryStructure, config::SimConfig) -> (metrics, tray_infl)
 
 Esta función genera la trayectoria paramétrica , las trayectorias de simulación
 y las métricas de evaluación utilizando la configuración [`SimConfig`](@ref). 
@@ -20,38 +20,28 @@ La función `evalsim` recibe un `CountryStructure` y un `AbstractConfig` del tip
 Teniendo una configuración del tipo `SimConfig` y un set de datos `gtdata_eval`
 
 ```julia-repl 
-julia> config = SimConfig(totalfn, resamplefn, trendfn, 1000)
-|─> Función de inflación : InflationTotalCPI
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
+julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000)
+SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
+|─> Función de inflación            : Percentil equiponderado 69.0
+|─> Función de remuestreo           : Bootstrap IID por meses de ocurrencia
+|─> Función de tendencia            : Tendencia de caminata aleatoria
+|─> Método de inflación paramétrica : Variación interanual IPC con cambios de base sintéticos (36, 2)
+|─> Número de simulaciones          : 10000
 
-julia> evalsim(gtdata_eval, configA)
+julia> results, tray_infl = evalsim(gtdata_eval, config)
 ┌ Info: Evaluación de medida de inflación
-│   medida = "Variación interanual IPC"
-│   remuestreo = "Block bootstrap estacionario con bloque esperado 36"
+│   medida = "Percentil equiponderado 69.0"
+│   remuestreo = "Bootstrap IID por meses de ocurrencia"
 │   tendencia = "Tendencia de caminata aleatoria"
-└   simulaciones = 1000
-
+│   evaluación = "Variación interanual IPC con cambios de base sintéticos (36, 2)"
+└   simulaciones = 10000
 ┌ Info: Métricas de evaluación:
-│   mse = 7.518966f0
-│   std_sim_error = 0.48772313050091165
-│   rmse = 1.9927315f0
-│   me = 0.42103088f0
-└   mae = 1.9927315f0
-
-(7.518966f0, 0.48772313050091165, 1.9927315f0, 0.42103088f0, 1.9927315f0, Float32[6.043124; 6.0636163; … ; 2.16223; 2.7750611]
-
-Float32[6.7873716; 7.222402; … ; -0.022548437; 2.0638824]
-
-Float32[3.548479; 3.321886; … ; 6.0159087; 5.401492]
-
-...
-
-Float32[5.1038027; 5.1111817; … ; 8.468747; 7.354617]
-
-Float32[6.1980247; 5.1128864; … ; 6.4607024; 5.8743]
-
-Float32[5.035937; 5.7404637; … ; 8.130074; 7.985401])
+│   mse = 2.307275f0
+│   std_sim_error = 0.026808726787567138
+│   rmse = 1.3116561f0
+│   me = -1.3114622f0
+│   mae = 1.3116561f0
+└   corr = 0.97376233f0
 ```
 """
 function evalsim(data_eval::CountryStructure, config::SimConfig; 
@@ -84,7 +74,7 @@ end
 # Función para obtener diccionario de resultados y trayectorias a partir de un
 # AbstractConfig
 """
-    makesim(data, config::AbstractConfig)
+    makesim(data, config::AbstractConfig) -> (metrics, tray_infl)
 
 ## Utilización
 Esta función utiliza la función `evalsim` para generar un set de simulaciones en
@@ -114,6 +104,7 @@ julia> results, tray_infl = makesim(gtdata_eval, configA);
 │   me = 0.42103088f0
 └   mae = 1.9927315f0
 ```
+
 Exploramos el diccionario `results`:
 
 ```julia-repl 
@@ -154,8 +145,8 @@ end
 """
     run_batch(data, dict_list_params, savepath; savetrajectories = true)  
 
-La función `run_batch` genera paquetes de simulaciones con base en diccionario
-de parámetros de configuración.
+La función `run_batch` genera paquetes de simulaciones con base en el
+diccionario de parámetros de configuración.
 
 ## Utilización 
 La función recibe un `CountryStructure`, un diccionario con vectores que
@@ -169,40 +160,43 @@ diccionario con 21 configuraciones distintas para evaluación.
 
 ```julia-repl 
 dict_prueba = Dict(
-    :inflfn => InflationPercentileEq.(60:80), 
+    :inflfn => InflationPercentileWeighted.(50:80), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
+    :paramfn => paramfn, 
     :nsim => 1000) |> dict_list`
 ``` 
 Una vez creado dict_prueba, podemos generar el paquete de simulación utilizando
 run_batch.
 ```julia-repl 
-run_batch(gtdata_eval, dict_prueba, savepath)`
+julia> run_batch(gtdata_eval, dict_prueba, savepath)
+...
 ```
 
 Una vez generadas todas las simulaciones podemos obtener los datos mediante la
 función `collect_results`. Esta función lee los resultados desde `savepath` y
-los presenta en un DataFrame.
+los presenta en un `DataFrame`.
 
 ```julia-repl 
-julia> df = collect_results(savepath)
+julia> df = collect_results(savepath); 
 [ Info: Scanning folder `savepath` for result files.
-[ Info: Added 21 entries.
-21×12 DataFrame
- Row │ inflfn                       measure                       rmse      trendfn
-     │ Inflatio…?                   String?                       Float32?  TrendRan…?
-─────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-   1 │ InflationPercentileEq(0.6)   Percentil equiponderado 60.0   1.89932  TrendRandomWalk{Float32}(Float32…
-   2 │ InflationPercentileEq(0.61)  Percentil equiponderado 61.0   1.77141  TrendRandomWalk{Float32}(Float32…
-   3 │ InflationPercentileEq(0.62)  Percentil equiponderado 62.0   1.65418  TrendRandomWalk{Float32}(Float32…
-   4 │ InflationPercentileEq(0.63)  Percentil equiponderado 63.0   1.54492  TrendRandomWalk{Float32}(Float32…
-   5 │ InflationPercentileEq(0.64)  Percentil equiponderado 64.0   1.44367  TrendRandomWalk{Float32}(Float32…
-  ⋮  │              ⋮                            ⋮                   ⋮                      ⋮                  ⋮  ⋮  ⋮  ⋮  ⋮  ⋮  ⋮  ⋮
-  18 │ InflationPercentileEq(0.77)  Percentil equiponderado 77.0   2.40816  TrendRandomWalk{Float32}(Float32…
-  19 │ InflationPercentileEq(0.78)  Percentil equiponderado 78.0   2.75684  TrendRandomWalk{Float32}(Float32…
-  20 │ InflationPercentileEq(0.79)  Percentil equiponderado 79.0   3.154    TrendRandomWalk{Float32}(Float32…
-  21 │ InflationPercentileEq(0.8)   Percentil equiponderado 80.0   3.59652  TrendRandomWalk{Float32}(Float32…
-                                                                                                         8 columns and 12 rows omitted
+[ Info: Added 31 entries.
+
+julia> select(df, :measure, :mse)
+31×2 DataFrame
+ Row │ measure                   mse       
+     │ String?                   Float32?  
+─────┼─────────────────────────────────────
+   1 │ Percentil ponderado 50.0  17.9208
+   2 │ Percentil ponderado 51.0  16.8813
+   3 │ Percentil ponderado 52.0  15.874
+   4 │ Percentil ponderado 53.0  14.876
+  ⋮  │            ⋮                  ⋮
+  28 │ Percentil ponderado 77.0   2.85501
+  29 │ Percentil ponderado 78.0   4.32532
+  30 │ Percentil ponderado 79.0   6.33717
+  31 │ Percentil ponderado 80.0   9.02473
+                            23 rows omitted
 ```
 """
 function run_batch(data, dict_list_params, savepath; 
@@ -218,7 +212,7 @@ function run_batch(data, dict_list_params, savepath;
         print("\n\n\n")
 
         # Guardar los resultados 
-        filename = savename(config, "jld2", connector= " - ", equals=" = ")
+        filename = savename(config, "jld2")
         
         # Resultados de evaluación para collect_results 
         wsave(joinpath(savepath, filename), tostringdict(results))
@@ -271,3 +265,6 @@ function dict_config(params::Dict)
         config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date], params[:eval_size])        
     end
 end
+
+# Método opcional para lista de configuraciones
+dict_config(params::AbstractVector) = dict_config.(params)
