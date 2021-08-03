@@ -29,7 +29,7 @@ function param_gsbb_mod(base::VarCPIBase)
     end
 
     # Conformar fechas
-    dates = getdates(base.dates[begin], vpob)
+    dates = getdates(first(base.dates), vpob)
     VarCPIBase(vpob, base.w, dates, base.baseindex)
 end
 

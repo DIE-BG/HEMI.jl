@@ -206,7 +206,7 @@ function show(io::IO, base::AbstractCPIBase)
     field = hasproperty(base, :v) ? :v : :ipc
     periodos, gastos = size(getproperty(base, field))
     print(io, typeof(base), ": ", periodos, " períodos × ", gastos, " gastos básicos ")
-    datestart, dateend = _formatdate.((base.dates[begin], base.dates[end]))
+    datestart, dateend = _formatdate.((first(base.dates), last(base.dates)))
     print(io, datestart, "-", dateend)
 end
 

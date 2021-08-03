@@ -44,7 +44,7 @@ MixedCountryStructure(bases::Vararg{VarCPIBase}) = MixedCountryStructure(bases)
 # Resumen y método para mostrar 
 
 function summary(io::IO, cst::CountryStructure)
-    datestart, dateend = _formatdate.((cst.base[begin].dates[begin], cst.base[end].dates[end]))
+    datestart, dateend = _formatdate.((first(cst.base).dates[begin], last(cst.base).dates[end]))
     print(io, typeof(cst), ": ", datestart, "-", dateend)
 end
 
@@ -121,8 +121,8 @@ function getindex(cst::CountryStructure, startdate::Date, finaldate::Date)
     else 
         # different bases
         @debug "Fechas en diferentes bases"
-        firstbase = bases[begin]
-        lastbase = bases[end]
+        firstbase = first(bases)
+        lastbase = last(bases)
         newstart = VarCPIBase(
             firstbase.v[start_index:end, :], 
             copy(firstbase.w), firstbase.dates[start_index:end], copy(firstbase.baseindex))
@@ -215,4 +215,4 @@ Fechas correspondientes a la trayectorias de inflación computadas a partir un
 `CountryStructure`.
 """
 infl_dates(cst::CountryStructure) = 
-    cst.base[begin].dates[12]:Month(1):cst.base[end].dates[end]
+    first(cst.base).dates[12]:Month(1):last(cst.base).dates[end]
