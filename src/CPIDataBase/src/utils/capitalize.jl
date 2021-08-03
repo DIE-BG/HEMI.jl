@@ -92,8 +92,8 @@ end
 ## On containers
 
 function _offset_back(dates)
-    start = dates[begin] - Month(1)
-    start:Month(1):dates[end]
+    start = first(dates) - Month(1)
+    start:Month(1):last(dates)
 end
 
 """
