@@ -55,11 +55,11 @@ Float32[5.035937; 5.7404637; … ; 8.130074; 7.985401])
 ```
 """
 function evalsim(data_eval::CountryStructure, config::SimConfig; 
-    param_constructor_fn=ParamTotalCPIRebase, 
     rndseed = 0)
   
     # Obtener la trayectoria paramétrica de inflación 
-    param = param_constructor_fn(config.resamplefn, config.trendfn)
+    param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
+    # param = param_constructor_fn(config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
     @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) simulaciones=config.nsim 
