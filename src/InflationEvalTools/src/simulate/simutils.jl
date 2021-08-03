@@ -1,6 +1,7 @@
 # Esta función puede evaluar solo una medida de inflación
 """
-    evalsim(data_eval::CountryStructure, config::SimConfig) -> (metrics, tray_infl)
+    evalsim(data_eval::CountryStructure, config::SimConfig; 
+        rndseed = DEFAULT_SEED) -> (metrics, tray_infl)
 
 Esta función genera la trayectoria paramétrica , las trayectorias de simulación
 y las métricas de evaluación utilizando la configuración [`SimConfig`](@ref). 
@@ -45,7 +46,7 @@ julia> results, tray_infl = evalsim(gtdata_eval, config)
 ```
 """
 function evalsim(data_eval::CountryStructure, config::SimConfig; 
-    rndseed = 0)
+    rndseed = DEFAULT_SEED)
   
     # Obtener la trayectoria paramétrica de inflación 
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
@@ -74,7 +75,8 @@ end
 # Función para obtener diccionario de resultados y trayectorias a partir de un
 # AbstractConfig
 """
-    makesim(data, config::AbstractConfig) -> (metrics, tray_infl)
+    makesim(data, config::AbstractConfig; 
+        rndseed = DEFAULT_SEED) -> (metrics, tray_infl)
 
 ## Utilización
 Esta función utiliza la función `evalsim` para generar un set de simulaciones en
@@ -123,7 +125,7 @@ Dict{Symbol, Any} with 11 entries:
 ```
 """
 function makesim(data, config::AbstractConfig; 
-    rndseed = 0)
+    rndseed = DEFAULT_SEED)
         
      # Ejecutar la simulación y obtener los resultados 
     metrics, tray_infl = evalsim(data, config; 
@@ -143,7 +145,9 @@ end
 
 # Función para ejecutar lote de simulaciones 
 """
-    run_batch(data, dict_list_params, savepath; savetrajectories = true)  
+    run_batch(data, dict_list_params, savepath; 
+        savetrajectories = true, 
+        rndseed = DEFAULT_SEED)
 
 La función `run_batch` genera paquetes de simulaciones con base en el
 diccionario de parámetros de configuración.
@@ -201,7 +205,7 @@ julia> select(df, :measure, :mse)
 """
 function run_batch(data, dict_list_params, savepath; 
     savetrajectories = true, 
-    rndseed = 0)
+    rndseed = DEFAULT_SEED)
 
     # Ejecutar lote de simulaciones 
     for (i, dict_params) in enumerate(dict_list_params)
