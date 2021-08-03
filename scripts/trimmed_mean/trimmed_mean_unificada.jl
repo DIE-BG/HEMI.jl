@@ -24,8 +24,8 @@ LIST = [[gtdata_eval, InflationTrimmedMeanEq, ResampleSBB(36), N_iter_1, ParamTo
         [gtdata_eval, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPIRebase, LinRange(25,65,41), LinRange(70,100,31)],
         [gtdata_eval, InflationTrimmedMeanWeighted, ResampleSBB(36), N_iter_1, ParamTotalCPIRebase, LinRange(18,58,41), LinRange(70,100,31)],
         [gtdata_eval, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPIRebase, LinRange(10,50,41), LinRange(70,100,31)],
-        [gtdata_eval_legacy, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase, LinRange(5,45,41), LinRange(70,100,31)],
-        [gtdata_eval_legacy, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase,  LinRange(5,45,41), LinRange(70,100,31)]
+        [gtdata_eval_legacy, InflationTrimmedMeanEq, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase, LinRange(25,65,41), LinRange(70,100,31)],
+        [gtdata_eval_legacy, InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(), N_iter_1, ParamTotalCPILegacyRebase,  [40.0], [98.0, 99.0, 100.0]]
 ]
 
 using Plots
@@ -52,11 +52,12 @@ function evalperc(k, inflationfunction,resamplefn, trendfn, evaldata; param_fn=P
 end
 
 
-for k in 1:length(LIST)
+for k in 6:6#length(LIST)
      dataeval   = LIST[k][1]
      daterange  = string(dataeval.base[1])[end-16:end-9]*":"*string(dataeval.base[1])[end-7:end]
      resamplefn = LIST[k][3]
-     savepath   = datadir("Trimmed_Mean",string(LIST[k][2]),string(LIST[k][3]),string(LIST[k][4]),string(LIST[k][5]))
+     #savepath   = datadir("Trimmed_Mean",string(LIST[k][2]),string(LIST[k][3]),string(LIST[k][4]),string(LIST[k][5]))
+     savepath   = datadir("Trimmed_Mean","Legacy")
      plotname   = string(LIST[k][2])*"_"*string(LIST[k][3])*"_"*string(LIST[k][4])*"_"*string(LIST[k][5])*".png"
      plotname2  = string(LIST[k][2])*"_"*string(LIST[k][3])*"_N="*string(LIST[k][4])*"_"*string(LIST[k][5])*".svg"
      plottitle  = string(LIST[k][2])*", "*string(LIST[k][3])*"\n N="*string(LIST[k][4])*", "*string(LIST[k][5])
