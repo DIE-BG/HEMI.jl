@@ -81,8 +81,9 @@ hline!([mean(residmat[:, j])])
 
 
 ##
-avgmat = mean(gt00.v, dims=1)
-residmat = gt00.v .- avgmat
+historyavg_mat = mean(gt00.v, dims=1)
+monthavg_mat = InflationEvalTools.monthavg(gt00.v)
+residmat = gt00.v .- monthavg_mat
 
 plot(residmat[:, 1])
-hline!([avgmat[1]])
+hline!([monthavg_mat[1]])
