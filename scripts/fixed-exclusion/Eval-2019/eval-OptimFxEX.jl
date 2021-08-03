@@ -12,6 +12,13 @@ addprocs(4, exeflags="--project")
 using DataFrames
 using Plots, CSV
 
+"""
+Vectores de exclusión Evaluación 2019
+
+Base 2000: [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
+Base 2010: [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]
+"""
+
 ## #################### Instancias generales #############################
 
 trendfn = TrendRandomWalk()
@@ -35,7 +42,7 @@ vec_v = sorted_std[!,:num]
 # Creación de vectores de exclusión
 # Se crearán 100 vectores para la exploración inicial
 v_exc = []
-for i in 10:20#length(vec_v)-118
+for i in 1:length(vec_v)-118
    exc = vec_v[1:i]
    append!(v_exc, [exc])
 end
@@ -48,9 +55,9 @@ FxEx_00 = Dict(
     :inflfn => InflationFixedExclusionCPI.(v_exc), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 125_000) |> dict_list
+    :nsim => 10_000) |> dict_list
 
-savepath = datadir("results","fixed-exclusion","Eval-19","Base2000-125k-lp")    
+savepath = datadir("results","fixed-exclusion","Eval-19","Base2000-10k-19")    
 
 
 ## Lote de simulación con 100 vectores de exclusión
@@ -81,14 +88,14 @@ sort_0019[1,:mse]
 
 
 ## Revisión gráfica 
-mseplot = plot(collect(10:20),Exc_0019lp[1:end,:mse], xticks = 10:1:20,
+mseplot = plot(Exc_0019lp[2:end,:mse],#, xticks = 10:1:20,
     title = " Óptimización Base 2000",
     label = " MSE Exclusión fija Óptima Base 2000", 
     legend = :topleft, 
     xlabel= "Gastos Básicos Excluidos", ylabel = "MSE",
     dpi = 200) 
 
-plot!([13],seriestype="vline", label = "Mínimo en 13 exclusiones")
+plot!([13],seriestype="vline", label = "Mínimo en 14 exclusiones")
 # saveplot = plotsdir("fixed-exclusion","Base2000")    
 savefig(mseplot, "plots//fixed-exclusion//Eval-19//mse-base2000-125K")
 
@@ -108,13 +115,20 @@ ResampleScrambleVarMonths, ParamTotalCPILegacyRebase, TrendRandomWalk :
 exclusiones Base 2010 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 exclusiones)
 MSE = 1.2883958f0
 
+####### Julia con correcciones en método de remuestreo RRCP ####
+ResampleScrambleVarMonths, ParamTotalCPILegacyRebase, TrendRandomWalk, nsim = 10k
+exclusiones Base 2010 = [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
+MSE = 0.76647615f0
+
+
+
 """
 
 
 ##########################  Optimización Base 2010 ##########################
 
 # Vector óptimo base 2000 encontrado en la primera sección
-exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] 
+exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] 
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 gtdata_10 = gtdata[Date(2019, 12)]
@@ -132,7 +146,7 @@ vec_v = sorted_std[!,:num]
 v_exc = []
 tot = []
 total = []
-for i in 1:length(vec_v)-259
+for i in 1:length(vec_v)-179
    exc = vec_v[1:i]
    v_exc =  append!(v_exc, [exc])
    tot = (exc00, v_exc[i])
@@ -147,10 +161,10 @@ FxEx_10 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 125_000) |> dict_list
+    :nsim => 10_000) |> dict_list
 
 
-savepath10 = datadir("results","fixed-exclusion","Eval-19","Base2010-125k-lp")    
+savepath10 = datadir("results","fixed-exclusion","Eval-19","Base2010-10k-19")    
 
 ## Lote de simulación
 run_batch(gtdata_10, FxEx_10, savepath10, 
@@ -215,6 +229,12 @@ ResampleScrambleVarMonths, ParamTotalCPILegacyRebase, TrendRandomWalk :
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 exclusiones)
 Base 2010 -> [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
 MSE = 1.1360317f0
+
+### Julia con correcciones RRCP en método de remuestreo ######
+ResampleScrambleVarMonths, ParamTotalCPILegacyRebase, TrendRandomWalk, nsim=10K
+Base 2000 -> [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
+Base 2010 -> [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]
+MSE = 0.63936186f0
 
 """
 
@@ -288,6 +308,7 @@ Función de tendencia:  TrendRandomWalk()
 MSE MATLAB                   = 0.64
 MSE JULIA (VECTORES MATLAB)  = 1.29644
 MSE JULIA (VECTORES JULIA)   = 1.1360317
+MSE JULIA (VECTORES MATLAB CON AJUSTES RRCP) = 0.641783
 
 
 resultados
