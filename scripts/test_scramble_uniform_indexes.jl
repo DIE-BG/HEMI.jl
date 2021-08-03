@@ -52,8 +52,8 @@ idsinflfn = FictInflationIndexes()
 # realizaciones y posteriormente se analiza la frecuencia de remuestreo de cada
 # uno de los posibles índices 
 
-K = 10000
-bootids = pargentrayinfl(idsinflfn, resamplefn, TrendIdentity(), fictdata, K=K)
+K = 125_000
+bootids = pargentrayinfl(idsinflfn, resamplefn, TrendIdentity(), fictdata, K=K, rndseed=161803)
 
 ## Analizar la distribución de índices del primer período 
 
@@ -92,7 +92,7 @@ pvals = map(i -> chisquare_uniform_test(bootids, i), 1:109)
 
 # Vemos el porcentaje de períodos en los cuales se rechaza la hipótesis nula,
 # con el nivel de significancia dado 
-mean(pvals .< 0.01) 
+mean(pvals .< 0.05) 
 
 plot(pvals, label="Valores p, prueba Chi-cuadrada", xlabel="Período")
 hline!([0.05], label=:false)

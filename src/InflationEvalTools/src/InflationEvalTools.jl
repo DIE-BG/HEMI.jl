@@ -15,6 +15,17 @@ module InflationEvalTools
     using Distributed
     using SharedArrays
     using Reexport
+    using StableRNGs
+
+    ## Configuración por defecto de la semilla para el proceso de simulación
+    """
+        const DEFAULT_SEED
+
+    Semilla por defecto utilizada para el proceso de simulación y la
+    reproducibilidad de los resultados.
+    """
+    const DEFAULT_SEED = 314159
+
 
     ## Funciones de remuestreo de bases del IPC
     export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths, ResampleGSBBMod
