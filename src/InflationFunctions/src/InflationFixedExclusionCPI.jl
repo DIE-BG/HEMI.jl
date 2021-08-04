@@ -75,7 +75,8 @@ InflationFixedExclusionCPI(v_exc...) = InflationFixedExclusionCPI(v_exc)
 
 # Extender el método de nombre y de tag
 measure_name(inflfn::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos" * string(inflfn.v_exc)
-measure_tag(inflfn::InflationFixedExclusionCPI) = "FixedExclusionCPI " * string(hash(inflfn.v_exc)) 
+measure_tag(inflfn::InflationFixedExclusionCPI) = "FixedExcCPI-" * string(map(length, inflfn.v_exc))
+
 #string(" ",length(inflfn.v_exc[1])," ",length(inflfn.v_exc[2]))
 
 # Método para obtener parámetros
