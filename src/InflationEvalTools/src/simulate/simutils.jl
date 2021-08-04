@@ -66,15 +66,18 @@ julia> results, tray_infl = evalsim(gtdata_eval, config);
 └   std_sqerr_dist = 1.4591569f0
 ```
 """
-function evalsim(data_eval::CountryStructure, config::SimConfig; 
+function evalsim(data::CountryStructure, config::SimConfig; 
     rndseed = DEFAULT_SEED, 
     short = false)
   
+    # Obtener datos hasta la fecha de configuración 
+    data_eval = data[config.train_date]
+
     # Obtener la trayectoria paramétrica de inflación 
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
-    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim 
+    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim traindate=config.train_date
 
     # Generar las trayectorias de inflación de simulación 
     tray_infl = pargentrayinfl(config.inflfn, # función de inflación
@@ -228,12 +231,6 @@ function run_batch(data, dict_list_params, savepath;
     savetrajectories = true, 
     rndseed = DEFAULT_SEED)
 
-    # Fecha final de datos
-    end_date = join(
-        ["enddate", last(data.base).dates[end]], 
-        InflationEvalTools.DEFAULT_EQUALS
-    )
-
     # Ejecutar lote de simulaciones 
     for (i, dict_params) in enumerate(dict_list_params)
         @info "Ejecutando simulación $i de $(length(dict_list_params))..."
@@ -243,10 +240,7 @@ function run_batch(data, dict_list_params, savepath;
         print("\n\n\n") 
         
         # Guardar los resultados 
-        filename = join(
-            [end_date, savename(config, "jld2")],
-            InflationEvalTools.DEFAULT_CONNECTOR     
-        )
+        filename = savename(config, "jld2")
         
         # Resultados de evaluación para collect_results 
         wsave(joinpath(savepath, filename), tostringdict(results))
@@ -263,15 +257,16 @@ end
 """
     dict_config(params::Dict)
 
-Función para convertir diccionario a `AbstractConfig`.
+Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalConfig`.
 """
 function dict_config(params::Dict)
-    # configD = SimConfig(dict_prueba[:inflfn], dict_prueba[:resamplefn], dict_prueba[:trendfn], dict_prueba[:nsim])
-    if length(params) == 5
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim])
+    # CrossEvalConfig contiene el campo de períodos de evaluación 
+    if !(:eval_size in keys(params))
+        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date])
     else
         config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date], params[:eval_size])        
     end
+    config 
 end
 
 # Método opcional para lista de configuraciones

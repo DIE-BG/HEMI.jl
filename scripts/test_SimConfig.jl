@@ -39,10 +39,10 @@ sz = 24
 
 ## Creación de configuraciones de prueba usando objetos AbstractConfig.
 
-configA = SimConfig(totalfn, resamplefn, trendfn, paramfn, 1000)
-configB = SimConfig(fxEx, resamplefn, trendfn, paramfn, 1000)
-configC = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000)
-configC = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2012, 12), 24)
+configA = SimConfig(totalfn, resamplefn, trendfn, paramfn, 1000, ff)
+configB = SimConfig(fxEx, resamplefn, trendfn, paramfn, 1000, ff)
+configC = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000, ff)
+configC = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, ff, sz)
 
 
 # Algunas utilidades relacionadas con los objetos AbstractConfig
@@ -67,7 +67,8 @@ dict_prueba = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 100) |> dict_list
+    :nsim => 100, 
+    :traindate => ff) |> dict_list
 
 # Diccionario de prueba 2: utilizando dict_list (DrWatson), 
 # Este ejemplo crea un vector con un único diccionario con la función de inflación total instanciada al inicio de este script
@@ -76,7 +77,8 @@ dict_pruebaB = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000) |> dict_list
+    :nsim => 10_000,
+    :traindate => ff) |> dict_list
 
 # Diccionario de prueba 3: utilizando dict_list (DrWatson), 
 # Este ejemplo crea un vector con un único diccionario con la función Exclusión Fija instanciada al inicio de este script. 
@@ -86,7 +88,8 @@ dict_pruebaC = Dict(
         :resamplefn => resamplefn, 
         :trendfn => trendfn,
         :paramfn => paramfn,
-        :nsim => 1000) |> dict_list
+        :nsim => 1000, 
+        :traindate => ff) |> dict_list
 
 
 # la función dict_config nos permite convertir un Diccionario a un objeto AbstractConfig, 
@@ -98,21 +101,21 @@ configC_a = dict_config(dict_pruebaC)
 configE = dict_config(dict_pruebaB)
 
 
-## FUNCIONES DE EVALUACIÓN
+## FUNCIONES DE EVALUACI��N
 
 # 1. Función evalsim(). 
 # Esta función recibe un CountryStructure y un AbstractConfig.
 # Esta función realiza todos los cálculos asociados a la evaluación y devuelve las métricas de 
 # evaulación y las trayectorias simuladas.
 
-evalsim(gtdata_eval, configA)
+evalsim(gtdata, configA)
 
 # 2. Función MakeSim 
 # Esta función recibe un CountryStructure y un AbstractConfig. 
 # Realiza los cálculos de evaluación por medio de la función evalsim y devuelve un diccionario con 
 # las métricas de evaluación y un "cubo" con las trayectorias de inflación.
 
-results, tray_infl = makesim(gtdata_eval, configB)
+results, tray_infl = makesim(gtdata, configB)
 results
 
 # 3. Función run_batch 
@@ -173,7 +176,8 @@ dict_percW = Dict(
     :resamplefn => [resamplefn2],
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 100) |> dict_list
+    :nsim => 100, 
+    :traindate => ff) |> dict_list
 
 
 # 2. Definimos el folder para almacenar los resultados 
@@ -201,7 +205,7 @@ scatter(60:80, df_pw.mse,
 gtdata_eval19 = gtdata[Date(2019, 12)]
 
 # Configuración para percentil equiponderado 69, Metodo de selección por meses, Caminata aleatoria e Inflación de evaluación con hasta 2 cambios de base.
-config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000)
+config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000, Date(2019, 12))
 
 results, tray_infl = evalsim(gtdata_eval19, config)
 results

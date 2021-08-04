@@ -34,13 +34,14 @@ paramfn = InflationWeightedMean()
 Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
 ```julia-repl 
-julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000)
-|─> Función de inflación     : PercEq-80.0
-|─> Función de remuestreo    : ResampleSBB-36
-|─> Función de tendencia     : TrendRandomWalk
-|─> Inflación paramétrica    : InflationTotalRebaseCPI
-|─> Simulaciones             : 1000
-
+julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2019,12))
+SimConfig{InflationPercentileEq, ResampleSBB, TrendRandomWalk{Float32}}
+|─> Función de inflación            : Percentil equiponderado 80.0
+|─> Función de remuestreo           : Block bootstrap estacionario con bloque esperado 36
+|─> Función de tendencia            : Tendencia de caminata aleatoria
+|─> Método de inflación paramétrica : Media ponderada interanual
+|─> Número de simulaciones          : 1000
+|─> Fin set de entrenamiento        : 2019-12-01
 ```
 """
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -54,6 +55,8 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     paramfn
     # Cantidad de Simulaciones
     nsim::Int  
+    # Fecha final de evaluación 
+    traindate::Date
 end
 
 
@@ -66,7 +69,7 @@ entrenamiento y un período de n meses como período de evaluación . Recibe una
 función de inflación [`InflationFunction`](@ref), una función de remuestreo
 [`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), la
 cantidad de simulaciones deseadas [`nsim`], el último mes del set de
-entrenamiento [`train_date`] y el tamaño del período de evaluación en meses
+entrenamiento [`traindate`] y el tamaño del período de evaluación en meses
 [`eval_size`].
 
 ## Ejemplo
@@ -108,7 +111,7 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Cantidad de simulaciones
     nsim::Int
     # Último mes de set de "entrenamiento"
-    train_date::Date   
+    traindate::Date   
     # Tamaño del período de evaluación en meses 
     eval_size::Int = 24
 end
@@ -126,8 +129,8 @@ function Base.show(io::IO, config::AbstractConfig)
     println(io, "|─> ", "Función de tendencia            : ", method_name(config.trendfn))
     println(io, "|─> ", "Método de inflación paramétrica : ", measure_name(config.paramfn))
     println(io, "|─> ", "Número de simulaciones          : ", config.nsim)
+    println(io, "|─> ", "Fin set de entrenamiento        : ", config.traindate)
     if config isa CrossEvalConfig 
-        println(io, "|─> ", "Fin set de entrenamiento        : ", config.train_date)
         println(io, "|─> ", "Meses de evaluación             : ", config.eval_size)
     end
 end
@@ -149,21 +152,5 @@ DrWatson.savename(conf::CrossEvalConfig, suffix::String = "jld2") =
     savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
 
 
-## método para convertir de AbstractConfig a Diccionario 
+## Método para convertir de AbstractConfig a Diccionario 
 # Esto lo hace la función struct2dict() de DrWatson
-
-# function convert_dict(config::AbstractConfig)
-   
-#     if typeof(config) == SimConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)}
-#         # Convertir SimConfig a Diccionari
-#         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, :nsim => config.nsim)     
-    
-#     elseif typeof(config) == CrossEvalConfig{typeof(config.inflfn),typeof(config.resamplefn), typeof(config.trendfn)} 
-#         # Convertir CrossEvalConfig a Diccionario
-#         dict = Dict(:inflfn => config.inflfn, :resamplefn => config.resamplefn, :trendfn => config.trendfn, 
-#                     :nsim => config.nsim, :train_date => config.train_date, :eval_size => config.eval_size)    
-    
-#     end
-#     dict
-# end
-
