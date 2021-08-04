@@ -228,16 +228,25 @@ function run_batch(data, dict_list_params, savepath;
     savetrajectories = true, 
     rndseed = DEFAULT_SEED)
 
+    # Fecha final de datos
+    end_date = join(
+        ["enddate", last(data.base).dates[end]], 
+        InflationEvalTools.DEFAULT_EQUALS
+    )
+
     # Ejecutar lote de simulaciones 
     for (i, dict_params) in enumerate(dict_list_params)
         @info "Ejecutando simulación $i de $(length(dict_list_params))..."
-        config = dict_config(dict_params) 
+        config = dict_config(dict_params)
         results, tray_infl = makesim(data, config;
             rndseed = rndseed)
-        print("\n\n\n")
-
+        print("\n\n\n") 
+        
         # Guardar los resultados 
-        filename = savename(config, "jld2")
+        filename = join(
+            [end_date, savename(config, "jld2")],
+            InflationEvalTools.DEFAULT_CONNECTOR     
+        )
         
         # Resultados de evaluación para collect_results 
         wsave(joinpath(savepath, filename), tostringdict(results))
