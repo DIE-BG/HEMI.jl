@@ -1,15 +1,24 @@
 # Esta función puede evaluar solo una medida de inflación
 """
     evalsim(data_eval::CountryStructure, config::SimConfig; 
-        rndseed = DEFAULT_SEED) -> (metrics, tray_infl)
+        rndseed = DEFAULT_SEED, 
+        short = false) -> (metrics, tray_infl)
 
 Esta función genera la trayectoria paramétrica , las trayectorias de simulación
 y las métricas de evaluación utilizando la configuración [`SimConfig`](@ref). 
 
-Genera el error cuadrático medio `mse`, el error estándar de simulación
-`std_sim_error`, la raíz del error cuadrático medio `rmse`, el error medio `me`
-y el error absoluto medio `mae`, así como un array con las trayectorias de
-simulación `tray_infl`.
+Las métricas de evaluación se devuelven en el diccionario `metrics`. Si
+`short=true`, el diccionario contiene únicamente la llave `:mse`. Este
+diccionario corto es útil para optimización iterativa. Por defecto, se computa
+el diccionario completo de métricas, pero este proceso es más intensivo en
+memoria. Ver también [`eval_metrics`](@ref).
+
+Las trayectorias de inflación simuladas son devueltas en `tray_infl` como un
+arreglo tridimensional de dimensión `(T, 1, K)`, en donde `T` corresponde a los
+períodos de inflación computados y `K` representa el número de realizaciones de
+la simulación. La dimensión unitaria `1` sirve para concatenar posteriormente
+los resultados de simulación. Por ejemplo, en el cómputo de una medida de
+promedio ponderado óptima. 
 
 ## Utilización
 
@@ -21,7 +30,11 @@ La función `evalsim` recibe un `CountryStructure` y un `AbstractConfig` del tip
 Teniendo una configuración del tipo `SimConfig` y un set de datos `gtdata_eval`
 
 ```julia-repl 
-julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000)
+julia> config = SimConfig(
+    InflationPercentileEq(69), 
+    ResampleScrambleVarMonths(), 
+    TrendRandomWalk(), 
+    InflationTotalRebaseCPI(36, 2), 10_000)
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
 |─> Función de remuestreo           : Bootstrap IID por meses de ocurrencia
@@ -29,28 +42,36 @@ SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Floa
 |─> Método de inflación paramétrica : Variación interanual IPC con cambios de base sintéticos (36, 2)
 |─> Número de simulaciones          : 10000
 
-julia> results, tray_infl = evalsim(gtdata_eval, config)
+julia> results, tray_infl = evalsim(gtdata_eval, config);
 ┌ Info: Evaluación de medida de inflación
 │   medida = "Percentil equiponderado 69.0"
 │   remuestreo = "Bootstrap IID por meses de ocurrencia"
 │   tendencia = "Tendencia de caminata aleatoria"
 │   evaluación = "Variación interanual IPC con cambios de base sintéticos (36, 2)"
 └   simulaciones = 10000
+
 ┌ Info: Métricas de evaluación:
-│   mse = 2.307275f0
-│   std_sim_error = 0.026808726787567138
-│   rmse = 1.3116561f0
-│   me = -1.3114622f0
-│   mae = 1.3116561f0
-└   corr = 0.97376233f0
+│   mse_std_error = 0.0011911743134260177
+│   mse_bias = 0.62594384f0
+│   mse_var = 0.23529443f0
+│   huber = 0.425227918501327
+│   std_mse_dist = 0.11911743f0
+│   mse_cov = 0.16402239f0
+│   mae = 0.8003128f0
+│   me = -0.7897533f0
+│   rmse = 1.0108289f0
+│   T = 217
+│   mse = 1.0252613f0
+│   corr = 0.98361874f0
+└   std_sqerr_dist = 1.4591569f0
 ```
 """
 function evalsim(data_eval::CountryStructure, config::SimConfig; 
-    rndseed = DEFAULT_SEED)
+    rndseed = DEFAULT_SEED, 
+    short = false)
   
     # Obtener la trayectoria paramétrica de inflación 
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
-    # param = param_constructor_fn(config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
     @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim 
@@ -64,9 +85,8 @@ function evalsim(data_eval::CountryStructure, config::SimConfig;
     println()
 
     # Métricas de evaluación 
-    metrics = eval_metrics(tray_infl, tray_infl_pob)
-    @unpack mse, std_sim_error, rmse, me, mae, corr = metrics 
-    @info "Métricas de evaluación:" mse std_sim_error rmse me mae corr
+    metrics = eval_metrics(tray_infl, tray_infl_pob; short)
+    @info "Métricas de evaluación:" metrics...
 
     # Devolver estos valores
     metrics, tray_infl
@@ -76,7 +96,8 @@ end
 # AbstractConfig
 """
     makesim(data, config::AbstractConfig; 
-        rndseed = DEFAULT_SEED) -> (metrics, tray_infl)
+        rndseed = DEFAULT_SEED
+        short = false) -> (metrics, tray_infl)
 
 ## Utilización
 Esta función utiliza la función `evalsim` para generar un set de simulaciones en
@@ -125,11 +146,11 @@ Dict{Symbol, Any} with 11 entries:
 ```
 """
 function makesim(data, config::AbstractConfig; 
-    rndseed = DEFAULT_SEED)
+    rndseed = DEFAULT_SEED, 
+    short = false)
         
      # Ejecutar la simulación y obtener los resultados 
-    metrics, tray_infl = evalsim(data, config; 
-        rndseed = rndseed)
+    metrics, tray_infl = evalsim(data, config; rndseed, short)
 
     # Agregar resultados a diccionario 
     results = struct2dict(config)
@@ -229,32 +250,6 @@ end
 
 
 # Funciones de ayuda 
-
-"""
-    eval_metrics(tray_infl, tray_infl_pob)
-
-Función para obtener diccionario con estadísticos de evaluación.
-"""
-function eval_metrics(tray_infl, tray_infl_pob)
-    err_dist = tray_infl .- tray_infl_pob
-    sq_err_dist = err_dist .^ 2
-    
-    K = size(tray_infl, 3)
-    mse = mean(sq_err_dist) 
-    std_sim_error = std(sq_err_dist) / sqrt(K)
-    
-    rmse = mean(sqrt.(sq_err_dist)) # corregir acá para devolver promedio por realizaciones
-    mae = mean(abs.(err_dist))
-    me = mean(err_dist)
-    corr = mean(cor.(eachslice(tray_infl, dims=3), Ref(tray_infl_pob)))[1]
-
-    Dict(:mse => mse, :std_sim_error => std_sim_error, 
-        :rmse => rmse, 
-        :mae => mae, 
-        :me => me, 
-        :corr => corr)
-end
-
 
 """
     dict_config(params::Dict)

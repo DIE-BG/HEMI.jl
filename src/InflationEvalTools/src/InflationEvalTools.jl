@@ -73,6 +73,7 @@ module InflationEvalTools
 
     ## Funciones de evaluación  
     export evalsim, makesim, dict_config, run_batch, eval_metrics
+    include("simulate/metrics.jl")
     include("simulate/simutils.jl")
 
 
