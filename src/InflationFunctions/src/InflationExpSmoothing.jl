@@ -32,6 +32,7 @@ function (esfn::InflationExpSmoothing)(cs::CountryStructure)
     # Algoritmo de promedio con suavizamiento exponencial
     k = esfn.alpha
     k == 1 && return tray_infl
+    k == 0 && return ones(length(tray_infl))*tray_infl[length(tray_infl)]
 
     # Computar el promedio con suavizamiento exponencial (in-place)
     es_tray_infl = smoothing_exponential(tray_infl, k)
@@ -59,8 +60,9 @@ function smoothing_exponential(v, k)
     es = similar(v)
     n = length(es)
     es[1] = v[n]
-    for j = 2:n
-        es[j] = es[j-1] + (v[n-j+1] - es[(j-1)])*k
+    es[2] = v[n]
+    for j = 3:(n)
+        es[j] = es[j-1] + (v[n-j+2] - es[(j-1)])*k
     end
-    es
+    es = reverse(es)
 end 
