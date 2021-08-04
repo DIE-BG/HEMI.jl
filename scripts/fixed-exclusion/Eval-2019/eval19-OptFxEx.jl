@@ -12,7 +12,7 @@ addprocs(4, exeflags="--project")
 @everywhere using HEMI
 using DataFrames
 using Plots, CSV
-
+##
 """
 Resultados de Evaluación 2019 con Matlab
 
@@ -45,3 +45,37 @@ gtdata_00 = gtdata[Date(2010, 12)]
 # Para optimización Base 2010
 gtdata_10 = gtdata[Date(2019, 12)]
 
+## Optimización Base 2000
+ 
+# Creación de vector de de gastos básicos ordenados por volatilidad.
+
+estd = std(gt00.v |> capitalize |> varinteran, dims=1)
+
+df = DataFrame(num = collect(1:218), Desv = vec(estd))
+
+sorted_std = sort(df, "Desv", rev=true)
+
+vec_v = sorted_std[!,:num]
+
+# Creación de vectores de exclusión
+# Se crean 218 vectores para la exploración inicial y se almacenan en v_exc
+v_exc = []
+for i in 1:length(vec_v)
+   exc = vec_v[1:i]
+   append!(v_exc, [exc])
+end
+
+# Diccionarios para exploración inicial (primero 100 vectores de exclusión)
+FxEx_00 = Dict(
+    :inflfn => InflationFixedExclusionCPI.(v_exc[1:100]), 
+    :resamplefn => resamplefn, 
+    :trendfn => trendfn,
+    :paramfn => paramfn,
+    :nsim => 10_000) |> dict_list
+
+savepath = datadir("results","fixed-exclusion","Eval-19","Base2000-ExpInicial")  
+
+
+## Lote de simulación con 100 vectores de exclusión
+
+run_batch(gtdata_00, FxEx_00, savepath)
