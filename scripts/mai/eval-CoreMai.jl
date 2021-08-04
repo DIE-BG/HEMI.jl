@@ -29,16 +29,16 @@ config_mai = Dict(
     :inflfn => inflfns, 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
+    :paramfn => InflationTotalRebaseCPI(36, 2), 
     :nsim => 125_000) |> dict_list
 
 
 # Definimos el folder para almacenar los resultados 
-savepath = datadir("results", "CoreMai")
+savepath = datadir("results", "CoreMai", "2019-InflationTotalRebaseCPI(36, 2)")
 
 ## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
-run_batch(gtdata_eval, config_mai, savepath, 
-    param_constructor_fn = ParamTotalCPILegacyRebase)
+run_batch(gtdata_eval, config_mai, savepath, savetrajectories=false)
 
 ## 
 # ## Revisión de resultados, utilizando `collect_results`
@@ -48,7 +48,7 @@ df_mai = collect_results(savepath)
 
 
 df_results = @chain df_mai begin 
-    select(:measure, :resamplefn, :mse, :std_sim_error, :rmse, :me, :mae,)
+    select(:measure, :resamplefn, :mse, :mse_std_error, :rmse, :me, :mae, :huber)
     sort(:mse)
 end
 
