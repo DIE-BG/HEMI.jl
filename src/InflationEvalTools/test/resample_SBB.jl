@@ -22,7 +22,7 @@ resample_sbb = ResampleSBB(12)
 
 # Probar que las ponderaciones, fechas y demás campos no están alterados 
 resample_gt00 = resample_sbb(test_gt00)
-@test resample_gt00.fechas == test_gt00.fechas
+@test resample_gt00.dates == test_gt00.dates
 @test resample_gt00.baseindex == test_gt00.baseindex
 @test resample_gt00.w == test_gt00.w
 

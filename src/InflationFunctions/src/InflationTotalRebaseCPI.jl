@@ -13,9 +13,12 @@ end
 InflationTotalRebaseCPI(period::Int) = InflationTotalRebaseCPI(period, 0)
 
 # Nombre de la medida
-measure_name(::InflationTotalRebaseCPI) = "Variación interanual IPC con cambios de base sintéticos"
+measure_name(inflfn::InflationTotalRebaseCPI) = 
+    "Variación interanual IPC con cambios de base sintéticos ($(inflfn.period), $(inflfn.maxchanges))"
+
 # Etiqueta 
-measure_tag(inflfn::InflationTotalRebaseCPI) = "TotalRebaseCPI-" * string(period)
+measure_tag(inflfn::InflationTotalRebaseCPI) = 
+    "TotalRebaseCPI-($(inflfn.period),$(inflfn.maxchanges))"
 
 # Parámetros
 params(totalrebasefn::InflationTotalRebaseCPI) = (totalrebasefn.period, )

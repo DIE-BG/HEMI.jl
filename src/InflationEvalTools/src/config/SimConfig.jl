@@ -16,26 +16,31 @@ abstract type AbstractConfig{F <: InflationFunction, R <:ResampleFunction, T <:T
 Tipo concreto que contiene una configuración base para generar simulaciones
 utilizando todos los datos como set de entrenamiento. Recibe una función de
 inflación [`InflationFunction`](@ref), una función de remuestreo
-[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), y
-la cantidad de simulaciones deseadas [`nsim`].
+[`ResampleFunction`](@ref), una función de Tendencia [`TrendFunction`](@ref), 
+una función de inflación de evaluación [`paramfn`] y la cantidad de simulaciones 
+deseadas [`nsim`].
 
 ## Ejemplo
-Considerando las siguientes instancias de funciones de inflación, remuestreo y
-tendencia:
+Considerando las siguientes instancias de funciones de inflación, remuestreo,
+tendencia e inflación de evaluación:
 
 ```julia
 percEq = InflationPercentileEq(80)
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
+paramfn = InflationWeightedMean()
 ```
 
 Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
 ```julia-repl 
-julia> config = SimConfig(percEq, resamplefn, trendfn, 1000)
-|─> Función de inflación : PercEq-80.0
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
+julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000)
+|─> Función de inflación     : PercEq-80.0
+|─> Función de remuestreo    : ResampleSBB-36
+|─> Función de tendencia     : TrendRandomWalk
+|─> Inflación paramétrica    : InflationTotalRebaseCPI
+|─> Simulaciones             : 1000
+
 ```
 """
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -45,6 +50,8 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     resamplefn::R
     # Función de Tendencia
     trendfn::T
+    # Función de inflación paramétrica 
+    paramfn
     # Cantidad de Simulaciones
     nsim::Int  
 end
@@ -64,25 +71,29 @@ entrenamiento [`train_date`] y el tamaño del período de evaluación en meses
 
 ## Ejemplo
 
-Considerando las mismas funciones de inflación, remuestreo y tendencia: 
+Considerando las mismas funciones de inflación, remuestreo, tendencia e
+inflación de evaluación: 
 
 ```julia 
 percEq = InflationPercentileEq(80)
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk()
+paramfn = InflationTotalRebaseCPI(60)
 ```
 
-Generamos una configuración del tipo SimConfig con 1000 simulaciones y
+Generamos una configuración del tipo CrossEvalConfig con 1000 simulaciones y
 utilizando el fin de set de entrenamiento hasta diciembre de 2012 y 24 meses de
 evaluación.
 
 ```julia-repl 
-julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, 1000, Date(2012, 12), 24)
-|─> Función de inflación : PercEq-80.0
-|─> Función de remuestreo: ResampleSBB-36
-|─> Función de tendencia : TrendRandomWalk
-|─> Fin set de entrenamiento: 2012-12-01
-|─> Meses de evaluación     : 24
+julia> config = CrossEvalConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2012, 12), 24)
+|─> Función de inflación     : PercEq-80.0
+|─> Función de remuestreo    : ResampleSBB-36
+|─> Función de tendencia     : TrendRandomWalk
+|─> Inflación paramétrica    : InflationTotalRebaseCPI
+|─> Simulaciones             : 1000
+|─> Fin set de entrenamiento : 2012-12-01
+|─> Meses de evaluación      : 24
 ```
 """
 Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -92,6 +103,8 @@ Base.@kwdef struct CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
     resamplefn::R
     # Función de Tendencia
     trendfn::T
+    # # Función de inflación paramétrica 
+    paramfn
     # Cantidad de simulaciones
     nsim::Int
     # Último mes de set de "entrenamiento"
@@ -108,20 +121,33 @@ Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación : ", measure_tag(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo: ", method_tag(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia : ", method_tag(config.trendfn))
-    println(io, "|─> ", "Simulaciones         : ", config.nsim)
+    println(io, "|─> ", "Función de inflación            : ", measure_name(config.inflfn))
+    println(io, "|─> ", "Función de remuestreo           : ", method_name(config.resamplefn))
+    println(io, "|─> ", "Función de tendencia            : ", method_name(config.trendfn))
+    println(io, "|─> ", "Método de inflación paramétrica : ", measure_name(config.paramfn))
+    println(io, "|─> ", "Número de simulaciones          : ", config.nsim)
     if config isa CrossEvalConfig 
-        println(io, "|─> ", "Fin set de entrenamiento: ", config.train_date)
-        println(io, "|─> ", "Meses de evaluación     : ", config.eval_size)
+        println(io, "|─> ", "Fin set de entrenamiento        : ", config.train_date)
+        println(io, "|─> ", "Meses de evaluación             : ", config.eval_size)
     end
 end
 
 
 # Extensión de tipos permitidos para simulación en DrWatson
 DrWatson.default_allowed(::AbstractConfig) = (String, Symbol, TimeType, Function, Real) 
-DrWatson.default_prefix(::AbstractConfig) = "HEMI"
+DrWatson.default_prefix(::SimConfig) = "HEMI-SimConfig"
+DrWatson.default_prefix(::CrossEvalConfig) = "HEMI-CrossEvalConfig"
+
+# Definición de formato para guardado de archivos relacionados con la configuración
+DEFAULT_CONNECTOR = ", "
+DEFAULT_EQUALS = "="
+
+DrWatson.savename(conf::SimConfig, suffix::String = "jld2") = 
+    savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
+
+DrWatson.savename(conf::CrossEvalConfig, suffix::String = "jld2") = 
+    savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
+
 
 ## método para convertir de AbstractConfig a Diccionario 
 # Esto lo hace la función struct2dict() de DrWatson

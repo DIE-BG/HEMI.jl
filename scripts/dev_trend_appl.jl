@@ -45,7 +45,7 @@ trended_gt00.v[1:10, 1:10]
 
 # In place: 
 # Datos hasta dic-20
-gt10_sliced = VarCPIBase(gt10.v[1:120, :], gt10.w, gt10.fechas[1:120], gt10.baseindex)
+gt10_sliced = VarCPIBase(gt10.v[1:120, :], gt10.w, gt10.dates[1:120], gt10.baseindex)
 newgtdata = UniformCountryStructure(deepcopy(gt00), gt10_sliced)
 
 apply_trend!(newgtdata, RWTREND)
@@ -63,7 +63,7 @@ newgtdata[2].v[1:10, 1:10]
 # 817.600 μs (9 allocations: 1.48 KiB)
 
 # With copies of trended vmats and CountryStructure
-gt10_sliced = VarCPIBase(gt10.v[1:120, :], gt10.w, gt10.fechas[1:120], gt10.baseindex)
+gt10_sliced = VarCPIBase(gt10.v[1:120, :], gt10.w, gt10.dates[1:120], gt10.baseindex)
 newgtdata = UniformCountryStructure(deepcopy(gt00), gt10_sliced)
 
 trended_cs = apply_trend(newgtdata, RWTREND)

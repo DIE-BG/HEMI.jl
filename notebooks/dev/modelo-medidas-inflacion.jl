@@ -122,14 +122,14 @@ En este ejemplo creamos una base de variaciones intermensuales hipotética, cuya
 # ╔═╡ d978fedd-c923-41ac-83d6-cdb5796aaa31
 begin 
 	GB = 200
-	fechas = Date(2009,12):Month(1):Date(2016,12)
-	T = length(fechas)
+	dates = Date(2009,12):Month(1):Date(2016,12)
+	T = length(dates)
 	v06 = rand(T, GB) .- 0.25
 	w06 = rand(GB)
 	w06 = 100 * w06 / sum(w06)
 	bases = rand(110:0.5:120, GB)
 	
-	nic06 = VarCPIBase(v06, w06, fechas, bases)
+	nic06 = VarCPIBase(v06, w06, dates, bases)
 end
 
 # ╔═╡ 20b2e8ed-e0ab-4f01-a8a3-aa53b19b26db

@@ -54,9 +54,9 @@ function (resamplefn::ResampleFunction)(base::VarCPIBase, rng = Random.GLOBAL_RN
     # `base.v` 
     periods = size(v_boot, 1)
     if periods == size(base.v, 1)
-        dates = base.fechas
+        dates = base.dates
     else
-        startdate = base.fechas[1]
+        startdate = base.dates[1]
         dates = startdate:Month(1):(startdate + Month(periods - 1))
     end
 

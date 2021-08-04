@@ -29,7 +29,7 @@ function param_gsbb_mod(base::VarCPIBase)
     end
 
     # Conformar fechas
-    dates = getdates(base.fechas[begin], vpob)
+    dates = getdates(first(base.dates), vpob)
     VarCPIBase(vpob, base.w, dates, base.baseindex)
 end
 
@@ -43,7 +43,7 @@ function param_gsbb_mod(cs::CountryStructure)
     
     # Modificar las fechas de la segunda base
     finalbase = pob_base[2]
-    startdate = pob_base[1].fechas[end] + Month(1)
+    startdate = pob_base[1].dates[end] + Month(1)
     T = periods(finalbase)
     newdates = getdates(startdate, T)
     base10_mod = VarCPIBase(finalbase.v, finalbase.w, newdates, finalbase.baseindex)
@@ -70,7 +70,7 @@ function param_sbb(base::VarCPIBase)
     month_mat = monthavg(base.v)
 
     # Conformar base de variaciones intermensuales promedio
-    VarCPIBase(month_mat, base.w, base.fechas, base.baseindex)
+    VarCPIBase(month_mat, base.w, base.dates, base.baseindex)
 end
 
 

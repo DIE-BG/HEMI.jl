@@ -83,7 +83,7 @@ function (trendfn::ArrayTrendFunction)(base::VarCPIBase{T}, range::UnitRange) wh
     # intermensuales
     vtrend =  @. base.v * ((base.v > 0) * trend + !(base.v > 0))
     # Crear un nuevo VarCPIBase con las nuevas variaciones intermensuales
-    VarCPIBase(vtrend, base.w, base.fechas, base.baseindex)
+    VarCPIBase(vtrend, base.w, base.dates, base.baseindex)
 end 
 
 
