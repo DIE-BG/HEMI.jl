@@ -229,7 +229,7 @@ MSE = 0.64
 JULIA , con 10_000 simulaciones
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
 Base 2010 -> [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184] (17 exclusiones)
-MSE = 0.64
+MSE = 0.64404726f0
 
 """
 
@@ -276,11 +276,11 @@ MSE = 0.64
 JULIA , con 10_000 simulaciones para los 100 primeros vectores de exclusión
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
 Base 2010 -> [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184] (17 exclusiones)
-MSE = 0.64
+MSE = 64404726f0
 
 JULIA , con 125_000 simulaciones para el recorte de 10 vectores de exclusión 
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
 Base 2010 -> [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184] (17 exclusiones)
-MSE = 0.64
+MSE = 0.6421985f0
 
 """
