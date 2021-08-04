@@ -1,7 +1,10 @@
 # Función de generación de trayectorias de inflación sin computación paralela
 
 """
-    gentrayinfl(inflfn::F, resamplefn::R, trendfn::T, csdata::CountryStructure; K = 100, rndseed = 0, showprogress = true)
+    gentrayinfl(inflfn::F, resamplefn::R, trendfn::T, csdata::CountryStructure; 
+        K = 100, 
+        rndseed = DEFAULT_SEED, 
+        showprogress = true)
 
 Computa `K` trayectorias de inflación utilizando la función de inflación
 `inflfn::`[`InflationFunction`](@ref), la función de remuestreo
@@ -17,12 +20,12 @@ esta forma, generar trayectorias de inflación con diferentes metodologías
 utilizando los mismos remuestreos, se fija la semilla de generación de acuerdo
 con el número de iteración en la simulación. Para controlar el inicio de la
 generación de trayectorias se utiliza como parámetro de desplazamiento el valor
-`rndseed`. 
+`rndseed`, cuyo valor por defecto es la semilla [`DEFAULT_SEED`](@ref). 
 """
 function gentrayinfl(inflfn::F, resamplefn::R, trendfn::T, 
     csdata::CountryStructure; 
     K = 100, 
-    rndseed = 0, 
+    rndseed = DEFAULT_SEED, 
     showprogress = true) where {F <: InflationFunction, R <: ResampleFunction, T <: TrendFunction}
 
     # Configurar el generador de números aleatorios
