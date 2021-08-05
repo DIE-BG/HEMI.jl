@@ -53,7 +53,7 @@ module InflationFunctions
     include("InflationFixedExclusionCPI.jl")
 
     ## Subyacente MAI (muestra ampliada implícitamente)
-    export MaiG, MaiF
+    export MaiG, MaiF, MaiFP
     export InflationCoreMai
     include("mai/TransversalDistr.jl")
     include("mai/renormalize.jl")
