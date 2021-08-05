@@ -10,31 +10,32 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
-# CountryStructure con datos hasta diciembre de 2020
-gtdata_eval = gtdata[Date(2019, 12)]
-
 ##
 # ## Configuración para simulaciones
 
 # Funciones de remuestreo y tendencia
-resamplefn = ResampleScrambleVarMonths() # ResampleSBB(36)
+resamplefn = ResampleScrambleVarMonths() 
 trendfn = TrendRandomWalk()
 
-variants = [4, 5, 10, 20, 40]
+variants = [3, 4, 5, 8, 10, 20, 40]
+maifps = [InflationCoreMai(MaiFP(i)) for i in variants]
 maifs = [InflationCoreMai(MaiF(i)) for i in variants]
 maigs = [InflationCoreMai(MaiG(i)) for i in variants]
-inflfns = vcat(maifs, maigs)
+
+# inflfns = vcat(maifs, maigs)
+inflfns = maifps
 
 config_mai = Dict(
     :inflfn => inflfns, 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => InflationTotalRebaseCPI(36, 2), 
+    :traindate => Date(2019,12)
     :nsim => 125_000) |> dict_list
 
 
 # Definimos el folder para almacenar los resultados 
-savepath = datadir("results", "CoreMai", "2019-InflationTotalRebaseCPI(36, 2)")
+savepath = datadir("results", "CoreMai", "Esc-A")
 
 ## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
