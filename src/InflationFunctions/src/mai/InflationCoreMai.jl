@@ -9,38 +9,100 @@ const V = range(-200, 200, step=0.01f0) # -100:0.01:100
 abstract type AbstractMaiMethod end 
 
 # Algoritmo de cómputo de MAI-G con n segmentos marcados en las posiciones p
+"""
+    MaiG{P} <: AbstractMaiMethod
+
+    MaiG(n::Int)
+    MaiG(p::AbstractArray)
+
+Tipo para englobar la metodología de cómputo de inflación subyacente MAI-F, en
+la cual se transforma la distribución **de ocurrencias** de variaciones
+intermensuales utilizando la distribución histórica de variaciones
+intermensuales ponderadas. 
+
+Se proporciona el número de segmentos de normalización, o bien, las posiciones
+de los cuantiles utilizados para llevar a cabo la transformación. Si se
+proporcionan las posiciones, la primera y la última posición deben ser el
+cuantil 0 y 1, respectivamente.
+
+## Ejemplos 
+
+1. Utilizar los quintiles como puntos de referencia para normalización 
+```jldoctest 
+julia> method = MaiG(5)
+MaiG{StepRangeLen{Float64, Base.TwicePrecision{Float64}, Base.TwicePrecision{Float64}}}(5, 0.0:0.2:1.0)
+```
+
+2. Utilizar tres segmentos de normalización, en el primer y tercer cuartil: 
+```jldoctest 
+julia> method = MaiG([0, 0.25, 0.75, 1])
+MaiG{Vector{Float64}}(3, [0.0, 0.25, 0.75, 1.0])
+```
+"""
 struct MaiG{P} <: AbstractMaiMethod
     n::Int
     p::P
 
     function MaiG(n, p)
-        length(p) == n+1 || error("Distribución de percentiles de tamaño incorrecto")
-        issorted(p) || error("Distribución de percentiles debe estar ordenada")
-        all(0 .<= p .<= 1) || error("Cuantiles deben estar entre cero y uno")
-        (first(p) == 0 && last(p) == 1) || error("Primer y último cuantil deben ser 0, 1")
+        _checkmethod(n, p)
         new{typeof(p)}(n, p)
     end
 end
 
 # Algoritmo de cómputo de MAI-F con n segmentos marcados en las posiciones p
+"""
+    MaiF{P} <: AbstractMaiMethod
+
+    MaiF(n::Int)
+    MaiF(p::AbstractArray)
+
+Tipo para englobar la metodología de cómputo de inflación subyacente MAI-F, en
+la cual se transforma la distribución **de ocurrencias** de variaciones
+intermensuales utilizando la distribución histórica de variaciones
+intermensuales ponderadas. 
+
+Se proporciona el número de segmentos de normalización, o bien, las posiciones
+de los cuantiles utilizados para llevar a cabo la transformación. Si se
+proporcionan las posiciones, la primera y la última posición deben ser el
+cuantil 0 y 1, respectivamente.
+
+## Ejemplos 
+
+1. Utilizar los quintiles como puntos de referencia para normalización 
+```jldoctest 
+julia> method = MaiF(5)
+MaiF{StepRangeLen{Float64, Base.TwicePrecision{Float64}, Base.TwicePrecision{Float64}}}(5, 0.0:0.2:1.0)
+```
+
+2. Utilizar tres segmentos de normalización, en el primer y tercer cuartil: 
+```jldoctest 
+julia> method = MaiF([0, 0.25, 0.75, 1])
+MaiF{Vector{Float64}}(3, [0.0, 0.25, 0.75, 1.0])
+```
+"""
 struct MaiF{P} <: AbstractMaiMethod
     n::Int
     p::P
 
     function MaiF(n, p)
-        length(p) == n+1 || error("Distribución de percentiles de tamaño incorrecto")
-        issorted(p) || error("Distribución de percentiles debe estar ordenada")
-        all(0 .<= p .<= 1) || error("Cuantiles deben estar entre cero y uno")
-        (first(p) == 0 && last(p) == 1) || error("Primer y último cuantil deben ser 0, 1")
+        _checkmethod(n, p)
         new{typeof(p)}(n, p)
     end
+end
+
+# Revisión de condiciones para aplicación de métodos MAI 
+function _checkmethod(n, p)
+    length(p) == n+1 || error("Distribución de percentiles de tamaño incorrecto")
+    issorted(p) || error("Distribución de percentiles debe estar ordenada")
+    all(0 .<= p .<= 1) || error("Cuantiles deben estar entre cero y uno")
+    (first(p) == 0 && last(p) == 1) || error("Primer y último cuantil deben ser 0, 1")
 end
 
 # Constructores para división equitativa de posiciones p
 MaiF(n::Int) = MaiF(n, (0:n)/n)
 MaiG(n::Int) = MaiG(n, (0:n)/n)
-MaiF(v::AbstractArray) = MaiF(length(v)-1, v)
-MaiG(v::AbstractArray) = MaiG(length(v)-1, v)
+MaiF(p::AbstractArray) = MaiF(length(p)-1, p)
+MaiG(p::AbstractArray) = MaiG(length(p)-1, p)
 
 function Base.string(method::AbstractMaiMethod)
     algorithm = method isa MaiG ? "G" : "F"
@@ -53,7 +115,25 @@ end
 
 
 ## Definición de la función de inflación 
+"""
+    InflationCoreMai{T <: AbstractFloat, B, M <:AbstractMaiMethod} 
+        <: InflationFunction
 
+    InflationCoreMai(vspace::StepRangeLen{T, B, B}, method::M)
+
+Función de inflación de la metodología de muestra ampliada implicítamente (MAI).
+Se parametriza en el tipo flotante `T` de los datos, `B` el tipo para
+representar la precisión de la grilla `vspace` en el algoritmo de cómputo y el método `M`
+de cómputo. 
+
+Los métodos de cómputo disponibles son: 
+- Metodología MAI-G: se transforma la distribución **ponderada** de variaciones
+  intermensuales utilizando la distribución histórica de variaciones
+  intermensuales ponderadas. Se debe dar como argumento el método [`MaiG`](@ref).
+- Metodología MAI-F: se transforma la distribución **de ocurrencias** de
+  variaciones intermensuales utilizando la distribución histórica de variaciones
+  intermensuales ponderadas. Se debe dar como argumento el método [`MaiF`](@ref).
+"""
 Base.@kwdef struct InflationCoreMai{T <: AbstractFloat, B, M <:AbstractMaiMethod} <: InflationFunction
     vspace::StepRangeLen{T, B, B} = V
     method::M = MaiG(4)
@@ -65,7 +145,7 @@ InflationCoreMai(method::AbstractMaiMethod) = InflationCoreMai(V, method)
 # Nombre de la medida 
 measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
 measure_tag(inflfn::InflationCoreMai) = string(nameof(inflfn)) * string(inflfn.method)
-
+CPIDataBase.params(inflfn::InflationCoreMai) = (inflfn.method, )
 
 # Operación sobre CountryStructure para obtener variaciones intermensuales de la
 # estructura de país

@@ -2,6 +2,7 @@ using HEMI
 using Documenter, Literate
 
 DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(InflationFunctions, :DocTestSetup, :(using HEMI); recursive=true)
 DocMeta.setdocmeta!(InflationEvalTools, :DocTestSetup, :(using HEMI); recursive=true)
 
 EXAMPLES_DIR = joinpath(@__DIR__, "..", "scripts", "examples")
