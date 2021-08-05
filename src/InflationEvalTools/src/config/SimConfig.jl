@@ -24,16 +24,19 @@ deseadas [`nsim`].
 Considerando las siguientes instancias de funciones de inflación, remuestreo,
 tendencia e inflación de evaluación:
 
-```julia
-percEq = InflationPercentileEq(80)
-resamplefn = ResampleSBB(36)
-trendfn = TrendRandomWalk()
-paramfn = InflationWeightedMean()
+```jldoctest genfunctions
+julia> percEq = InflationPercentileEq(80);
+
+julia> resamplefn = ResampleSBB(36);
+
+julia> trendfn = TrendRandomWalk();
+
+julia> paramfn = InflationWeightedMean();
 ```
 
 Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
 
-```julia-repl 
+```jldoctest genfunctions
 julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2019,12))
 SimConfig{InflationPercentileEq, ResampleSBB, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 80.0
