@@ -101,7 +101,7 @@ configC_a = dict_config(dict_pruebaC)
 configE = dict_config(dict_pruebaB)
 
 
-## FUNCIONES DE EVALUACIÃÿN
+## FUNCIONES DE EVALUACIï¿½ï¿½N
 
 # 1. FunciÃ³n evalsim(). 
 # Esta funciÃ³n recibe un CountryStructure y un AbstractConfig.
