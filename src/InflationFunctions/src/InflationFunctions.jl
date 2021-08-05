@@ -21,7 +21,7 @@ module InflationFunctions
     export InflationWeightedMean
     include("InflationWeightedMean.jl")
 
-    ## Método de medias móviles
+    ## Método de medias móviles y suavizamiento exponencial simple (SES)
     export InflationMovingAverage, InflationExpSmoothing
     include("InflationMovingAverage.jl")
     include("InflationExpSmoothing.jl")
