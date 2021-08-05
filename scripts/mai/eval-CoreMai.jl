@@ -30,7 +30,7 @@ config_mai = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => InflationTotalRebaseCPI(36, 2), 
-    :traindate => Date(2019,12)
+    :traindate => Date(2019,12),
     :nsim => 125_000) |> dict_list
 
 
@@ -39,7 +39,7 @@ savepath = datadir("results", "CoreMai", "Esc-A")
 
 ## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
-run_batch(gtdata_eval, config_mai, savepath, savetrajectories=false)
+run_batch(gtdata, config_mai, savepath, savetrajectories=true)
 
 ## 
 # ## Revisión de resultados, utilizando `collect_results`
