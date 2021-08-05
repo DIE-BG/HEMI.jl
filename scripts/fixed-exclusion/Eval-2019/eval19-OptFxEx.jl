@@ -41,9 +41,9 @@ resamplefn = ResampleScrambleVarMonths()
 paramfn    = InflationTotalRebaseCPI(36,2)
 
 # Para optimización Base 2000
-gtdata_00 = gtdata[Date(2010, 12)]
+ff00 = Date(2010,12)
 # Para optimización Base 2010
-gtdata_10 = gtdata[Date(2019, 12)]
+ff10 = Date(2019,12)
 
 #################  Optimización Base 2000  ###################################
  
@@ -71,13 +71,14 @@ FxEx_00 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000) |> dict_list
+    :nsim => 10_000
+    :traindate => ff00) |> dict_list
 
 savepath = datadir("results","Fx-Exc","Eval-19","Base00-10K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata_00, FxEx_00, savepath)
+run_batch(gtdata, FxEx_00, savepath)
 
 ## Recolección de resultados
 Exc_0019 = collect_results(savepath)
@@ -116,12 +117,13 @@ FxEx_00 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 125_000) |> dict_list
+    :nsim => 125_000
+    :traindate => ff00) |> dict_list
 
 savepath = datadir("results","Fx-Exc","Eval-19","Base00-125K")  
 
 ## Lote de simulación con 10 vectores de exclusión 
-run_batch(gtdata_00, FxEx_00, savepath)
+run_batch(gtdata, FxEx_00, savepath)
 
 ## Recolección de resultados
 Exc_0019 = collect_results(savepath)
@@ -192,13 +194,14 @@ FxEx_10 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000) |> dict_list
+    :nsim => 10_000
+    :traindate => ff10) |> dict_list
 
 savepath = datadir("results","Fx-Exc","Eval-19","Base10-10K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata_10, FxEx_10, savepath)
+run_batch(gtdata, FxEx_10, savepath)
 
 ## Recolección de resultados
 Exc_1019 = collect_results(savepath)
@@ -239,13 +242,14 @@ FxEx_10 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 125_000) |> dict_list
+    :nsim => 125_000
+    :traindate => ff10) |> dict_list
 
 savepath = datadir("results","Fx-Exc","Eval-19","Base10-125K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata_10, FxEx_10, savepath)
+run_batch(gtdata, FxEx_10, savepath)
 
 ## Recolección de resultados
 Exc_1019 = collect_results(savepath)
