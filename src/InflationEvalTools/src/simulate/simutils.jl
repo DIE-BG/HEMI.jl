@@ -71,13 +71,13 @@ function evalsim(data::CountryStructure, config::SimConfig;
     short = false)
   
     # Obtener datos hasta la fecha de configuración 
-    data_eval = data[config.train_date]
+    data_eval = data[config.traindate]
 
     # Obtener la trayectoria paramétrica de inflación 
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
-    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim traindate=config.train_date
+    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim traindate=config.traindate
 
     # Generar las trayectorias de inflación de simulación 
     tray_infl = pargentrayinfl(config.inflfn, # función de inflación
@@ -262,9 +262,9 @@ Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalCon
 function dict_config(params::Dict)
     # CrossEvalConfig contiene el campo de períodos de evaluación 
     if !(:eval_size in keys(params))
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date])
+        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
     else
-        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:train_date], params[:eval_size])        
+        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate], params[:eval_size])        
     end
     config 
 end
