@@ -1,5 +1,10 @@
 # This file is machine-generated - editing it directly is not advised
 
+[[AbstractTrees]]
+git-tree-sha1 = "03e0550477d86222521d254b741d470ba17ea0b5"
+uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+version = "0.3.4"
+
 [[ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
@@ -214,6 +219,18 @@ uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 [[NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
+[[OnlineStats]]
+deps = ["AbstractTrees", "Dates", "LinearAlgebra", "OnlineStatsBase", "OrderedCollections", "Random", "RecipesBase", "Statistics", "StatsBase", "SweepOperator"]
+git-tree-sha1 = "e8ac92503ddcbe9ea586bfbb4c8e8c6e2c14d5cc"
+uuid = "a15396b6-48d5-5d58-9928-6d29437db91e"
+version = "1.5.11"
+
+[[OnlineStatsBase]]
+deps = ["AbstractTrees", "Dates", "LinearAlgebra", "OrderedCollections", "Statistics", "StatsBase"]
+git-tree-sha1 = "8efa5acf7af1623eabeebdc82ef54396adf16f71"
+uuid = "925886fa-5bf2-5e8e-b522-a9147a512338"
+version = "1.4.5"
+
 [[OpenSpecFun_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "13652491f6856acfd2db29360e1bbcd4565d04f1"
@@ -376,6 +393,12 @@ version = "0.9.8"
 [[SuiteSparse]]
 deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
 uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
+
+[[SweepOperator]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "20da2784e79fc0bfdd70592d1b47d7a6034e82d1"
+uuid = "7522ee7d-7047-56d0-94d9-4bc626e7058d"
+version = "0.3.0"
 
 [[TOML]]
 deps = ["Dates"]
