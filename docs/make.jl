@@ -1,10 +1,8 @@
 using HEMI
-using CPIDataBase
-using InflationFunctions
-using InflationEvalTools
 using Documenter, Literate
 
-# DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(InflationEvalTools, :DocTestSetup, :(using HEMI); recursive=true)
 
 EXAMPLES_DIR = joinpath(@__DIR__, "..", "scripts", "examples")
 OUTPUT_DIR   = joinpath(@__DIR__, "src", "generated")
@@ -34,7 +32,7 @@ makedocs(;
         canonical="https://die-bg.github.io/HEMI",
         assets=String[],
     ),
-    doctest = false, 
+    doctest = true, 
     pages=[
         "Acerca" => "index.md",
         "Guía rápida" => "guides/Guia-rapida.md",
