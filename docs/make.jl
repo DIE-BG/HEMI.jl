@@ -37,6 +37,7 @@ makedocs(;
         "Acerca" => "index.md",
         "Guía rápida" => "guides/Guia-rapida.md",
         "Ejemplos" => example_pages,
+        "Guía de evaluación" => "guides/Guia-evaluacion.md", 
         "API" => 
             ["modules/API.md",
             "modules/HEMI.md",
