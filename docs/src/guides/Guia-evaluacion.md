@@ -1,26 +1,31 @@
-# Guía de Evaluación
+# Guía de evaluación
 
-En esta sección se documentan configuraciones generales para la generación de distintos escenarios de evaluación.
+En esta sección se documentan las configuraciones generales para la generación de distintos escenarios de evaluación.
 
-## Escenario 1: Replicar el trabajo efectuado en 2020 (criterios básicos a dic-19)
+## Escenario A: replica del trabajo efectuado en 2020 (criterios básicos a dic-19)
 
-### **Nombre para carpeta: "data\results\nombre-medida\Esc-1\"**
-Este escenario pretende replicar los resultados obtenidos utilizando el lenguaje de programación Matlab, el cual se utilizó en el año 2020 para realizar la evaluación con información hasta diciembre de 2019.
+### Nombre para los directorios
+
+- Directorio principal: `data\results\<nombre-medida>\Esc-A\`
+
+### Descripción 
+Este escenario pretende replicar los resultados obtenidos utilizando el lenguaje de programación MATLAB, el cual se utilizó en el año 2020 para realizar la evaluación con información hasta diciembre de 2019.
 
 Los parámetros de configuración en este caso son los siguientes:
 
- 1. Período de Evaluación: Diciembre 2000 - Diciembre 2019, `ff = Date(2019, 12)`.
+ 1. Período de Evaluación: Diciembre 2001 - Diciembre 2019, `ff = Date(2019, 12)`.
  2. Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años,  [`InflationTotalRebaseCPI(36, 2)`].
  3. Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [`ResampleScrambleVarMonths()`].
  4. Muestra completa para evaluación, [`SimConfig`].
 
-En este escenario no es necesario llevar a cabo el proceso de optimización. 
+!!! note 
+    
+    En este escenario **no** es necesario llevar a cabo el proceso de optimización, ya que es un escenario de comparación para replicar los resultados obtenidos con la versión anterior de la herramienta.
 
 En este caso, una configuración de simulación, para evaluar el Percentil Equiponderado 69, estaría dada por:
 
-``` julia
-# Instacias para Escenario 1
-
+```julia
+# Instacias para Escenario A
 inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
@@ -31,7 +36,7 @@ ff         = Date(2019, 12)
  # Configuración de simulación
 config = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff)
 ```
-```julia-repl
+```julia
 julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000, Date(2019, 12))      
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
@@ -42,27 +47,36 @@ SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Floa
 |─> Fin set de entrenamiento        : 2019-12-01
 ```
 
-## Escenario 2 -> Explicar diferencias *****
 
-## Escenario 3: Extender el trabajo efectuado en 2020 (criterios básicos a dic-20)
 
-### **Nombre para carpeta: "data\results\nombre-medida\Esc-3\"**
-Este escenario pretende evaluar las medidas de inflación utilizando la información hasta diciembre de 2020, utilizando los mismos parámetros de configuración que en el escenario 1.
+## Escenario B: extender el trabajo efectuado en 2020 (criterios básicos a dic-20)
+
+### Nombre para los directorios
+
+- Directorio principal: `data\results\<nombre-medida>\Esc-B\`
+
+### Descripción 
+
+Este escenario pretende evaluar las medidas de inflación utilizando la información hasta diciembre de 2020, utilizando los mismos parámetros de configuración que en el escenario A.
 
 Los parámetros de configuración en este caso son los siguientes:
 
-1. Período de Evaluación: Diciembre 2000 - Diciembre 2020, `ff = Date(2020, 12)`.
- 2. Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años,  [`InflationTotalRebaseCPI(36, 2)`].
- 3. Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [`ResampleScrambleVarMonths()`].
- 4. Muestra completa para evaluación, [`SimConfig`].
+1. Período de Evaluación: Diciembre 2001 - Diciembre 2020, `ff = Date(2020, 12)`.
+ 1. Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años,  [`InflationTotalRebaseCPI(36, 2)`].
+ 2. Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [`ResampleScrambleVarMonths()`].
+ 3. Muestra completa para evaluación, [`SimConfig`].
 
-A diferencia del Escenario 1, en este escenario si se debe llevar a cabo la optimización de la medida.
+
+!!! note
+
+    A diferencia del Escenario A, en este escenario **sí** se debe llevar a cabo la
+    optimización de la medida, ya que se ha agregado un conjunto de nuevos datos
+    correspondientes al año 2020.
 
 En este caso, una configuración de simulación, para evaluar el Percentil Equiponderado 69, estaría dada por:
 
-``` julia
-# Instacias para Escenario 3
-
+```julia
+# Instacias para Escenario B
 inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
@@ -73,7 +87,7 @@ ff         = Date(2020, 12)
  # Configuración de simulación
 config = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff)
 ```
-```julia-repl
+```julia
 julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000, Date(2020,12))       
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
@@ -84,29 +98,34 @@ SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Floa
 |─> Fin set de entrenamiento        : 2020-12-01
 ```
 
-## Escenario 4: Evaluación de criterios básicos con cambio de parámetro de evaluación
 
-### **Nombre para carpeta: "data\results\nombre-medida\Esc-4\"**
+## Escenario C: Evaluación de criterios básicos con cambio de parámetro de evaluación
 
-Este escenario pretende evaluar las medidas de inflación utilizando la configuración utilizada para la evaluación 2019 en Matlab, cambiando la trayectoria de inflación paramétrica por una con cambio de base sintético cada cinco años. 
+### Nombre para los directorios
+
+Es requerido llevar a cabo la optimización de la medida, para ambos períodos de evaluación. Se debe nombrar cada escenario como `C19` y `C20`.
+
+- Directorio principal: `data\results\<nombre-medida>\Esc-C\`
+  - Escenario hasta diciembre 2019: `C19`
+  - Escenario hasta diciembre 2020: `C20`
+
+### Descripción 
+
+Este escenario pretende evaluar las medidas de inflación cambiando la trayectoria de inflación paramétrica por una con cambio de base sintético cada cinco años, respecto a la configuración del escenario A.
 
 Los parámetros de configuración en este caso son los siguientes:
 
  1. Período de Evaluación: 
-    1.   Diciembre 2000 - Diciembre 2019, `ff = Date(2019, 12)`
-    2.   Diciembre 2000 - Diciembre 2020, `ff = Date(2020, 12)`
+    1.   Diciembre 2001 - Diciembre 2019, `ff = Date(2019, 12)`
+    2.   Diciembre 2001 - Diciembre 2020, `ff = Date(2020, 12)`
  2. Trayectoria de inflación paramétrica con cambios de base cada 5 años, [`InflationTotalRebaseCPI(60)`].
  3.  Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [`ResampleScrambleVarMonths()`].
  4. Muestra completa para evaluación [`SimConfig`].
 
-Es requerido llevar a cabo la optimización de la medida, para ambos períodos de evaluación.
-
 En este caso, una configuración de simulación, para evaluar el Percentil Equiponderado 69, estaría dada por:
 
-``` julia
-## Definición de instancias generales
-
-
+```julia
+## Definición de parámetros de simulación
 inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
@@ -121,7 +140,7 @@ config19 = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff19)
 config20 = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff20)
 ```
 
-``` julia-repl
+```julia
 julia> config19 = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff19)
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
@@ -140,16 +159,25 @@ SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Floa
 |─> Número de simulaciones          : 10000
 |─> Fin set de entrenamiento        : 2020-12-01
 ```
-## Escenario 5: Evaluación de criterios básicos con cambio en Método de remuestreo
 
-### **Nombre para carpeta: "data\results\nombre-medida\Esc-5\"**
 
-Este escenario pretende evaluar las medidas de inflación utilizando la configuración utilizada para la evaluación 2019 en Matlab, cambiando el método de remuestreo por el de extracciones estocásticas por bloques estacionarios
+## Escenario D: Evaluación de criterios básicos con cambio en metodología de remuestreo
+
+### Nombre para los directorios
+
+- Directorio principal: `data\results\<nombre-medida>\Esc-D\`
+  - Escenario hasta diciembre 2019 y cambios de base cada 3 años: `D19-36`
+  - Escenario hasta diciembre 2020 y cambios de base cada 5 años: `D19-60`
+  - Escenario hasta diciembre 2019 y cambios de base cada 3 años: `D20-36`
+  - Escenario hasta diciembre 2020 y cambios de base cada 5 años: `D20-60`
+
+### Descripción 
+Este escenario pretende evaluar las medidas de inflación cambiando el método de remuestreo por el de extracciones estocásticas por bloques estacionarios. 
 
 Los parámetros de configuración en este caso son los siguientes:
  1. Período de Evaluación: 
-    1.   Diciembre 2000 - Diciembre 2019, `ff = Date(2019, 12)`
-    2.   Diciembre 2000 - Diciembre 2020, `ff = Date(2020, 12)`
+    1.   Diciembre 2001 - Diciembre 2019, `ff = Date(2019, 12)`
+    2.   Diciembre 2001 - Diciembre 2020, `ff = Date(2020, 12)`
  2. Trayectoria de inflación paramétrica 
     1. Con cambios de base cada 3 años, [`InflationTotalRebaseCPI(36, 2)`].
     2. Con cambios de base cada 5 años, [`InflationTotalRebaseCPI(60)`].
@@ -158,10 +186,8 @@ Los parámetros de configuración en este caso son los siguientes:
 
 En este caso, una configuración de simulación, para evaluar el Percentil Equiponderado 69, estaría dada por:
 
-``` julia
-## Definición de instancias generales
-
-
+```julia
+## Definición de parámetros de simulación
 inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleSBB(36)
 trendfn    = TrendRandomWalk()
@@ -173,29 +199,33 @@ ff20       = Date(2020, 12)
 
  # Configuración de simulación*
 
-# Para período Diciembre 2000 - Diciembre 2019
+# Para período Diciembre 2001 - Diciembre 2019
 config19_1 = SimConfig(inflfn, resamplefn, trendfn, paramfn1, nsim, ff19)
 config19_2 = SimConfig(inflfn, resamplefn, trendfn, paramfn2, nsim, ff19)
-# Para período Diciembre 2000 - Diciembre 2020
+# Para período Diciembre 2001 - Diciembre 2020
 config20_1 = SimConfig(inflfn, resamplefn, trendfn, paramfn1, nsim, ff20)
 config20_2 = SimConfig(inflfn, resamplefn, trendfn, paramfn2, nsim, ff20)
 ```
 
-**NOTA:** Las configuraciones se muestran individuales y como ejemplo. Puede también utilizarse `dict_list` para crear diccionarios de simulación con las distintas variantes de funciones o fechas finales.
+!!! note 
 
-``` julia
-inflfn     = InflationPercentileEq(69)
-resamplefn = ResampleSBB(36)
-trendfn    = TrendRandomWalk()
-
-paramfn1    = InflationTotalRebaseCPI(36, 2)
-paramfn2    = InflationTotalRebaseCPI(60)
-
-dict_eval = Dict(
-    :inflfn => inflfn, 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :paramfn => [paramfn1, paramfn2],
-    :nsim => 10_000,
-    :traindate => [Date(2019, 12), Date(2020, 12)]) |> dict_list
-```
+    Las configuraciones anteriores se hacen manualmente. También se puede
+    utilizar `dict_list` para crear diccionarios de simulación con las distintas
+    variantes de funciones o fechas finales.
+    
+    ```julia
+    inflfn     = InflationPercentileEq(69)
+    resamplefn = ResampleSBB(36)
+    trendfn    = TrendRandomWalk()
+    
+    paramfn1    = InflationTotalRebaseCPI(36, 2)
+    paramfn2    = InflationTotalRebaseCPI(60)
+    
+    dict_eval = Dict(
+       :inflfn => inflfn, 
+       :resamplefn => resamplefn, 
+       :trendfn => trendfn,
+       :paramfn => [paramfn1, paramfn2],
+       :nsim => 10_000,
+       :traindate => [Date(2019, 12), Date(2020, 12)]) |> dict_list
+    ```
