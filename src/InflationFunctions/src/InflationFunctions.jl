@@ -24,9 +24,9 @@ module InflationFunctions
     include("InflationWeightedMean.jl")
 
     ## Método de medias móviles
-    export InflationMovingAverage
+    export InflationMovingAverage, InflationExpSmoothing
     include("InflationMovingAverage.jl")
-
+    include("InflationExpSmoothing.jl")
 
     ## Percentiles equiponderados
     export InflationPercentileEq
