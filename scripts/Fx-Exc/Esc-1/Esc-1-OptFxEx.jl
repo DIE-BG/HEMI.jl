@@ -74,7 +74,7 @@ FxEx_00 = Dict(
     :nsim => 10_000
     :traindate => ff00) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Eval-19","Base00-10K")  
+savepath = datadir("results","Fx-Exc","Esc-1","Base00-10K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -120,7 +120,7 @@ FxEx_00 = Dict(
     :nsim => 125_000
     :traindate => ff00) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Eval-19","Base00-125K")  
+savepath = datadir("results","Fx-Exc","Esc-1","Base00-125K")  
 
 ## Lote de simulación con 10 vectores de exclusión 
 run_batch(gtdata, FxEx_00, savepath)
@@ -197,7 +197,7 @@ FxEx_10 = Dict(
     :nsim => 10_000
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Eval-19","Base10-10K")  
+savepath = datadir("results","Fx-Exc","Esc-1","Base10-10K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -245,7 +245,7 @@ FxEx_10 = Dict(
     :nsim => 125_000
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Eval-19","Base10-125K")  
+savepath = datadir("results","Fx-Exc","Esc-1","Base10-125K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
