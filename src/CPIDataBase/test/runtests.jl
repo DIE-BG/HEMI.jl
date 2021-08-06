@@ -37,8 +37,8 @@ using SafeTestsets
     @test indexcpi.ipc == indexcpi2.ipc
     @test !(indexcpi.ipc === indexcpi2.ipc)
 
-    @test vcpi.fechas == vcpi2.fechas
-    @test indexcpi.fechas == indexcpi2.fechas
+    @test vcpi.dates == vcpi2.dates
+    @test indexcpi.dates == indexcpi2.dates
 
 
     ## Test convert methods with different precision floats

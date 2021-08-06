@@ -34,16 +34,16 @@ totalfneval = TotalEvalCPI()
 
 ## Probar aplicación de tendencia 
 
-gt00_fict = convert(Float32, VarCPIBase(ones(120, 218), copy(gt00.w), gt00.fechas, gt00.baseindex))
-gt10_fict = convert(Float32, VarCPIBase(ones(120, 279), copy(gt10.w), gt10.fechas[1:120], gt10.baseindex))
+gt00_fict = convert(Float32, VarCPIBase(ones(120, 218), copy(gt00.w), gt00.dates, gt00.baseindex))
+gt10_fict = convert(Float32, VarCPIBase(ones(120, 279), copy(gt10.w), gt10.dates[1:120], gt10.baseindex))
 gtdata_fict = UniformCountryStructure(gt00_fict, gt10_fict)
 trended_gtdata = apply_trend(gtdata_fict, RWTREND)
 
 
 ## Probar el muestreo 
 
-gt00_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 218), dims=2), copy(gt00.w), gt00.fechas, gt00.baseindex)
-gt10_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 279), dims=2), copy(gt10.w), gt10.fechas[1:120], gt10.baseindex)
+gt00_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 218), dims=2), copy(gt00.w), gt00.dates, gt00.baseindex)
+gt10_fict = VarCPIBase(cumsum(repeat(1.0:12.0, 10, 279), dims=2), copy(gt10.w), gt10.dates[1:120], gt10.baseindex)
 gtdata_fict = UniformCountryStructure(gt00_fict, gt10_fict)
 
 scramblevar!(gtdata_fict)

@@ -120,7 +120,7 @@ function (resamplefn::ResampleGSBB)(base::VarCPIBase, ::Val{:inverse})
     end
 
     # Conformar base de variaciones intermensuales promedio
-    VarCPIBase(vpob, base.w, base.fechas, base.baseindex)
+    VarCPIBase(vpob, base.w, base.dates, base.baseindex)
 end
 
 # Función para obtener CountryStructure paramétrico 

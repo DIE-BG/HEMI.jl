@@ -1,4 +1,4 @@
-# # Script de prueba para tipos que especifican variantes de simulación
+# # Exploración de variantes para medida de exclusión dinámica
 using DrWatson
 using Chain
 @quickactivate "HEMI"
@@ -11,35 +11,35 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
+# ## Definición de parámetros y variantes de simulación
+
 # CountryStructure con datos hasta diciembre de 2020
-gtdata_eval = gtdata[Date(2020, 12)]
+gtdata_eval = [gtdata[Date(2020, 12)], gtdata[Date(2019, 12)]]
 
-## Definición de Parámetros de simulación
+# Funciones de remuestreo
+resamplefn = [ResampleSBB(36), ResampleScrambleVarMonths()]
 
-# Funciones de remuestreo y tendencia
-resamplefn = ResampleSBB(36)
+# Funciones de tendencia
 trendfn = TrendRandomWalk()
 
-## Ejemplos de creacion de diccionarios para Evaluación
+# Funciones de parámetros
+paramfn = [ParamTotalCPIRebase, ParamTotalCPILegacyRebase]
+
+# ## Parametrización de la evaluación
 # Estos diccionarios contienen n vectores, en donde cada uno contiene una parametrización de simulación, 
 # la cual posteriormente es convertida a un objeto AbstractConfig y utilizada para generar una simulación.
-
-# Diccionario de prueba 1: utilizando la función dict_list (DrWatson), 
-# crea un vector de tuplas con el producto cartesiano de ...
-
 dict_config_dynEx = Dict(
     :inflfn => InflationDynamicExclusion.(
             @chain range(0, 3, length = 70) ((i, j) for i in _ for j in _) 
        ),
-    #:inflfn => InflationDynamicExclusion(2,2),
+    #:dataeval => gtdata_eval,
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :nsim => 10_000) |> dict_list
+    #:paramfn => paramfn,
+    :nsim => 100) |> dict_list
 
 
-## FUNCIONES DE EVALUACIÓN
-
-# run_batch 
+# ## Ejecución de evaluación
 
 # Esta función recibe un CountryStructure, un vector con diccionarios con
 # parámetros de evaluación y una ruta para almacenar los resultados.
@@ -47,7 +47,8 @@ dict_config_dynEx = Dict(
 # Path para almacenamiento de resultados.
 savepath = datadir("results", "dynamic-exclusion")
 
-run_batch(gtdata_eval, dict_config_dynEx, savepath)
+#
+run_batch(gtdata_eval, dict_config_dynEx, savepath, rndseed = 314159)
 
 # Revisión de resultados
 # La función collect_results recoje todos los resultados almacenados en savepath

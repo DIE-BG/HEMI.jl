@@ -43,6 +43,9 @@ module CPIDataBase
     include("inflation/InflationFunction.jl")
     include("inflation/EnsembleInflationFunction.jl")
 
+    # Medida de inflación básica 
+    include("inflation/InflationTotalCPI.jl")
+
     # Funciones de utilidad
     export getdates
     include("utils/utils.jl")

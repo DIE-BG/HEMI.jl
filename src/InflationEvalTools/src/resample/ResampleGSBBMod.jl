@@ -43,7 +43,7 @@ function (resample_gsbb_fn::ResampleGSBBMod)(cs::CountryStructure, rng = Random.
         
     # Modificar las fechas de la segunda base
     finalbase = base_boot[2]
-    startdate = base_boot[1].fechas[end] + Month(1)
+    startdate = base_boot[1].dates[end] + Month(1)
     T = periods(finalbase)
     newdates = getdates(startdate, T)
     base10_mod = VarCPIBase(finalbase.v, finalbase.w, newdates, finalbase.baseindex)

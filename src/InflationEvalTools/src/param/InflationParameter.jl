@@ -41,6 +41,7 @@ function Base.show(io::IO, param::AbstractInflationParameter)
     println(io, "|─> TrendFunction     : " * method_name(param.trendfn) )
 end
 
+method_tag(param::InflationParameter) = string("InflParam: [",nameof(param.inflfn),", ",nameof(param.resamplefn),", ",nameof(param.trendfn),"]")
 
 """
     DEFAULT_RESAMPLE_FN
@@ -71,7 +72,6 @@ ParamTotalCPIRebase() =
 # Función para obtener el parámetro con otra función de remuestreo y otra función de tendencia.
 ParamTotalCPIRebase(resamplefn::ResampleFunction, trendfn::TrendFunction) = 
     InflationParameter(InflationTotalRebaseCPI(60), resamplefn, trendfn)
-
 
 """
     ParamTotalCPI()

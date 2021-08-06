@@ -407,8 +407,8 @@ function create_gif(varbase, resamplefn; path, x = 1, N = 10, decompose_stations
     # Fechas de acuerdo con el tipo de función de remuestreo, algunas extienden
     # períodos
     fechas = !extend_periods ? 
-        varbase.fechas :                    # fechas originales 
-        varbase.fechas[1] .+ Month.(0:299)  # fechas extendidas a 300 obs
+        varbase.dates :                    # fechas originales 
+        varbase.dates[1] .+ Month.(0:299)  # fechas extendidas a 300 obs
 
     # Remuestrear datos N veces y generar gráfica
     anim = @animate for j in 1:N 
@@ -419,7 +419,7 @@ function create_gif(varbase, resamplefn; path, x = 1, N = 10, decompose_stations
         end
         # boot_vmat = resamplefn(varbase.v)
 
-        plot(varbase.fechas, varbase.v[:, x], linewidth=3, label="Original")
+        plot(varbase.dates, varbase.v[:, x], linewidth=3, label="Original")
         plot!(fechas, boot_vmat[:, x], label="Remuestreada")
         ylabel!("Variación intermensual")
     end
