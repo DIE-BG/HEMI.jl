@@ -2,6 +2,7 @@
 
 using Optim
 using DrWatson
+using DataFrames
 
 @quickactivate "HEMI"
 
@@ -95,11 +96,17 @@ for variant in optim_variants
     variant[:inflfn] = variant[:inflfn](Optim.minimizer(optres))
     filename = savename(dict_config(variant), "jld2")
             
+    # Guardar los resultados como un data frame para su fácil exploración.
+
+    optres = @chain Dict(
+        :lower_factor => optres.minimizer[1],
+        :upper_factor => optres.minimizer[2],
+        :mse => optres.minimum
+    ) begin
+        merge(_, variant)
+    end
+
     # Resultados de evaluación para collect_results 
-    save(joinpath(SAVEPATH, filename), Dict("optres" => optres))
+    save(joinpath(SAVEPATH, filename), optres)
 
 end
-
-
-
-
