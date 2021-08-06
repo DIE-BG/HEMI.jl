@@ -44,8 +44,8 @@ optim_variants = Dict(
     :inflfn => vecParameters -> INFLATION_FUNCTION_TYPE(vecParameters),
     :resamplefn => [ResampleScrambleVarMonths(), ResampleSBB(36)], 
     :trendfn => TrendRandomWalk(),
-    :paramfn => [InflationTotalRebaseCPI(36, 2), InflationWeightedMean()],
-    :nsim => 100,
+    :paramfn => [InflationTotalRebaseCPI(36, 2), InflationTotalRebaseCPI(60)],
+    :nsim => 125_000,
     :traindate => [Date(2019, 12), Date(2020, 12)]
 ) |> dict_list
 
