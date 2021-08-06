@@ -59,16 +59,18 @@ end
 
 vscodedisplay(df_results)
 pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
-# 
+
+
 sens_metrics = @chain df_mai begin 
-    select(:measure, :mse, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    select(:measure, :rmse, :me, :mae, :huber, :corr)
     sort(:mse)
 end 
+# select(:measure, :mse, r"^mse_[bvc]",)
+# select(:measure, :mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+
 vscodedisplay(sens_metrics)
 
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
-
-df_results
 
 ## 
 # ## Gráficas de resultados
