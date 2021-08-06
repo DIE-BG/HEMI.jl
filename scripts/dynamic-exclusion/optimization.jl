@@ -69,7 +69,7 @@ for variant in optim_variants
 
         # Evalua la medida y obtiene el MSE. Se deja una condición par promover la optimización dentro de la región delimitada por los límites superiores e inferiores. 
         if all(LOWER_B .< vecParameters .< UPPER_B)
-            results, _ = makesim(DATA, sim_config)
+            results, _ = makesim(DATA, sim_config, short=true)
             mse = results[:mse]
         else
             mse = 1_000_000
@@ -97,7 +97,7 @@ for variant in optim_variants
     variant[:inflfn] = variant[:inflfn](Optim.minimizer(optres))
     filename = savename(dict_config(variant), "jld2")
             
-    # Guardar los resultados como un data frame para su fácil exploración.
+    # Guardar los resultados como un diccionario para su fácil exploración.
 
     optres = @chain Dict(
         :lower_factor => optres.minimizer[1],
