@@ -52,7 +52,7 @@ function pargentrayinfl(inflfn::F, resamplefn::R, trendfn::T,
     # Cubo de trayectorias de inflación de salida
     periods = infl_periods(csdata)
     n_measures = num_measures(inflfn)
-    tray_infl = SharedArray{Float32}(periods, n_measures, K)
+    tray_infl = SharedArray{eltype(csdata)}(periods, n_measures, K)
 
     # Variables para el control de progreso
     progress= Progress(K, enabled=showprogress)

@@ -36,6 +36,7 @@ paramfn = InflationTotalRebaseCPI(60)
 ff = Date(2020, 12)
 sz = 24
 
+ff2 = [Date(2019,12),Date(2020,12)]
 
 ## Creación de configuraciones de prueba usando objetos AbstractConfig.
 
@@ -78,7 +79,7 @@ dict_pruebaB = Dict(
     :trendfn => trendfn,
     :paramfn => paramfn,
     :nsim => 10_000,
-    :traindate => ff) |> dict_list
+    :traindate => ff2) |> dict_list
 
 # Diccionario de prueba 3: utilizando dict_list (DrWatson), 
 # Este ejemplo crea un vector con un único diccionario con la función Exclusión Fija instanciada al inicio de este script. 
