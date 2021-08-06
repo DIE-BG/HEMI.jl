@@ -38,6 +38,11 @@ makedocs(;
         "Guía rápida" => "guides/Guia-rapida.md",
         "Ejemplos" => example_pages,
         "Guía de evaluación" => "guides/Guia-evaluacion.md", 
+        "Evaluación" => [
+            "Escenario A" => [
+                "eval/EscA/evaluacion-dynEx.md"
+            ]
+        ], 
         "API" => 
             ["modules/API.md",
             "modules/HEMI.md",
