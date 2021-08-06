@@ -45,7 +45,7 @@ optim_variants = Dict(
     :resamplefn => [ResampleScrambleVarMonths(), ResampleSBB(36)], 
     :trendfn => TrendRandomWalk(),
     :paramfn => [InflationTotalRebaseCPI(36, 2), InflationTotalRebaseCPI(60)],
-    :nsim => 125_000,
+    :nsim => 100,
     :traindate => [Date(2019, 12), Date(2020, 12)]
 ) |> dict_list
 
@@ -107,6 +107,5 @@ for variant in optim_variants
     end
 
     # Resultados de evaluación para collect_results 
-    save(joinpath(SAVEPATH, filename), optres)
-
+    wsave(joinpath(SAVEPATH, filename), tostringdict(optres))
 end
