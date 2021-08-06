@@ -85,7 +85,8 @@ for variant in optim_variants
         PARAM_0, # Punto inicial
         NelderMead(), # Método
         Optim.Options(
-            f_tol = F_TOL
+            f_tol = F_TOL,
+            show_trace = true
         )
     )
 
