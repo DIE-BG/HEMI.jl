@@ -45,13 +45,28 @@ run_batch(gtdata, config_mai, savepath, savetrajectories=true)
 # ## Revisión de resultados, utilizando `collect_results`
 using DataFrames
 using Chain
+using PrettyTables
 df_mai = collect_results(savepath)
 
-
+# Tabla de resultados principales del escenario 
 df_results = @chain df_mai begin 
-    select(:measure, :resamplefn, :mse, :mse_std_error, :rmse, :me, :mae, :huber)
+    select(:measure, :mse, :mse_std_error)
     sort(:mse)
+    filter(:measure => s -> !occursin("FP",s), _)
 end
+
+# select(df_results, :measure => ByRow(s -> match(r"(?:\w), (?:\d{1,2})", s).match |> split))
+
+vscodedisplay(df_results)
+pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
+# 
+sens_metrics = @chain df_mai begin 
+    select(:measure, :mse, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+vscodedisplay(sens_metrics)
+
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 
 df_results
 

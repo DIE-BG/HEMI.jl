@@ -3,76 +3,58 @@ using DrWatson
 @quickactivate "HEMI"
 
 using HEMI 
-using DataFrames
+using DataFrames, Chain
 using Plots
 
 # Funciones de ayuda 
 includet(scriptsdir("mai", "eval-helpers.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
-tray_dir = datadir("results", "CoreMai", "tray_infl")
+tray_dir = datadir("results", "CoreMai", "Esc-A", "tray_infl")
 plotspath = mkpath(plotsdir("CoreMai"))
 
-# CountryStructure con datos hasta diciembre de 2020
-gtdata_eval = gtdata[Date(2020, 12)]
+# CountryStructure con datos hasta diciembre de 2019
+gtdata_eval = gtdata[Date(2019, 12)]
 
-##
-# ## Obtener las trayectorias de simulación de inflación MAI
 
-# Funciones de remuestreo y tendencia
-resamplefn = ResampleSBB(36)
-trendfn = TrendRandomWalk()
+## Obtener las trayectorias de simulación de inflación MAI de variantes F y G
+df_mai = collect_results(savepath)
 
-variants = [4, 5, 10, 20, 40]
-maifs = [InflationCoreMai(MaiF(i)) for i in variants]
-maigs = [InflationCoreMai(MaiG(i)) for i in variants]
-inflfns = vcat(maifs, maigs)
-
-config_mai = Dict(
-    :inflfn => inflfns, 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :nsim => 125_000) |> dict_list
-
-# Función para obtener el nombre de archivo de una configuración
-fn_tray_name = c -> savename(c, "jld2", connector= " - ", equals=" = ")
-
-tray_infl_mai = map(config_mai) do config
-    simconf = dict_config(config) 
-    # Obtenemos nombre del archivo de trayectorias y lo cargamos
-    filepath = joinpath(tray_dir, fn_tray_name(simconf))
-    tray_infl = load(filepath, "tray_infl")
-end
-# Obtener cubo de trayectorias de simulación 
-tray_infl_mai = cat(tray_infl_mai..., dims=2)
-
-# Nombres de las medidas a combinar 
-mai_names = map(config_mai) do config 
-    simconf = dict_config(config)
-    measure_name(simconf.inflfn)
+# Obtener variantes de MAI a combinar. Como se trata de los resultados de 2019,
+# se combinan todas las versiones F y G
+tray_paths = @chain df_mai begin 
+    filter(:measure => s -> !occursin("FP",s), _)
+    select(:measure, :mse, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
 end
 
+# Obtener las trayectorias 
+tray_list_mai = map(tray_paths.tray_path) do path
+    tray_infl = load(path, "tray_infl")
+end
 
-##
-# ## Obtener trayectoria paramétrica de inflación 
+# Obtener el arreglo de 3 dimensiones de trayectorias (T, 10, K)
+tray_infl_mai = reduce(hcat, tray_list_mai)
 
-param = ParamTotalCPIRebase(resamplefn, trendfn)
+
+## Obtener trayectoria paramétrica de inflación 
+
+resamplefn = df_mai[1, :resamplefn]
+trendfn = df_mai[1, :trendfn]
+paramfn = df_mai[1, :paramfn]
+param = InflationParameter(paramfn, resamplefn, trendfn)
 tray_infl_pob = param(gtdata_eval)
 
-##
-# ## Algoritmo de combinación para ponderadores óptimos
+
+## Algoritmo de combinación para ponderadores óptimos
 
 # Obtener los ponderadores de combinación óptimos para el cubo de trayectorias
 # de inflación MAI 
 a_optim = combination_weights(tray_infl_mai, tray_infl_pob)
 
-# Ejercicio de combinación sin la variante F-40
-# tray_infl_nof40 = tray_infl_mai[:, [1,2,3,4,6,7,8,9,10], :]
-# a_optimsens = combination_weights(tray_infl_nof40, tray_infl_pob)
-# tray_infl_maisens = sum(tray_infl_nof40 .* a_optimsens', dims=2)
-# metrics_sens = eval_metrics(tray_infl_maisens, tray_infl_pob)
-
-a_df = DataFrame(measure = mai_names, weight = a_optim)
+dfweights = DataFrame(
+    measure = tray_paths.measure, 
+    weight = a_optim
+)
 
 # Gráfica de ponderadores 
 bar(a_df.measure, a_df.weight, 
@@ -88,14 +70,4 @@ tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
 ## Estadísticos 
 
 metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
-@info "Métricas de evaluación:" metrics
-
-# ┌ Info: Métricas de evaluación:
-# │   metrics =
-# │    Dict{Symbol, AbstractFloat} with 6 entries:
-# │      :rmse          => 1.20281
-# │      :mse           => 2.53356
-# │      :mae           => 1.20281
-# │      :std_sim_error => 0.0122459
-# │      :me            => -0.328675
-# └      :corr          => 0.836101
+@info "Métricas de evaluación:" metrics...
