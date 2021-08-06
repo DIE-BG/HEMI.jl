@@ -14,23 +14,33 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
-# ## Parametros globales
+# ## Parámetros globales
 
+# Datos para la evaluación de tipo ``CountryStructure``.
 DATA = gtdata
 
+# Tipo de función a evaluar.
+INFLATION_FUNCTION_TYPE = InflationDynamicExclusion
+
+# Directorio para el almacenamiento de resultados.
+SAVEPATH = datadir("results", "dynamic-exclusion", "optimization")
+
+# Límites de caja para restricción de optimización.
 LOWER_B = [0f0, 0f0]
 UPPER_B = [3f0, 3f0]
 
+# Valor inicial para la optimización.
 PARAM_0 = [0.42424244f0, 1.5151515f0]
 
+# Tolerancia en la optimización.
 F_TOL = 1e-6
-
-SAVEPATH = datadir("results", "dynamic-exclusion", "optimization")
 
 # ## Variantes de optimización
 
+# En esta sección se definen todas las variantes para la optimización. Notar que el campo ``:inflfn`` corresponde a una función anónima, por lo que estas variantes no pueden ser evaluadas de forma inmediata.
+
 optim_variants = Dict(
-    :inflfn => vecParameters -> InflationDynamicExclusion(vecParameters),
+    :inflfn => vecParameters -> INFLATION_FUNCTION_TYPE(vecParameters),
     :resamplefn => [ResampleScrambleVarMonths(), ResampleSBB(36)], 
     :trendfn => TrendRandomWalk(),
     :paramfn => [InflationTotalRebaseCPI(36, 2), InflationWeightedMean()],
@@ -39,6 +49,9 @@ optim_variants = Dict(
 ) |> dict_list
 
 # ## Optimización de variantes
+
+# El loop recorre todas las posibles variantes dentro del diccionario creado en la sección anterior.
+
 for variant in optim_variants
 
     function mse_variant(vecParameters)
@@ -53,7 +66,7 @@ for variant in optim_variants
             traindate = variant[:traindate]
         )
 
-        # Evalua la medida y obtiene el MSE
+        # Evalua la medida y obtiene el MSE. Se deja una condición par promover la optimización dentro de la región delimitada por los límites superiores e inferiores. 
         if all(LOWER_B .< vecParameters .< UPPER_B)
             results, _ = makesim(DATA, sim_config)
             mse = results[:mse]
@@ -78,7 +91,7 @@ for variant in optim_variants
     println(optres)
     @info "Resultados de optimización:" min_mse=minimum(optres) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
 
-    # Guardar los resultados 
+    # Guardar los resultados. Se evalúa la función anónima con el punto óptimo para el almacenamiento del resultado.
     variant[:inflfn] = variant[:inflfn](Optim.minimizer(optres))
     filename = savename(dict_config(variant), "jld2")
             
