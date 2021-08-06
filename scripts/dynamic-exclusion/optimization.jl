@@ -34,7 +34,7 @@ UPPER_B = [3f0, 3f0]
 PARAM_0 = [0.42424244f0, 1.5151515f0]
 
 # Tolerancia en la optimización.
-F_TOL = 1e-6
+F_TOL = 1e-9
 
 # ## Variantes de optimización
 
