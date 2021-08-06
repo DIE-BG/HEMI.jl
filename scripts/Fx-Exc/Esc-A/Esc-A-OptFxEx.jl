@@ -1,4 +1,20 @@
 # Script con optimización y evaluación, con datos y configuración de simulación hasta 2019
+"""
+Escenario A: replica del trabajo efectuado en 2020 (criterios básicos a dic-19)
+
+En este script se realizaron pruebas para la comprobación de los resultados MATLAB-JULIA. 
+Por consiguiente se llevó a cabo la óptimización de la medida de exclusión fija (según la hoja de ruta no era necesario)
+
+Se comprobó que los resultados fueran consistentes con MATLAB y se procedió a realizar el Escenario A en el script "Esc-A-Medidas.jl"
+
+Los parámetros de configuración para la optimización fueron los siguientes:
+
+ 1. Período de Evaluación: Diciembre 2001 - Diciembre 2019, `ff = Date(2019, 12)`.
+ 2. Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años,  [`InflationTotalRebaseCPI(36, 2)`].
+ 3. Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [`ResampleScrambleVarMonths()`].
+ 4. Muestra completa para evaluación, [`SimConfig`].
+"""
+
 ## carga de paquetes
 using DrWatson
 @quickactivate "HEMI"
@@ -194,7 +210,7 @@ FxEx_10 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000
+    :nsim => 10_000,
     :traindate => ff10) |> dict_list
 
 savepath = datadir("results","Fx-Exc","Esc-1","Base10-10K")  
