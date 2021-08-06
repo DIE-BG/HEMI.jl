@@ -21,8 +21,9 @@ struct InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
     alpha::Float64
 end
 
-# Método de conveniencia para definir sobre parámetro de suavizamiento real
-# InflationExpSmoothing(inflfn::F, a::Real) where {F} = InflationExpSmoothing(F, convert(Float64, a))
+# Método de conveniencia para definir sobre parámetro de suavizamiento Enteros
+InflationExpSmoothing(inflfn::InflationFunction,alpha::Int)=
+    InflationExpSmoothing(inflfn::InflationFunction,convert(Float64,alpha))
 
 # Método que opera sobre CountryStructure: computa la trayectoria de inflación
 # con la función inflfn y luego computa el promedio con suavizamiento exponencial con el parámetro
@@ -35,7 +36,7 @@ function (esfn::InflationExpSmoothing)(cs::CountryStructure)
     # Algoritmo de promedio con suavizamiento exponencial
     k = esfn.alpha
     k == 1 && return tray_infl
-    k == 0 && return ones(length(tray_infl))*tray_infl[length(tray_infl)]
+    k == 0 && return ones(length(tray_infl))*tray_infl[1]
 
     # Computar el promedio con suavizamiento exponencial (in-place)
     es_tray_infl = smoothing_exponential(tray_infl, k)
@@ -62,10 +63,9 @@ end
 function smoothing_exponential(v, k)
     es = similar(v)
     n = length(es)
-    es[1] = v[n]
-    es[2] = v[n]
-    for j = 3:(n)
-        es[j] = es[j-1] + (v[n-j+2] - es[(j-1)])*k
+    es[1] = v[1]
+    for j = 2:(n)
+        es[j] = es[j-1] + (v[j] - es[(j-1)])*k
     end
-    es = reverse(es)
+    es 
 end 
