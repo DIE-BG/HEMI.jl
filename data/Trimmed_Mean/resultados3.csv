@@ -1,2 +1,0 @@
-measure,optim,mse,dates,resample,trend,N_iter,param
-InflationTrimmedMeanWeighted,"(38.60325f0, 86.02319f0)",3.0909479,Jan-2001:Dec-2010,ResampleSBB-36,TrendRandomWalk,125000,ParamTotalCPIRebase

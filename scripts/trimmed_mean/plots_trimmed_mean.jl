@@ -66,7 +66,12 @@ p = plot(layer1,layer2,
         text(xmin_params-6, ymin_params-4, "($xmin_params, $ymin_params) \n mse = $min_mse"))
     ),
     Guide.xlabel("ℓ₁"),
-    Guide.ylabel("ℓ₂")
+    Guide.ylabel("ℓ₂"),
+    Theme(background_color="white",
+        major_label_font="CMU Serif", 
+        minor_label_font="CMU Serif",
+        key_label_font="CMU Serif",
+        key_title_font="CMU Serif"),
 )
 
 img = SVG(NAMES[k][3], 6inch, 4inch)
@@ -75,16 +80,21 @@ draw(img, p)
 OPTIM  = [(61.0f0, 76.0f0), (56.94879f0, 88.43475f0), (38.60325f0, 86.02319f0), (17.221561f0, 97.95325f0), (62.0f0, 84.0f0), (17.23389f0, 97.624054f0)]
 OPTIM2 = [(round(Float64(x[1]);digits=2),round(Float64(x[2]),digits=2)) for x in OPTIM]
 
-lay1 = layer(x=Dates_gtdata, y=InflationTotalCPI()(gtdata), Geom.line, Theme(default_color="green"))
-lay2 = layer(x=Dates_gtdata, y=InflationTrimmedMeanEq(OPTIM[1])(gtdata), Geom.line, Theme(default_color="blue"))
-lay3 = layer(x=Dates_gtdata, y=InflationTrimmedMeanEq(OPTIM[2])(gtdata), Geom.line, Theme(default_color="red"))
-lay4 = layer(x=Dates_gtdata, y=InflationTrimmedMeanWeighted(OPTIM[3])(gtdata), Geom.line, Theme(default_color="orange"))
-lay5 = layer(x=Dates_gtdata, y=InflationTrimmedMeanWeighted(OPTIM[4])(gtdata), Geom.line, Theme(default_color="purple"))
+lay0 = layer(x=Dates_gtdata, y=[4.0 for x in Dates_gtdata] .-4 , Geom.line, Theme(default_color="black"))
+lay1 = layer(x=Dates_gtdata, y=InflationTotalCPI()(gtdata) .-4, Geom.line, Theme(default_color="green"))
+lay2 = layer(x=Dates_gtdata, y=InflationTrimmedMeanEq(OPTIM[1])(gtdata) .-4, Geom.line, Theme(default_color="blue"))
+lay3 = layer(x=Dates_gtdata, y=InflationTrimmedMeanEq(OPTIM[2])(gtdata) .-4, Geom.line, Theme(default_color="red"))
+lay4 = layer(x=Dates_gtdata, y=InflationTrimmedMeanWeighted(OPTIM[3])(gtdata) .-4, Geom.line, Theme(default_color="orange"))
+lay5 = layer(x=Dates_gtdata, y=InflationTrimmedMeanWeighted(OPTIM[4])(gtdata) .-4, Geom.line, Theme(default_color="purple"))
+lay6 = layer(x=[Dates_gtdata[1],Dates_gtdata[1],Dates_gtdata[end],Dates_gtdata[end]],
+        y=[3.0,5.0,5.0,3.0] .-4 , Geom.polygon(preserve_order=true, fill=true))
 
-plot(lay1,lay2, lay3, lay4, lay5,
-    Coord.cartesian(xmin=Dates_gtdata[1], xmax=Dates_gtdata[end]),
+plot(lay0 ,lay1,lay2, lay3, lay4, lay5, lay6,
+    Coord.cartesian(xmin=Dates_gtdata[1], xmax=Dates_gtdata[end] ),
     Guide.xlabel(""),
     Guide.ylabel("π"),
+    Scale.y_asinh,
+    Guide.title("Comparación de medidas óptimas de inflación"),
     Guide.manual_color_key("", 
         ["π total", 
         "Eq"*string(OPTIM2[1]),
@@ -92,5 +102,9 @@ plot(lay1,lay2, lay3, lay4, lay5,
         "W"*string(OPTIM2[3]),
         "W"*string(OPTIM2[4]),
         ], 
-        ["green", "blue", "red", "orange", "purple"])
+        ["green", "blue", "red", "orange", "purple"]),
+        Theme(background_color="white",key_position=:bottom,
+            major_label_font="CMU Serif", 
+            minor_label_font="CMU Serif",
+            key_label_font="CMU Serif"),
 )

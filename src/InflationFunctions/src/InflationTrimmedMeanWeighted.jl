@@ -53,6 +53,8 @@ CPIDataBase.params(inflfn::InflationTrimmedMeanWeighted) = (inflfn.l1, inflfn.l2
 function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T     
     l1 = inflfn.l1
     l2 = inflfn.l2
+    # l1 = min(inflfn.l1, inflfn.l2) 
+    # l2 = max(inflfn.l1, inflfn.l2)  
     outVec   = Vector{T}(undef, periods(base))                         
     # para cada t: creamos parejas de variaciones con pesos,
     # ordenamos de acuerdo a variaciones, truncamos
@@ -102,14 +104,14 @@ function (inflfn::InflationTrimmedMeanWeighted)(base::VarCPIBase{T}) where T
     
     outVec
 end
-
+# Método para recibir argumentos en forma de tupla
 InflationTrimmedMeanWeighted(factors::Tuple{Real, Real}) = InflationTrimmedMeanWeighted(
     convert(Float32, factors[1]), 
     convert(Float32, factors[2])
 )
 
-# Método para recibir argumentos como par en una lista.
-function (InflationTrimmedMeanWeighted)(factor_vec::Vector{<:Real})
+# Método para recibir argumentos en forma de vector
+function InflationTrimmedMeanWeighted(factor_vec::Vector{<:Real})
     length(factor_vec) != 2 && return @error "Dimensión incorrecta del vector"
     InflationTrimmedMeanWeighted(
         convert(Float32, factor_vec[1]),

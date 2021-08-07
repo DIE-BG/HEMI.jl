@@ -51,6 +51,7 @@ function InflationTrimmedMeanEq(l1::Real,l2::Real)
     # Obtener los recortes adecuados en tiempo de construcción
     leftPercentile, rightPercentile = min(l1, l2), max(l1, l2)   
     InflationTrimmedMeanEq(l1=Float32(leftPercentile), l2=Float32(rightPercentile))
+    # InflationTrimmedMeanEq(Float32(l1), Float32(l1))
 end
 
 """
@@ -81,7 +82,9 @@ CPIDataBase.params(inflfn::InflationTrimmedMeanEq) = (inflfn.l1, inflfn.l2)
 function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T 
     # Obtener los percentiles de recorte 
     l1 = inflfn.l1
-    l2 = inflfn.l2                                          
+    l2 = inflfn.l2
+    # l1 = min(inflfn.l1, inflfn.l2) 
+    # l2 = max(inflfn.l1, inflfn.l2)                                          
     
     # Determinamos en dónde truncar
     q1      = Int(ceil(length(base.w) * l1 / 100))                        
@@ -114,14 +117,14 @@ function (inflfn::InflationTrimmedMeanEq)(base::VarCPIBase{T}) where T
 end 
 
 
-# Método para recibir argumentos como par en una tupla.
+# Método para recibir argumentos en forma de tupla
 InflationTrimmedMeanEq(factors::Tuple{Real, Real}) = InflationTrimmedMeanEq(
     convert(Float32, factors[1]), 
     convert(Float32, factors[2])
 )
 
-# Método para recibir argumentos como par en una lista.
-function (InflationTrimmedMeanEq)(factor_vec::Vector{<:Real})
+# Método para recibir argumentos en forma de vector
+function InflationTrimmedMeanEq(factor_vec::Vector{<:Real})
     length(factor_vec) != 2 && return @error "Dimensión incorrecta del vector"
     InflationTrimmedMeanEq(
         convert(Float32, factor_vec[1]),
