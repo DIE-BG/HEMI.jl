@@ -6,15 +6,6 @@ using DataFrames
 using Gadfly
 using Compose
 
-dir_list    = ["MTEq_SBB36_RW_N10000_Rebase(60)_2020-12",
-               "MTEq_SVM_RW_N10000_Rebase(60)_2020-12",
-               "MTW_SBB36_RW_N10000_Rebase(60)_2020-12",
-               "MTW_SVM_RW_N10000_Rebase(60)_2020-12",
-               "MTEq_SVM_RW_N10000_Rebase(36,2)_2019-12",
-               "MTW_SVM_RW_N10000_Rebase(36,2)_2019-12",
-]
-
-dir = "MTEq_SVM_RW_Rebase36_N999_2019-12"
 
 function plot_grid(dir_name::String, measure=:mse)
             savepath    = datadir("Trimmed_Mean", dir_name)
@@ -62,6 +53,3 @@ function plot_grid(dir_name::String, measure=:mse)
             img = SVG(plotsave, 7.5inch, 5inch)
             draw(img, p)           
 end
-
-#Ejemplo
-#plot_grid.(dir_list);

@@ -1,2 +1,0 @@
-measure,optim,mse,dates,resample,trend,N_iter,param
-InflationTrimmedMeanEq,"(62.0f0, 84.0f0)",0.29161534,Jan-2001:Dec-2010,ResampleScrambleVarMonths,TrendRandomWalk,125000,ParamTotalCPILegacyRebase

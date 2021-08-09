@@ -57,4 +57,5 @@ end
 
 # EJEMPLO: 
 #grid_batch(gtdata,InflationTrimmedMeanEq, ResampleSBB(36), TrendRandomWalk(),499, 10:20, 97:99,InflationTotalRebaseCPI(36,2),Date(2020,12))
-grid_batch(gtdata,InflationTrimmedMeanEq, ResampleScrambleVarMonths(), TrendRandomWalk(), 999, 45:70, 70:99,InflationTotalRebaseCPI(36,2),Date(2019,12))
+
+
