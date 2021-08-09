@@ -91,7 +91,7 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
         qinf, qsup, # Límites
         q0, # Punto inicial
         NelderMead(), # Método
-        Optim.Options(f_abstol = 1e-4, show_trace = true, extended_trace=true))
+        Optim.Options(x_abstol = 1e-4, f_abstol = 1e-4, show_trace = true, extended_trace=true))
 
     println(optres)
     @info "Resultados de optimización:" min_mse=minimum(optres) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
@@ -102,6 +102,7 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
         "n" => n, 
         "q" => Optim.minimizer(optres), 
         "mse" => minimum(optres),
+        "K" => K,
         "optres" => optres
     )
 
@@ -117,18 +118,24 @@ end
 ## Generar optimización de variantes 
 
 savepath = datadir("results", "CoreMai", "Esc-A", "Optim")
+K = 10_000
 
-## Optimización de métodos MAI-F
-optimizemai(3, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(4, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(5, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
+## Optimización de métodos MAI
 
-## Optimización de métodos MAI-G
-optimizemai(3, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(4, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(5, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
+# Optimización de métodos MAI-F
+optimizemai(3, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(4, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(5, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(10, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
 
-## Optimización de métodos MAI-FP
-optimizemai(3, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(4, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
-optimizemai(5, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=10_000, savepath=savepath)
+# Optimización de métodos MAI-G
+optimizemai(3, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(4, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(5, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(10, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+
+# Optimización de métodos MAI-FP
+optimizemai(3, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(4, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(5, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(10, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
