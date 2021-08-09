@@ -38,6 +38,24 @@ La variante FP consiste en la aplicación directa de la metodología de MAI-G ut
 | MAI (FP,20) | 0.9323 |         0.0006 |
 | MAI (FP,40) | 1.3337 |         0.0007 |
 
+### Combinación lineal óptima 
+
+| Medida     | Ponderador |
+| ---------- | ---------- |
+| MAI (F,4)  | 0.78338    |
+| MAI (G,4)  | 0.11850    |
+| MAI (F,5)  | -0.27381   |
+| MAI (G,5)  | -0.0408    |
+| MAI (F,10) | 0.23939    |
+| MAI (G,10) | -0.02522   |
+| MAI (F,20) | -0.09705   |
+| MAI (G,20) | 0.04821    |
+| MAI (F,40) | 0.16584    |
+| MAI (G,40) | 0.05460    |
+
+| Medida          |    MSE | Error estándar |
+| :-------------- | -----: | -------------: |
+| Combinación MAI | 0.2172 |         0.0002 |
 
 ## Descomposición aditiva del MSE
 
@@ -61,7 +79,6 @@ La variante FP consiste en la aplicación directa de la metodología de MAI-G ut
 | MAI (FP,20) | 0.9323 |      0.0461 |         0.4659 |           0.4203 |
 | MAI (FP,40) | 1.3337 |      0.0444 |         0.5985 |           0.6909 |
 
-
 ### Metodologías MAI-G
 
 | Medida     |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
@@ -72,28 +89,32 @@ La variante FP consiste en la aplicación directa de la metodología de MAI-G ut
 | MAI (G,20) |  0.684 |       0.103 |         0.0657 |           0.5152 |
 | MAI (G,40) | 0.7861 |       0.091 |         0.0993 |           0.5957 |
 
+### Combinación lineal óptima 
 
+| Medida          |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :-------------- | -----: | ----------: | -------------: | ---------------: |
+| Combinación MAI | 0.2172 |      0.0386 |         0.0119 |           0.1667 |
 
 ## Métricas de evaluación 
 
 ### Metodologías MAI-F
-| Medida      |   RMSE | Error medio |    MAE |  Huber | Correlación |
-| :---------- | -----: | ----------: | -----: | -----: | ----------: |
-| MAI (F,4)   | 0.5984 |      0.2992 | 0.4805 | 0.1812 |      0.9826 |
-| MAI (F,5)   | 0.5464 |      0.2093 | 0.4407 | 0.1512 |      0.9824 |
-| MAI (F,10)  | 0.6101 |     -0.0803 |  0.479 | 0.1805 |      0.9802 |
-| MAI (F,20)  | 0.9007 |     -0.0203 | 0.7652 | 0.3754 |      0.9526 |
-| MAI (F,40)  | 1.0759 |     -0.0069 | 0.9359 | 0.5141 |      0.9228 |
+| Medida     |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :--------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4)  | 0.5984 |      0.2992 | 0.4805 | 0.1812 |      0.9826 |
+| MAI (F,5)  | 0.5464 |      0.2093 | 0.4407 | 0.1512 |      0.9824 |
+| MAI (F,10) | 0.6101 |     -0.0803 |  0.479 | 0.1805 |      0.9802 |
+| MAI (F,20) | 0.9007 |     -0.0203 | 0.7652 | 0.3754 |      0.9526 |
+| MAI (F,40) | 1.0759 |     -0.0069 | 0.9359 | 0.5141 |      0.9228 |
 
 
 ### Metodologías MAI-G
-| Medida      |   RMSE | Error medio |    MAE |  Huber | Correlación |
-| :---------- | -----: | ----------: | -----: | -----: | ----------: |
-| MAI (G,4)   | 0.9332 |      0.1589 | 0.7923 | 0.3985 |      0.9708 |
-| MAI (G,5)   | 0.9409 |     -0.0288 | 0.8113 | 0.4093 |      0.9683 |
-| MAI (G,10)  | 0.8344 |     -0.2231 | 0.6836 | 0.3234 |      0.9665 |
-| MAI (G,20)  | 0.8182 |     -0.2405 | 0.6563 | 0.3078 |      0.9612 |
-| MAI (G,40)  | 0.8774 |     -0.2053 | 0.7029 |  0.346 |      0.9561 |
+| Medida     |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :--------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (G,4)  | 0.9332 |      0.1589 | 0.7923 | 0.3985 |      0.9708 |
+| MAI (G,5)  | 0.9409 |     -0.0288 | 0.8113 | 0.4093 |      0.9683 |
+| MAI (G,10) | 0.8344 |     -0.2231 | 0.6836 | 0.3234 |      0.9665 |
+| MAI (G,20) | 0.8182 |     -0.2405 | 0.6563 | 0.3078 |      0.9612 |
+| MAI (G,40) | 0.8774 |     -0.2053 | 0.7029 |  0.346 |      0.9561 |
 
 
 ### Metodologías MAI-FP
@@ -106,3 +127,14 @@ La variante FP consiste en la aplicación directa de la metodología de MAI-G ut
 | MAI (FP,10) | 0.6700 |     -0.2435 | 0.5133 | 0.2116 |      0.9801 |
 | MAI (FP,20) | 0.9601 |     -0.1603 | 0.8261 | 0.4192 |      0.9536 |
 | MAI (FP,40) | 1.1498 |     -0.1556 | 1.0215 | 0.5795 |      0.9196 |
+
+### Combinación lineal óptima 
+
+| Medida          |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :-------------- | -----: | ----------: | -----: | -----: | ----------: |
+| Combinación MAI | 0.4599 |      0.0099 | 0.3554 | 0.1064 |      0.9861 |
+
+
+## Trayectoria de inflación observada
+
+![Trayectoria observada](images/mai/MAI-optima-MSE.svg)
