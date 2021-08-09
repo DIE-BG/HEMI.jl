@@ -147,9 +147,18 @@ DrWatson.default_prefix(::CrossEvalConfig) = "HEMI-CrossEvalConfig"
 # Definición de formato para guardado de archivos relacionados con la configuración
 DEFAULT_CONNECTOR = ", "
 DEFAULT_EQUALS = "="
+DEFAULT_DATE_FORMAT = DateFormat("uyy")
 
-DrWatson.savename(conf::SimConfig, suffix::String = "jld2") = 
-    savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)
+function DrWatson.savename(config::SimConfig, suffix::String = "jld2")
+    join([
+        measure_tag(config.inflfn), # Función de inflación 
+        method_tag(config.resamplefn), # Función de remuestreo 
+        method_tag(config.trendfn), # Función de tendencia
+        measure_tag(config.paramfn), # Función de inflación paramétrica de evaluación
+        config.nsim > 1000 ? string(config.nsim ÷ 1000) * "k" : string(config.nsim), # Número de simulaciones, 
+        Dates.format(config.traindate, DEFAULT_DATE_FORMAT)
+    ], DEFAULT_CONNECTOR) * "." * suffix
+end
 
 DrWatson.savename(conf::CrossEvalConfig, suffix::String = "jld2") = 
     savename(conf, suffix; connector=DEFAULT_CONNECTOR, equals=DEFAULT_EQUALS)

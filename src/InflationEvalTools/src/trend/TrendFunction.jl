@@ -107,6 +107,7 @@ end
 
 # Nombre para la función de tendencia de caminata aleatoria
 method_name(::TrendRandomWalk) = "Tendencia de caminata aleatoria"
+method_tag(::TrendRandomWalk) = "RW"
 
 ## Definición del tipo para tendencia con función anónima
 
@@ -154,7 +155,7 @@ end
 
 # Nombre para función analítica de tendencia, debe proveerse en el constructor
 method_name(trendfn::TrendAnalytical) = trendfn.name
-
+method_tag(::TrendAnalytical) = "TA" # depende del vector generado por la función anónima
 
 ## Definición del tipo para función de tendencia neutra
 
@@ -184,6 +185,7 @@ struct TrendIdentity <: TrendFunction end
 
 # Nombre para la función de tendencia identidad
 method_name(::TrendIdentity) = "Tendencia identidad"
+method_tag(::TrendIdentity) = "ID"
 
 # Se redefine para devolver el mismo CountryStructure sin alteración
 function (trendfn::TrendIdentity)(cs::CountryStructure)
@@ -261,5 +263,6 @@ end
 
 # Nombre para la función de tendencia identidad
 method_name(trendfn::TrendExponential) = "Tendencia de crecimiento exponencial al " * string(round(100 * trendfn.rate, digits=2)) * "%"
+method_name(::TrendExponential) = "EXP" * string(round(100 * trendfn.rate, digits=2)) * "%"
 
 

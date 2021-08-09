@@ -23,7 +23,7 @@ get_param_function(::ResampleSBB) = param_sbb
 
 # Definir el nombre y la etiqueta del método de remuestreo 
 method_name(resamplefn::ResampleSBB) = "Block bootstrap estacionario con bloque esperado " * string(resamplefn.expected_l) 
-method_tag(resamplefn::ResampleSBB) = string(nameof(resamplefn)) * "-" * string(resamplefn.expected_l)
+method_tag(resamplefn::ResampleSBB) = "SBB-" * string(resamplefn.expected_l)
 
 ## Comportamiento de la función de remuestreo de Stationary Block Bootstrap
 
