@@ -73,10 +73,16 @@ end
 
 function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param; 
     savepath,
-    K = 10_000)
+    K = 10_000, 
+    qstart = nothing)
 
     # Puntos iniciales
-    q0 = collect(1/n:1/n:(n-1)/n) 
+    if isnothing(qstart)
+        q0 = collect(1/n:1/n:(n-1)/n) 
+    else
+        q0 = qstart
+    end
+
     # Se dejan los límites entre 0 y 1 y las restricciones de orden e
     # interioridad se delegan a evalmai
     qinf, qsup = zeros(n), ones(n)
@@ -126,7 +132,8 @@ K = 10_000
 optimizemai(3, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
 optimizemai(4, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
 optimizemai(5, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
-optimizemai(10, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
+optimizemai(10, MaiF, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath, 
+    qstart = [0.20582748170395043, 0.22744133241431963, 0.2955680996803914, 0.4328511200867613, 0.48060500267082573, 0.6375744335608725, 0.741886698802693, 0.7849135647953245, 0.8727808673468107])
 
 # Optimización de métodos MAI-G
 optimizemai(3, MaiG, resamplefn, trendfn, gtdata_eval, tray_infl_param; K, savepath)
