@@ -34,7 +34,7 @@ UPPER_B = [3f0, 3f0]
 PARAM_0 = [0.42424244f0, 1.5151515f0]
 
 # Tolerancia en la optimización.
-F_TOL = 1e-9
+F_TOL = 1e-4
 
 # ## Variantes de optimización
 
@@ -45,7 +45,7 @@ optim_variants = Dict(
     :resamplefn => [ResampleScrambleVarMonths(), ResampleSBB(36)], 
     :trendfn => TrendRandomWalk(),
     :paramfn => [InflationTotalRebaseCPI(36, 2), InflationTotalRebaseCPI(60)],
-    :nsim => 100,
+    :nsim => 125_000,
     :traindate => [Date(2019, 12), Date(2020, 12)]
 ) |> dict_list
 
@@ -55,22 +55,28 @@ optim_variants = Dict(
 
 for variant in optim_variants
 
-    function mse_variant(vecParameters)
+    # Pre-computo de parámetro de inflación
 
-        # Crea configuración de evaluación
-        sim_config = SimConfig(
-            inflfn = variant[:inflfn](vecParameters),
-            resamplefn = variant[:resamplefn], 
-            trendfn = variant[:trendfn], 
-            paramfn = variant[:paramfn],
-            nsim = variant[:nsim],
-            traindate = variant[:traindate]
-        )
+    param = InflationParameter(
+        variant[:paramfn], 
+        variant[:resamplefn], 
+        variant[:trendfn]
+    )
+
+    tray_infl_param = param(DATA[variant[:traindate]])
+
+    function mse_variant(vecParameters)
 
         # Evalua la medida y obtiene el MSE. Se deja una condición par promover la optimización dentro de la región delimitada por los límites superiores e inferiores. 
         if all(LOWER_B .< vecParameters .< UPPER_B)
-            results, _ = makesim(DATA, sim_config, short=true)
-            mse = results[:mse]
+            mse = eval_mse_online(
+                variant[:inflfn](vecParameters),
+                variant[:resamplefn], 
+                variant[:trendfn],
+                DATA[variant[:traindate]], 
+                tray_infl_param; 
+                K = variant[:nsim]
+            )
         else
             mse = 1_000_000
         end
