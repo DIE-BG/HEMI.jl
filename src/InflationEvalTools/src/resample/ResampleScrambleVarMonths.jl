@@ -78,4 +78,4 @@ end
 
 # Definir el nombre y la etiqueta del método de remuestreo 
 method_name(resamplefn::ResampleScrambleVarMonths) = "Bootstrap IID por meses de ocurrencia"
-method_tag(resamplefn::ResampleScrambleVarMonths) = string(nameof(resamplefn))
+method_tag(resamplefn::ResampleScrambleVarMonths) = "SVM"
