@@ -89,7 +89,7 @@ julia> measure_name(percEqfn)
 ```
 """
 measure_name(inflfn::InflationPercentileEq) = "Percentil equiponderado " * string(round(100inflfn.k, digits=2))
-measure_tag(inflfn::InflationPercentileEq) = "PercEq-" * string(round(100inflfn.k, digits=2))
+
 
 # Parámetro de la función de inflación
 params(inflfn::InflationPercentileEq) = (inflfn.k, )

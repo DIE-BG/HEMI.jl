@@ -11,9 +11,6 @@ end
 # 2. Extender el método de nombre 
 measure_name(::InflationSimpleMean) = "Media simple interanual"
 
-# Etiqueta para guardado de archivos
-measure_tag(::InflationSimpleMean) = "SimpleMean"
-
 # Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
 function (inflfn::InflationSimpleMean)(base::VarCPIBase{T}) where T
     #Obtener el indice correspondiente a las variaciones intermensuales

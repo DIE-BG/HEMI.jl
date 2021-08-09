@@ -23,7 +23,7 @@ get_param_function(::ResampleSBB) = param_sbb
 
 # Definir el nombre y la etiqueta del método de remuestreo 
 method_name(resamplefn::ResampleSBB) = "Block bootstrap estacionario con bloque esperado " * string(resamplefn.expected_l) 
-method_tag(resamplefn::ResampleSBB) = string(nameof(resamplefn)) * "-" * string(resamplefn.expected_l)
+method_tag(resamplefn::ResampleSBB) = "SBB-" * string(resamplefn.expected_l)
 
 ## Comportamiento de la función de remuestreo de Stationary Block Bootstrap
 
@@ -38,10 +38,17 @@ function (resample_sbb_fn::ResampleSBB)(vmat::AbstractMatrix, numobsresample::In
     inds = sbb_inds(resample_sbb_fn, numobs, numobsresample, rng)
 
     # Reordenar las filas de la matriz de residuos para generar el remuestreo.
+
     # Los residuos son obtenidos con respecto a los promedios de cada mes.
-    avgmat = monthavg(vmat, numobsresample)
-    residmat = vmat - (@view avgmat[1:numobs, :])
-    resamplemat = avgmat + (@view residmat[inds, :])
+    # avgmat = monthavg(vmat, numobsresample)
+    # residmat = vmat - (@view avgmat[1:numobs, :])
+    # resamplemat = avgmat + (@view residmat[inds, :])
+    
+    # Los residuos son obtenidos con respecto al promedio histórico de cada gasto básico.
+    avgmat = mean(vmat, dims=1)
+    residmat = vmat .- avgmat
+    resamplemat = avgmat .+ (@view residmat[inds, :])
+    
     resamplemat
 end
 

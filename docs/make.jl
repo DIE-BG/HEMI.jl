@@ -1,18 +1,21 @@
 using HEMI
-using CPIDataBase
-using InflationFunctions
-using InflationEvalTools
 using Documenter, Literate
 
-# DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(InflationEvalTools, :DocTestSetup, :(using HEMI); recursive=true)
 
 EXAMPLES_DIR = joinpath(@__DIR__, "..", "scripts", "examples")
 OUTPUT_DIR   = joinpath(@__DIR__, "src", "generated")
 examples = ["explore_data.jl"]
 
+# Función para preprocesar y remover secciones de vscode
+function preprocess(content)
+    return replace(content, r"^##$."ms => "")
+end
+
 for example in examples
     example_path = joinpath(EXAMPLES_DIR, example)
-    Literate.markdown(example_path, OUTPUT_DIR, documenter=true)
+    Literate.markdown(example_path, OUTPUT_DIR, documenter=true, preprocess=preprocess)
 end
 
 example_pages = [
@@ -29,11 +32,17 @@ makedocs(;
         canonical="https://die-bg.github.io/HEMI",
         assets=String[],
     ),
-    doctest = false, 
+    doctest = true, 
     pages=[
         "Acerca" => "index.md",
         "Guía rápida" => "guides/Guia-rapida.md",
         "Ejemplos" => example_pages,
+        "Guía de evaluación" => "guides/Guia-evaluacion.md", 
+        "Evaluación" => [
+            "Escenario A" => [
+                "eval/EscA/evaluacion-dynEx.md"
+            ]
+        ], 
         "API" => 
             ["modules/API.md",
             "modules/HEMI.md",

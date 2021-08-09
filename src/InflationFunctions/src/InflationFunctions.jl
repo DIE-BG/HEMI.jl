@@ -8,6 +8,8 @@ module InflationFunctions
     using CPIDataBase
     using Statistics
     using StatsBase
+    using SparseArrays
+    using RecipesBase
 
     ## Métodos a extender 
     import CPIDataBase: measure_name, measure_tag, params
@@ -50,11 +52,24 @@ module InflationFunctions
     export InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
 
+    ## Subyacente MAI (muestra ampliada implícitamente)
+    export MaiG, MaiF
+    export InflationCoreMai
+    include("mai/TransversalDistr.jl")
+    include("mai/renormalize.jl")
+    include("mai/InflationCoreMai.jl")
+
     ## Exclusión dinámica
     export InflationDynamicExclusion
     include("InflationDynamicExclusion.jl")
 
+    ## Etiquetas 
+    include("inflation_tags.jl")
+
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
+
+    ## Recetas para Gráficas
+    include("recipes/plotrecipes.jl")
 
 end

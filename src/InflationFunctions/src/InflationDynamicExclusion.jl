@@ -42,6 +42,21 @@ Base.@kwdef struct InflationDynamicExclusion <: InflationFunction
     upper_factor::Float32
 end
 
+# Método para recibir argumentos como par en una tupla.
+InflationDynamicExclusion(factors::Tuple{Real, Real}) = InflationDynamicExclusion(
+    convert(Float32, factors[1]), 
+    convert(Float32, factors[2])
+)
+
+# Método para recibir argumentos como par en una lista.
+function (InflationDynamicExclusion)(factor_vec::Vector{<:Real})
+    length(factor_vec) != 2 && return @error "Dimensión incorrectal del vector"
+    InflationDynamicExclusion(
+        convert(Float32, factor_vec[1]),
+        convert(Float32, factor_vec[2])
+    )
+end
+
 """
     measure_name(inflfn::InflationDynamicExclusion)
 
@@ -75,15 +90,6 @@ julia> measure_tag(dynExfn)
 "DynEx(2.0,2.0)"
 ```
 """
-function CPIDataBase.measure_tag(inflfn::InflationDynamicExclusion)
-    round_lower_factor, round_upper_factor = string.(
-        round.(
-            [inflfn.lower_factor, inflfn.upper_factor], digits = 2
-        )
-    )
-    "DynEx($(round_lower_factor),$(round_upper_factor))"
-end
-
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
 CPIDataBase.params(inflfn::InflationDynamicExclusion) = (inflfn.lower_factor, inflfn.upper_factor)
 
@@ -95,7 +101,9 @@ function (inflfn::InflationDynamicExclusion)(base::VarCPIBase)
     std_v = std(base.v, dims = 2)
     mean_v = mean(base.v, dims = 2)
 
-    dynEx_filter = mean_v - (lower_factor .* std_v) .<= base.v .<= mean_v + (upper_factor .* std_v)
+    dynEx_filter = (mean_v - (lower_factor .* std_v)) .<= 
+        base.v .<= 
+        (mean_v + (upper_factor .* std_v))
 
     dynEx_w = base.w' .* dynEx_filter
     dynEx_w = dynEx_w ./ sum(dynEx_w, dims = 2)

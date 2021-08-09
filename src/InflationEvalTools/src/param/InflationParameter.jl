@@ -41,6 +41,7 @@ function Base.show(io::IO, param::AbstractInflationParameter)
     println(io, "|─> TrendFunction     : " * method_name(param.trendfn) )
 end
 
+method_tag(param::InflationParameter) = string("InflParam: [",nameof(param.inflfn),", ",nameof(param.resamplefn),", ",nameof(param.trendfn),"]")
 
 """
     DEFAULT_RESAMPLE_FN
@@ -61,7 +62,9 @@ const DEFAULT_TREND_FN    = TrendRandomWalk()
 """
     ParamTotalCPIRebase()
 
-Función de ayuda para obtener la configuración del parámetro de inflación dado por la función de inflación del IPC con cambio de base sintético, y el método de remuestreo y función de tendencia por defecto.
+Función de ayuda para obtener la configuración del parámetro de inflación dado
+por la función de inflación del IPC con cambio de base sintético, y el método de
+remuestreo y función de tendencia por defecto.
 """
 ParamTotalCPIRebase() = 
     InflationParameter(InflationTotalRebaseCPI(60), DEFAULT_RESAMPLE_FN, DEFAULT_TREND_FN)
@@ -70,11 +73,12 @@ ParamTotalCPIRebase() =
 ParamTotalCPIRebase(resamplefn::ResampleFunction, trendfn::TrendFunction) = 
     InflationParameter(InflationTotalRebaseCPI(60), resamplefn, trendfn)
 
-
 """
     ParamTotalCPI()
 
-Función de ayuda para obtener la configuración del parámetro de inflación dado por la función de inflación del IPC, y el método de remuestreo y funcón de tendencia por defecto.
+Función de ayuda para obtener la configuración del parámetro de inflación dado
+por la función de inflación del IPC, y el método de remuestreo y función de
+tendencia por defecto.
 """
 ParamTotalCPI() = InflationParameter(InflationTotalCPI(), DEFAULT_RESAMPLE_FN, DEFAULT_TREND_FN)
 
@@ -84,8 +88,29 @@ ParamTotalCPI(resamplefn::ResampleFunction, trendfn::TrendFunction) =
 
 
 """
+    ParamTotalCPILegacyRebase()
+
+Función de ayuda para obtener la configuración del parámetro de inflación dado
+por la función de inflación del IPC con cambio de base sintético, y el método de
+remuestreo y función de tendencia por defecto.
+"""
+ParamTotalCPILegacyRebase() = 
+    InflationParameter(InflationTotalRebaseCPI(36, 2), ResampleScrambleVarMonths(), DEFAULT_TREND_FN)
+
+# Función para obtener el parámetro con otra función de remuestreo y otra función de tendencia.
+ParamTotalCPILegacyRebase(resamplefn::ResampleFunction, trendfn::TrendFunction) = 
+    InflationParameter(InflationTotalRebaseCPI(36, 2), resamplefn, trendfn)
+
+    
+"""
     ParamWeightedMean()
 
-Función de ayuda para obtener la configuración del parámetro de inflación dado por la media ponderada interanual y el método de remuestreo por defecto.
+Función de ayuda para obtener la configuración del parámetro de inflación dado
+por la media ponderada interanual y el método de remuestreo por defecto.
 """
-ParamWeightedMean() = error("Este parámetro no está implementado aún")
+ParamWeightedMean() = InflationParameter(InflationWeightedMean(), DEFAULT_RESAMPLE_FN, DEFAULT_TREND_FN)
+
+# Función para obtener el parámetro con otra función de remuestreo y otra
+# función de tendencia.
+ParamWeightedMean(resamplefn::ResampleFunction, trendfn::TrendFunction) = 
+    InflationParameter(InflationWeightedMean(), resamplefn, trendfn)
