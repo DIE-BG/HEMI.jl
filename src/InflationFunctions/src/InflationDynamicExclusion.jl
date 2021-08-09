@@ -75,15 +75,6 @@ julia> measure_tag(dynExfn)
 "DynEx(2.0,2.0)"
 ```
 """
-function CPIDataBase.measure_tag(inflfn::InflationDynamicExclusion)
-    round_lower_factor, round_upper_factor = string.(
-        round.(
-            [inflfn.lower_factor, inflfn.upper_factor], digits = 2
-        )
-    )
-    "DynEx($(round_lower_factor),$(round_upper_factor))"
-end
-
 # Extendemos `params`, que devuelve los parámetros de la medida de inflación
 CPIDataBase.params(inflfn::InflationDynamicExclusion) = (inflfn.lower_factor, inflfn.upper_factor)
 
