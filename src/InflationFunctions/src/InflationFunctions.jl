@@ -63,6 +63,9 @@ module InflationFunctions
     export InflationDynamicExclusion
     include("InflationDynamicExclusion.jl")
 
+    ## Etiquetas 
+    include("inflation_tags.jl")
+
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
 
