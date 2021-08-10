@@ -3,3 +3,7 @@
 
 # Archivos comprimidos en zip 
 **/*.zip
+
+# Resultados en CSV 
+results/**/*.csv
+

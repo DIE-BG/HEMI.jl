@@ -21,7 +21,7 @@ get_param_function(resamplefn::ResampleGSBB) = cs::CountryStructure -> resamplef
 
 # Definir el nombre y la etiqueta del método de remuestreo 
 method_name(resamplefn::ResampleGSBB) = "Block bootstrap estacional con bloque de tamaño " * string(resamplefn.blocklength) 
-method_tag(resamplefn::ResampleGSBB) = string(nameof(resamplefn)) * "-" * string(resamplefn.blocklength)
+method_tag(resamplefn::ResampleGSBB) = "GSBB-" * string(resamplefn.blocklength)
 
 
 # Definición del procedimiento de remuestreo para matrices con las series de

@@ -41,7 +41,8 @@ makedocs(;
         "Guía de evaluación" => "guides/Guia-evaluacion.md", 
         "Evaluación" => [
             "Escenario A" => [
-                "eval/EscA/evaluacion-MAI.md"
+                "eval/EscA/evaluacion-MAI.md", 
+                "eval/EscA/evaluacion-dynEx.md"
             ]
         ],
         "API" => 

@@ -27,7 +27,6 @@ module InflationFunctions
     export InflationMovingAverage
     include("InflationMovingAverage.jl")
 
-
     ## Percentiles equiponderados
     export InflationPercentileEq
     include("InflationPercentileEq.jl")
@@ -62,6 +61,9 @@ module InflationFunctions
     ## Exclusión dinámica
     export InflationDynamicExclusion
     include("InflationDynamicExclusion.jl")
+
+    ## Etiquetas 
+    include("inflation_tags.jl")
 
     ## Desarrollo 
     include("dev/totalcpi_methods.jl")
