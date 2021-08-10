@@ -17,6 +17,7 @@ module InflationEvalTools
     using Reexport
     using StableRNGs
     using OnlineStats: Mean, fit!, merge, value
+    using LinearAlgebra: mul!
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """
@@ -78,6 +79,9 @@ module InflationEvalTools
     include("simulate/simutils.jl")
     include("simulate/eval_mse_online.jl")
 
+    ## Combinación óptima MSE de estimadores 
+    export combination_weights
+    include("combination/combination_weights.jl")
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
