@@ -8,7 +8,7 @@ using Optim
 using Plots
 
 # Funciones de ayuda 
-includet(scriptsdir("mai", "eval-helpers.jl"))
+includet(scriptsdir("mai", "Esc-A", "eval-helpers.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
 savepath = datadir("results", "CoreMai", "Esc-A")
