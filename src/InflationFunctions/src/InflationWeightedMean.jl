@@ -11,9 +11,6 @@ end
 # 2. Extender el método de nombre 
 measure_name(::InflationWeightedMean) = "Media ponderada interanual"
 
-# Etiqueta para guardado de archivos
-measure_tag(::InflationWeightedMean) = "WeightedMean"
-
 # Define cómo opera InflationSimpleMean sobre un objeto de tipo VarCPIBase.
 function (inflfn::InflationWeightedMean)(base::VarCPIBase{T}) where T
     #Obtener el indice correspondiente a las variaciones intermensuales
