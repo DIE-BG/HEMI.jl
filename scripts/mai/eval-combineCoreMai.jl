@@ -12,7 +12,7 @@ includet(scriptsdir("mai", "eval-helpers.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
 savepath = datadir("results", "CoreMai", "Esc-A")
-tray_dir = datadir("results", "CoreMai", "Esc-A", "tray_infl")
+tray_dir = datadir(savepath, "tray_infl")
 plotspath = mkpath(plotsdir("CoreMai"))
 
 # CountryStructure con datos hasta diciembre de 2019
@@ -24,14 +24,14 @@ df_mai = collect_results(savepath)
 
 # Obtener variantes de MAI a combinar. Como se trata de los resultados de 2019,
 # se combinan todas las versiones F y G
-tray_paths = @chain df_mai begin 
+combine_df = @chain df_mai begin 
     filter(:measure => s -> !occursin("FP",s), _)
     select(:measure, :mse, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
     sort(:mse)
 end
 
 # Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
-tray_list_mai = map(tray_paths.tray_path) do path
+tray_list_mai = map(combine_df.tray_path) do path
     tray_infl = load(path, "tray_infl")
 end
 
@@ -53,23 +53,6 @@ tray_infl_pob = param(gtdata_eval)
 # Obtener los ponderadores de combinación óptimos para el cubo de trayectorias
 # de inflación MAI 
 a_optim = combination_weights(tray_infl_mai, tray_infl_pob)
-# A, b = combination_weights(tray_infl_mai, tray_infl_pob)
-
-dfweights = DataFrame(
-    measure = tray_paths.measure, 
-    weight = a_optim
-)
-
-##
-# ## Evaluación de combinación lineal óptima 
-
-tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
-
-## Estadísticos 
-
-metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
-@info "Métricas de evaluación:" metrics...
-
 
 ## Optimización iterativa con Optim 
 
@@ -80,16 +63,31 @@ optres = Optim.optimize(
     Optim.LBFGS(), # Algoritmo 
     Optim.Options(show_trace = true)) 
 
+a_optim_iter = Optim.minimizer(optres)
+
 println(optres)
-println(Optim.minimizer(optres))
+println(a_optim_iter)
 @info "Resultados de optimización:" min_mse=minimum(optres) iterations=Optim.iterations(optres)
 
-# Conformar un DataFrame de ponderadores 
+
+## Conformar un DataFrame de ponderadores 
+
 dfweights = DataFrame(
-    measure = tray_paths.measure, 
-    weight = Optim.minimizer(optres)
+    measure = combine_df.measure, 
+    analytic_weight = a_optim, 
+    iter_weight = a_optim_iter
 )
 
+
+## Evaluación de combinación lineal óptima 
+
+# a_optim = ones(Float32, 10) / 10
+# a_optim = a_optim_iter
+tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
+
+# Estadísticos 
+metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
+@info "Métricas de evaluación:" metrics...
 
 
 ## Prueba con funciones sin utilización de inplace 
@@ -126,11 +124,10 @@ optres = optimize(
     inplace = false, show_trace = true)
 =#
 
-
 ## Generación de gráfica de trayectoria histórica 
 
-tray_infl_mai_obs = mapreduce(inflfn -> inflfn(gtdata), hcat, tray_paths.inflfn)
-tray_infl_maiopt = tray_infl_mai_obs * optres.minimizer
+tray_infl_mai_obs = mapreduce(inflfn -> inflfn(gtdata), hcat, combine_df.inflfn)
+tray_infl_maiopt = tray_infl_mai_obs * a_optim
 
 plot(InflationTotalCPI(), gtdata)
 plot!(infl_dates(gtdata), tray_infl_maiopt, 

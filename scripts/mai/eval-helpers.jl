@@ -1,4 +1,5 @@
 ## Funciones para obtención de ponderadores de la combinación lineal de trayectorias 
+using LinearAlgebra
 
 ## Método de solución analítica de ponderadores de la combinación lineal óptima del MSE 
 function combination_weights(tray_infl, tray_infl_pob)
@@ -6,31 +7,33 @@ function combination_weights(tray_infl, tray_infl_pob)
     T, n, K = size(tray_infl)
 
     # Conformar la matriz de coeficientes
-    tray_infl_T = permutedims(tray_infl, [2, 1, 3])
     A = zeros(eltype(tray_infl), n, n)
-    for j = 1:K
-        A += (@views tray_infl_T[:, :, j] * tray_infl[:, :, j])
+    Atemp = zeros(eltype(tray_infl), n, n)
+    for j in 1:K
+        tray = @view tray_infl[:, :, j]
+        mul!(Atemp, tray', tray)
+        Atemp ./= T
+        A += Atemp
     end
-    # Promedios en el tiempo y realizaciones
-    # fullA = convert.(Float64, A)
-    # fullA /= (T * K)
-    @info size(A)
+    # Promedios en número de realizaciones
+    A /= K
 
-    # fullA = mean(A / T, dims=3)[:, :, 1]
-    fullA = A / (T * K)
-
-    @info size(fullA)
 
     # Interceptos como función del parámetro y las trayectorias a combinar
-    b = vec(mean(tray_infl .* tray_infl_pob, dims=[1, 3]))
-    # fullb = convert.(Float64, b)
-    fullb = b
+    b = zeros(eltype(tray_infl), n)
+    btemp = zeros(eltype(tray_infl), n)
+    for j in 1:K
+        tray = @view tray_infl[:, :, j]
+        mul!(btemp, tray', tray_infl_pob)
+        btemp ./= T
+        b += btemp
+    end
+    # Promedios en número de realizaciones
+    b /= K
 
     # Ponderadores de combinación óptima 
-    @info fullA, fullb 
-    a_optim = fullA \ fullb
+    a_optim = A\b
     a_optim 
-    # fullA, fullb
 end
 
 
