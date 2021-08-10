@@ -47,6 +47,40 @@ function msefn(w, tray_infl, tray_infl_pob)
     mse_prom, mse_grad
 end
 
+## Prueba con funciones sin utilización de inplace 
+#=
+function mseonly(w, tray_infl, tray_infl_pob) 
+    # Trayectoria promedio ponderado entre las medidas a combinar
+    tray_infl_comb = sum(tray_infl .* w', dims=2)
+
+    # Definición del error como función de los ponderadores
+    err_t_k =  tray_infl_comb .- tray_infl_pob
+
+    # Función objetivo
+    # Definición del MSE promedio en función de los ponderadores
+    mse_prom = mean(err_t_k .^ 2)
+    mse_prom
+end
+
+function gradonly(w, tray_infl, tray_infl_pob) 
+    # Trayectoria promedio ponderado entre las medidas a combinar
+    tray_infl_comb = sum(tray_infl .* w', dims=2)
+
+    # Definición del error como función de los ponderadores
+    err_t_k =  tray_infl_comb .- tray_infl_pob
+
+    # Cómputo de gradientes
+    mse_grad = 2 * vec(mean(err_t_k .* tray_infl, dims=[1, 3]))
+    mse_grad
+end
+
+# optres = optimize(
+#     a -> mseonly(a, tray_infl_mai, tray_infl_pob), 
+#     a -> gradonly(a, tray_infl_mai, tray_infl_pob), 
+#     ones(Float32, 10) / 10; 
+#     inplace = false, show_trace = true)
+=#
+
 
 ## Funciones de evaluación de variantes MAI para optimización de cuantiles del algoritmo de renormalización 
 

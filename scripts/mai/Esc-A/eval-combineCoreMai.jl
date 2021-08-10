@@ -70,7 +70,7 @@ println(a_optim_iter)
 @info "Resultados de optimización:" min_mse=minimum(optres) iterations=Optim.iterations(optres)
 
 
-## Conformar un DataFrame de ponderadores 
+## Conformar un DataFrame de ponderadores y guardarlos en un directorio 
 
 dfweights = DataFrame(
     measure = combine_df.measure, 
@@ -78,6 +78,8 @@ dfweights = DataFrame(
     iter_weight = a_optim_iter
 )
 
+weightsfile = datadir(savepath, "mse-weights", "mai-mse-weights.jld2")
+wsave(weightsfile, "mai_mse_weights", a_optim)
 
 ## Evaluación de combinación lineal óptima 
 
@@ -88,41 +90,6 @@ tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
 # Estadísticos 
 metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
 @info "Métricas de evaluación:" metrics...
-
-
-## Prueba con funciones sin utilización de inplace 
-#=
-function mseonly(w, tray_infl, tray_infl_pob) 
-    # Trayectoria promedio ponderado entre las medidas a combinar
-    tray_infl_comb = sum(tray_infl .* w', dims=2)
-
-    # Definición del error como función de los ponderadores
-    err_t_k =  tray_infl_comb .- tray_infl_pob
-
-    # Función objetivo
-    # Definición del MSE promedio en función de los ponderadores
-    mse_prom = mean(err_t_k .^ 2)
-    mse_prom
-end
-
-function gradonly(w, tray_infl, tray_infl_pob) 
-    # Trayectoria promedio ponderado entre las medidas a combinar
-    tray_infl_comb = sum(tray_infl .* w', dims=2)
-
-    # Definición del error como función de los ponderadores
-    err_t_k =  tray_infl_comb .- tray_infl_pob
-
-    # Cómputo de gradientes
-    mse_grad = 2 * vec(mean(err_t_k .* tray_infl, dims=[1, 3]))
-    mse_grad
-end
-
-optres = optimize(
-    a -> mseonly(a, tray_infl_mai, tray_infl_pob), 
-    a -> gradonly(a, tray_infl_mai, tray_infl_pob), 
-    ones(Float32, 10) / 10; 
-    inplace = false, show_trace = true)
-=#
 
 ## Generación de gráfica de trayectoria histórica 
 
