@@ -1,5 +1,4 @@
-# ExpSmoothing.jl - Tipo para computar medias con 
-# suavizamiento exponencial de medidas de inflación
+# ExpSmoothing.jl - Tipo para computar suavizamiento exponencial de medidas de inflación
 
 """
     InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
@@ -22,15 +21,15 @@ struct InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
 end
 
 # 2. Extender el método de nombre  
-measure_name(esfn::InflationExpSmoothing) = "Promedios con suavizamiento exponencial de $(esfn.alpha) parámetros de " * measure_name(esfn.inflfn) 
+measure_name(esfn::InflationExpSmoothing) = "Suavizamiento exponencial con parámetro $(round(esfn.alpha, digits=4)) parámetros de " * measure_name(esfn.inflfn) 
 
-# Etiqueta para guardado de archivos 
-measure_tag(esfn::InflationExpSmoothing) = "ES$(round(esfn.alpha, digits=4))_" * measure_tag(esfn.inflfn) 
+# Función de parámetros 
+CPIDataBase.params(esfn::InflationExpSmoothing) = (esfn.alpha, )
 
 
 # Método de conveniencia para definir sobre parámetro de suavizamiento Enteros
-InflationExpSmoothing(inflfn::InflationFunction,alpha::Int)=
-    InflationExpSmoothing(inflfn::InflationFunction,convert(Float64,alpha))
+InflationExpSmoothing(inflfn::InflationFunction,alpha::Int) =
+    InflationExpSmoothing(inflfn::InflationFunction, convert(Float64,alpha))
 
 # Método que opera sobre CountryStructure: computa la trayectoria de inflación
 # con la función inflfn y luego computa el promedio con suavizamiento exponencial con el parámetro
