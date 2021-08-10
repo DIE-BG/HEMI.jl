@@ -23,7 +23,6 @@ function measure_tag(inflfn::InflationTrimmedMeanEq)
 end
 
 # Media Truncada Ponderada  
- 
 function measure_tag(inflfn::InflationTrimmedMeanWeighted)
     l1 = string(round(inflfn.l1, digits=2))
     l2 = string(round(inflfn.l2, digits=2))
@@ -43,4 +42,6 @@ end
 # Función de inflación total con cambio de base sintético.  (TotalRebaseCPI)
 measure_tag(inflfn::InflationTotalRebaseCPI) = "TRB-($(inflfn.period),$(inflfn.maxchanges))"
 
-
+# Wrapper de medias móviles y suavizamiento exponencial 
+# colocar acá el tag para InflationMovingAverage...
+measure_tag(esfn::InflationExpSmoothing) = "ES$(round(esfn.alpha, digits=4))_" * measure_tag(esfn.inflfn)
