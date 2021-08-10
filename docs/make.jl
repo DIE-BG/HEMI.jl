@@ -41,6 +41,9 @@ makedocs(;
         "Evaluación" => [
             "Escenario A" => [
                 "eval/EscA/evaluacion-dynEx.md"
+            ],            
+            "Escenario B" => [
+                "eval/EscB/evaluacion-dynEx.md"
             ]
         ], 
         "API" => 
