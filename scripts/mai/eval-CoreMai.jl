@@ -14,6 +14,7 @@ addprocs(4, exeflags="--project")
 # ## Configuración para simulaciones
 
 # Funciones de remuestreo y tendencia
+paramfn = InflationTotalRebaseCPI(36, 2)
 resamplefn = ResampleScrambleVarMonths() 
 trendfn = TrendRandomWalk()
 
@@ -29,7 +30,7 @@ config_mai = Dict(
     :inflfn => inflfns, 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
-    :paramfn => InflationTotalRebaseCPI(36, 2), 
+    :paramfn => paramfn, 
     :traindate => Date(2019,12),
     :nsim => 125_000) |> dict_list
 
@@ -54,8 +55,8 @@ df_results = @chain df_mai begin
     sort(:mse)
     filter(:measure => s -> !occursin("FP",s), _)
 end
-
 # select(df_results, :measure => ByRow(s -> match(r"(?:\w), (?:\d{1,2})", s).match |> split))
+
 
 vscodedisplay(df_results)
 pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))

@@ -23,8 +23,7 @@ function measure_tag(inflfn::InflationTrimmedMeanEq)
 end
 
 # Media Truncada Ponderada  
- 
-function measure_tag(inflfn::InflationTrimmedMeanWeighted)
+ function measure_tag(inflfn::InflationTrimmedMeanWeighted)
     l1 = string(round(inflfn.l1, digits=2))
     l2 = string(round(inflfn.l2, digits=2))
     "MTW-(" * l1 * "," * l2 * ")"
@@ -43,4 +42,5 @@ end
 # Función de inflación total con cambio de base sintético.  (TotalRebaseCPI)
 measure_tag(inflfn::InflationTotalRebaseCPI) = "TRB-($(inflfn.period),$(inflfn.maxchanges))"
 
-
+# MAI 
+measure_tag(inflfn::InflationCoreMai) = "MAI" * string(inflfn.method)

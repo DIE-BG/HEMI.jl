@@ -152,7 +152,7 @@ function Base.string(method::AbstractMaiMethod)
     if method.p isa StepRangeLen 
         return "($algorithm," * string(method.n) * ")"
     else
-        return "($algorithm," * string(method.n) * ", " * string(method.p) * ")"
+        return "($algorithm," * string(method.n) * "," * string(round.(method.p[2:end-1], digits=2)) * ")"
     end
 end
 
@@ -194,7 +194,8 @@ InflationCoreMai(method::AbstractMaiMethod) = InflationCoreMai(V, method)
 
 # Nombre de la medida 
 measure_name(inflfn::InflationCoreMai) = "MAI " * string(inflfn.method)
-measure_tag(inflfn::InflationCoreMai) = string(nameof(inflfn)) * string(inflfn.method)
+
+# Parámetros 
 CPIDataBase.params(inflfn::InflationCoreMai) = (inflfn.method, )
 
 
