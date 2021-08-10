@@ -22,10 +22,10 @@ struct InflationExpSmoothing{F <: InflationFunction} <: InflationFunction
 end
 
 # 2. Extender el método de nombre  
-measure_name(esfn::InflationExpSmoothing) = "Promedios con suavizamiento exponencial de $(esfn.alpha) períodos de " * measure_name(esfn.inflfn) 
+measure_name(esfn::InflationExpSmoothing) = "Promedios con suavizamiento exponencial de $(esfn.alpha) parámetros de " * measure_name(esfn.inflfn) 
 
 # Etiqueta para guardado de archivos 
-measure_tag(esfn::InflationExpSmoothing) = "ES$(esfn.alpha)_" * measure_tag(esfn.inflfn) 
+measure_tag(esfn::InflationExpSmoothing) = "ES$(round(esfn.alpha, digits=4))_" * measure_tag(esfn.inflfn) 
 
 
 # Método de conveniencia para definir sobre parámetro de suavizamiento Enteros
