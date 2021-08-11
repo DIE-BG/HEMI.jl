@@ -17,7 +17,7 @@ module InflationEvalTools
     using Reexport
     using StableRNGs
     using OnlineStats: Mean, fit!, merge, value
-    using LinearAlgebra: mul!
+    using LinearAlgebra: det, mul!
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """

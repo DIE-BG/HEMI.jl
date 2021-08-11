@@ -37,6 +37,8 @@ function combination_weights(tray_infl, tray_infl_param)
     # Promedios en número de realizaciones
     b /= K
 
+    @info "Determinante de la matriz de coeficientes" det(A)
+
     # Ponderadores de combinación óptima 
     a_optim = A\b
     a_optim 
