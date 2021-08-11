@@ -26,7 +26,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 ### Evaluación de metodologías MAI-FP
 
-La variante FP consiste en la aplicación directa de la metodología de MAI-G utilizando únicamente distribuciones de ocurrencias. 
 
 | Medida      |    MSE | Error estándar |
 | :---------- | -----: | -------------: |
@@ -138,3 +137,46 @@ La variante FP consiste en la aplicación directa de la metodología de MAI-G ut
 ## Trayectoria de inflación observada
 
 ![Trayectoria observada](images/mai/MAI-optima-MSE.svg)
+
+
+## Optimización de cuantiles 
+
+Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
+
+| Medida                                                              |    MSE | Error estándar |
+| :------------------------------------------------------------------ | -----: | -------------: |
+| MAI (FP,4,[0.32, 0.71, 0.77])                                       | 0.2064 |         0.0001 |
+| MAI (F,4,[0.26, 0.7, 0.81])                                         | 0.2191 |         0.0002 |
+| MAI (G,10,[0.05, 0.24, 0.3, 0.6, 0.62, 0.65, 0.72, 0.7633, 0.7643]) | 0.4732 |         0.0004 |
+| Combinación MAI                                                     | 0.2029 |         0.0002 |
+
+### Ponderadores de combinación lineal 
+
+| Medida                                                              | Ponderador |
+| :------------------------------------------------------------------- | ----------: |
+| MAI (FP,4,[0.32, 0.71, 0.77])                                       | 0.7034     |
+| MAI (F,4,[0.26, 0.7, 0.81])                                         | 0.3006     |
+| MAI (G,10,[0.05, 0.24, 0.3, 0.6, 0.62, 0.65, 0.72, 0.7633, 0.7643]) | -0.0022    |
+
+
+### Descomposición aditiva del MSE
+
+| Medida                                                              |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :------------------------------------------------------------------ | -----: | ----------: | -------------: | ---------------: |
+| MAI (F,4,[0.26, 0.7, 0.81])                                         | 0.2191 |      0.0394 |         0.0056 |           0.1741 |
+| MAI (FP,4,[0.32, 0.71, 0.77])                                       | 0.2064 |      0.0185 |         0.0042 |           0.1836 |
+| MAI (G,10,[0.05, 0.24, 0.3, 0.6, 0.62, 0.65, 0.72, 0.7633, 0.7643]) | 0.4732 |       0.043 |         0.0208 |           0.4094 |
+| Combinación MAI                                                     | 0.2029 |      0.0200 |         0.0042 |           0.1788 |
+
+### Métricas de evaluación 
+
+| Medida                                                              |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :------------------------------------------------------------------ | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4,[0.26, 0.7, 0.81])                                         | 0.4624 |     -0.0131 | 0.3617 | 0.1078 |      0.9859 |
+| MAI (FP,4,[0.32, 0.71, 0.77])                                       | 0.4507 |     -0.0295 | 0.3493 | 0.1017 |      0.9851 |
+| MAI (G,10,[0.05, 0.24, 0.3, 0.6, 0.62, 0.65, 0.72, 0.7633, 0.7643]) | 0.6799 |     -0.0123 | 0.5374 |  0.221 |      0.9674 |
+| Combinación MAI                                                     | 0.4469 |     -0.0144 | 0.3475 | 0.1001 |      0.9855 |
+
+### Trayectoria de inflación observada
+
+![Trayectoria observada](images/mai/MAI-optima-bestOptim-MSE.svg)

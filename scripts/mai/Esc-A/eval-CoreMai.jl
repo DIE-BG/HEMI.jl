@@ -56,8 +56,6 @@ df_results = @chain df_mai begin
     filter(:measure => s -> !occursin("FP",s), _)
 end
 # select(df_results, :measure => ByRow(s -> match(r"(?:\w), (?:\d{1,2})", s).match |> split))
-
-
 vscodedisplay(df_results)
 pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
 
@@ -68,13 +66,10 @@ sens_metrics = @chain df_mai begin
 end 
 # select(:measure, :mse, r"^mse_[bvc]",)
 # select(:measure, :mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
-
 vscodedisplay(sens_metrics)
-
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 
-## 
-# ## Gráficas de resultados
+## Gráficas de resultados
 
 plotspath = mkpath(plotsdir("CoreMai"))
 
