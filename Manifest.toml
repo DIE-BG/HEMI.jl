@@ -363,7 +363,7 @@ uuid = "615f187c-cbe4-4ef1-ba3b-2fcf58d6d173"
 version = "0.1.0"
 
 [[InflationEvalTools]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "JLD2", "OnlineStats", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
+deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "JLD2", "LinearAlgebra", "OnlineStats", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
 path = "src/InflationEvalTools"
 uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 version = "0.2.0"

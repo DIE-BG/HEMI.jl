@@ -42,6 +42,10 @@ end
 # Función de inflación total con cambio de base sintético.  (TotalRebaseCPI)
 measure_tag(inflfn::InflationTotalRebaseCPI) = "TRB-($(inflfn.period),$(inflfn.maxchanges))"
 
+# MAI 
+measure_tag(inflfn::InflationCoreMai) = "MAI" * string(inflfn.method)
+
 # Wrapper de medias móviles y suavizamiento exponencial 
 # colocar acá el tag para InflationMovingAverage...
 measure_tag(esfn::InflationExpSmoothing) = "ES$(round(esfn.alpha, digits=4))_" * measure_tag(esfn.inflfn)
+

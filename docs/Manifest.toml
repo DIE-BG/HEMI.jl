@@ -358,7 +358,7 @@ uuid = "0234f1f7-429e-5d53-9886-15a909be8d59"
 version = "1.12.0+1"
 
 [[HEMI]]
-deps = ["BenchmarkTools", "CPIDataBase", "CSV", "Chain", "DaemonMode", "DataFrames", "DataFramesMeta", "Dates", "Distributions", "DrWatson", "InflationEvalTools", "InflationFunctions", "JLD2", "LaTeXStrings", "MAT", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "Reexport", "StaticArrays", "Statistics", "StatsBase", "TerminalPager"]
+deps = ["BenchmarkTools", "CPIDataBase", "CSV", "Chain", "DaemonMode", "DataFrames", "DataFramesMeta", "Dates", "Distributions", "DrWatson", "InflationEvalTools", "InflationFunctions", "JLD2", "LaTeXStrings", "MAT", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "RecipesBase", "Reexport", "StaticArrays", "Statistics", "StatsBase", "TerminalPager"]
 path = ".."
 uuid = "e7656710-d5c8-11eb-389b-4b79a3cea986"
 version = "0.1.0"
@@ -381,7 +381,7 @@ uuid = "615f187c-cbe4-4ef1-ba3b-2fcf58d6d173"
 version = "0.1.0"
 
 [[InflationEvalTools]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "JLD2", "OnlineStats", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
+deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "JLD2", "LinearAlgebra", "OnlineStats", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
 path = "../src/InflationEvalTools"
 uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 version = "0.2.0"
