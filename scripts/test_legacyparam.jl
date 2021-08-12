@@ -7,6 +7,26 @@ using Plots
 # Datos hasta dic-19
 gtdata_eval = gtdata[Date(2019, 12)]
 
+## Configuración del parámetro de evaluación a dic-19
+
+# Forma manual de configuración del parámetro 
+legacy_param = InflationParameter(
+    InflationTotalRebaseCPI(36, 2), # Cada 36 meses y hasta 2 cambios de base 
+    ResampleScrambleVarMonths(), 
+    TrendRandomWalk()
+)
+
+# Función de ayuda para construcción automática en InflationEvalTools
+legacy_param = ParamTotalCPILegacyRebase(ResampleScrambleVarMonths(), TrendRandomWalk())
+
+
+## Gráfica del parámetro 
+
+tray_infl_param = legacy_param(gtdata_eval)
+plot(infl_dates(gtdata_eval), tray_infl_param, 
+    label="Trayectoria paramétrica")
+# ylims!(0, 20)
+
 ## Realizar evaluación de prueba 
 
 using Distributed

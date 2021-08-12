@@ -23,9 +23,10 @@ module InflationFunctions
     export InflationWeightedMean
     include("InflationWeightedMean.jl")
 
-    ## Método de medias móviles
-    export InflationMovingAverage
+    ## Método de medias móviles y suavizamiento exponencial simple (SES)
+    export InflationMovingAverage, InflationExpSmoothing
     include("InflationMovingAverage.jl")
+    include("InflationExpSmoothing.jl")
 
     ## Percentiles equiponderados
     export InflationPercentileEq
@@ -52,7 +53,7 @@ module InflationFunctions
     include("InflationFixedExclusionCPI.jl")
 
     ## Subyacente MAI (muestra ampliada implícitamente)
-    export MaiG, MaiF
+    export MaiG, MaiF, MaiFP
     export InflationCoreMai
     include("mai/TransversalDistr.jl")
     include("mai/renormalize.jl")
