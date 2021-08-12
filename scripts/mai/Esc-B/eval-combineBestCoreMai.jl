@@ -11,12 +11,12 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
-savepath = datadir("results", "CoreMai", "Esc-A", "bestOptim")
+savepath = datadir("results", "CoreMai", "Esc-B", "bestOptim")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai"))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-B"))
 
-# CountryStructure con datos hasta diciembre de 2019
-gtdata_eval = gtdata[Date(2019, 12)]
+# CountryStructure con datos hasta diciembre de 2020
+gtdata_eval = gtdata[Date(2020, 12)]
 
 
 ## Obtener las trayectorias de simulación de inflación MAI de variantes F y G

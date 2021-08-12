@@ -2,10 +2,15 @@
 using DrWatson
 @quickactivate "HEMI"
 using HEMI 
+using Plots
 
 ## Datos de evaluación 
 const EVALDATE = Date(2020,12)
 gtdata_eval = gtdata[EVALDATE]
+
+## Definimos directorios para almacenar los resultados 
+savepath = datadir("results", "CoreMai", "Esc-B", "Standard")
+plotspath = mkpath(plotsdir("CoreMai", "Esc-B"))
 
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -34,12 +39,8 @@ config_mai = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
-    :traindate => Date(2019,12),
+    :traindate => EVALDATE,
     :nsim => 125_000) |> dict_list
-
-
-# Definimos el folder para almacenar los resultados 
-savepath = datadir("results", "CoreMai", "Esc-B", "Standard")
 
 ## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
@@ -73,10 +74,6 @@ vscodedisplay(sens_metrics)
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 
 ## Gráficas de resultados
-
-plotspath = mkpath(plotsdir("CoreMai"))
-
-using Plots
 
 # Generar las gráficas de las siguientes métricas de evaluación 
 measures = [:mse, :me, :mae, :rmse]
