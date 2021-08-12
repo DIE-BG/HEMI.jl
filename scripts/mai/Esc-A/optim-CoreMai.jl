@@ -18,7 +18,7 @@ addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 ## Funciones de apoyo para optimización iterativa de cuantiles 
-includet(scriptsdir("mai", "Esc-A", "eval-helpers.jl"))
+includet(scriptsdir("mai", "mai-optimization.jl"))
 
 ## Configuración para simulaciones
 # Funciones de remuestreo y tendencia
