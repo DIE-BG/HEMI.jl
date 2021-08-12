@@ -61,6 +61,8 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 | Alimentos y Energéticos 9  |   3.1216 |         0.003  |
 | Energéticos                |  82.0842 |        2.3344  | 
 
+![MSE-MEDIDAS](images/Fx-Ex/MSE-Med.svg)
+
 ## Descomposición aditiva del MSE
 
 |                     Medida | Comp. Sesgo |  Comp. Varianza |  Comp. Covarianza | 
@@ -85,4 +87,7 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 
 ### Exclusión Fija óptima
 
-![Trayectoria observada](images/Fx-Ex/optima.svg)
+![Trayectoria Óptima observada](images/Fx-Ex/optima.svg)
+
+### Medidas de Exclusión Fija
+![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx.svg)

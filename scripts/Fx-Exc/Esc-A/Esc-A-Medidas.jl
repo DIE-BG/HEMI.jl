@@ -94,7 +94,7 @@ annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
           (3, gr[3]+0.2, string(gr[3])[1:4]),
           (4, 4.5, string(gr[4])[1:4]), annotationfontsize = 8)
 
-saveplot = plotsdir("Fx-Exc","Esc-A","MSE-Med")
+saveplot = plotsdir("Fx-Exc","Esc-A","MSE-Med.svg")
 savefig(graf,saveplot)
 
 ## Trayectorias
@@ -106,12 +106,12 @@ Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
 AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
 Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 
-saveplot = plotsdir("Fx-Exc","Esc-A","Óptima.svg")
+saveplot = plotsdir("Fx-Exc","Esc-A","Trayectorias-FxEx.svg")
 
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
 
 tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
-title = "Exclusión Fija Óptima", dpi=200) 
+title = "Medidas de exclusión Fija", dpi=200) 
 
 plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
 plot!(plotrng, Energ, label = "Energéticos")
