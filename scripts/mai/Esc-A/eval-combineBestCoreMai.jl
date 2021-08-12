@@ -13,7 +13,7 @@ includet(scriptsdir("mai", "mai-optimization.jl"))
 # Obtenemos el directorio de trayectorias resultados 
 savepath = datadir("results", "CoreMai", "Esc-A", "bestOptim")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai"))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-A"))
 
 # CountryStructure con datos hasta diciembre de 2019
 gtdata_eval = gtdata[Date(2019, 12)]
