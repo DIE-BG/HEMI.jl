@@ -106,7 +106,7 @@ Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
 AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
 Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 
-saveplot = plotsdir("Fx-Exc","Esc-A","Óptima")
+saveplot = plotsdir("Fx-Exc","Esc-A","Óptima.svg")
 
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
 
@@ -116,9 +116,41 @@ title = "Exclusión Fija Óptima", dpi=200)
 plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
 plot!(plotrng, Energ, label = "Energéticos")
 plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)")  
-plot!(plotrng, tot, label = "Inflación Total", linestyle=:dash, color=[:black])
+plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 
 hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
     
 savefig(tray_plot,saveplot)
+
+
+
+## Tabla Markdown
+using Chain
+using PrettyTables
+savepath = datadir("results","Fx-Exc","Esc-A","Medidas")
+df = collect_results(savepath)
+gr_l = ["Exclusión Óptima","Alimentos y Energéticos 11","Alimentos y Energéticos 9","Energéticos"]
+# Exc_1019[!,:exclusiones] = exclusiones 
+sens_metrics = @chain df begin 
+    select(:mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+insertcols!(sens_metrics, 1, :medida => gr_l)
+# sens_metrics[!,:medida] = gr_l
+vscodedisplay(sens_metrics)
+
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
+
+"""
+|                     medida |      mse | mse_std_error | mse_bias |  mse_var |  mse_cov |     rmse |       me |      mae |    huber |     corr |
+|                     String | Float32? |      Float64? | Float32? | Float32? | Float32? | Float32? | Float32? | Float32? | Float64? | Float32? |
+|----------------------------|----------|---------------|----------|----------|----------|----------|----------|----------|----------|----------|
+|           Exclusión Óptima |   0.6422 |        0.0006 |   0.1263 |   0.1408 |   0.3752 |   0.7919 |  -0.3051 |   0.6407 |   0.2901 |   0.9731 |
+| Alimentos y Energéticos 11 |   0.8667 |        0.0016 |   0.1836 |   0.2534 |   0.4297 |   0.9102 |  -0.3668 |   0.7396 |   0.3659 |   0.9707 |
+|  Alimentos y Energéticos 9 |   3.1216 |         0.003 |   2.3603 |   0.1495 |   0.6117 |   1.7542 |  -1.5135 |   1.5924 |   1.1134 |    0.954 |
+|                Energéticos |  82.0842 |        2.3344 |  10.4907 |  62.9358 |   8.6577 |   4.2484 |   1.6031 |   2.3149 |   1.9144 |   0.7678 |
+
+"""
+
