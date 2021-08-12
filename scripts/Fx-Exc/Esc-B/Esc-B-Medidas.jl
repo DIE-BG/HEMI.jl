@@ -43,16 +43,16 @@ paramfn    = InflationTotalRebaseCPI(36,2)
 ff = Date(2020,12)
 
 ## Vectores de exclusión por medida
-# 1. Exclusión fija de Alimentos y energéticos variante 11
+# 1. Exclusión fija de Alimentos y energéticos variante 11 (21,31)
 exc_ae1 = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
 
-# Exclusión fija de Energéticos 
+# Exclusión fija de Energéticos (2,4)
 exc_e  = ([104, 159], vcat(116, collect(184:186)))
 
-# Exclusión fija de Alimentos y energéticos variante 9
+# Exclusión fija de Alimentos y energéticos variante 9 (64,80)
 exc_ae2 = (vcat(collect(1:62), 104, 159), vcat(collect(1:74), collect(116:118), collect(184:186)))
 
-# 4. Exclusión fija óptima 
+# 4. Exclusión fija óptima (14,18)
 opt00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
 ## Cambio aquí!
 opt10 = [29, 46, 39, 31, 116, 40, 30, 186, 35, 47, 197, 41, 22, 185, 48, 34, 37, 184]
@@ -95,7 +95,7 @@ annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
           (3, gr[3]+0.2, string(gr[3])[1:4]),
           (4, 4.5, string(gr[4])[1:4]), annotationfontsize = 8)
 
-saveplot = plotsdir("Fx-Exc","Esc-B","MSE-Med")
+saveplot = plotsdir("Fx-Exc","Esc-B","MSE-Med.svg")
 savefig(graf,saveplot)
 
 ## Trayectorias
@@ -107,17 +107,17 @@ Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
 AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
 Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 
-saveplot = plotsdir("Fx-Exc","Esc-B","Trayectorias")
+saveplot = plotsdir("Fx-Exc","Esc-B","optima.svg")
 
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
 
 tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
-title = "Medidas de Exclusión Fija", dpi=200) 
+title = "Exclusión Fija Óptima", dpi=200) 
 
 plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
 plot!(plotrng, Energ, label = "Energéticos")
 plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)")  
-plot!(plotrng, tot, label = "Inflación Total", linestyle=:dash, color=[:black])
+plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 
 hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
@@ -136,5 +136,34 @@ tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima 2020",
 plot!(plotrng, opt19, label= "Exclusión Fija Óptima 2019")     
 hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
-saveplot = plotsdir("Fx-Exc","Esc-B","Comp-Optimas")  
+saveplot = plotsdir("Fx-Exc","Esc-B","Comp-Optimas.svg")  
 savefig(tray_plot,saveplot)                             
+
+## Tabla Markdown
+using Chain
+using PrettyTables
+savepath = datadir("results","Fx-Exc","Esc-B","Medidas")
+df = collect_results(savepath)
+gr_l = ["Exclusión Óptima","Alimentos y Energéticos 11","Alimentos y Energéticos 9","Energéticos"]
+# Exc_1019[!,:exclusiones] = exclusiones 
+sens_metrics = @chain df begin 
+    select(:mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+insertcols!(sens_metrics, 1, :medida => gr_l)
+# sens_metrics[!,:medida] = gr_l
+vscodedisplay(sens_metrics)
+
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
+
+"""
+|                     medida |      mse | mse_std_error | mse_bias |  mse_var |  mse_cov |     rmse |       me |      mae |    huber |     corr |
+|                     String | Float32? |      Float64? | Float32? | Float32? | Float32? | Float32? | Float32? | Float32? | Float64? | Float32? |
+|----------------------------|----------|---------------|----------|----------|----------|----------|----------|----------|----------|----------|
+|           Exclusión Óptima |    0.646 |         0.001 |    0.123 |    0.136 |    0.388 |    0.795 |     -0.3 |    0.645 |    0.293 |    0.972 |
+| Alimentos y Energéticos 11 |    0.889 |         0.002 |    0.195 |    0.256 |    0.438 |    0.924 |   -0.385 |    0.753 |    0.377 |     0.97 |
+|  Alimentos y Energéticos 9 |    2.989 |         0.003 |      2.2 |    0.141 |    0.647 |    1.716 |    -1.46 |     1.54 |    1.067 |     0.95 |
+|                Energéticos |   78.363 |         2.212 |     9.86 |   59.895 |    8.609 |     4.24 |    1.645 |    2.322 |    1.918 |    0.758 |
+
+"""
