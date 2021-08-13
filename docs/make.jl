@@ -41,6 +41,7 @@ makedocs(;
         "Evaluación" => [
             "Escenario A" => [
                 "eval/EscA/evaluacion-dynEx.md"
+                "eval/EscA/evaluacion-InflPercentileWeighted.md"
             ]
         ], 
         "API" => 
