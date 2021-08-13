@@ -5,6 +5,7 @@ using JLD2
 
 function grid_optim(dir_name, data, N::Int64, radius, measure=:mse; esc="")
                 savepath    = datadir("results", dir_name)
+                # dir_last    = split(dir_name,"\\")[end]
                 df          = collect_results(savepath)
                 condition   =  measure==:corr   
                 sorted_df   = sort(df,measure, rev=condition)
@@ -19,21 +20,27 @@ function grid_optim(dir_name, data, N::Int64, radius, measure=:mse; esc="")
                 upper_b     = [min(initial_params[1]+radius,100.0f0), min(initial_params[2]+radius,100.0f0)]
                 f = x -> evalperc(x, inflfn, resamplefn, trendfn, data, paramfn, traindate; K = N, measure,lb=lower_b, ub=upper_b)
                 optres = optimize(f, lower_b, upper_b, initial_params, NelderMead(), Optim.Options(iterations=100, g_tol=1.0e-3))
-                min_measure = optres.minimum
                 min_params = optres.minimizer
-                dict = Dict()
-                dict["inflfn"] = inflfn
-                dict["min_param"] = min_params
-                dict["min_measure"] = min_measure*(-1)^Int(condition)
-                dict["resamplefn"] = resamplefn
-                dict["trendfn"] = trendfn
-                dict["paramfn"] = paramfn
-                dict["N"] = N
-                dict["traindate"] = traindate
-                dict["measure"] = measure
-                dictname = "optim_"*join(split(dir_name,"_")[1:4],"_")*"_N"*string(N)*"_"*split(dir_name,"_")[6]*"_"*string(measure)*".jld2"
-                dictsave = datadir("results", string(inflfn), esc, dictname)
-                save(dictsave, dict)
+                # min_measure = optres.minimum
+                # dict = Dict()
+                # dict["inflfn"] = inflfn
+                # dict["min_param"] = min_params
+                # dict["min_measure"] = min_measure*(-1)^Int(condition)
+                # dict["resamplefn"] = resamplefn
+                # dict["trendfn"] = trendfn
+                # dict["paramfn"] = paramfn
+                # dict["N"] = N
+                # dict["traindate"] = traindate
+                # dict["measure"] = measure
+                # dictname = "optim_"*join(split(dir_last,"_")[1:4],"_")*"_N"*string(N)*"_"*split(dir_last,"_")[6]*"_"*string(measure)*".jld2"
+                # dictsave = datadir("results", string(inflfn), esc, dictname)
+                # save(dictsave, dict)
+                INF         = inflfn(min_params)
+                config      = SimConfig(INF, resamplefn, trendfn, paramfn, N, traindate)
+                results, _  = makesim(gtdata, config)
+                filename    = savename(config, "jld2")
+                dir        = datadir("results", string(inflfn), esc, "optim")
+                wsave(joinpath(dir, filename), tostringdict(results))
 
 end
 

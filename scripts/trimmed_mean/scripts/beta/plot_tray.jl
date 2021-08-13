@@ -1,5 +1,6 @@
 using Gadfly
 using DataFrames
+using Colors
 
 inflfn1    = InflationTrimmedMeanEq(57.5, 84)
 inflfn2    = InflationTrimmedMeanWeighted(15,97) 
@@ -34,7 +35,7 @@ plot(lay0,lay1, lay2,
     Guide.colorkey(title="" , pos = [0.0mm, 2.50cm]),
     Guide.yticks(ticks = -1:15),
     Guide.xlabel(""),
-    Guide.ylabel("π"),
+    Guide.ylabel(""),
     Scale.y_continuous,
     Coord.cartesian(xmin=minimum(DF0.fecha), xmax=maximum(DF0.fecha),
                     ymin=minimum(DF0.π)-1, ymax=maximum(DF0.π)+1),

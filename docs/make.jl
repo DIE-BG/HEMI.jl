@@ -42,10 +42,12 @@ makedocs(;
         "Evaluación" => [
             "Escenario A" => [
                 "eval/EscA/evaluacion-MAI.md", 
-                "eval/EscA/evaluacion-dynEx.md"
+                "eval/EscA/evaluacion-dynEx.md", 
+                "eval/EscA/evaluacion-MT.md"
             ],            
             "Escenario B" => [
-                "eval/EscB/evaluacion-dynEx.md"
+                "eval/EscB/evaluacion-dynEx.md",
+                "eval/EscB/evaluacion-MT.md"
             ],
             "Escenario C" => [
                 "eval/EscC/evaluacion-dynEx.md"
