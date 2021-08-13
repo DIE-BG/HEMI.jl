@@ -70,7 +70,7 @@ sim_FxEx = Dict(
     :traindate => ff) |> dict_list
 
 
-savepath = datadir("results","Fx-Exc","Esc-C","C19","Meds")  
+savepath = datadir("results","Fx-Exc","Esc-C","C19","Medidas")  
 
 ## lote de simulación 
 
@@ -86,7 +86,7 @@ df = DataFrame(medida = ["Exclusión Óptima", "Exclusión Energéticos","Alimen
 df = sort!(df, :mse)
 
 gr = [df[1,:mse],df[2,:mse], df[3,:mse],df[4,:mse]]
-gr_l = ["Exc. Óptima","Alim y En. 9","Alim. y En. 11","Energéticos*"]
+gr_l = ["Exc. Óptima","Alim y En. 11","Alim. y En. 9","Energéticos*"]
 graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label=false, ylims=[0, 5], dpi=200)
 title!("MSE - Medidas de Exclusión Fija")       
 annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
@@ -94,7 +94,7 @@ annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
           (3, gr[3]+0.2, string(gr[3])[1:4]),
           (4, 4.5, string(gr[4])[1:4]), annotationfontsize = 8)
 
-saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","MSE-Med")
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","MSE-Med.svg")
 savefig(graf,saveplot)
 
 ## Trayectorias
@@ -106,21 +106,25 @@ Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
 AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
 Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 
-saveplot = plotsdir("Fx-Exc","Esc-C","C-19","Trayectoria")
-
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
+## óptima
+tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
+title = "Medidas basadas en Exclusión Fija", dpi=200) 
+plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 
-tray_plot = plot(plotrng, Opt, label = "Medidas de Exclusión Fija",
-title = "Exclusión Fija Óptima", dpi=200) 
+# hspan!([3,5], color=[:gray], alpha=0.25, label="")
+# hline!([4], linestyle=:dash, color=[:black], label = "") 
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","optima.svg") 
+savefig(tray_plot,saveplot)
 
+## Trayectorias
+tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
+title = "Medidas basadas en Exclusión Fija", dpi=200) 
+plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
 plot!(plotrng, Energ, label = "Energéticos")
-plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)")  
-plot!(plotrng, tot, label = "Inflación Total", linestyle=:dash, color=[:black])
-
-hspan!([3,5], color=[:gray], alpha=0.25, label="")
-hline!([4], linestyle=:dash, color=[:black], label = "")
-    
+plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)") 
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","Trayectorias-FxEx.svg")
 savefig(tray_plot,saveplot)
 
 
@@ -138,3 +142,8 @@ hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
 saveplot = plotsdir("Fx-Exc","Esc-C","C-19","Comp-Optimas")  
 savefig(tray_plot,saveplot)        
+
+
+## Tablas 
+
+df = FxEx

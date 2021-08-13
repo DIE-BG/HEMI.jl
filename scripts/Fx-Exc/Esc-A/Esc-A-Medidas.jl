@@ -86,7 +86,7 @@ df = DataFrame(medida = ["Exclusión Óptima", "Exclusión Energéticos","Alimen
 df = sort!(df, :mse)
 
 gr = [df[1,:mse],df[2,:mse], df[3,:mse],df[4,:mse]]
-gr_l = ["Exc. Óptima","Alim y En. 9","Alim. y En. 11","Energéticos*"]
+gr_l = ["Exc. Óptima","Alim y En. 11","Alim. y En. 9","Energéticos*"]
 graf = plot(gr, seriestype=:bar, xticks = (1:4, gr_l), label=false, ylims=[0, 5], dpi=200)
 title!("MSE - Medidas de Exclusión Fija")       
 annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
@@ -106,21 +106,25 @@ Energ = InflationFixedExclusionCPI(exc_e)(gtdata)
 AE_v2 = InflationFixedExclusionCPI(exc_ae2)(gtdata)
 Opt = InflationFixedExclusionCPI(exc_opt)(gtdata)
 
-saveplot = plotsdir("Fx-Exc","Esc-A","Trayectorias-FxEx.svg")
-
 plotrng = Date(2001, 12):Month(1):Date(2021, 6)
-
+## óptima
 tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
-title = "Medidas de exclusión Fija", dpi=200) 
-
-plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
-plot!(plotrng, Energ, label = "Energéticos")
-plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)")  
+title = "Medidas basadas en Exclusión Fija", dpi=200) 
 plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 
-hspan!([3,5], color=[:gray], alpha=0.25, label="")
-hline!([4], linestyle=:dash, color=[:black], label = "")
-    
+# hspan!([3,5], color=[:gray], alpha=0.25, label="")
+# hline!([4], linestyle=:dash, color=[:black], label = "") 
+saveplot = plotsdir("Fx-Exc","Esc-A","optima.svg") 
+savefig(tray_plot,saveplot)
+
+## Trayectorias
+tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima",
+title = "Medidas basadas en Exclusión Fija", dpi=200) 
+plot!(plotrng, tot, label = "Inflación Total", color=[:black])
+plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
+plot!(plotrng, Energ, label = "Energéticos")
+plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)") 
+saveplot = plotsdir("Fx-Exc","Esc-A","Trayectorias-FxEx.svg")
 savefig(tray_plot,saveplot)
 
 
