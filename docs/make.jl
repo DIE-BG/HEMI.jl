@@ -2,6 +2,7 @@ using HEMI
 using Documenter, Literate
 
 DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(InflationFunctions, :DocTestSetup, :(using HEMI); recursive=true)
 DocMeta.setdocmeta!(InflationEvalTools, :DocTestSetup, :(using HEMI); recursive=true)
 
 EXAMPLES_DIR = joinpath(@__DIR__, "..", "scripts", "examples")
@@ -40,10 +41,17 @@ makedocs(;
         "Guía de evaluación" => "guides/Guia-evaluacion.md", 
         "Evaluación" => [
             "Escenario A" => [
-                "eval/EscA/evaluacion-dynEx.md"
+                "eval/EscA/evaluacion-MAI.md", 
+                "eval/EscA/evaluacion-dynEx.md",
                 "eval/EscA/evaluacion-InflPercentileWeighted.md"
+            ],            
+            "Escenario B" => [
+                "eval/EscB/evaluacion-dynEx.md"
+            ],
+            "Escenario C" => [
+                "eval/EscC/evaluacion-dynEx.md"
             ]
-        ], 
+        ],
         "API" => 
             ["modules/API.md",
             "modules/HEMI.md",
