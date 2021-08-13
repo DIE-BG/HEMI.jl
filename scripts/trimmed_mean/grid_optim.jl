@@ -2,18 +2,9 @@ using Optim
 using DataFrames
 using JLD2
 
-#= dir_list    = ["MTEq_SBB36_RW_N10000_Rebase(60)_2020-12",
-               "MTEq_SVM_RW_N10000_Rebase(60)_2020-12",
-               "MTW_SBB36_RW_N10000_Rebase(60)_2020-12",
-               "MTW_SVM_RW_N10000_Rebase(60)_2020-12",
-               "MTEq_SVM_RW_N10000_Rebase(36,2)_2019-12",
-               "MTW_SVM_RW_N10000_Rebase(36,2)_2019-12",
-]
- =#
-#dir = "MTEq_SVM_RW_Rebase36_N999_2019-12"
 
-function grid_optim(dir_name, data, N::Int64, radius, measure=:mse)
-                savepath    = datadir("Trimmed_Mean", dir_name)
+function grid_optim(dir_name, data, N::Int64, radius, measure=:mse; esc="")
+                savepath    = datadir("results", dir_name)
                 df          = collect_results(savepath)
                 condition   =  measure==:corr   
                 sorted_df   = sort(df,measure, rev=condition)
@@ -41,7 +32,7 @@ function grid_optim(dir_name, data, N::Int64, radius, measure=:mse)
                 dict["traindate"] = traindate
                 dict["measure"] = measure
                 dictname = "optim_"*join(split(dir_name,"_")[1:4],"_")*"_N"*string(N)*"_"*split(dir_name,"_")[6]*"_"*string(measure)*".jld2"
-                dictsave = datadir("Trimmed_Mean","Optim", dictname)
+                dictsave = datadir("results", string(inflfn), esc, dictname)
                 save(dictsave, dict)
 
 end

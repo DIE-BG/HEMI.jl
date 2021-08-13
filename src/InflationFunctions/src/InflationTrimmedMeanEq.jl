@@ -49,7 +49,7 @@ julia> mtfn = InflationTrimmedMeanEq(25, 75.5)
 """
 function InflationTrimmedMeanEq(l1::Real,l2::Real) 
     # Obtener los recortes adecuados en tiempo de construcción
-    InflationTrimmedMeanEq(Float32(l1), Float32(l1))
+    InflationTrimmedMeanEq(Float32(l1), Float32(l2))
 end
 
 """

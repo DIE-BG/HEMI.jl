@@ -1,18 +1,20 @@
-using Base: parameter_upper_bound
-using DrWatson
-@quickactivate "HEMI"
-
-## Cargar el módulo de Distributed para computación paralela
-using Distributed
-# Agregar procesos trabajadores
-addprocs(4, exeflags="--project")
-
-# Cargar los paquetes utilizados en todos los procesos
-@everywhere using HEMI
-
-function grid_batch(data, inflfn, resamplefn, trendfn, N::Int, 
+"""
+    grid_batch(data, inflfn, resamplefn, trendfn, N::Int, 
                     l1_range, l2_range, paramfn, traindate::Date;
                     savetrajectories = false)
+
+Ejecuta `run_batch` de MediaTruncada(l1,l2) ∀ l1 ϵ l1-range,
+l2 ϵ l2-range donde l1<l2
+# Ejemplo: 
+```
+grid_batch(gtdata,InflationTrimmedMeanEq, ResampleScrambleVarMonths(), 
+    TrendRandomWalk(),10_000, 10:20, 90:99,InflationTotalRebaseCPI(36,2),
+    Date(2020,12); esc = "Esc-B")
+```
+"""
+function grid_batch(data, inflfn, resamplefn, trendfn, N::Int, 
+                    l1_range, l2_range, paramfn, traindate::Date;
+                    savetrajectories = false, esc="")
 
                     sims = Dict(
                         :inflfn => inflfn.([(x,y) for x in l1_range for y in l2_range if x<y]), 
@@ -24,12 +26,15 @@ function grid_batch(data, inflfn, resamplefn, trendfn, N::Int,
                     ) |> dict_list
 
                     dir_name = join(alias_savepath.([inflfn,resamplefn,trendfn,paramfn,N,traindate]),"_")
-                    savepath   = datadir("Trimmed_Mean", dir_name)
+                    savepath   = datadir("results", string(inflfn), esc ,dir_name)
 
                     run_batch(data, sims, savepath; savetrajectories)
+                    println("resultados guardados en:")
+                    println(savepath)
 end
 
 
+# Función auxiliar para construir el nombre del directorio donde se guardan las simulaciones
 function alias_savepath(x)
     if x == InflationTrimmedMeanEq
         return "MTEq"
@@ -54,8 +59,5 @@ function alias_savepath(x)
     end
 end
 
-
-# EJEMPLO: 
-#grid_batch(gtdata,InflationTrimmedMeanEq, ResampleSBB(36), TrendRandomWalk(),499, 10:20, 97:99,InflationTotalRebaseCPI(36,2),Date(2020,12))
 
 
