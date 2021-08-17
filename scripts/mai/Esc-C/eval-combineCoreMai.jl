@@ -13,11 +13,11 @@ includet(scriptsdir("mai", "mai-optimization.jl"))
 # Obtenemos el directorio de trayectorias resultados 
 savepath = datadir("results", "CoreMai", "Esc-C", "Standard")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai", "Esc-C"))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-C", "Standard"))
 weightsfile = datadir(savepath, "mse-weights", "mai-mse-weights.jld2")
 
 # CountryStructure con datos hasta diciembre de 2020
-const EVALDATE = Date(2020,12)
+EVALDATE = Date(2019,12)
 gtdata_eval = gtdata[EVALDATE]
 
 
@@ -27,10 +27,14 @@ df_mai = collect_results(savepath)
 # Obtener variantes de MAI a combinar. Se combinan únicamente variantes F y G
 # como punto de comparación con los resultados de 2019
 combine_df = @chain df_mai begin 
+    filter(r -> r.traindate == EVALDATE, _)
+    transform(
+        :inflfn => ByRow(fn -> fn.method.n) => :nseg,
+        :measure => ByRow(s -> match(r"MAI \((\w+)", s).captures[1]) => :maitype)
+    sort([:maitype, :nseg])
     filter(:measure => s -> !occursin("FP",s), _)
-    filter(r -> r.inflfn.method.n in [4,5,10,20,40], _)
+    filter(r -> r.nseg in [4,5,10,20,40], _)
     select(:measure, :mse, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
-    sort(:mse)
 end
 
 # Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
@@ -99,12 +103,13 @@ metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
 tray_infl_mai_obs = mapreduce(inflfn -> inflfn(gtdata), hcat, combine_df.inflfn)
 tray_infl_maiopt = tray_infl_mai_obs * a_optim
 
+fdate = Dates.format(EVALDATE, "uyy")
 plot(InflationTotalCPI(), gtdata)
 plot!(infl_dates(gtdata), tray_infl_maiopt, 
-    label="Combinación lineal óptima MSE MAI", 
+    label="Combinación lineal óptima MSE MAI ($fdate)", 
     legend=:topright)
 
-savefig(plotsdir(plotspath, "MAI-optima-MSE.svg"))
+savefig(plotsdir(plotspath, savename("MAI-optima-MSE", (@dict fdate), "svg")))
 
 
 ## Tablas de resultados 
@@ -116,42 +121,27 @@ combined_metrics.measure = ["Combinación MAI"]
 combined_metrics
 
 # Resultados principales 
-df_results = @chain df_mai begin 
-    filter(r -> r.inflfn.method isa MaiF, _)
-    select(:measure, :mse, :mse_std_error, 
-        :inflfn => ByRow(fn -> fn.method.n) => :n)
-    sort(:n)
-    select(Not(:n))
-    [_; select(combined_metrics, :measure, :mse, :mse_std_error)]
+main_results = @chain combined_metrics begin 
+    select(:measure, :mse, :mse_std_error)
 end
-pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
 
 # Descomposición del MSE 
-df_mse_decomp = @chain df_mai begin 
-    filter(r -> r.inflfn.method isa MaiF, _)
-    select(:measure, :mse, r"mse_[bvc]",
-        :inflfn => ByRow(fn -> fn.method.n) => :n)
-    sort(:n)
-    select(Not(:n))
-    # [_; select(combined_metrics, :measure, :mse, r"mse_[bvc]")]
+mse_decomp = @chain combined_metrics begin 
+    select(:measure, :mse, r"mse_[bvc]")
 end 
-pretty_table(df_mse_decomp, tf=tf_markdown, formatters=ft_round(4))
 
 # Otras métricas 
-sens_metrics = @chain df_mai begin 
-    filter(r -> r.inflfn.method isa MaiFP, _)
-    select(:measure, :rmse, :me, :mae, :huber, :corr,
-        :inflfn => ByRow(fn -> fn.method.n) => :n)
-    sort(:n)
-    select(Not(:n))
-    [_; select(combined_metrics, :measure, :rmse, :me, :mae, :huber, :corr)]
+sens_metrics = @chain combined_metrics begin 
+    select(:measure, :rmse, :me, :mae, :huber, :corr)
 end 
-pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 
 # Tabla de ponderadores analíticos 
-@chain dfweights begin 
+weights_results = @chain dfweights begin 
     select(:measure, :analytic_weight)
-    pretty_table(_, tf=tf_markdown, formatters=ft_round(4))
 end
 
-getproperty.(combine_df.inflfn, :method)
+# Impresión de resultados en Markdown
+pretty_table(main_results, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(mse_decomp, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(weights_results, tf=tf_markdown, formatters=ft_round(4))

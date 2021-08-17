@@ -47,24 +47,37 @@ run_batch(gtdata, config_mai, savepath, savetrajectories=true)
 using DataFrames
 using Chain
 using PrettyTables
+
 df_mai = collect_results(savepath)
+evaldate = Date(2019,12)
+
+# Agregar :nseg y :maitype para filtrar y ordenar resultados 
+df_results = @chain df_mai begin 
+    filter(r -> r.traindate == evaldate, _)
+    transform(
+        :inflfn => ByRow(fn -> fn.method.n) => :nseg,
+        :measure => ByRow(s -> match(r"MAI \((\w+)", s).captures[1]) => :maitype)
+    sort([:maitype, :nseg])
+end
 
 # Tabla de resultados principales del escenario 
-df_results = @chain df_mai begin 
+main_results = @chain df_results begin 
     select(:measure, :mse, :mse_std_error)
-    sort(:mse)
     # filter(:measure => s -> !occursin("FP",s), _)
 end
-# select(df_results, :measure => ByRow(s -> match(r"(?:\w), (?:\d{1,2})", s).match |> split))
-vscodedisplay(df_results)
-pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
 
+# Descomposición aditiva del MSE 
+mse_decomp = @chain df_results begin 
+    select(:measure, :mse, r"^mse_[bvc]")
+    sort(:measure)
+end
 
-sens_metrics = @chain df_mai begin 
+# Otras métricas de evaluación 
+sens_metrics = @chain df_results begin 
     select(:measure, :rmse, :me, :mae, :huber, :corr)
-    sort(:mse)
 end 
-# select(:measure, :mse, r"^mse_[bvc]",)
-# select(:measure, :mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
-vscodedisplay(sens_metrics)
+
+
+pretty_table(main_results, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(mse_decomp, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
