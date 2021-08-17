@@ -17,7 +17,7 @@ plotspath = mkpath(plotsdir("CoreMai", "Esc-C", "Standard"))
 weightsfile = datadir(savepath, "mse-weights", "mai-mse-weights.jld2")
 
 # CountryStructure con datos hasta diciembre de 2020
-EVALDATE = Date(2019,12)
+EVALDATE = Date(2020,12)
 gtdata_eval = gtdata[EVALDATE]
 
 

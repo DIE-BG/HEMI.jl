@@ -11,7 +11,7 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Configuración de fechas final
-EVALDATE = Date(2019,12)
+EVALDATE = Date(2020,12)
 SCENARIO = "C" * Dates.format(EVALDATE, "yy")
 
 # Obtenemos el directorio de trayectorias resultados 
