@@ -43,13 +43,15 @@ makedocs(;
             "Escenario A" => [
                 "eval/EscA/evaluacion-MAI.md", 
                 "eval/EscA/evaluacion-dynEx.md",
-                "eval/EscA/evaluacion-InflPercentileWeighted.md"
+                "eval/EscA/evaluacion-InflPercentile.md"
             ],            
             "Escenario B" => [
-                "eval/EscB/evaluacion-dynEx.md"
+                "eval/EscB/evaluacion-dynEx.md",
+                "eval/EscB/evaluacion-InflPercentile.md"
             ],
             "Escenario C" => [
-                "eval/EscC/evaluacion-dynEx.md"
+                "eval/EscC/evaluacion-dynEx.md",
+                "eval/EscC/evaluacion-InflPercentile.md"
             ]
         ],
         "API" => 
