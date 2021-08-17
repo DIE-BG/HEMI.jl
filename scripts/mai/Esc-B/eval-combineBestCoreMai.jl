@@ -11,12 +11,12 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
-savepath = datadir("results", "CoreMai", "Esc-A")
+savepath = datadir("results", "CoreMai", "Esc-B", "bestOptim")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai", "Esc-A"))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-B"))
 
-# CountryStructure con datos hasta diciembre de 2019
-gtdata_eval = gtdata[Date(2019, 12)]
+# CountryStructure con datos hasta diciembre de 2020
+gtdata_eval = gtdata[Date(2020, 12)]
 
 
 ## Obtener las trayectorias de simulación de inflación MAI de variantes F y G
@@ -25,7 +25,7 @@ df_mai = collect_results(savepath)
 # Obtener variantes de MAI a combinar. Como se trata de los resultados de 2019,
 # se combinan todas las versiones F y G
 combine_df = @chain df_mai begin 
-    filter(:measure => s -> !occursin("FP",s), _)
+    # filter(:measure => s -> !occursin("FP",s), _)
     select(:measure, :mse, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
     sort(:mse)
 end
@@ -102,4 +102,42 @@ plot!(infl_dates(gtdata), tray_infl_maiopt,
     label="Combinación lineal óptima MSE MAI", 
     legend=:topright)
 
-savefig(plotsdir(plotspath, "MAI-optima-MSE.svg"))
+savefig(plotsdir(plotspath, "MAI-optima-bestOptim-MSE.svg"))
+
+## Tablas de resultados 
+
+using PrettyTables
+
+combined_metrics = DataFrame(metrics)
+combined_metrics.measure = ["Combinación MAI"]
+combined_metrics
+
+# Resultados principales 
+df_results = @chain df_mai begin 
+    select(:measure, :mse, :mse_std_error)
+    sort(:mse)
+    [_; select(combined_metrics, :measure, :mse, :mse_std_error)]
+end
+pretty_table(df_results, tf=tf_markdown, formatters=ft_round(4))
+
+# Descomposición del MSE 
+df_mse_decomp = @chain df_mai begin 
+    select(:measure, :mse, r"mse_[bvc]")
+    [_; select(combined_metrics, :measure, :mse, r"mse_[bvc]")]
+end 
+pretty_table(df_mse_decomp, tf=tf_markdown, formatters=ft_round(4))
+
+# Otras métricas 
+sens_metrics = @chain df_mai begin 
+    select(:measure, :rmse, :me, :mae, :huber, :corr)
+    [_; select(combined_metrics, :measure, :rmse, :me, :mae, :huber, :corr)]
+end 
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
+
+# Tabla de ponderadores analíticos 
+@chain dfweights begin 
+    select(:measure, :analytic_weight)
+    pretty_table(_, tf=tf_markdown, formatters=ft_round(4))
+end
+
+getproperty.(combine_df.inflfn, :method)
