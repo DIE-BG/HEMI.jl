@@ -15,7 +15,7 @@ medidas de inflación y es más eficiente en memoria que [`pargentrayinfl`](@ref
 function eval_mse_online(config::SimConfig, csdata::CountryStructure, tray_infl_param; 
     K = 1000, rnsdeed = DEFAULT_SEED)
     # Desempaquetar la configuración 
-    eval_mse_online(config.inflfn, config.resamplefn, config.trendfn, csdata, tray_infl_param)
+    eval_mse_online(config.inflfn, config.resamplefn, config.trendfn, csdata, tray_infl_param; K)
 end
 
 
