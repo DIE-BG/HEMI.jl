@@ -6,7 +6,7 @@ using Plots
 using DataFrames, Chain, PrettyTables
 
 # Fecha de evaluación 
-EVALDATE = Dates(2019, 12)
+EVALDATE = Date(2019, 12)
 
 ## Definimos directorios para almacenar los resultados 
 savepath = datadir("results", "CoreMai", "Esc-D", "D19-36", "Standard")
@@ -27,12 +27,14 @@ paramfn = InflationTotalRebaseCPI(36, 2)
 resamplefn = ResampleSBB(36) 
 trendfn = TrendRandomWalk()
 
-variants = [3, 4, 5, 8, 10, 20, 40]
+# variants = [3, 4, 5, 8, 10, 20, 40]
+variants = [4, 5, 8, 10, 20, 40]
 maifps = [InflationCoreMai(MaiFP(i)) for i in variants]
 maifs = [InflationCoreMai(MaiF(i)) for i in variants]
 maigs = [InflationCoreMai(MaiG(i)) for i in variants]
 
-inflfns = vcat(maifs, maigs, maifps)
+# inflfns = vcat(maifs, maigs, maifps)
+inflfns = vcat(maifps)
 
 config_mai = Dict(
     :inflfn => inflfns, 

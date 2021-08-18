@@ -6,7 +6,7 @@ using Plots
 using DataFrames, Chain, PrettyTables
 
 # Fecha de evaluación 
-EVALDATE = Dates(2019, 12)
+EVALDATE = Date(2019, 12)
 
 ## Definimos directorios para almacenar los resultados 
 savepath = datadir("results", "CoreMai", "Esc-D", "D19-60", "Standard")
