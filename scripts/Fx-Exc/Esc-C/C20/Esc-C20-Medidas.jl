@@ -54,7 +54,7 @@ exc_ae2 = (vcat(collect(1:62), 104, 159), vcat(collect(1:74), collect(116:118), 
 
 # 4. Exclusión fija óptima 
 opt00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193]
-opt10 = [29, 31, 116, 39, 46, 40, 30]
+opt10 = [29, 46, 39, 31, 116, 40, 30, 186]
 exc_opt = (opt00, opt10)
 
 # Vector con variantes de exclusión
@@ -70,11 +70,11 @@ sim_FxEx = Dict(
     :traindate => ff) |> dict_list
 
 
-savepath = datadir("results","Fx-Exc","Esc-C","C19","Medidas")  
+savepath = datadir("results","Fx-Exc","Esc-C","C20","Medidas")  
 
 ## lote de simulación 
 
-run_batch(gtdata, sim_FxEx, savepath)
+run_batch(gtdata, sim_FxEx, savepath, savetrajectories = false)
 
 ## recolección de resultados
 
@@ -94,7 +94,7 @@ annotate!((1, gr[1]+0.2, string(gr[1])[1:4]),
           (3, gr[3]+0.2, string(gr[3])[1:4]),
           (4, 4.5, string(gr[4])[1:4]), annotationfontsize = 8)
 
-saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","MSE-Med.svg")
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-20","MSE-Med.svg")
 savefig(graf,saveplot)
 
 ## Trayectorias
@@ -114,7 +114,7 @@ plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 
 # hspan!([3,5], color=[:gray], alpha=0.25, label="")
 # hline!([4], linestyle=:dash, color=[:black], label = "") 
-saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","optima.svg") 
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-20","optima.svg") 
 savefig(tray_plot,saveplot)
 
 ## Trayectorias
@@ -124,7 +124,7 @@ plot!(plotrng, tot, label = "Inflación Total", color=[:black])
 plot!(plotrng, AE_v1, label= "Alimentos y Energéticos (11)")
 plot!(plotrng, Energ, label = "Energéticos")
 plot!(plotrng, AE_v2, label = "Alimentos y Energéticos (9)") 
-saveplot = plotsdir("Fx-Exc\\Esc-C\\C-19","Trayectorias-FxEx.svg")
+saveplot = plotsdir("Fx-Exc\\Esc-C\\C-20","Trayectorias-FxEx.svg")
 savefig(tray_plot,saveplot)
 
 
@@ -140,10 +140,40 @@ tray_plot = plot(plotrng, Opt, label = "Exclusión Fija Óptima 2019 SBB",
 plot!(plotrng, opt19A, label= "Exclusión Fija Óptima 2019A")     
 hspan!([3,5], color=[:gray], alpha=0.25, label="")
 hline!([4], linestyle=:dash, color=[:black], label = "")
-saveplot = plotsdir("Fx-Exc","Esc-C","C-19","Comp-Optimas")  
+saveplot = plotsdir("Fx-Exc","Esc-C","C20","Comp-Optimas")  
 savefig(tray_plot,saveplot)        
 
 
-## Tablas 
+## Tabla Markdown
+using Chain
+using PrettyTables
+savepath = datadir("results","Fx-Exc","Esc-C","C-20","Medidas")  
+df = collect_results(savepath)
+gr_l = ["Exclusión Óptima","Alimentos y Energéticos 11","Alimentos y Energéticos 9","Energéticos"]
+# Exc_1019[!,:exclusiones] = exclusiones 
+sens_metrics = @chain df begin 
+    select(:mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
 
-df = FxEx
+insertcols!(sens_metrics, 1, :medida => gr_l)
+# sens_metrics[!,:medida] = gr_l
+vscodedisplay(sens_metrics)
+
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
+
+"""
+|                     medida |      mse | mse_std_error | mse_bias |  mse_var |  mse_cov |     rmse |       me |      mae |    huber |     corr |
+|                     String | Float32? |      Float64? | Float32? | Float32? | Float32? | Float32? | Float32? | Float32? | Float64? | Float32? |
+|----------------------------|----------|---------------|----------|----------|----------|----------|----------|----------|----------|----------|
+|           Exclusión Óptima |    0.803 |         0.001 |    0.189 |    0.084 |     0.53 |    0.889 |   -0.392 |    0.728 |    0.359 |    0.961 |
+| Alimentos y Energéticos 11 |    1.118 |         0.001 |    0.437 |    0.212 |    0.469 |    1.044 |   -0.625 |     0.88 |    0.477 |    0.968 |
+|  Alimentos y Energéticos 9 |    3.803 |         0.003 |    2.959 |    0.137 |    0.707 |    1.939 |   -1.701 |    1.759 |    1.278 |    0.946 |
+|                Energéticos |   77.326 |         2.207 |    9.127 |   59.594 |    8.605 |    4.131 |    1.405 |    2.254 |    1.849 |    0.762 |
+
+""" 
+
+
+
+
+

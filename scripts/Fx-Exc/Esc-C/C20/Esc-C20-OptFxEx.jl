@@ -30,7 +30,7 @@ addprocs(4, exeflags="--project")
 using DataFrames
 using Plots, CSV
 ##
-"""
+["""
 Resultados de Evaluación 2019 con Matlab
 Base 2000: [35,30,190,36,37,40,31,104,162,32,33,159,193,161] (14 Exclusiones)
 MSE = 0.777
@@ -94,7 +94,7 @@ savepath = datadir("results","Fx-Exc","Esc-C","C20","B0010K")
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata, FxEx_00, savepath)
+run_batch(gtdata, FxEx_00, savepath, savetrajectories = false)
 
 ## Recolección de resultados
 Exc_00C20 = collect_results(savepath)
@@ -136,28 +136,28 @@ FxEx_00 = Dict(
     :nsim => 125_000,
     :traindate => ff00) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-C","C19","B00125K")  
+savepath = datadir("results","Fx-Exc","Esc-C","C20","B00125K")  
 
 ## Lote de simulación con 10 vectores de exclusión 
-run_batch(gtdata, FxEx_00, savepath)
+run_batch(gtdata, FxEx_00, savepath, savetrajectories = false)
 
 ## Recolección de resultados
-Exc_00C19 = collect_results(savepath)
+Exc_00C20 = collect_results(savepath)
 
 ## Análisis de exploración preliminar
 # obtener longitud del vector de exclusión de cada simulación
-exclusiones =  getindex.(map(x -> length.(x), Exc_00C19[!,:params]),1)
-Exc_00C19[!,:exclusiones] = exclusiones 
+exclusiones =  getindex.(map(x -> length.(x), Exc_00C20[!,:params]),1)
+Exc_00C20[!,:exclusiones] = exclusiones 
 
 # Ordenamiento por cantidad de exclusiones
-Exc_00C19 = sort(Exc_00C19, :exclusiones)
+Exc_00C20 = sort(Exc_00C20, :exclusiones)
 
 # DF ordenado por MSE
-sort_00C19 = sort(Exc_00C19, :mse)
+sort_00C20 = sort(Exc_00C20, :mse)
 
 ## Exctracción de vector de exclusión  y MSE
-a = collect(sort_00C19[1,:params])
-sort_00C19[1,:mse]
+a = collect(sort_00C20[1,:params])
+sort_00C20[1,:mse]
 
 """
 Resultados de Evaluación de los vectores de exclusión 10 a 20 
@@ -182,7 +182,7 @@ MSE = 0.85986376f0
 exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193]
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
-gtdata_10 = gtdata[Date(2019,12)]
+gtdata_10 = gtdata[Date(2020,12)]
 est_10 = std(gtdata_10[2].v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(est_10))
@@ -213,29 +213,29 @@ FxEx_10 = Dict(
     :nsim => 10_000,
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-C","C19","B1010K")  
+savepath = datadir("results","Fx-Exc","Esc-C","C20","B1010K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata, FxEx_10, savepath)
+run_batch(gtdata, FxEx_10, savepath, savetrajectories = false)
 
 ## Recolección de resultados
-Exc_1019 = collect_results(savepath)
+Exc_1020 = collect_results(savepath)
 
 ## Análisis de exploración preliminar
 # obtener longitud del vector de exclusión de cada simulación
-exclusiones =  getindex.(map(x -> length.(x), Exc_1019[!,:params]),1)
-Exc_1019[!,:exclusiones] = exclusiones 
+exclusiones =  getindex.(map(x -> length.(x), Exc_1020[!,:params]),1)
+Exc_1020[!,:exclusiones] = exclusiones 
 
 # Ordenamiento por cantidad de exclusiones
-Exc_1019 = sort(Exc_1019, :exclusiones)
+Exc_1020 = sort(Exc_1020, :exclusiones)
 
 # DF ordenado por MSE
-sort_1019 = sort(Exc_1019, :mse)
+sort_1020 = sort(Exc_1020, :mse)
 
 ## Exctracción de vector de exclusión  y MSE
-a = collect(sort_1019[1,:params])
-sort_1019[1,:mse]
+a = collect(sort_1020[1,:params])
+sort_1020[1,:mse]
 
 """
 Resultados de Evaluación de exploración con 10_000 simulaciones para los 100 primeros vectores de exlcusión
@@ -247,12 +247,12 @@ MSE = 0.64
 
 JULIA, con 10K simulaciones y InflationTotalRebaseCPI(60)
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 Exclusiones)
-Base 2010 -> [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
-MSE = 0.8072317f0
+Base 2010 -> [29, 46, 39, 31, 116, 40, 30, 186] (8 exclusiones)
+MSE = 0.80318826f0
 
 """
 
-# Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
+## Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
 FxEx_10 = Dict(
     :inflfn => InflationFixedExclusionCPI.(total[1:15]), 
     :resamplefn => resamplefn, 
@@ -261,29 +261,29 @@ FxEx_10 = Dict(
     :nsim => 125_000,
     :traindate => ff10) |> dict_list
 
-    savepath = datadir("results","Fx-Exc","Esc-C","C19","10125K")  
+    savepath = datadir("results","Fx-Exc","Esc-C","C20","10125K")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata, FxEx_10, savepath)
+run_batch(gtdata, FxEx_10, savepath, savetrajectories = false)
 
 ## Recolección de resultados
-Exc_1019 = collect_results(savepath)
+Exc_1020 = collect_results(savepath)
 
 ## Análisis de exploración preliminar
 # obtener longitud del vector de exclusión de cada simulación
-exclusiones =  getindex.(map(x -> length.(x), Exc_1019[!,:params]),1)
-Exc_1019[!,:exclusiones] = exclusiones 
+exclusiones =  getindex.(map(x -> length.(x), Exc_1020[!,:params]),1)
+Exc_1020[!,:exclusiones] = exclusiones 
 
 # Ordenamiento por cantidad de exclusiones
-Exc_1019 = sort(Exc_1019, :exclusiones)
+Exc_1020 = sort(Exc_1020, :exclusiones)
 
 # DF ordenado por MSE
-sort_1019 = sort(Exc_1019, :mse)
+sort_1020 = sort(Exc_1020, :mse)
 
 ## Exctracción de vector de exclusión  y MSE
-a = collect(sort_1019[1,:params])
-sort_1019[1,:mse]
+a = collect(sort_1020[1,:params])
+sort_1020[1,:mse]
 
 """
 Resultados de Evaluación de exploración con 10_000 simulaciones para los 100 primeros vectores de exlcusión
@@ -295,12 +295,12 @@ MSE = 0.64
 
 JULIA, con 10K simulaciones y InflationTotalRebaseCPI(60)
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 Exclusiones)
-Base 2010 -> [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
-MSE = 0.8072317f0
+Base 2010 -> [29, 46, 39, 31, 116, 40, 30, 186] (8 exclusiones)
+MSE = 0.80318826f0
 
 JULIA, con 125K simulaciones y InflationTotalRebaseCPI(60)
 Base 2000 -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193] (13 Exclusiones)
-Base 2010 -> [29, 31, 116, 39, 46, 40, 30] (7 exclusiones)
-MSE = 0.8068863f0
+Base 2010 ->  [29, 46, 39, 31, 116, 40, 30, 186] (8 exclusiones)
+MSE = 0.80346f0
 
 """
