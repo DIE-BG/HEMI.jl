@@ -11,7 +11,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil ponderado 71.0      | 0.5478 |         0.0004 |
 | Percentil equiponderado 73.0  | 0.3322 |         0.0002 |
 
-## Descomposición aditiva del MSE
+### Descomposición aditiva del MSE
 
 ### Percentiles ponderados y equiponderados
 
@@ -21,7 +21,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil equiponderado 73.0 | 0.3322 |      0.0033 |         0.0437 |           0.2852 |
 
 
-## Métricas de evaluación 
+### Métricas de evaluación 
 
 ### Percentiles ponderados y equiponderados
 
@@ -30,7 +30,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil ponderado 71.0     | 0.7340 |     -0.0663 | 0.5927 | 0.2532 |      0.9658 |
 | Percentil equiponderado 73.0 | 0.5734 |      0.0028 | 0.4210 | 0.1551 |      0.9761 |
 
-## Trayectoria de inflación observada
+### Trayectoria de inflación observada
 
 ### Percentiles ponderados 
 ![Trayectoria observada](images/InflPercentileWeighted/obs_trajectory_c19.svg)
@@ -38,7 +38,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 ### Percentiles equiponderados
 ![Trayectoria observada](images/InflPercentileEq/obs_trajectory_c19.svg)
 
-## Evaluación gráfica de percentiles 
+### Evaluación gráfica de percentiles 
 
 ### Percentiles ponderados 
 ![Min MSE](images/InflPercentileWeighted/MSE_c19.png)
@@ -57,7 +57,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil ponderado 71.0      | 0.5710 |         0.0004 |
 | Percentil equiponderado 73.0  | 0.3142 |         0.0002 |
 
-## Descomposición aditiva del MSE
+### Descomposición aditiva del MSE
 
 ### Percentiles ponderados y equiponderados
 
@@ -67,7 +67,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil equiponderado 73.0 | 0.3142 |      0.0045 |         0.0268 |           0.2829 |
 
 
-## Métricas de evaluación 
+### Métricas de evaluación 
 
 ### Percentiles ponderados y equiponderados
 
@@ -76,7 +76,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil ponderado 71.0     | 0.7504 |     -0.1214 | 0.6158 | 0.2660 |      0.9665 |
 | Percentil equiponderado 73.0 | 0.5576 |     -0.0380 | 0.4097 | 0.1477 |      0.9766 |
 
-## Trayectoria de inflación observada
+### Trayectoria de inflación observada
 
 ### Percentiles ponderados 
 ![Trayectoria observada](images/InflPercentileWeighted/obs_trajectory_c20.svg)
@@ -84,7 +84,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 ### Percentiles equiponderados
 ![Trayectoria observada](images/InflPercentileEq/obs_trajectory_c20.svg)
 
-## Evaluación gráfica de percentiles 
+### Evaluación gráfica de percentiles 
 
 ### Percentiles ponderados 
 ![Min MSE](images/InflPercentileWeighted/MSE_c20.png)
