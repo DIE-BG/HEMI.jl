@@ -11,23 +11,30 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Obtenemos el directorio de trayectorias resultados 
-savepath = datadir("results", "CoreMai", "Esc-A")
+savepath = datadir("results", "CoreMai", "Esc-C", "Standard")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai", "Esc-A"))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-C", "Standard"))
+weightsfile = datadir(savepath, "mse-weights", "mai-mse-weights.jld2")
 
-# CountryStructure con datos hasta diciembre de 2019
-gtdata_eval = gtdata[Date(2019, 12)]
+# CountryStructure con datos hasta diciembre de 2020
+EVALDATE = Date(2020,12)
+gtdata_eval = gtdata[EVALDATE]
 
 
 ## Obtener las trayectorias de simulación de inflación MAI de variantes F y G
 df_mai = collect_results(savepath)
 
-# Obtener variantes de MAI a combinar. Como se trata de los resultados de 2019,
-# se combinan todas las versiones F y G
+# Obtener variantes de MAI a combinar. Se combinan únicamente variantes F y G
+# como punto de comparación con los resultados de 2019
 combine_df = @chain df_mai begin 
+    filter(r -> r.traindate == EVALDATE, _)
+    transform(
+        :inflfn => ByRow(fn -> fn.method.n) => :nseg,
+        :measure => ByRow(s -> match(r"MAI \((\w+)", s).captures[1]) => :maitype)
+    sort([:maitype, :nseg])
     filter(:measure => s -> !occursin("FP",s), _)
+    filter(r -> r.nseg in [4,5,10,20,40], _)
     select(:measure, :mse, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
-    sort(:mse)
 end
 
 # Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
@@ -35,7 +42,7 @@ tray_list_mai = map(combine_df.tray_path) do path
     tray_infl = load(path, "tray_infl")
 end
 
-# Obtener el arreglo de 3 dimensiones de trayectorias (T, 10, K)
+# Obtener el arreglo de 3 dimensiones de trayectorias (T, n, K)
 tray_infl_mai = reduce(hcat, tray_list_mai)
 
 
@@ -79,7 +86,6 @@ dfweights = DataFrame(
     iter_weight = a_optim_iter
 )
 
-weightsfile = datadir(savepath, "mse-weights", "mai-mse-weights.jld2")
 wsave(weightsfile, "mai_mse_weights", a_optim)
 
 ## Evaluación de combinación lineal óptima 
@@ -97,9 +103,45 @@ metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
 tray_infl_mai_obs = mapreduce(inflfn -> inflfn(gtdata), hcat, combine_df.inflfn)
 tray_infl_maiopt = tray_infl_mai_obs * a_optim
 
+fdate = Dates.format(EVALDATE, "uyy")
 plot(InflationTotalCPI(), gtdata)
 plot!(infl_dates(gtdata), tray_infl_maiopt, 
-    label="Combinación lineal óptima MSE MAI", 
+    label="Combinación lineal óptima MSE MAI ($fdate)", 
     legend=:topright)
 
-savefig(plotsdir(plotspath, "MAI-optima-MSE.svg"))
+savefig(plotsdir(plotspath, savename("MAI-optima-MSE", (@dict fdate), "svg")))
+
+
+## Tablas de resultados 
+
+using PrettyTables
+
+combined_metrics = DataFrame(metrics)
+combined_metrics.measure = ["Combinación MAI"]
+combined_metrics
+
+# Resultados principales 
+main_results = @chain combined_metrics begin 
+    select(:measure, :mse, :mse_std_error)
+end
+
+# Descomposición del MSE 
+mse_decomp = @chain combined_metrics begin 
+    select(:measure, :mse, r"mse_[bvc]")
+end 
+
+# Otras métricas 
+sens_metrics = @chain combined_metrics begin 
+    select(:measure, :rmse, :me, :mae, :huber, :corr)
+end 
+
+# Tabla de ponderadores analíticos 
+weights_results = @chain dfweights begin 
+    select(:measure, :analytic_weight)
+end
+
+# Impresión de resultados en Markdown
+pretty_table(main_results, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(mse_decomp, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(weights_results, tf=tf_markdown, formatters=ft_round(4))
