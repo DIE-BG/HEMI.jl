@@ -44,17 +44,17 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 ### Combinación lineal óptima 
 
 | Medida     | Ponderador |
-| ---------- | ---------- |
-| MAI (F,4)  | 0.7273     |
-| MAI (F,5)  | -0.2012    |
-| MAI (F,10) | 0.2112     |
-| MAI (F,20) | -0.0737    |
-| MAI (F,40) | 0.2145     |
-| MAI (G,4)  | 0.11       |
-| MAI (G,5)  | -0.0527    |
-| MAI (G,10) | -0.0198    |
-| MAI (G,20) | 0.0425     |
-| MAI (G,40) | 0.0178     |
+| ---------- | ---------: |
+| MAI (F,4)  |     0.7273 |
+| MAI (F,5)  |    -0.2012 |
+| MAI (F,10) |     0.2112 |
+| MAI (F,20) |    -0.0737 |
+| MAI (F,40) |     0.2145 |
+| MAI (G,4)  |       0.11 |
+| MAI (G,5)  |    -0.0527 |
+| MAI (G,10) |    -0.0198 |
+| MAI (G,20) |     0.0425 |
+| MAI (G,40) |     0.0178 |
 
 | Medida          |    MSE | Error estándar |
 | :-------------- | -----: | -------------: |
