@@ -54,9 +54,14 @@ makedocs(;
             ],
             "Escenario C" => [
                 "eval/EscC/evaluacion-InflPercentile.md",
-                "eval/EscC/evaluacion-dynEx.md", 
-                "eval/EscC/evaluacion-MAI.md",
+                "eval/EscC/evaluacion-dynEx.md",
+                "eval/EscC/evaluacion-MT.md", 
+                "eval/EscC/evaluacion-MAI.md",             
+            ],
+            "Escenario D" => [
+                "eval/EscD/evaluacion-MT.md",    
             ]
+
         ],
         "API" => 
             ["modules/API.md",

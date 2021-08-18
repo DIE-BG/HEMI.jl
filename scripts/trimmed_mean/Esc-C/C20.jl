@@ -48,7 +48,9 @@ dirs = ["InflationTrimmedMeanEq\\Esc-C\\optim",
 df1 = collect_results(datadir("results",dirs[1]))
 df2 = collect_results(datadir("results",dirs[2]))
 
-df = vcat(DataFrame(df1[1,:]),DataFrame(df2[1,:]))
+df3 = vcat(df1,df2)
+cond = (df3[:,:traindate].== Date(2020,12))
+df = DataFrame(df3[cond,:])
 
 
 # Graficamos
