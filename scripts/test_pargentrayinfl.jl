@@ -1,27 +1,28 @@
-# # Script de prueba para generar trayectorias de inflación de simulación
+# # Prueba para generar trayectorias de inflación de simulación
+
 using DrWatson
 @quickactivate "HEMI" 
 
-# Cargar el módulo de Distributed para computación paralela
+# Se carga el módulo de `Distributed` para computación paralela
 using Distributed
-# Agregar procesos trabajadores
-addprocs(4, exeflags="--project")
 
 # Cargar los paquetes utilizados en todos los procesos
 
 @everywhere using HEMI 
+# Se agregan procesos trabajadores
+addprocs(4, exeflags="--project")
 
 # ## Generar trayectorias de inflación 
 
-# Obtener la función de inflación, remuestreo y de tendencia a aplicar
+# Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
 inflfn = InflationTotalCPI() 
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk() 
 
-# Generar trayectorias de inflación interanual 
+# Se generan trayectorias de inflación interanual, con `K=125,000` trayectorias de inflación 
 tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, gtdata; K = 125_000)
 
-# Generar independientemente otro lote de trayectorias para verificar la
+# Se genera independientemente otro lote de `K=125,000` trayectorias para verificar la
 # reproducibilidad del muestreo 
 tray_infl2 = pargentrayinfl(inflfn, resamplefn, trendfn, gtdata; K = 125_000)
 
