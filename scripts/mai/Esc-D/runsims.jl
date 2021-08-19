@@ -11,7 +11,7 @@ using Logging, LoggingExtras
 using ConfigEnv
 
 # El archivo .env debe contener las llaves TELEGRAM_BOT_TOKEN y TELEGRAM_BOT_CHAT_ID
-dotenv(projectdir()) 
+dotenv(projectdir(".env")) 
 
 # Configurar logger en Telegram 
 tg = TelegramClient()
