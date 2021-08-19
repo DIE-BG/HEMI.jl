@@ -14,8 +14,8 @@ addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 # Cargar scripts auxiliares para optimización
-include("../scripts/grid_batch.jl")
-include("../scripts/grid_optim.jl")
+include(scriptsdir("trimmed_mean","scripts","grid_batch.jl"))
+include(scriptsdir("trimmed_mean","scripts","grid_optim.jl"))
 
 
 # Obtener una grilla para las medidas
@@ -30,8 +30,8 @@ grid_batch(gtdata,InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(),
 )
 
 # Optimizar
-dir_list = ["InflationTrimmedMeanEq\\Esc-C\\MTEq_SVM_RW_Rebase60_N10000_2019-12", 
-            "InflationTrimmedMeanWeighted\\Esc-C\\MTW_SVM_RW_Rebase60_N10000_2019-12"
+dir_list = [joinpath("InflationTrimmedMeanEq","Esc-C","MTEq_SVM_RW_Rebase60_N10000_2019-12"), 
+            joinpath("InflationTrimmedMeanWeighted","Esc-C","MTW_SVM_RW_Rebase60_N10000_2019-12")
 ]
 
 grid_optim(dir_list[1],gtdata,125_000,7 ; esc="Esc-C")
@@ -40,8 +40,8 @@ grid_optim(dir_list[2],gtdata,125_000,7 ; esc="Esc-C")
 
 # Obtenemos resultados optimos para 2019
 
-dirs = ["InflationTrimmedMeanEq\\Esc-C\\optim",
-        "InflationTrimmedMeanWeighted\\Esc-C\\optim"
+dirs = [joinpath("InflationTrimmedMeanEq","Esc-C","optim"),
+        joinpath("InflationTrimmedMeanWeighted","Esc-C","optim")
 ]
 
 df1 = collect_results(datadir("results",dirs[1]))

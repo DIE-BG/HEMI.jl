@@ -13,9 +13,10 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
+
 # Cargar scripts auxiliares para optimización
-include("../scripts/grid_batch.jl")
-include("../scripts/grid_optim.jl")
+include(scriptsdir("trimmed_mean","scripts","grid_batch.jl"))
+include(scriptsdir("trimmed_mean","scripts","grid_optim.jl"))
 
 
 # Obtener una grilla para las medidas
@@ -31,8 +32,8 @@ grid_batch(gtdata,InflationTrimmedMeanWeighted, ResampleScrambleVarMonths(),
 
 
 # Optimizar
-dir_list = ["InflationTrimmedMeanEq\\Esc-B\\MTEq_SVM_RW_Rebase36_N10000_2020-12", 
-            "InflationTrimmedMeanWeighted\\Esc-B\\MTW_SVM_RW_Rebase36_N10000_2020-12"
+dir_list = [joinpath("InflationTrimmedMeanEq","Esc-B","MTEq_SVM_RW_Rebase36_N10000_2020-12"), 
+            joinpath("InflationTrimmedMeanWeighted","Esc-B","MTW_SVM_RW_Rebase36_N10000_2020-12")
 ]
 
 
@@ -41,8 +42,8 @@ grid_optim(dir_list[2],gtdata,125_000,7 ; esc="Esc-B")
 
 # Graficar trayectorias
 
-dirs = ["InflationTrimmedMeanEq\\Esc-B\\optim",
-        "InflationTrimmedMeanWeighted\\Esc-B\\optim"
+dirs = [joinpath("InflationTrimmedMeanEq","Esc-B","optim"),
+        joinpath("InflationTrimmedMeanWeighted","Esc-B","optim")
 ]
 
 df1 = collect_results(datadir("results",dirs[1]))

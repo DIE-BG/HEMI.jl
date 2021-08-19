@@ -81,7 +81,3 @@ end
 tab1 = pretty_table(res1, tf=tf_markdown, formatters=ft_round(4))
 tab2 = pretty_table(res2, tf=tf_markdown, formatters=ft_round(4))
 tab3 = pretty_table(res3, tf=tf_markdown, formatters=ft_round(4))
-
-tab1 = pretty_table(res1, tf=tf_markdown, formatters=ft_round(4))
-tab2 = pretty_table(res2, tf=tf_markdown, formatters=ft_round(4))
-tab3 = pretty_table(res3, tf=tf_markdown, formatters=ft_round(4))
