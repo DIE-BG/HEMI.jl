@@ -147,3 +147,60 @@ savefig(tray_plot,saveplot)
 ## Tablas 
 
 df = FxEx
+## Tabla Markdown
+using Chain
+using PrettyTables
+# savepath = datadir("results","Fx-Exc","Esc-C","C-20","Medidas")  
+df = collect_results(savepath)
+gr_l = ["Exclusión Óptima","Alimentos y Energéticos 11","Alimentos y Energéticos 9","Energéticos"]
+# Exc_1019[!,:exclusiones] = exclusiones 
+
+# Tabla 1
+sens_metrics = @chain df begin 
+    select(:mse, :mse_std_error)#, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+insertcols!(sens_metrics, 1, :medida => gr_l)
+# sens_metrics[!,:medida] = gr_l
+pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
+
+# Tabla 2
+sens_metrics = @chain df begin 
+    select(:mse, r"^mse_[bvc]")#, :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+t2 = sens_metrics[!,2:end]
+insertcols!(t2, 1, :medida => gr_l)
+pretty_table(t2, tf=tf_markdown, formatters=ft_round(3))
+"""
+|                     medida |      mse | mse_std_error | mse_bias |  mse_var |  mse_cov |     rmse |       me |      mae |    huber |     corr |
+|                     String | Float32? |      Float64? | Float32? | Float32? | Float32? | Float32? | Float32? | Float32? | Float64? | Float32? |
+|----------------------------|----------|---------------|----------|----------|----------|----------|----------|----------|----------|----------|
+|           Exclusión Óptima |    0.807 |         0.001 |    0.208 |    0.092 |    0.507 |    0.891 |   -0.415 |    0.733 |    0.361 |    0.964 |
+| Alimentos y Energéticos 11 |    1.092 |         0.001 |    0.422 |    0.211 |    0.459 |    1.031 |   -0.611 |     0.87 |    0.466 |    0.969 |
+|  Alimentos y Energéticos 9 |     3.97 |         0.003 |    3.158 |    0.142 |     0.67 |    1.981 |   -1.757 |    1.817 |    1.332 |     0.95 |
+|                Energéticos |   81.064 |         2.329 |    9.768 |    62.64 |    8.656 |    4.148 |    1.359 |    2.257 |    1.855 |    0.771 |
+
+# Resultados criterios básicos
+
+|                     medida |      mse | mse_std_error |
+|                     String | Float32? |      Float64? |
+|----------------------------|----------|---------------|
+|           Exclusión Óptima |    0.807 |         0.001 |
+| Alimentos y Energéticos 11 |    1.092 |         0.001 |
+|  Alimentos y Energéticos 9 |     3.97 |         0.003 |
+|                Energéticos |   81.064 |         2.329 |
+
+|                     medida | mse_bias |  mse_var |  mse_cov |
+|                     String | Float32? | Float32? | Float32? |
+|----------------------------|----------|----------|----------|
+|           Exclusión Óptima |    0.208 |    0.092 |    0.507 |
+| Alimentos y Energéticos 11 |    0.422 |    0.211 |    0.459 |
+|  Alimentos y Energéticos 9 |    3.158 |    0.142 |     0.67 |
+|                Energéticos |    9.768 |    62.64 |    8.656 |
+
+
+
+"""
