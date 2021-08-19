@@ -87,8 +87,13 @@ function evalsim(data::CountryStructure, config::SimConfig;
         rndseed = rndseed, K=config.nsim)
     println()
 
-    # Métricas de evaluación 
-    metrics = eval_metrics(tray_infl, tray_infl_pob; short)
+    # Métricas de evaluación en cada subperíodo
+    metrics = mapreduce(merge, config.evalperiods) do period 
+        mask = eval_periods(data_eval, period)
+        prefix = period_tag(period)
+        metrics = eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
+        metrics 
+    end 
     @info "Métricas de evaluación:" metrics...
 
     # Devolver estos valores
@@ -156,10 +161,7 @@ function makesim(data, config::AbstractConfig;
     metrics, tray_infl = evalsim(data, config; rndseed, short)
 
     # Agregar resultados a diccionario 
-    results = struct2dict(config)
-    for (key, value) in metrics
-        results[key] = value
-    end
+    results = merge(struct2dict(config), metrics)
     results[:measure] = CPIDataBase.measure_name(config.inflfn)
     results[:params] = CPIDataBase.params(config.inflfn)
 

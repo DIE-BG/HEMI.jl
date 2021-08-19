@@ -55,13 +55,23 @@ Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
     # Función de Tendencia
     trendfn::T
     # Función de inflación paramétrica 
-    paramfn
+    paramfn::InflationFunction
     # Cantidad de Simulaciones
     nsim::Int  
     # Fecha final de evaluación 
     traindate::Date
+    # Colección de período(s) de evaluación, por defecto el período completo 
+    evalperiods = (CompletePeriod(),)
 end
 
+# Constructor con períodos de evaluación por defecto para Guatemala 
+SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, traindate) = 
+    SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, traindate, 
+    # Configuración de períodos por defecto 
+    (CompletePeriod(), GT_EVAL_B00, GT_EVAL_T0010, GT_EVAL_B10))
+    
+# SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, traindate, evalperiods::AbstractEvalPeriod...) = 
+#     SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, traindate, evalperiods)
 
 """
     CrossEvalConfig{F, R, T} <:AbstractConfig{F, R, T}
@@ -127,12 +137,15 @@ Base.string(trendfn::TrendFunction) = method_tag(trendfn)
 # Método para mostrar información de la configuración en el REPL
 function Base.show(io::IO, config::AbstractConfig)
     println(io, typeof(config))
-    println(io, "|─> ", "Función de inflación            : ", measure_name(config.inflfn))
-    println(io, "|─> ", "Función de remuestreo           : ", method_name(config.resamplefn))
-    println(io, "|─> ", "Función de tendencia            : ", method_name(config.trendfn))
-    println(io, "|─> ", "Método de inflación paramétrica : ", measure_name(config.paramfn))
-    println(io, "|─> ", "Número de simulaciones          : ", config.nsim)
-    println(io, "|─> ", "Fin set de entrenamiento        : ", config.traindate)
+    println(io, "|─> Función de inflación            : ", measure_name(config.inflfn))
+    println(io, "|─> Función de remuestreo           : ", method_name(config.resamplefn))
+    println(io, "|─> Función de tendencia            : ", method_name(config.trendfn))
+    println(io, "|─> Método de inflación paramétrica : ", measure_name(config.paramfn))
+    println(io, "|─> Número de simulaciones          : ", config.nsim)
+    println(io, "|─> Fin set de entrenamiento        : ", Dates.format(config.traindate, DEFAULT_DATE_FORMAT))
+    if hasproperty(config, :evalperiods)
+        println(io, "|─> Períodos de evaluación          : ", join(config.evalperiods, ", ", " y "))
+    end
     if config isa CrossEvalConfig 
         println(io, "|─> ", "Meses de evaluación             : ", config.eval_size)
     end
@@ -147,7 +160,8 @@ DrWatson.default_prefix(::CrossEvalConfig) = "HEMI-CrossEvalConfig"
 # Definición de formato para guardado de archivos relacionados con la configuración
 DEFAULT_CONNECTOR = ", "
 DEFAULT_EQUALS = "="
-DEFAULT_DATE_FORMAT = DateFormat("uyy")
+DEFAULT_DATE_FORMAT = DateFormat("u-yy")
+COMPACT_DATE_FORMAT = DateFormat("uyy")
 
 function DrWatson.savename(config::SimConfig, suffix::String = "jld2")
     join([
@@ -155,9 +169,9 @@ function DrWatson.savename(config::SimConfig, suffix::String = "jld2")
         method_tag(config.resamplefn), # Función de remuestreo 
         method_tag(config.trendfn), # Función de tendencia
         measure_tag(config.paramfn), # Función de inflación paramétrica de evaluación
-        config.nsim > 1000 ? string(config.nsim ÷ 1000) * "k" : string(config.nsim), # Número de simulaciones, 
-        Dates.format(config.traindate, DEFAULT_DATE_FORMAT)
-    ], DEFAULT_CONNECTOR) * "." * suffix
+        config.nsim >= 1000 ? string(config.nsim ÷ 1000) * "k" : string(config.nsim), # Número de simulaciones, 
+        Dates.format(config.traindate, COMPACT_DATE_FORMAT)
+    ], DEFAULT_CONNECTOR) * (suffix != "" ? "." * suffix : "")
 end
 
 DrWatson.savename(conf::CrossEvalConfig, suffix::String = "jld2") = 
