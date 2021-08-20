@@ -147,20 +147,39 @@ savefig(tray_plot,saveplot)
 ## Tabla Markdown
 using Chain
 using PrettyTables
-savepath = datadir("results","Fx-Exc","Esc-C","C-20","Medidas")  
+savepath = datadir("results","Fx-Exc","Esc-C","C20","Medidas")  
 df = collect_results(savepath)
 gr_l = ["Exclusión Óptima","Alimentos y Energéticos 11","Alimentos y Energéticos 9","Energéticos"]
 # Exc_1019[!,:exclusiones] = exclusiones 
+
+# Tabla 1 resultados con criterios básicos (mse y std error)
 sens_metrics = @chain df begin 
-    select(:mse, :mse_std_error, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
+    select(:mse, :mse_std_error)#, r"^mse_[bvc]", :rmse, :me, :mae, :huber, :corr)
     sort(:mse)
 end 
 
 insertcols!(sens_metrics, 1, :medida => gr_l)
-# sens_metrics[!,:medida] = gr_l
-vscodedisplay(sens_metrics)
-
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
+
+# Tabla 2, descomposición aditiva del MSE
+sens_metrics = @chain df begin 
+    select(:mse, r"^mse_[bvc]")#, :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+t2 = sens_metrics[!,2:end]
+insertcols!(t2, 1, :medida => gr_l)
+pretty_table(t2, tf=tf_markdown, formatters=ft_round(3))
+
+# Tabla 3, Métricas de evaluación
+sens_metrics = @chain df begin 
+    select(:mse, :rmse, :me, :mae, :huber, :corr)
+    sort(:mse)
+end 
+
+t3 = sens_metrics[!,2:end]
+insertcols!(t3, 1, :medida => gr_l)
+pretty_table(t3, tf=tf_markdown, formatters=ft_round(3))
 
 """
 |                     medida |      mse | mse_std_error | mse_bias |  mse_var |  mse_cov |     rmse |       me |      mae |    huber |     corr |
@@ -171,6 +190,29 @@ pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(3))
 |  Alimentos y Energéticos 9 |    3.803 |         0.003 |    2.959 |    0.137 |    0.707 |    1.939 |   -1.701 |    1.759 |    1.278 |    0.946 |
 |                Energéticos |   77.326 |         2.207 |    9.127 |   59.594 |    8.605 |    4.131 |    1.405 |    2.254 |    1.849 |    0.762 |
 
+
+
+| Medida                     | MSE      | Error Estándar  |
+|:---------------------------|---------:|----------------:|
+|           Exclusión Óptima |    0.803 |           0.001 |
+| Alimentos y Energéticos 11 |    1.118 |           0.001 |
+|  Alimentos y Energéticos 9 |    3.803 |           0.003 |
+|                Energéticos |   77.326 |           2.207 |
+
+|                     Medida | Comp. Sesgo |  Comp. Varianza |  Comp. Covarianza | 
+|:---------------------------|------------:|----------------:|------------------:|
+|           Exclusión Óptima |       0.189 |           0.084 |              0.53 |
+| Alimentos y Energéticos 11 |       0.437 |           0.212 |             0.469 |
+|  Alimentos y Energéticos 9 |       2.959 |           0.137 |             0.707 |
+|                Energéticos |       9.127 |          59.594 |             8.605 |
+
+
+|                     Medida |     RMSE |       ME |      MAE |    Huber | Correlación |
+|:---------------------------|---------:|---------:|---------:|---------:|------------:|
+|           Exclusión Óptima |    0.889 |   -0.392 |    0.728 |    0.359 |       0.961 |
+| Alimentos y Energéticos 11 |    1.044 |   -0.625 |     0.88 |    0.477 |       0.968 |
+|  Alimentos y Energéticos 9 |    1.939 |   -1.701 |    1.759 |    1.278 |       0.946 |
+|                Energéticos |    4.131 |    1.405 |    2.254 |    1.849 |       0.762 |
 """ 
 
 

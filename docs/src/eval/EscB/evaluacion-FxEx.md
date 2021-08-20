@@ -66,8 +66,6 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 | Alimentos y Energéticos 9  |   2.989  |        0.003   |
 | Energéticos                |  78.363  |        2.212   | 
 
-![MSE-MEDIDAS](images/Fx-Ex/MSE-Med.svg)
-
 ## Descomposición aditiva del MSE
 
 |                     Medida | Comp. Sesgo |  Comp. Varianza |  Comp. Covarianza | 
