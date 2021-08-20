@@ -7,7 +7,8 @@ realizaciones de las medidas de inflación en `tray_infl` utilizando el parámet
 
 Si `short=true`, devuelve un diccionario únicamente con el error cuadrático medio (MSE) de evaluación. Útil para realizar optimización iterativa en la búsqueda de parámetros. 
 """
-function eval_metrics(tray_infl, tray_infl_pob; short=false)
+function eval_metrics(tray_infl, tray_infl_pob; short=false, prefix="")
+    _prefix = prefix == "" ? "" : prefix * "_"
     T = size(tray_infl, 1)
     K = size(tray_infl, 3)
 
@@ -17,7 +18,7 @@ function eval_metrics(tray_infl, tray_infl_pob; short=false)
     # MSE 
     mse_dist = vec(mean(x -> x^2, err_dist, dims=1))
     mse = mean(mse_dist) 
-    short && return Dict(:mse => mse) # solo MSE si short=true
+    short && return Dict(Symbol(_prefix, "mse") => mse) # solo MSE si short=true
     
     # Distribución de error cuadrático 
     sq_err_dist = err_dist .^ 2
@@ -59,19 +60,20 @@ function eval_metrics(tray_infl, tray_infl_pob; short=false)
     mse_cov = mean(mse_cov_dist)
 
     # Diccionario de métricas a devolver
-    Dict(:mse => mse, 
-        :mse_std_error => mse_std_error, 
-        :std_mse_dist => std_mse_dist, 
-        :std_sqerr_dist => std_sqerr_dist, 
-        :rmse => rmse, 
-        :mae => mae, 
-        :me => me, 
-        :corr => corr, 
-        :huber => huber,
-        :mse_bias => mse_bias, 
-        :mse_var => mse_var, 
-        :mse_cov => mse_cov,
-        :T => T
+    Dict(
+        Symbol(_prefix, "mse") => mse, 
+        Symbol(_prefix, "mse_std_error") => mse_std_error, 
+        Symbol(_prefix, "std_mse_dist") => std_mse_dist, 
+        Symbol(_prefix, "std_sqerr_dist") => std_sqerr_dist, 
+        Symbol(_prefix, "rmse") => rmse, 
+        Symbol(_prefix, "mae") => mae, 
+        Symbol(_prefix, "me") => me, 
+        Symbol(_prefix, "corr") => corr, 
+        Symbol(_prefix, "huber") => huber,
+        Symbol(_prefix, "mse_bias") => mse_bias, 
+        Symbol(_prefix, "mse_var") => mse_var, 
+        Symbol(_prefix, "mse_cov") => mse_cov,
+        Symbol(_prefix, "T") => T
     )
 end
 
