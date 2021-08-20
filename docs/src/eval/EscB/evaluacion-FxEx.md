@@ -2,7 +2,7 @@
 
 En esta sección se documentan los resultados del proceso de evaluación de las medidas de inflación interanual basadas en Exclusión fija.
 
-Evaluación de medidas de exclusión fija evaluadas
+Medidas de exclusión fija evaluadas
  1. Exclusión Fija de Alimentos y energéticos variante 11
  2. Exclusión Fija de Energéticos 
  3. Exclusión Fija de Alimentos y energéticos variante 9
@@ -11,7 +11,7 @@ Evaluación de medidas de exclusión fija evaluadas
 
 ### Exclusión Fija Óptima
 
-En total, luego del proceso de optimización, se excluyen 14 gastos básicos de la base 2000 y 17 gastos básicos de la Base 2010:
+En total, luego del proceso de optimización, se excluyen 14 gastos básicos de la base 2000 y 18 gastos básicos de la Base 2010:
 
 | Exclusiones Base 2000                                                             |
 |:---------------------------------------------------------------------------------:|

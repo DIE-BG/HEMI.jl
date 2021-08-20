@@ -2,7 +2,7 @@
 
 En esta sección se documentan los resultados del proceso de evaluación de las medidas de inflación interanual basadas en Exclusión fija.
 
-Evaluación de medidas de exclusión fija evaluadas
+Medidas de exclusión fija evaluadas
  1. Exclusión Fija de Alimentos y energéticos variante 11
  2. Exclusión Fija de Energéticos 
  3. Exclusión Fija de Alimentos y energéticos variante 9
@@ -115,7 +115,12 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Gas Propano                       |
 | Papa                              |
 | Güisquil                          |
-| Diesel                            |    
+| Diesel                            |  
+
+
+!!! note 
+    
+    En comparación con la optimización con criterios a 2019, hay un gasto básico adicional en las exclusiones de la base 2010 (Diesel), los 7 gastos básicos restantes únicamente cambiaron el órden dentro del vector de exclusión.
 
 
 ## Resultados de evaluación 
