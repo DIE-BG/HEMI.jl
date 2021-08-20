@@ -173,18 +173,21 @@ equiponderados, desde el percentil 60 hasta el percentil 80. Esto genera un
 diccionario con 21 configuraciones distintas para evaluación.
 
 ```julia-repl 
-dict_prueba = Dict(
+config_dict = Dict(
     :inflfn => InflationPercentileWeighted.(50:80), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
+    :traindate => Date(2019, 12),
     :nsim => 1000) |> dict_list`
 ``` 
-Una vez creado `dict_prueba`, podemos generar el paquete de simulación utilizando
+
+Una vez creado `config_dict`, podemos generar el paquete de simulación utilizando
 `run_batch`.
+
 ```julia-repl 
-julia> run_batch(gtdata_eval, dict_prueba, savepath)
-...
+julia> run_batch(gtdata_eval, config_dict, savepath)
+... (progreso de evaluación)
 ```
 
 Una vez generadas todas las simulaciones podemos obtener los datos mediante la
@@ -192,25 +195,10 @@ función `collect_results`. Esta función lee los resultados desde `savepath` y
 los presenta en un `DataFrame`.
 
 ```julia-repl 
-julia> df = collect_results(savepath); 
-[ Info: Scanning folder `savepath` for result files.
+julia> df = collect_results(savepath)
+[ Info: Scanning folder `<savepath>` for result files.
 [ Info: Added 31 entries.
-
-julia> select(df, :measure, :mse)
-31×2 DataFrame
- Row │ measure                   mse       
-     │ String?                   Float32?  
-─────┼─────────────────────────────────────
-   1 │ Percentil ponderado 50.0  17.9208
-   2 │ Percentil ponderado 51.0  16.8813
-   3 │ Percentil ponderado 52.0  15.874
-   4 │ Percentil ponderado 53.0  14.876
-  ⋮  │            ⋮                  ⋮
-  28 │ Percentil ponderado 77.0   2.85501
-  29 │ Percentil ponderado 78.0   4.32532
-  30 │ Percentil ponderado 79.0   6.33717
-  31 │ Percentil ponderado 80.0   9.02473
-                            23 rows omitted
+...
 ```
 """
 function run_batch(data, dict_list_params, savepath; 
