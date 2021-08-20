@@ -87,14 +87,16 @@ function evalsim(data::CountryStructure, config::SimConfig;
         rndseed = rndseed, K=config.nsim)
     println()
 
-    # Métricas de evaluación en cada subperíodo
+    # Métricas de evaluación en cada subperíodo de config 
     metrics = mapreduce(merge, config.evalperiods) do period 
         mask = eval_periods(data_eval, period)
         prefix = period_tag(period)
         metrics = eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
         metrics 
     end 
-    @info "Métricas de evaluación:" metrics...
+    # Se filtran métricas que empiecen con gt_. Las métricas de CompletePeriod()
+    # no contienen prefijo y son las que se muestran por defecto. 
+    @info "Métricas de evaluación:" filter(t -> !contains(string(t), "gt_"), metrics)...
 
     # Devolver estos valores
     metrics, tray_infl

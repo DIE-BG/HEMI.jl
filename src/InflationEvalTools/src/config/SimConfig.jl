@@ -34,7 +34,11 @@ julia> trendfn = TrendRandomWalk();
 julia> paramfn = InflationWeightedMean();
 ```
 
-Generamos una configuración del tipo `SimConfig` con 1000 simulaciones:
+Generamos una configuración del tipo `SimConfig` con 1000 simulaciones, con períodos de evaluación por defecto:
+- `CompletePeriod()`, 
+- `GT_EVAL_B00`, 
+- `GT_EVAL_T0010` y  
+- `GT_EVAL_B10`
 
 ```jldoctest genfunctions
 julia> config = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2019,12))
@@ -44,7 +48,23 @@ SimConfig{InflationPercentileEq, ResampleSBB, TrendRandomWalk{Float32}}
 |─> Función de tendencia            : Tendencia de caminata aleatoria
 |─> Método de inflación paramétrica : Media ponderada interanual
 |─> Número de simulaciones          : 1000
-|─> Fin set de entrenamiento        : 2019-12-01
+|─> Fin set de entrenamiento        : Dec-19
+|─> Períodos de evaluación          : Período completo, gt_b00:Dec-01-Dec-10, gt_t0010:Jan-11-Nov-11 y gt_b10:Dec-11-Dec-20
+```
+
+Para generar una configuración con períodos específicos podemos brindar la colección de períodos de interés:
+
+```jldoctest genfunctions
+julia> config2 = SimConfig(percEq, resamplefn, trendfn, paramfn, 1000, Date(2019,12),
+       (CompletePeriod(), EvalPeriod(Date(2008,1), Date(2009,12), "fincrisis")))
+SimConfig{InflationPercentileEq, ResampleSBB, TrendRandomWalk{Float32}}
+|─> Función de inflación            : Percentil equiponderado 80.0
+|─> Función de remuestreo           : Block bootstrap estacionario con bloque esperado 36
+|─> Función de tendencia            : Tendencia de caminata aleatoria
+|─> Método de inflación paramétrica : Media ponderada interanual
+|─> Número de simulaciones          : 1000
+|─> Fin set de entrenamiento        : Dec-19
+|─> Períodos de evaluación          : Período completo y fincrisis:Jan-08-Dec-09
 ```
 """
 Base.@kwdef struct SimConfig{F, R, T} <:AbstractConfig{F, R, T}
