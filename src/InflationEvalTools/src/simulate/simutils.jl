@@ -91,7 +91,7 @@ function evalsim(data::CountryStructure, config::SimConfig;
     metrics = mapreduce(merge, config.evalperiods) do period 
         mask = eval_periods(data_eval, period)
         prefix = period_tag(period)
-        metrics = eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
+        metrics = @views eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
         metrics 
     end 
     # Se filtran métricas que empiecen con gt_. Las métricas de CompletePeriod()
