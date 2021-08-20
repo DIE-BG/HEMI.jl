@@ -2,10 +2,11 @@
 """
     evalsim(data_eval::CountryStructure, config::SimConfig; 
         rndseed = DEFAULT_SEED, 
-        short = false) -> (metrics, tray_infl)
+        short = false) -> (Dict, Array{<:AbstractFloat, 3})
 
-Esta función genera la trayectoria paramétrica , las trayectorias de simulación
-y las métricas de evaluación utilizando la configuración [`SimConfig`](@ref). 
+Esta función genera la trayectoria paramétrica, las trayectorias de simulación
+y las métricas de evaluación utilizando la configuración [`SimConfig`](@ref).
+Devuelve `(metrics, tray_infl)`.
 
 Las métricas de evaluación se devuelven en el diccionario `metrics`. Si
 `short=true`, el diccionario contiene únicamente la llave `:mse`. Este
@@ -22,48 +23,46 @@ promedio ponderado óptima.
 
 ## Utilización
 
-La función `evalsim` recibe un `CountryStructure` y un `AbstractConfig` del tipo
-`SimConfig`.
+La función `evalsim` recibe un [`CountryStructure`](@ref) y un `AbstractConfig`
+del tipo [`SimConfig`](@ref).
 
 ### Ejemplo
 
-Teniendo una configuración del tipo `SimConfig` y un set de datos `gtdata_eval`
+Teniendo una configuración de tipo `SimConfig` y un conjunto de datos
+`gtdata_eval`
 
-```julia-repl 
+```jldoctest evalsimconf
 julia> config = SimConfig(
-    InflationPercentileEq(69), 
-    ResampleScrambleVarMonths(), 
-    TrendRandomWalk(), 
-    InflationTotalRebaseCPI(36, 2), 10_000)
+        InflationPercentileEq(69),
+        ResampleScrambleVarMonths(),
+        TrendRandomWalk(),
+        InflationTotalRebaseCPI(36, 2), 10_000, Date(2019,12))
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
 |─> Función de remuestreo           : Bootstrap IID por meses de ocurrencia
 |─> Función de tendencia            : Tendencia de caminata aleatoria
 |─> Método de inflación paramétrica : Variación interanual IPC con cambios de base sintéticos (36, 2)
 |─> Número de simulaciones          : 10000
+|─> Fin set de entrenamiento        : Dec-19
+|─> Períodos de evaluación          : Período completo, gt_b00:Dec-01-Dec-10, gt_t0010:Jan-11-Nov-11 y gt_b10:Dec-11-Dec-20
+```
 
-julia> results, tray_infl = evalsim(gtdata_eval, config);
+podemos ejecutar una simulación con los parámetros de `config` con: 
+
+```julia-repl
+julia> results, tray_infl = evalsim(gtdata, config)
 ┌ Info: Evaluación de medida de inflación
 │   medida = "Percentil equiponderado 69.0"
 │   remuestreo = "Bootstrap IID por meses de ocurrencia"
 │   tendencia = "Tendencia de caminata aleatoria"
 │   evaluación = "Variación interanual IPC con cambios de base sintéticos (36, 2)"
-└   simulaciones = 10000
-
+│   simulaciones = 10000
+│   traindate = 2019-12-01
+└   periodos = (Período completo, gt_b00:Dec-01-Dec-10, gt_t0010:Jan-11-Nov-11, gt_b10:Dec-11-Dec-20)
+... (barra de progreso)
 ┌ Info: Métricas de evaluación:
-│   mse_std_error = 0.0011911743134260177
-│   mse_bias = 0.62594384f0
-│   mse_var = 0.23529443f0
-│   huber = 0.425227918501327
-│   std_mse_dist = 0.11911743f0
-│   mse_cov = 0.16402239f0
-│   mae = 0.8003128f0
-│   me = -0.7897533f0
-│   rmse = 1.0108289f0
-│   T = 217
-│   mse = 1.0252613f0
-│   corr = 0.98361874f0
-└   std_sqerr_dist = 1.4591569f0
+│   mse = ...
+└   ... (otras métricas)
 ```
 """
 function evalsim(data::CountryStructure, config::SimConfig; 
@@ -77,7 +76,7 @@ function evalsim(data::CountryStructure, config::SimConfig;
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
     tray_infl_pob = param(data_eval)
 
-    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim traindate=config.traindate
+    @info "Evaluación de medida de inflación" medida=measure_name(config.inflfn) remuestreo=method_name(config.resamplefn) tendencia=method_name(config.trendfn) evaluación=measure_name(config.paramfn) simulaciones=config.nsim traindate=config.traindate periodos=config.evalperiods
 
     # Generar las trayectorias de inflación de simulación 
     tray_infl = pargentrayinfl(config.inflfn, # función de inflación
@@ -107,14 +106,14 @@ end
 """
     makesim(data, config::AbstractConfig; 
         rndseed = DEFAULT_SEED
-        short = false) -> (metrics, tray_infl)
+        short = false) -> (Dict, Array{<:AbstractFloat, 3})
 
 ## Utilización
 Esta función utiliza la función `evalsim` para generar un set de simulaciones en
 base a un `CountryStructure` y un `AbstractConfig`, y genera un diccionario
 `results` con todas las métricas de evaluación y con la información del
 `AbstractConfig` utilizado para generarlas. Adicionalmente genera un objeto con
-las trayectorias de inflación.
+las trayectorias de inflación. Devuelve `(metrics, tray_infl)`.
 
 ### Ejemplos
 `makesim` recibe un `CountryStructure` y un `AbstractConfig`, para trasladarlo a
@@ -123,36 +122,19 @@ simulación en el diccionario results, y Adicionalmente devuelve las trayectoria
 de simulacion.
 
 ```julia-repl 
-julia> results, tray_infl = makesim(gtdata_eval, configA);
+julia> results, tray_infl = makesim(gtdata, config)
 ┌ Info: Evaluación de medida de inflación
-│   medida = "Variación interanual IPC"
-│   remuestreo = "Block bootstrap estacionario con bloque esperado 36"
+│   medida = "Percentil equiponderado 69.0"
+│   remuestreo = "Bootstrap IID por meses de ocurrencia"
 │   tendencia = "Tendencia de caminata aleatoria"
-└   simulaciones = 1000
-
+│   evaluación = "Variación interanual IPC con cambios de base sintéticos (36, 2)"
+│   simulaciones = 10000
+│   traindate = 2019-12-01
+└   periodos = (Período completo, gt_b00:Dec-01-Dec-10, gt_t0010:Jan-11-Nov-11, gt_b10:Dec-11-Dec-20)
+... (barra de progreso)
 ┌ Info: Métricas de evaluación:
-│   mse = 7.518966f0
-│   std_sim_error = 0.48772313050091165
-│   rmse = 1.9927315f0
-│   me = 0.42103088f0
-└   mae = 1.9927315f0
-```
-
-Exploramos el diccionario `results`:
-
-```julia-repl 
-julia> results
-Dict{Symbol, Any} with 11 entries:
-  :trendfn       => TrendRandomWalk{Float32}(Float32[0.953769, 0.948405, 0.926209, 0.902285, 0.832036, 0.825772, 0.799508, 0.789099, 0.764708, 0.757526  …  1.04656, 1.0…  :params        => (nothing,)
-  :measure       => "Variación interanual IPC"
-  :resamplefn    => ResampleSBB(36, Distributions.Geometric{Float64}(p=0.0277778))
-  :me            => 0.421031
-  :mae           => 1.99273
-  :nsim          => 1000
-  :rmse          => 1.99273
-  :inflfn        => InflationTotalCPI()
-  :mse           => 7.51897
-  :std_sim_error => 0.487723
+│   mse = ...
+└   ... (otras métricas)
 ```
 """
 function makesim(data, config::AbstractConfig; 
