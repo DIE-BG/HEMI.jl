@@ -9,6 +9,15 @@ Medidas de exclusión fija evaluadas
  4. Exclusión Fija Óptima 
 
 
+## Resultados de evaluación con criterios básicos a diciembre de 2019
+
+| Medida                     |     MSE | Error Estándar |
+| :------------------------- | ------: | -------------: |
+| Exclusión Óptima           |  0.6422 |         0.0006 |
+| Alimentos y Energéticos 11 |  0.8667 |         0.0016 |
+| Alimentos y Energéticos 9  |  3.1216 |          0.003 |
+| Energéticos                | 82.0842 |         2.3344 |
+
 ### Exclusión Fija Óptima
 
 En total, luego del proceso de optimización, se excluyen 14 gastos básicos de la base 2000 y 17 gastos básicos de la Base 2010:
@@ -51,15 +60,6 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 | Gasolina regular                                 |
 | Repollo                                          |
 | Gasolina superior                                |
-
-## Resultados de evaluación con criterios básicos a diciembre de 2019
-
-| Medida                     |     MSE | Error Estándar |
-| :------------------------- | ------: | -------------: |
-| Exclusión Óptima           |  0.6422 |         0.0006 |
-| Alimentos y Energéticos 11 |  0.8667 |         0.0016 |
-| Alimentos y Energéticos 9  |  3.1216 |          0.003 |
-| Energéticos                | 82.0842 |         2.3344 |
 
 ## Descomposición aditiva del MSE
 

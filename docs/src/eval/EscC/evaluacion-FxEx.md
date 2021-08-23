@@ -8,7 +8,16 @@ Medidas de exclusión fija evaluadas
  3. Exclusión Fija de Alimentos y energéticos variante 9
  4. Exclusión Fija Óptima 
 
-## Escenario C-19
+## Resultados de evaluación con criterios básicos a diciembre de 2019 modificando el parámetro de evaluación
+
+### Resultados de evaluación 
+
+| Medida                     |    MSE | Error Estándar |
+| :------------------------- | -----: | -------------: |
+| Exclusión Óptima           |  0.807 |          0.001 |
+| Alimentos y Energéticos 11 |  1.092 |          0.001 |
+| Alimentos y Energéticos 9  |   3.97 |          0.003 |
+| Energéticos                | 81.064 |          2.329 |
 
 ### Exclusión Fija Óptima
 
@@ -31,8 +40,6 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Otras cuotas fijas y extraordinarias en la educación secundaria                |
 
 
-
-
 | Gastos básicos excluidos en la base 2010 del IPC |
 | :----------------------------------------------- |
 | Tomate                                           |
@@ -44,17 +51,7 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Güisquil                                         |
 
 
-## Resultados de evaluación 
-
-| Medida                     |    MSE | Error Estándar |
-| :------------------------- | -----: | -------------: |
-| Exclusión Óptima           |  0.807 |          0.001 |
-| Alimentos y Energéticos 11 |  1.092 |          0.001 |
-| Alimentos y Energéticos 9  |   3.97 |          0.003 |
-| Energéticos                | 81.064 |          2.329 |
-
-
-## Descomposición aditiva del MSE
+### Descomposición aditiva del MSE
 
 | Medida                     | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :------------------------- | ----------: | -------------: | ---------------: |
@@ -64,7 +61,7 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Energéticos                |       9.768 |          62.64 |            8.656 |
 
 
-## Métricas de evaluación 
+### Métricas de evaluación 
 
 | Medida                     |  RMSE |     ME |   MAE | Huber | Correlación |
 | :------------------------- | ----: | -----: | ----: | ----: | ----------: |
@@ -74,16 +71,27 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Energéticos                | 4.148 |  1.359 | 2.257 | 1.855 |       0.771 |
 
 
-## Trayectorias de inflación observada
+### Trayectorias de inflación observada
 
-### Exclusión Fija óptima
+#### Exclusión Fija óptima
 
 ![Trayectoria Óptima observada](images/Fx-Ex/optima-c19.svg)
 
-### Medidas de Exclusión Fija
+#### Medidas de Exclusión Fija
 ![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-c19.svg)
 
-## Escenario C-20
+
+## Resultados de evaluación con criterios básicos a diciembre de 2020 modificando el parámetro de evaluación
+
+### Resultados de evaluación 
+
+| Medida                     |    MSE | Error Estándar |
+| :------------------------- | -----: | -------------: |
+| Exclusión Óptima           |  0.803 |          0.001 |
+| Alimentos y Energéticos 11 |  1.118 |          0.001 |
+| Alimentos y Energéticos 9  |  3.803 |          0.003 |
+| Energéticos                | 77.326 |          2.207 |
+
 
 ### Exclusión Fija Óptima
 
@@ -123,17 +131,7 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
     En comparación con la optimización con criterios a 2019, hay un gasto básico adicional en las exclusiones de la base 2010 (Diesel), los 7 gastos básicos restantes únicamente cambiaron el órden dentro del vector de exclusión.
 
 
-## Resultados de evaluación 
-
-| Medida                     |    MSE | Error Estándar |
-| :------------------------- | -----: | -------------: |
-| Exclusión Óptima           |  0.803 |          0.001 |
-| Alimentos y Energéticos 11 |  1.118 |          0.001 |
-| Alimentos y Energéticos 9  |  3.803 |          0.003 |
-| Energéticos                | 77.326 |          2.207 |
-
-
-## Descomposición aditiva del MSE
+### Descomposición aditiva del MSE
 
 | Medida                     | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :------------------------- | ----------: | -------------: | ---------------: |
@@ -143,7 +141,7 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Energéticos                |       9.127 |         59.594 |            8.605 |
 
 
-## Métricas de evaluación 
+### Métricas de evaluación 
 
 | Medida                     |  RMSE |     ME |   MAE | Huber | Correlación |
 | :------------------------- | ----: | -----: | ----: | ----: | ----------: |
@@ -153,11 +151,11 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 | Energéticos                | 4.131 |  1.405 | 2.254 | 1.849 |       0.762 |
 
 
-## Trayectorias de inflación observada
+### Trayectorias de inflación observada
 
-### Exclusión Fija óptima
+#### Exclusión Fija óptima
 
 ![Trayectoria Óptima observada](images/Fx-Ex/optima-c20.svg)
 
-### Medidas de Exclusión Fija
+#### Medidas de Exclusión Fija
 ![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-c20.svg)

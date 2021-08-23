@@ -9,6 +9,15 @@ Medidas de exclusión fija evaluadas
  4. Exclusión Fija Óptima 
 
 
+## Resultados de evaluación con criterios básicos a diciembre de 2020
+
+| Medida                     |    MSE | Error Estándar |
+| :------------------------- | -----: | -------------: |
+| Exclusión Óptima           |  0.646 |          0.001 |
+| Alimentos y Energéticos 11 |  0.889 |          0.002 |
+| Alimentos y Energéticos 9  |  2.989 |          0.003 |
+| Energéticos                | 78.363 |          2.212 |
+
 ### Exclusión Fija Óptima
 
 En total, luego del proceso de optimización, se excluyen 14 gastos básicos de la base 2000 y 18 gastos básicos de la Base 2010:
@@ -29,7 +38,6 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 | Gasolina                                                                       |
 | Otras cuotas fijas y extraordinarias en la educación secundaria                |
 | Transporte urbano                                                              |
-
 
 
 | Gastos básicos excluidos en la base 2010 del IPC |
@@ -56,15 +64,6 @@ En total, luego del proceso de optimización, se excluyen 14 gastos básicos de 
 !!! note 
     
     En comparación con la optimización con criterios básicos a 2019, hay un gasto básico adicional en las exclusiones de la base 2010 (Ejotes), los 17 gastos básicos restantes únicamente cambiaron el órden dentro del vector de exclusión.
-
-## Resultados de evaluación con criterios básicos a diciembre de 2020
-
-| Medida                     |    MSE | Error Estándar |
-| :------------------------- | -----: | -------------: |
-| Exclusión Óptima           |  0.646 |          0.001 |
-| Alimentos y Energéticos 11 |  0.889 |          0.002 |
-| Alimentos y Energéticos 9  |  2.989 |          0.003 |
-| Energéticos                | 78.363 |          2.212 |
 
 ## Descomposición aditiva del MSE
 
