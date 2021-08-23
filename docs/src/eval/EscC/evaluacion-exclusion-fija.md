@@ -23,32 +23,32 @@ Medidas de exclusión fija evaluadas
 
 En total, luego del proceso de optimización, se excluyen 13 gastos básicos de la base 2000 y 7 gastos básicos de la Base 2010:
 
-| Gastos básicos excluidos en la base 2000 del IPC                               |
-| :----------------------------------------------------------------------------- |
-| Cebolla                                                                        |
-| Tomate                                                                         |
-| Otras cuotas fijas y extraordinarias en la educación preprimaria y primaria    |
-| Papa o patata                                                                  |
-| Zanahoria                                                                      |
-| Culantro o cilantro                                                            |
-| Güisquil                                                                       |
-| Gastos derivados del gas manufacturado y natural y gases licuados del petróleo |
-| Transporte aéreo                                                               |
-| Otras verduras y hortalizas                                                    |
-| Frijol                                                                         |
-| Gasolina                                                                       |
-| Otras cuotas fijas y extraordinarias en la educación secundaria                |
+|  No.  | Gastos básicos excluidos en la base 2000 del IPC                               |
+| :---: | :----------------------------------------------------------------------------- |
+|   1   | Cebolla                                                                        |
+|   2   | Tomate                                                                         |
+|   3   | Otras cuotas fijas y extraordinarias en la educación preprimaria y primaria    |
+|   4   | Papa o patata                                                                  |
+|   5   | Zanahoria                                                                      |
+|   6   | Culantro o cilantro                                                            |
+|   7   | Güisquil                                                                       |
+|   8   | Gastos derivados del gas manufacturado y natural y gases licuados del petróleo |
+|   9   | Transporte aéreo                                                               |
+|  10   | Otras verduras y hortalizas                                                    |
+|  11   | Frijol                                                                         |
+|  12   | Gasolina                                                                       |
+|  13   | Otras cuotas fijas y extraordinarias en la educación secundaria                |
 
 
-| Gastos básicos excluidos en la base 2010 del IPC |
-| :----------------------------------------------- |
-| Tomate                                           |
-| Chile pimiento                                   |
-| Gas Propano                                      |
-| Cebolla                                          |
-| Culantro                                         |
-| Papa                                             |
-| Güisquil                                         |
+|  No.  | Gastos básicos excluidos en la base 2010 del IPC |
+| :---: | :----------------------------------------------- |
+|   1   | Tomate                                           |
+|   2   | Chile pimiento                                   |
+|   3   | Gas Propano                                      |
+|   4   | Cebolla                                          |
+|   5   | Culantro                                         |
+|   6   | Papa                                             |
+|   7   | Güisquil                                         |
 
 
 ### Descomposición aditiva del MSE
@@ -97,33 +97,33 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 
 En total, luego del proceso de optimización, se excluyen 13 gastos básicos de la base 2000 y 8 gastos básicos de la Base 2010:
 
-| Gastos básicos excluidos en la base 2000 del IPC                               |
-| :----------------------------------------------------------------------------- |
-| Cebolla                                                                        |
-| Tomate                                                                         |
-| Otras cuotas fijas y extraordinarias en la educación preprimaria y primaria    |
-| Papa o patata                                                                  |
-| Zanahoria                                                                      |
-| Culantro o cilantro                                                            |
-| Güisquil                                                                       |
-| Gastos derivados del gas manufacturado y natural y gases licuados del petróleo |
-| Transporte aéreo                                                               |
-| Otras verduras y hortalizas                                                    |
-| Frijol                                                                         |
-| Gasolina                                                                       |
-| Otras cuotas fijas y extraordinarias en la educación secundaria                |
+|  No.  | Gastos básicos excluidos en la base 2000 del IPC                               |
+| :---: | :----------------------------------------------------------------------------- |
+|   1   | Cebolla                                                                        |
+|   2   | Tomate                                                                         |
+|   3   | Otras cuotas fijas y extraordinarias en la educación preprimaria y primaria    |
+|   4   | Papa o patata                                                                  |
+|   5   | Zanahoria                                                                      |
+|   6   | Culantro o cilantro                                                            |
+|   7   | Güisquil                                                                       |
+|   8   | Gastos derivados del gas manufacturado y natural y gases licuados del petróleo |
+|   9   | Transporte aéreo                                                               |
+|  10   | Otras verduras y hortalizas                                                    |
+|  11   | Frijol                                                                         |
+|  12   | Gasolina                                                                       |
+|  13   | Otras cuotas fijas y extraordinarias en la educación secundaria                |
 
 
-| Gastos básicos excluidos en la base 2010 del IPC |
-| :----------------------------------------------- |
-| Tomate                                           |
-| Culantro                                         |
-| Cebolla                                          |
-| Chile pimiento                                   |
-| Gas Propano                                      |
-| Papa                                             |
-| Güisquil                                         |
-| Diesel                                           |
+|  No.  | Gastos básicos excluidos en la base 2010 del IPC |
+| :---: | :----------------------------------------------- |
+|   1   | Tomate                                           |
+|   2   | Culantro                                         |
+|   3   | Cebolla                                          |
+|   4   | Chile pimiento                                   |
+|   5   | Gas Propano                                      |
+|   6   | Papa                                             |
+|   7   | Güisquil                                         |
+|   8   | Diesel                                           |
 
 
 !!! note 
