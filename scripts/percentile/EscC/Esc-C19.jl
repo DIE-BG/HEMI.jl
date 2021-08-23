@@ -10,9 +10,9 @@
 
 Esc = "EscC19"
 using DrWatson
+@quickactivate "HEMI"
 using DataFrames
 using Plots, CSV
-@quickactivate "HEMI"
 
 # Cargar el módulo de Distributed para computación paralela
 using Distributed
