@@ -34,7 +34,7 @@ UPPER_B = [3f0, 3f0]
 PARAM_0 = [0.42424244f0, 1.5151515f0]
 
 # Tolerancia en la optimización.
-F_TOL = 1e-4
+F_TOL = 1e-5
 
 # ## Variantes de optimización
 
@@ -48,6 +48,8 @@ optim_variants = Dict(
     :nsim => 125_000,
     :traindate => [Date(2019, 12), Date(2020, 12)]
 ) |> dict_list
+
+optim_variants = optim_variants[5:end]
 
 # ## Optimización de variantes
 
