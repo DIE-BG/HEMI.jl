@@ -1,9 +1,9 @@
 using DrWatson
+@quickactivate "HEMI"
 using Plots
 using DataFrames
 using Chain
 using PrettyTables
-@quickactivate "HEMI"
 
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
