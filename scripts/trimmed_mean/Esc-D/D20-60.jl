@@ -19,6 +19,7 @@ include(scriptsdir("trimmed_mean","scripts","grid_optim.jl"))
 
 
 # Obtener una grilla para las medidas
+# AMPLIAR EXPLICACIÓN DEL FLUJO DE TRABAJO ACÁ
 grid_batch(gtdata,InflationTrimmedMeanEq, ResampleSBB(36),
             TrendRandomWalk(),10_000, 45:75, 70:100,InflationTotalRebaseCPI(60),
             Date(2020,12);esc="Esc-D"
@@ -30,11 +31,8 @@ grid_batch(gtdata,InflationTrimmedMeanWeighted, ResampleSBB(36),
 )
 
 
-
-
-
-
 # Optimizar
+# AMPLIAR EXPLICACIÓN DEL FLUJO DE TRABAJO ACÁ
 dir_list = [joinpath("InflationTrimmedMeanEq","Esc-D","MTEq_SBB36_RW_Rebase60_N10000_2020-12"), 
             joinpath("InflationTrimmedMeanWeighted","Esc-D","MTW_SBB36_RW_Rebase60_N10000_2020-12")
 ]
