@@ -2,7 +2,6 @@
 
 En esta sección se documentan los resultados del proceso de evaluación de las medidas de inflación interanual basadas en la metodología de percentiles ponderados y equiponderados.
 
-<!-- D19-36 -->
 ## Resultados de evaluación con criterios básicos a diciembre de 2019 modificando la metodología de remuestreo
 
 | Medida                        |    MSE | Error estándar |
@@ -24,13 +23,12 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil equiponderado 71.23 |  1.596 |     -0.1817 | 1.2171 | 0.8061 |      0.8259 |
 | Percentil ponderado 67.79     | 1.9023 |     -0.4862 | 1.5376 | 1.0926 |      0.8034 |
 
-### Trayectoria de inflación observada
+### Trayectorias de inflación observada
 
 ![Trayectoria observada](images/Percentile/Optim-Percentile_EVALDATE=2019-12-01_PARAM_PERIOD=36.svg)
 
 
 
-<!-- D19-60 -->
 ## Resultados de evaluación con criterios básicos a diciembre de 2019 modificando la metodología de remuestreo y el parámetro de evaluación
 
 | Medida                        |    MSE | Error estándar |
@@ -54,7 +52,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 
 
-<!-- D20-36 -->
 ## Resultados de evaluación con criterios básicos a diciembre de 2020 modificando la metodología de remuestreo
 
 | Medida                        |    MSE | Error estándar |
@@ -78,7 +75,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 
 
-<!-- D20-60 -->
 ## Resultados de evaluación con criterios básicos a diciembre de 2020 modificando la metodología de remuestreo y el parámetro de evaluación
 
 | Medida                        |    MSE | Error estándar |
@@ -100,6 +96,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | Percentil equiponderado 71.47 |  1.655 |      -0.404 | 1.2956 |  0.866 |      0.8269 |
 | Percentil ponderado 69.46     | 1.9597 |     -0.4082 |  1.589 | 1.1414 |      0.8123 |
 
-### Trayectoria de inflación observada
+### Trayectorias de inflación observada
 
 ![Trayectoria observada](images/Percentile/Optim-Percentile_EVALDATE=2020-12-01_PARAM_PERIOD=60.svg)
