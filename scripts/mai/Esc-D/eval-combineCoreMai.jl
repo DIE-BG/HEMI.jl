@@ -12,7 +12,7 @@ includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Configuración de escenario
 EVALDATE = Date(2020,12)
-PARAMSCENARIO = 36
+PARAMSCENARIO = 60
 SCENARIO = "D" * Dates.format(EVALDATE, "yy") * "-" * string(PARAMSCENARIO)
 @info "Escenario de evaluación:" SCENARIO
 
@@ -111,10 +111,10 @@ tray_infl_maiopt = tray_infl_mai_obs * a_optim
 fdate = Dates.format(EVALDATE, "uyy")
 plot(InflationTotalCPI(), gtdata)
 plot!(infl_dates(gtdata), tray_infl_maiopt, 
-    label="Combinación lineal óptima MSE MAI ($fdate)", 
+    label="Combinación lineal óptima MSE MAI ($SCENARIO)", 
     legend=:topright)
 
-savefig(plotsdir(plotspath, savename("MAI-optima-MSE", (@dict fdate), "svg")))
+savefig(plotsdir(plotspath, savename("MAI-optima-MSE", (@dict SCENARIO), "svg")))
 
 
 ## Tablas de resultados 
