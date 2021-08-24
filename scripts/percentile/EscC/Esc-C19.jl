@@ -1,17 +1,18 @@
 # # Script de Evaluación de inflación basada en percentiles (Equiponderados y ponderados)
 
-# Escenario B: réplica del trabajo efectuado en 2020 (criterios básicos a dic-19) 
-# utilizando la información hasta diciembre de 2020
-#   - Período de Evaluación: Diciembre 2001 - Diciembre 2020, ff = Date(2020, 12).
-#   - Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años, [InflationTotalRebaseCPI(36, 2)] (legacy).
-#   - Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [ResampleScrambleVarMonths()].
-#   - Muestra completa para evaluación, [SimConfig].
+# Escenario C: Evaluación de criterios básicos con cambio de parámetro de evaluación
+# -  Período de Evaluación:
+#      a. Diciembre 2001 - Diciembre 2019, ff19 = Date(2019, 12)
+#      b. Diciembre 2001 - Diciembre 2020, ff20 = Date(2020, 12)
+# -  Trayectoria de inflación paramétrica con cambios de base cada 5 años, [InflationTotalRebaseCPI(60)].
+# -  Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [ResampleScrambleVarMonths()].
+# -  Muestra completa para evaluación [SimConfig].
 
-Esc = "EscB"
+Esc = "EscC19"
 using DrWatson
+@quickactivate "HEMI"
 using DataFrames
 using Plots, CSV
-@quickactivate "HEMI"
 
 # Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -22,9 +23,8 @@ addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 # CountryStructure con datos hasta diciembre de 2020
-gtdata_eval = gtdata[Date(2020, 12)]
-ff = Date(2020, 12)
-# ff2 = [Date(2019,12),Date(2020,12)]
+gtdata_eval = gtdata[Date(2019, 12)]
+ff = Date(2019, 12)
 
 ##
 # Percentiles ponderados
@@ -35,13 +35,13 @@ medida = "InflPercentileWeighted"
 
 # Se evalúan los percentiles ponderados del 50 al 80. 
 # Generamos el diccionario con los parámetros de evaluación.
-# utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
+# utilizamos los mismos datos gtdata_eval = gtdata[Date(2019, 12)]
 
 # Funciones de remuestreo y tendencia
 #resamplefn = ResampleSBB(36)
 resamplefn = ResampleScrambleVarMonths() 
 trendfn = TrendRandomWalk()
-paramfn = InflationTotalRebaseCPI(36, 2)
+paramfn = InflationTotalRebaseCPI(60)
 
 # la función de inflación, la instanciamos dentro del diccionario.
 dict_percW = Dict(
@@ -53,8 +53,8 @@ dict_percW = Dict(
     :traindate => ff) |> dict_list 
 
 # 2. Definimos las carpetas para almacenar los resultados 
-savepath_pw = datadir("results",medida,Esc)
-savepath_plot_pw = joinpath("docs", "src", "eval", Esc, "images", medida)
+savepath_pw = datadir("results",medida,"EscC",Esc)
+savepath_plot_pw = joinpath("docs", "src", "eval", "EscC", "images", medida)
 
 # 3. Usamos run_batch, para gnenerar la evaluación de los percentiles del 50 al 80
 run_batch(gtdata_eval, dict_percW, savepath_pw)
@@ -83,13 +83,13 @@ scatter(50:80, df_pw.mse,
     legend = :topright, # :topleft, 
     xlabel= "Percentil ponderado", ylabel = "MSE")
     annotate!(70, 14, string("min MSE = ",min_mse_pw,"  ",min_pw),7)
-    png(joinpath(savepath_plot_pw, "MSE"))
+    png(joinpath(savepath_plot_pw, "MSE_c19"))
 
 # b. Gráfica trayectorias
 p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
 plot!(InflationPercentileWeighted(num_min_pw), gtdata, fmt = :svg)
 
-Plots.svg(p, joinpath(savepath_plot_pw, "obs_trajectory"))
+Plots.svg(p, joinpath(savepath_plot_pw, "obs_trajectory_c19"))
     
 ##
 # Percentiles Equiponderados
@@ -99,13 +99,13 @@ medida = "InflPercentileEq"
 
 # Asumimos que queremos evaluar los percentiles ponderados del 50 al 80. 
 # Generamos el diccionario con los parámetros de evaluación.
-# utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
+# utilizamos los mismos datos gtdata_eval = gtdata[Date(2019, 12)]
 
 # Funciones de remuestreo y tendencia
 #resamplefn = ResampleSBB(36)
 resamplefn = ResampleScrambleVarMonths() 
 trendfn = TrendRandomWalk()
-paramfn = InflationTotalRebaseCPI(36, 2)
+paramfn = InflationTotalRebaseCPI(60)
 
 # la función de inflación, la instanciamos dentro del diccionario.
 dict_perc = Dict(
@@ -118,8 +118,8 @@ dict_perc = Dict(
 
 # 2. Definimos las carpetas para almacenar los resultados 
 
-savepath_p = datadir("results",medida,Esc)
-savepath_plot_p = joinpath("docs", "src", "eval", Esc, "images", medida)
+savepath_p = datadir("results",medida,"EscC",Esc)
+savepath_plot_p = joinpath("docs", "src", "eval", "EscC", "images", medida)
 
 # 3. Usamos run_batch, para gnenerar la evaluación de los percentiles del 50 al 80
 run_batch(gtdata_eval, dict_perc, savepath_p)
@@ -148,10 +148,10 @@ scatter(50:80, df_p.mse,
     legend = :topright, # :topleft, 
     xlabel= "Percentil Equiponderado", ylabel = "MSE")
     annotate!(70, 16, string("min MSE = ",min_mse_p,"  ",min_p),7)
-    png(joinpath(savepath_plot_p, "MSE"))
+    png(joinpath(savepath_plot_p, "MSE_c19"))
 
 # b. Gráfica trayectorias
 p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
 plot!(InflationPercentileEq(num_min_p), gtdata, fmt = :svg)
 
-Plots.svg(p, joinpath(savepath_plot_p, "obs_trajectory"))
+Plots.svg(p, joinpath(savepath_plot_p, "obs_trajectory_c19"))

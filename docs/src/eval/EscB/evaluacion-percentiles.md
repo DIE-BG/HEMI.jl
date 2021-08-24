@@ -4,7 +4,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 ## Resultados de evaluación con criterios básicos a diciembre de 2020
 
-### Percentiles ponderados y equiponderados
 
 | Medida                        |    MSE | Error estándar |
 |:----------------------------- | ------:| --------------:|
@@ -13,7 +12,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 ## Descomposición aditiva del MSE
 
-### Percentiles ponderados y equiponderados
 
 | Medida                       |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 |:---------------------------- | ------:| -----------:| --------------:| ----------------:|
@@ -25,19 +23,16 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 ## Métricas de evaluación 
 
-### Percentiles ponderados y equiponderados
 
 | Medida                       |   RMSE | Error medio |    MAE |  Huber | Correlación |
 |:---------------------------- | ------:| -----------:| ------:| ------:| -----------:|
 | Percentil ponderado 70.0     | 0.6504 |     -0.1461 | 0.5312 | 0.2058 |      0.9737 |
 | Percentil equiponderado 72.0 | 0.4709 |     -0.0754 | 0.3428 | 0.1081 |      0.9844 |
 
-## Trayectoria de inflación observada
+## Trayectorias de inflación observada
 
-### Percentiles ponderados 
 ![Trayectoria observada](images/InflPercentileWeighted/obs_trajectory.svg)
 
-### Percentiles equiponderados
 ![Trayectoria observada](images/InflPercentileEq/obs_trajectory.svg)
 
 ## Evaluación gráfica de percentiles 
