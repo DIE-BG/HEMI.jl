@@ -12,7 +12,7 @@ includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Configuración de escenario
 EVALDATE = Date(2020,12)
-PARAMSCENARIO = 36
+PARAMSCENARIO = 60
 SCENARIO = "D" * Dates.format(EVALDATE, "yy") * "-" * string(PARAMSCENARIO)
 @info "Escenario de evaluación:" SCENARIO
 

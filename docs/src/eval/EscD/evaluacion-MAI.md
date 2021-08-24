@@ -120,32 +120,46 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 ![Trayectoria observada](images/mai/MAI-optima-MSE_SCENARIO=D19-36.svg)
 
 
-### Optimización de cuantiles 
+## Optimización de cuantiles 
 
 Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
 
-| Medida |  MSE | Error estándar |
-| :----- | ---: | -------------: |
-
+| Medida                        |    MSE | Error estándar |
+| :---------------------------- | -----: | -------------: |
+| MAI (FP,4,[0.28, 0.81, 0.98]) | 1.5229 |         0.0016 |
+| MAI (F,4,[0.33, 0.74, 0.98])  | 1.7551 |         0.0017 |
+| MAI (G,4,[0.32, 0.39, 0.98])  | 2.2761 |         0.0022 |
+| Combinación MAI               | 1.4024 |         0.0015 |
 
 #### Ponderadores de combinación lineal 
 
-| Medida | Ponderador |
-| :----- | ---------: |
+| Medida                        | Ponderador |
+| :---------------------------- | ---------: |
+| MAI (FP,4,[0.28, 0.81, 0.98]) |     1.7756 |
+| MAI (F,4,[0.33, 0.74, 0.98])  |    -0.9896 |
+| MAI (G,4,[0.32, 0.39, 0.98])  |      0.258 |
 
 #### Descomposición aditiva del MSE
 
-| Medida |  MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
-| :----- | ---: | ----------: | -------------: | ---------------: |
+| Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :---------------------------- | -----: | ----------: | -------------: | ---------------: |
+| MAI (F,4,[0.33, 0.74, 0.98])  | 1.7551 |      0.1112 |         0.0606 |           1.5833 |
+| MAI (FP,4,[0.28, 0.81, 0.98]) | 1.5229 |      0.1703 |          0.037 |           1.3157 |
+| MAI (G,4,[0.32, 0.39, 0.98])  | 2.2761 |      0.3851 |          0.114 |            1.777 |
+| Combinación MAI               | 1.4024 |       0.142 |         0.0443 |           1.2162 |
 
 #### Métricas de evaluación 
 
-| Medida | RMSE | Error medio |  MAE | Huber | Correlación |
-| :----- | ---: | ----------: | ---: | ----: | ----------: |
+| Medida                        |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :---------------------------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4,[0.33, 0.74, 0.98])  | 1.3057 |      -0.047 | 1.0021 | 0.6153 |      0.8782 |
+| MAI (FP,4,[0.28, 0.81, 0.98]) | 1.2138 |     -0.3122 |  0.944 | 0.5575 |       0.895 |
+| MAI (G,4,[0.32, 0.39, 0.98])  | 1.4874 |       0.427 | 1.1486 | 0.7539 |      0.8516 |
+| Combinación MAI               | 1.1652 |     -0.1496 |  0.908 | 0.5254 |      0.9024 |
 
 #### Trayectoria de inflación observada
 
-![Trayectoria observada](images/mai/****.svg)
+![Trayectoria observada](images/mai/MAI-optima-bestOptim-MSE-D19-36.svg)
 
 
 
@@ -270,32 +284,46 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 ![Trayectoria observada](images/mai/MAI-optima-MSE_SCENARIO=D20-36.svg)
 
 
-### Optimización de cuantiles 
+## Optimización de cuantiles 
 
 Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
 
-| Medida |  MSE | Error estándar |
-| :----- | ---: | -------------: |
-
+| Medida                       |    MSE | Error estándar |
+| :--------------------------- | -----: | -------------: |
+| MAI (FP,4,[0.3, 0.81, 0.98]) | 1.5078 |         0.0015 |
+| MAI (F,4,[0.31, 0.81, 0.98]) | 1.5342 |         0.0015 |
+| MAI (G,4,[0.3, 0.49, 0.98])  | 2.5036 |         0.0023 |
+| Combinación MAI              | 1.4772 |         0.0014 |
 
 #### Ponderadores de combinación lineal 
 
-| Medida | Ponderador |
-| :----- | ---------: |
+| Medida                       | Ponderador |
+| :--------------------------- | ---------: |
+| MAI (FP,4,[0.3, 0.81, 0.98]) |     0.9611 |
+| MAI (F,4,[0.31, 0.81, 0.98]) |     0.1669 |
+| MAI (G,4,[0.3, 0.49, 0.98])  |    -0.0941 |
 
 #### Descomposición aditiva del MSE
 
-| Medida |  MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
-| :----- | ---: | ----------: | -------------: | ---------------: |
+| Medida                       |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :--------------------------- | -----: | ----------: | -------------: | ---------------: |
+| MAI (F,4,[0.31, 0.81, 0.98]) | 1.5342 |      0.1489 |         0.0484 |           1.3368 |
+| MAI (FP,4,[0.3, 0.81, 0.98]) | 1.5078 |      0.2047 |         0.0361 |            1.267 |
+| MAI (G,4,[0.3, 0.49, 0.98])  | 2.5036 |        0.19 |         0.1573 |           2.1562 |
+| Combinación MAI              | 1.4772 |      0.1352 |         0.0526 |           1.2893 |
 
 #### Métricas de evaluación 
 
-| Medida | RMSE | Error medio |  MAE | Huber | Correlación |
-| :----- | ---: | ----------: | ---: | ----: | ----------: |
+| Medida                       |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :--------------------------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4,[0.31, 0.81, 0.98]) | 1.2201 |      -0.219 | 0.9467 | 0.5591 |      0.8947 |
+| MAI (FP,4,[0.3, 0.81, 0.98]) | 1.2086 |     -0.3474 | 0.9458 | 0.5569 |      0.8984 |
+| MAI (G,4,[0.3, 0.49, 0.98])  |  1.561 |        0.29 | 1.1826 | 0.7863 |      0.8419 |
+| Combinación MAI              | 1.1982 |     -0.2115 | 0.9354 | 0.5494 |      0.8999 |
 
 #### Trayectoria de inflación observada
 
-![Trayectoria observada](images/mai/****.svg)
+![Trayectoria observada](images/mai/MAI-optima-bestOptim-MSE-D20-36.svg)
 
 
 
@@ -422,32 +450,46 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 ![Trayectoria observada](images/mai/MAI-optima-MSE_SCENARIO=D19-60.svg)
 
 
-### Optimización de cuantiles 
+## Optimización de cuantiles 
 
 Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
 
-| Medida |  MSE | Error estándar |
-| :----- | ---: | -------------: |
-
+| Medida                       |    MSE | Error estándar |
+| :--------------------------- | -----: | -------------: |
+| MAI (FP,4,[0.3, 0.65, 0.98]) |  2.064 |         0.0018 |
+| MAI (F,4,[0.3, 0.63, 0.98])  | 2.0757 |         0.0019 |
+| MAI (G,4,[0.3, 0.48, 0.98])  |  2.536 |         0.0025 |
+| Combinación MAI              | 1.9936 |          0.002 |
 
 #### Ponderadores de combinación lineal 
 
-| Medida | Ponderador |
-| :----- | ---------: |
+| Medida                       | Ponderador |
+| :--------------------------- | ---------: |
+| MAI (FP,4,[0.3, 0.65, 0.98]) |     0.4683 |
+| MAI (F,4,[0.3, 0.63, 0.98])  |     0.3684 |
+| MAI (G,4,[0.3, 0.48, 0.98])  |     0.1271 |
 
 #### Descomposición aditiva del MSE
 
-| Medida |  MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
-| :----- | ---: | ----------: | -------------: | ---------------: |
+| Medida                       |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :--------------------------- | -----: | ----------: | -------------: | ---------------: |
+| MAI (F,4,[0.3, 0.63, 0.98])  | 2.0757 |      0.1128 |         0.1498 |           1.8131 |
+| MAI (FP,4,[0.3, 0.65, 0.98]) |  2.064 |      0.1095 |         0.1839 |           1.7707 |
+| MAI (G,4,[0.3, 0.48, 0.98])  |  2.536 |      0.1219 |         0.1034 |           2.3108 |
+| Combinación MAI              | 1.9936 |      0.1589 |         0.0894 |           1.7454 |
 
 #### Métricas de evaluación 
 
-| Medida | RMSE | Error medio |  MAE | Huber | Correlación |
-| :----- | ---: | ----------: | ---: | ----: | ----------: |
+| Medida                       |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :--------------------------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4,[0.3, 0.63, 0.98])  | 1.4221 |     -0.0621 | 1.1215 |  0.714 |      0.8745 |
+| MAI (FP,4,[0.3, 0.65, 0.98]) | 1.4187 |     -0.1342 | 1.1272 | 0.7171 |      0.8795 |
+| MAI (G,4,[0.3, 0.48, 0.98])  | 1.5688 |       0.114 | 1.2016 | 0.7992 |      0.8321 |
+| Combinación MAI              | 1.3906 |     -0.2838 | 1.1077 | 0.6956 |      0.8745 |
 
 #### Trayectoria de inflación observada
 
-![Trayectoria observada](images/mai/****.svg)
+![Trayectoria observada](images/mai/MAI-optima-bestOptim-MSE-D19-60.svg)
 
 
 
@@ -574,32 +616,46 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 ![Trayectoria observada](images/mai/MAI-optima-MSE_SCENARIO=D20-60.svg)
 
 
-### Optimización de cuantiles 
+## Optimización de cuantiles 
 
 Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
 
 | Medida |  MSE | Error estándar |
 | :----- | ---: | -------------: |
-
+| MAI (FP,4,[0.31, 0.77, 0.98]) |    1.815 |        0.0018 |
+|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.8657 |        0.0018 |
+|  MAI (G,4,[0.29, 0.48, 0.98]) |   2.5139 |        0.0024 |
+|               Combinación MAI |    1.805 |        0.0017 |
 
 #### Ponderadores de combinación lineal 
 
 | Medida | Ponderador |
 | :----- | ---------: |
+| MAI (FP,4,[0.31, 0.77, 0.98]) |          0.8528 |
+|  MAI (F,4,[0.31, 0.74, 0.98]) |          0.1448 |
+|  MAI (G,4,[0.29, 0.48, 0.98]) |          0.0118 |
 
 #### Descomposición aditiva del MSE
 
 | Medida |  MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :----- | ---: | ----------: | -------------: | ---------------: |
+|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.8657 |   0.1175 |    0.063 |   1.6852 |
+| MAI (FP,4,[0.31, 0.77, 0.98]) |    1.815 |   0.1742 |   0.0379 |   1.6029 |
+|  MAI (G,4,[0.29, 0.48, 0.98]) |   2.5139 |   0.1158 |   0.1036 |   2.2945 |
+|               Combinación MAI |    1.805 |   0.1298 |    0.044 |   1.6312 |
 
 #### Métricas de evaluación 
 
 | Medida | RMSE | Error medio |  MAE | Huber | Correlación |
 | :----- | ---: | ----------: | ---: | ----: | ----------: |
+|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.3467 |   -0.105 |   1.0455 |   0.6503 |   0.8751 |     
+| MAI (FP,4,[0.31, 0.77, 0.98]) |   1.3273 |  -0.2898 |   1.0314 |   0.6389 |   0.8764 |     
+|  MAI (G,4,[0.29, 0.48, 0.98]) |   1.5622 |   0.1019 |   1.1897 |   0.7897 |   0.8323 |     
+|               Combinación MAI |   1.3241 |  -0.2075 |   1.0284 |   0.6358 |   0.8762 |
 
 #### Trayectoria de inflación observada
 
-![Trayectoria observada](images/mai/****.svg)
+![Trayectoria observada](images/mai/MAI-optima-bestOptim-MSE-D20-60.svg)
 
 
 
