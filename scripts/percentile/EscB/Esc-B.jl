@@ -1,16 +1,17 @@
 # # Script de Evaluación de inflación basada en percentiles (Equiponderados y ponderados)
 
-# Escenario A: réplica del trabajo efectuado en 2020 (criterios básicos a dic-19)
-#   - Período de Evaluación: Diciembre 2001 - Diciembre 2019, ff = Date(2019, 12).
+# Escenario B: réplica del trabajo efectuado en 2020 (criterios básicos a dic-19) 
+# utilizando la información hasta diciembre de 2020
+#   - Período de Evaluación: Diciembre 2001 - Diciembre 2020, ff = Date(2020, 12).
 #   - Trayectoria de inflación paramétrica con cambio de base sintético: 2 cambios de base cada 3 años, [InflationTotalRebaseCPI(36, 2)] (legacy).
 #   - Método de remuestreo de extracciones estocásticas independientes (Remuestreo por meses de ocurrencia), [ResampleScrambleVarMonths()].
 #   - Muestra completa para evaluación, [SimConfig].
 
-Esc = "EscA"
+Esc = "EscB"
 using DrWatson
+@quickactivate "HEMI"
 using DataFrames
 using Plots, CSV
-@quickactivate "HEMI"
 
 # Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -20,9 +21,9 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
-# CountryStructure con datos hasta diciembre de 2019
-gtdata_eval = gtdata[Date(2019, 12)]
-ff = Date(2019, 12)
+# CountryStructure con datos hasta diciembre de 2020
+gtdata_eval = gtdata[Date(2020, 12)]
+ff = Date(2020, 12)
 # ff2 = [Date(2019,12),Date(2020,12)]
 
 ##
@@ -34,7 +35,7 @@ medida = "InflPercentileWeighted"
 
 # Se evalúan los percentiles ponderados del 50 al 80. 
 # Generamos el diccionario con los parámetros de evaluación.
-# utilizamos los mismos datos gtdata_eval = gtdata[Date(2019, 12)]
+# utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
 
 # Funciones de remuestreo y tendencia
 #resamplefn = ResampleSBB(36)
@@ -70,7 +71,7 @@ min_pw= first(sorted_df_pw[!,"measure"])
 num_min_pw = sorted_df_pw.params[1]
 num_min_pw = num_min_pw[1]
 
-# Guardar el DataFrame en la ruta especifiada
+# Guardar como CSV el DataFrame en la ruta especifiada
 CSV.write(joinpath(savepath_pw,"InflationPercentileWeighted.csv"),sorted_df_pw)
 
 # revisión gráfica
@@ -98,7 +99,7 @@ medida = "InflPercentileEq"
 
 # Asumimos que queremos evaluar los percentiles ponderados del 50 al 80. 
 # Generamos el diccionario con los parámetros de evaluación.
-# utilizamos los mismos datos gtdata_eval = gtdata[Date(2019, 12)]
+# utilizamos los mismos datos gtdata_eval = gtdata[Date(2020, 12)]
 
 # Funciones de remuestreo y tendencia
 #resamplefn = ResampleSBB(36)

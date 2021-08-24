@@ -41,24 +41,27 @@ makedocs(;
         "Guía de evaluación" => "guides/Guia-evaluacion.md", 
         "Evaluación" => [
             "Escenario A" => [
-                "eval/EscA/evaluacion-InflPercentile.md", 
+                "eval/EscA/evaluacion-percentiles.md", 
                 "eval/EscA/evaluacion-dynEx.md", 
                 "eval/EscA/evaluacion-MT.md",
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md", 
             ],            
             "Escenario B" => [
-                "eval/EscB/evaluacion-InflPercentile.md", 
+                "eval/EscB/evaluacion-percentiles.md", 
                 "eval/EscB/evaluacion-dynEx.md",
                 "eval/EscB/evaluacion-MT.md",
                 "eval/EscB/evaluacion-exclusion-fija.md",
                 "eval/EscB/evaluacion-MAI.md",
             ],
             "Escenario C" => [
-                "eval/EscC/evaluacion-InflPercentile.md",
+                "eval/EscC/evaluacion-percentiles.md",
                 "eval/EscC/evaluacion-dynEx.md", 
                 "eval/EscC/evaluacion-exclusion-fija.md", 
                 "eval/EscC/evaluacion-MAI.md",
+            ],
+            "Escenario D" => [
+                "eval/EscD/evaluacion-percentiles.md",
             ]
         ],
         "API" => 
