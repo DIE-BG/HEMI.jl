@@ -5,7 +5,7 @@ using DrWatson
 # Cargar el módulo de Distributed para computación paralela
 using Distributed
 # Agregar procesos trabajadores
-addprocs(4, exeflags="--project")
+nprocs() < 5 && addprocs(4, exeflags="--project")
 
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI

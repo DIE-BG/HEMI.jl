@@ -64,8 +64,10 @@ module InflationEvalTools
 
     # Tipos para configuración de simulaciones
     export AbstractConfig, SimConfig, CrossEvalConfig
-    export convert_dict
+    export CompletePeriod, EvalPeriod, eval_periods, period_tag
+    export GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010
     include("config/SimConfig.jl")
+    include("config/EvalPeriod.jl")
     
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
