@@ -62,6 +62,7 @@ makedocs(;
             ],
             "Escenario D" => [
                 "eval/EscD/evaluacion-percentiles.md",
+                "eval/EscD/evaluacion-MT.md",
                 "eval/EscD/evaluacion-MAI.md",
             ]
         ],

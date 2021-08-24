@@ -1,7 +1,7 @@
 """
     grid_batch(data, inflfn, resamplefn, trendfn, N::Int, 
                     l1_range, l2_range, paramfn, traindate::Date;
-                    savetrajectories = false)
+                    savetrajectories = false, save_dir = "")
 
 Ejecuta `run_batch` de MediaTruncada(l1,l2) ∀ l1 ϵ l1-range,
 l2 ϵ l2-range donde l1<l2
@@ -9,12 +9,14 @@ l2 ϵ l2-range donde l1<l2
 ```
 grid_batch(gtdata,InflationTrimmedMeanEq, ResampleScrambleVarMonths(), 
     TrendRandomWalk(),10_000, 10:20, 90:99,InflationTotalRebaseCPI(36,2),
-    Date(2020,12); esc = "Esc-B")
+    Date(2020,12); 
+    save_dir = joinpath("results","InflationTrimmedMeanEq","Esc-B")
+    )
 ```
 """
 function grid_batch(data, inflfn, resamplefn, trendfn, N::Int, 
                     l1_range, l2_range, paramfn, traindate::Date;
-                    savetrajectories = false, esc="")
+                    savetrajectories = false, save_dir="")
 
                     sims = Dict(
                         :inflfn => inflfn.([(x,y) for x in l1_range for y in l2_range if x<y]), 
@@ -26,7 +28,7 @@ function grid_batch(data, inflfn, resamplefn, trendfn, N::Int,
                     ) |> dict_list
 
                     dir_name = join(alias_savepath.([inflfn,resamplefn,trendfn,paramfn,N,traindate]),"_")
-                    savepath   = datadir("results", string(inflfn), esc ,dir_name)
+                    savepath   = datadir(save_dir, dir_name)
 
                     run_batch(data, sims, savepath; savetrajectories)
                     println("resultados guardados en:")

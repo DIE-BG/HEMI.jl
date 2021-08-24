@@ -3,10 +3,8 @@ using DataFrames
 using JLD2
 
 
-function grid_optim(dir_name, data, N::Int64, radius, measure=:mse; esc="")
-                savepath    = datadir("results", dir_name)
-                # dir_last    = split(dir_name,"\\")[end]
-                df          = collect_results(savepath)
+function grid_optim(data_dir, data, N::Int64, radius, measure=:mse; save_dir="")
+                df          = collect_results(datadir(data_dir))
                 condition   =  measure==:corr   
                 sorted_df   = sort(df,measure, rev=condition)
                 min_params  = sorted_df[1,:params]
@@ -39,8 +37,8 @@ function grid_optim(dir_name, data, N::Int64, radius, measure=:mse; esc="")
                 config      = SimConfig(INF, resamplefn, trendfn, paramfn, N, traindate)
                 results, _  = makesim(gtdata, config)
                 filename    = savename(config, "jld2")
-                dir        = datadir("results", string(inflfn), esc, "optim")
-                wsave(joinpath(dir, filename), tostringdict(results))
+                savepath    = datadir(save_dir, "optim")
+                wsave(joinpath(savepath, filename), tostringdict(results))
 
 end
 
