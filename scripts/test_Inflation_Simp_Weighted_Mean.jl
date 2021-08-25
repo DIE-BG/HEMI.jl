@@ -2,7 +2,8 @@
 
 #Carga de paquetes
 using DrWatson
-@quickactivate :HEMI
+@quickactivate "HEMI"
+using HEMI
 using InflationFunctions
 
 # ##MEDIA SIMPLE

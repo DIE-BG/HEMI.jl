@@ -30,14 +30,14 @@ inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
 paramfn    = InflationTotalRebaseCPI(36, 2)
-nsim       = 10_000
+nsim       = 125_000
 ff         = Date(2019, 12)
 
  # Configuración de simulación
 config = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff)
 ```
 ```julia
-julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000, Date(2019, 12))      
+julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 125_000, Date(2019, 12))      
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
 |─> Función de remuestreo           : Bootstrap IID por meses de ocurrencia
@@ -81,14 +81,14 @@ inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
 paramfn    = InflationTotalRebaseCPI(36, 2)
-nsim       = 10_000
+nsim       = 125_000
 ff         = Date(2020, 12)
 
  # Configuración de simulación
 config = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, ff)
 ```
 ```julia
-julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 10_000, Date(2020,12))       
+julia> config = SimConfig(InflationPercentileEq(69), ResampleScrambleVarMonths(), TrendRandomWalk(), InflationTotalRebaseCPI(36, 2), 125_000, Date(2020,12))       
 SimConfig{InflationPercentileEq, ResampleScrambleVarMonths, TrendRandomWalk{Float32}}
 |─> Función de inflación            : Percentil equiponderado 69.0
 |─> Función de remuestreo           : Bootstrap IID por meses de ocurrencia
@@ -130,7 +130,7 @@ inflfn     = InflationPercentileEq(69)
 resamplefn = ResampleScrambleVarMonths()
 trendfn    = TrendRandomWalk()
 paramfn    = InflationTotalRebaseCPI(60)
-nsim       = 10_000
+nsim       = 125_000
 ff19       = Date(2019, 12)
 ff20       = Date(2020, 12)
 
@@ -193,7 +193,7 @@ resamplefn = ResampleSBB(36)
 trendfn    = TrendRandomWalk()
 paramfn1    = InflationTotalRebaseCPI(36, 2)
 paramfn2    = InflationTotalRebaseCPI(60)
-nsim       = 10_000
+nsim       = 125_000
 ff19       = Date(2019,12)
 ff20       = Date(2020, 12)
 
@@ -226,6 +226,42 @@ config20_2 = SimConfig(inflfn, resamplefn, trendfn, paramfn2, nsim, ff20)
        :resamplefn => resamplefn, 
        :trendfn => trendfn,
        :paramfn => [paramfn1, paramfn2],
-       :nsim => 10_000,
+       :nsim => 125_000,
        :traindate => [Date(2019, 12), Date(2020, 12)]) |> dict_list
     ```
+
+
+
+## Escenario E: Evaluación con nuevos criterios para evaluación de combinación lineal fuera de muestra
+
+### Nombre para los directorios
+
+- Directorio principal: `data\results\<nombre-medida>\Esc-E\`
+  - Escenario hasta diciembre 2018 y cambios de base cada 5 años. 
+
+### Descripción 
+Este escenario pretende evaluar las medidas de inflación cambiando la metodología de remuestreo y la trayectoria paramétrica para obtener las mejores medidas en el período de evaluación de diciembre de 2001 a diciembre de 2018. La idea es obtener los mejores estimadores en la mayor parte de la muestra, pero al mismo tiempo, no sobreajustar los parámetros de las medidas sobre el período completo. El resto de la muestra se utiliza para obtener una combinación lineal de estimadores óptimos en la base 2010 del IPC.
+
+Los parámetros de configuración en este caso son los siguientes:
+ 1. Período de Evaluación: 
+    - Diciembre 2001 - Diciembre 2018, `ff = Date(2018, 12)`
+ 2. Trayectoria de inflación paramétrica 
+    - Con cambios de base cada 5 años, [`InflationTotalRebaseCPI(60)`].
+ 3.  Método de remuestreo Remuestreo bloques estacionarios, [`ResampleSBB(36)`], con tamaño de bloque esperado igual a 36.
+ 4. Muestra completa para evaluación [`SimConfig`].
+
+En este caso, una configuración de simulación, para evaluar el Percentil Equiponderado 69, estaría dada por:
+
+```julia
+## Definición de parámetros de simulación
+inflfn     = InflationPercentileEq(69)
+resamplefn = ResampleSBB(36)
+trendfn    = TrendRandomWalk()
+paramfn    = InflationTotalRebaseCPI(60)
+nsim       = 125_000
+evaldate   = Date(2018,12)
+
+# Configuración de simulación período Diciembre 2001 - Diciembre 2018
+config = SimConfig(inflfn, resamplefn, trendfn, paramfn, nsim, evaldate)
+```
+

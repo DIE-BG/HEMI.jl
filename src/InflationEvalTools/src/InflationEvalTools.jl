@@ -17,6 +17,7 @@ module InflationEvalTools
     using Reexport
     using StableRNGs
     using OnlineStats: Mean, fit!, merge, value
+    using LinearAlgebra: det, mul!
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """
@@ -63,8 +64,10 @@ module InflationEvalTools
 
     # Tipos para configuración de simulaciones
     export AbstractConfig, SimConfig, CrossEvalConfig
-    export convert_dict
+    export CompletePeriod, EvalPeriod, eval_periods, period_tag
+    export GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010
     include("config/SimConfig.jl")
+    include("config/EvalPeriod.jl")
     
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl
@@ -78,6 +81,9 @@ module InflationEvalTools
     include("simulate/simutils.jl")
     include("simulate/eval_mse_online.jl")
 
+    ## Combinación óptima MSE de estimadores 
+    export combination_weights
+    include("combination/combination_weights.jl")
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
