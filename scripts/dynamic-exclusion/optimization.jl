@@ -36,10 +36,15 @@ PARAM_0 = [0.42424244f0, 1.5151515f0]
 # Tolerancia en la optimización.
 F_TOL = 1e-5
 
+# Tolerancia en el cambio en x
+
+X_TOL = 1e-3
+
 # ## Variantes de optimización
 
 # En esta sección se definen todas las variantes para la optimización. Notar que el campo ``:inflfn`` corresponde a una función anónima, por lo que estas variantes no pueden ser evaluadas de forma inmediata.
 
+#=
 optim_variants = Dict(
     :inflfn => vecParameters -> INFLATION_FUNCTION_TYPE(vecParameters),
     :resamplefn => [ResampleScrambleVarMonths(), ResampleSBB(36)], 
@@ -48,6 +53,17 @@ optim_variants = Dict(
     :nsim => 125_000,
     :traindate => [Date(2019, 12), Date(2020, 12)]
 ) |> dict_list
+=#
+
+optim_variants = Dict(
+    :inflfn => vecParameters -> INFLATION_FUNCTION_TYPE(vecParameters),
+    :resamplefn => ResampleSBB(36), 
+    :trendfn => TrendRandomWalk(),
+    :paramfn => InflationTotalRebaseCPI(60),
+    :nsim => 125_000,
+    :traindate => Date(2018, 12)
+) |> dict_list
+
 
 optim_variants = optim_variants[5:end]
 
@@ -94,6 +110,7 @@ for variant in optim_variants
         NelderMead(), # Método
         Optim.Options(
             f_tol = F_TOL,
+            x_tol = X_TOL,
             show_trace = true
         )
     )
