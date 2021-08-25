@@ -57,12 +57,15 @@ makedocs(;
             "Escenario C" => [
                 "eval/EscC/evaluacion-percentiles.md",
                 "eval/EscC/evaluacion-dynEx.md", 
+                "eval/EscC/evaluacion-MT.md",
                 "eval/EscC/evaluacion-exclusion-fija.md", 
                 "eval/EscC/evaluacion-MAI.md",
             ],
             "Escenario D" => [
                 "eval/EscD/evaluacion-percentiles.md",
                 "eval/EscD/evaluacion-MT.md",
+                # "eval/EscD/evaluacion-dynEx.md",
+                # "eval/EscD/evaluacion-exclusion-fija.md",
                 "eval/EscD/evaluacion-MAI.md",
             ], 
             "Escenario E" => [
