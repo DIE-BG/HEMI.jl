@@ -42,15 +42,15 @@ makedocs(;
         "Evaluación" => [
             "Escenario A" => [
                 "eval/EscA/evaluacion-percentiles.md", 
-                "eval/EscA/evaluacion-dynEx.md", 
                 "eval/EscA/evaluacion-MT.md",
+                "eval/EscA/evaluacion-dynEx.md", 
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md", 
             ],            
             "Escenario B" => [
                 "eval/EscB/evaluacion-percentiles.md", 
-                "eval/EscB/evaluacion-dynEx.md",
                 "eval/EscB/evaluacion-MT.md",
+                "eval/EscB/evaluacion-dynEx.md",
                 "eval/EscB/evaluacion-exclusion-fija.md",
                 "eval/EscB/evaluacion-MAI.md",
             ],
@@ -64,11 +64,17 @@ makedocs(;
             "Escenario D" => [
                 "eval/EscD/evaluacion-percentiles.md",
                 "eval/EscD/evaluacion-MT.md",
+                # "eval/EscD/evaluacion-dynEx.md",
+                # "eval/EscD/evaluacion-exclusion-fija.md",
                 "eval/EscD/evaluacion-MAI.md",
-            ],
+            ], 
             "Escenario E" => [
+                "eval/EscE/evaluacion-percentiles.md", 
                 "eval/EscE/evaluacion-MT.md",
-            ]
+                # "eval/EscE/evaluacion-dynEx.md",
+                # "eval/EscE/evaluacion-exclusion-fija.md",
+                # "eval/EscE/evaluacion-MAI.md",
+            ]   
         ],
         "API" => 
             ["modules/API.md",
