@@ -195,3 +195,23 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
 end
 
 # optimizemai(3, MaiFP, resamplefn, trendfn, gtdata_eval, tray_infl_param, K=100)
+
+# Función para optimización MAI de método en `method` con n segmentos utilizando
+# diccionario de configuración 
+# function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param; 
+function optimizemai(config, data; options...)
+    # Datos de evaluación 
+    dataeval = data[config[:traindate]]
+    
+    # Configuración de simulación 
+    resamplefn = config[:resamplefn]
+    trendfn = config[:trendfn]
+    paramfn = config[:paramfn]
+    # Parámetro de inflación 
+    param = InflationParameter(paramfn, resamplefn, trendfn)
+    tray_infl_param = param(dataeval)
+
+    optimizemai(config[:mai_nseg], config[:mai_method], 
+        resamplefn, trendfn, dataeval, tray_infl_param; options...)
+
+end
