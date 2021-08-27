@@ -82,7 +82,8 @@ module InflationEvalTools
     include("simulate/eval_mse_online.jl")
 
     ## Combinación óptima MSE de estimadores 
-    export combination_weights
+    export combination_weights, average_mats
+    export ridge_combination_weights, lasso_combination_weights
     include("combination/combination_weights.jl")
 
     ## Funciones en desarrollo 

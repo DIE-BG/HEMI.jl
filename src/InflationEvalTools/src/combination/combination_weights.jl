@@ -3,16 +3,21 @@
 """
     combination_weights(tray_infl, tray_infl_param) -> Vector{<:AbstractFloat}
 
-Función de obtención de ponderadores óptimos de la solución analítica al
-problema de minimización del error cuadrático medio de la combinación lineal de
-estiamadores de inflación en `tray_infl` utilizando la trayectoria de inflación
-paramétrica `tray_infl_param`. Devuelve un vector con los ponderadores asociados
-a cada estimador en las columnas de `tray_infl`.
+Obtiene los ponderadores óptimos de la solución analítica al problema de
+minimización del error cuadrático medio de la combinación lineal de estiamadores
+de inflación en `tray_infl` utilizando la trayectoria de inflación paramétrica
+`tray_infl_param`. 
+
+Devuelve un vector con los ponderadores asociados a cada estimador en las
+columnas de `tray_infl`.
+
+Ver también: [`ridge_combination_weights`](@ref),
+[`lasso_combination_weights`](@ref)
 """
 function combination_weights(tray_infl, tray_infl_param)
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
-    @info "Determinante de la matriz de coeficientes" det(A)
+    @info "Determinante de la matriz de coeficientes" det(XᵀX)
 
     # Ponderadores de combinación óptima de mínimos cuadrados
     a_optim = XᵀX \ Xᵀπ
@@ -21,6 +26,12 @@ end
 
 # Matriz de diseño y de covarianza con parámetro, promediadas en tiempo y
 # a través de las realizaciones 
+"""
+    average_mats(tray_infl, tray_infl_param) -> (Matrix{<:AbstractFloat}, Vector{<:AbstractFloat})
+
+Obtiene las matrices `XᵀX` y `Xᵀπ` para el problema de minimización del error
+cuadrático medio. 
+"""
 function average_mats(tray_infl, tray_infl_param)
     # Número de ponderadores, observaciones y simulaciones 
     T, n, K = size(tray_infl)
@@ -52,54 +63,97 @@ function average_mats(tray_infl, tray_infl_param)
     XᵀX, Xᵀπ
 end
 
-# Ponderadores de combinación Ridge
-function ridge_combination_weights(tray_infl, tray_infl_param, λ)
+# Ponderadores de combinación Ridge con parámetro de regularización lambda
+"""
+    ridge_combination_weights(tray_infl, tray_infl_param, lambda) -> Vector{<:AbstractFloat}
+
+Obtiene ponderadores óptimos de Ridge a través de la solución analítica al
+problema de minimización del error cuadrático medio de la combinación lineal de
+estimadores de inflación en `tray_infl` utilizando la trayectoria de inflación
+paramétrica `tray_infl_param`, regularizada con la norma L2 de los ponderadores, 
+ponderada por el parámetro `lambda`.
+
+Devuelve un vector con los ponderadores asociados a cada estimador en las
+columnas de `tray_infl`.
+
+Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref)
+"""
+function ridge_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda) where F
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
-    @info "Determinante de la matriz de coeficientes" det(A)
-
-    # Ponderadores de combinación óptima de Ridge
+    λ = convert(F, lambda)
     n = size(tray_infl, 2)
+    
+    # Ponderadores de combinación óptima de Ridge
+    @info "Determinante de la matriz de coeficientes" det(XᵀX)
     a_ridge = (XᵀX + λ*I(n)) \ Xᵀπ
     a_ridge 
 end
 
 
-# Ponderadores de combinación lasso
-function lasso_combination_weights(tray_infl, tray_infl_param, λ; maxiterations=100, α=0.005)
-    T, n, K = size(tray_infl)
+# Ponderadores de combinación lasso con parámetro de regularización lambda
+"""
+    lasso_combination_weights(tray_infl, tray_infl_param, lambda; 
+        maxiterations, alpha, tol, showstatus) -> Vector{<:AbstractFloat}
 
-    β = zeros(eltype(tray_infl), n)
-    cost_vals = zeros(maxiterations)
+Obtiene ponderadores óptimos de LASSO a través de una aproximación iterativa al
+problema de minimización del error cuadrático medio de la combinación lineal de
+estimadores de inflación en `tray_infl` utilizando la trayectoria de inflación
+paramétrica `tray_infl_param`, regularizada con la norma L1 de los ponderadores,
+ponderada por el parámetro `lambda`.
+
+Los parámetros opcionales son: 
+- `maxiterations` (`Integer`): número máximo de iteraciones. Por defecto,
+  `1000`. 
+- `alpha` (`AbstractFloat`): parámetro de aproximación o avance del algoritmo de
+  gradiente próximo. Por defecto, `0.005`.
+- `tol` (`AbstractFloat`): desviación absoluta de la función de costo. Si la
+  función de costo varía en términos absolutos menos que `tol` de una iteración
+  a otra, el algoritmo de gradiente se detiene. Por defecto, `1e-4`. 
+- `showstatus` (`Bool`): mostrar estado del algoritmo iterativo. Por defecto,
+  `true`.
+
+Devuelve un vector con los ponderadores asociados a cada estimador en las
+columnas de `tray_infl`.
+
+Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref)
+"""
+function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
+    maxiterations=1000, alpha=F(0.005), tol = F(1e-4), showstatus=true) where F
+
+    T, n, _ = size(tray_infl)
+
+    λ = convert(F, lambda)
+    α = convert(F, alpha)
+    β = zeros(F, n)
+    cost_vals = zeros(F, maxiterations)
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
+    πᵀπ = sum(x -> x^2, tray_infl_param) / T
 
     # Proximal gradient descent
     for t in 1:maxiterations
-        # tray_infl_comb = sum(tray_infl .* β', dims=2)
-        # err_t_k =  tray_infl_comb .- tray_infl_param
-        # mse_grad = vec(mean(err_t_k .* tray_infl, dims=[1, 3]))
-
-        # metrics = eval_metrics(tray_infl_comb, tray_infl_param, short=true)
-		grad = (XᵀX * β) - Xᵀπ
+        # Computar el gradiente respecto de β
+        grad = (XᵀX * β) - Xᵀπ
 		
 		# Proximal gradient 
 		β = proxl1norm(β - α*grad, α*λ)
-		
-		# cost_vals[t] = metrics[:mse] + λ*sum(abs, β)
-		
-		if t % 5 == 0
-			println("Iter: ", t, "\tcost = ", cost_vals[t])
-            println("β = ", β) 
-            println("grad = ", grad)
+
+        # Métrica de costo 
+        mse = β'*XᵀX*β - 2*β'*Xᵀπ + πᵀπ
+		cost_vals[t] = mse + λ*sum(abs, β)
+		abstol = t > 1 ? abs(cost_vals[t] - cost_vals[t-1]) : 10e0
+
+		if showstatus && t % 100 == 0
+			println("Iter: ", t, " cost = ", cost_vals[t], "  |Δcost| = ", abstol)
 		end
+
+        abstol < tol && break 
 	end
 	
 	β, cost_vals
-
-
 end
 
-# Operador próximo para la norma L1
+# Operador próximo para la norma L1 del vector z
 function proxl1norm(z, α)
     proxl1 = z - clamp.(z, Ref(-α), Ref(α))
     proxl1
