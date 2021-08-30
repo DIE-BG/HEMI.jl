@@ -5,13 +5,12 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 ## Resultados de evaluación con criterios básicos a diciembre de 2018
 
 
-
 | Medida            |    MSE | Error estándar |
 | :---------------- | -----: | -------------: |
 | MTEq-(43.78,90.0) | 2.9124 |         0.0027 |
 | MTW-(17.63,96.2)  | 3.5497 |         0.0038 |
 
-## Descomposición aditiva del MSE
+### Descomposición aditiva del MSE
 
 
 
@@ -21,7 +20,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | MTW-(17.63,96.2)  | 3.5497 |      0.2177 |         0.2443 |           3.0876 |
 
 
-## Métricas de evaluación 
+### Métricas de evaluación 
 
 
 | Medida            |   RMSE | Error medio |    MAE |  Huber | Correlación |
@@ -30,6 +29,6 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 | MTW-(17.63,96.2)  | 1.8491 |     -0.3236 | 1.4555 | 1.0174 |      0.7853 |
 
 
-## Trayectoria de inflación observada
+### Trayectoria de inflación observada
 
 ![Trayectoria observada](images/trimmed_mean/trayectorias_MT.svg)

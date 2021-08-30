@@ -5,7 +5,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 ## Resultados de evaluación a diciembre de 2018
 
-### Evaluación de metodologías MAI-F, MAI-G, MAI-FP
+### Optimización de cuantiles de metodologías MAI-F, MAI-G, MAI-FP
 
 | Medida                        |    MSE | Error estándar |
 | :---------------------------- | -----: | -------------: |
