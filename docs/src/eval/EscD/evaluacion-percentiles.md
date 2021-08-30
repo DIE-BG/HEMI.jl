@@ -13,8 +13,8 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 | Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :---------------------------- | -----: | ----------: | -------------: | ---------------: |
-| Percentil equiponderado 71.23 | 2.6164 |       0.157 |         2.3495 |           0.1099 |
-| Percentil ponderado 67.79     | 3.7097 |      0.4133 |         2.9505 |           0.3459 |
+| Percentil equiponderado 71.23 | 2.6164 |      0.1099 |          0.157 |           2.3495 |
+| Percentil ponderado 67.79     | 3.7097 |      0.3459 |         0.4133 |           2.9505 |
 
 ### Métricas de evaluación 
 
@@ -40,8 +40,8 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 | Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :---------------------------- | -----: | ----------: | -------------: | ---------------: |
-| Percentil equiponderado 71.43 | 2.8519 |      0.1397 |         2.4913 |           0.2209 |
-| Percentil ponderado 69.5      | 3.9908 |      0.5816 |          3.174 |           0.2352 |
+| Percentil equiponderado 71.43 | 2.8519 |      0.2209 |         0.1397 |           2.4913 |
+| Percentil ponderado 69.5      | 3.9908 |      0.2352 |         0.5816 |            3.174 |
 
 ### Métricas de evaluación 
 
@@ -63,8 +63,8 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 | Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :---------------------------- | -----: | ----------: | -------------: | ---------------: |
-| Percentil equiponderado 71.37 | 2.5587 |      0.1762 |         2.2716 |           0.1109 |
-| Percentil ponderado 67.82     | 3.6545 |      0.4431 |         2.8237 |           0.3877 |
+| Percentil equiponderado 71.37 | 2.5587 |      0.1109 |         0.1762 |           2.2716 |
+| Percentil ponderado 67.82     | 3.6545 |      0.3877 |         0.4431 |           2.8237 |
 
 ### Métricas de evaluación 
 
@@ -86,8 +86,8 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 | Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :---------------------------- | -----: | ----------: | -------------: | ---------------: |
-| Percentil equiponderado 71.47 | 2.8034 |      0.1528 |         2.4118 |           0.2388 |
-| Percentil ponderado 69.46     | 3.9282 |       0.603 |         3.0442 |            0.281 |
+| Percentil equiponderado 71.47 | 2.8034 |      0.2388 |         0.1528 |           2.4118 |
+| Percentil ponderado 69.46     | 3.9282 |       0.281 |          0.603 |           3.0442 |
 
 ### Métricas de evaluación 
 
