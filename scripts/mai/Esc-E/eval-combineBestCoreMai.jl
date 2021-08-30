@@ -11,7 +11,7 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Configuración de escenario
-EVALDATE = Date(2020,12)
+EVALDATE = Date(2018,12)
 PARAMSCENARIO = 60
 SCENARIO = "E18"
 @info "Escenario de evaluación:" SCENARIO
@@ -124,8 +124,9 @@ end
 
 # Descomposición del MSE 
 mse_decomp = @chain df_mai begin 
-    select(:measure, :mse, r"mse_[bvc]")
-    [_; select(combined_metrics, :measure, :mse, r"mse_[bvc]")]
+    select(:measure, :mse, r"^mse_[bvc]")
+    [_; select(combined_metrics, :measure, :mse, r"^mse_[bvc]")]
+    select(:measure, :mse, :mse_bias, :mse_var, :mse_cov)
 end 
 
 # Otras métricas 
