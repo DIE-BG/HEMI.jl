@@ -61,8 +61,8 @@ dirs = [joinpath(save_dirs[1],"optim"),
 ]
 
 # cargamos los datos
-df1 = collect_results(datadir("results",dirs[1]))
-df2 = collect_results(datadir("results",dirs[2]))
+df1 = collect_results(datadir(dirs[1]))
+df2 = collect_results(datadir(dirs[2]))
 df3 = vcat(df1,df2)
 
 # filtramos datos basandonos en una condición
