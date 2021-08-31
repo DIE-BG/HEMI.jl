@@ -90,7 +90,7 @@ function evalsim(data::CountryStructure, config::SimConfig;
     metrics = mapreduce(merge, config.evalperiods) do period 
         mask = eval_periods(data_eval, period)
         prefix = period_tag(period)
-        metrics = @views eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
+    metrics = @views eval_metrics(tray_infl[mask, :, :], tray_infl_pob[mask]; short, prefix)
         metrics 
     end 
     # Se filtran métricas que empiecen con gt_. Las métricas de CompletePeriod()
@@ -235,8 +235,12 @@ Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalCon
 """
 function dict_config(params::Dict)
     # CrossEvalConfig contiene el campo de períodos de evaluación 
-    if !(:eval_size in keys(params))
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
+    if !(:eval_size in keys(params)) 
+        if :evalperiods in keys(params) 
+            config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate], params[:evalperiods]) 
+        else 
+            config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate]) 
+        end 
     else
         config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate], params[:eval_size])        
     end
