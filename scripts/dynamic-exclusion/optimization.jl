@@ -55,6 +55,7 @@ optim_variants = Dict(
 ) |> dict_list
 =#
 
+# Setting para optimización de variante E
 optim_variants = Dict(
     :inflfn => vecParameters -> INFLATION_FUNCTION_TYPE(vecParameters),
     :resamplefn => ResampleSBB(36), 
