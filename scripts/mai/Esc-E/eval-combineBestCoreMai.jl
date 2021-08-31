@@ -11,15 +11,15 @@ using Plots
 includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Configuración de escenario
-EVALDATE = Date(2020,12)
+EVALDATE = Date(2018,12)
 PARAMSCENARIO = 60
-SCENARIO = "D" * Dates.format(EVALDATE, "yy") * "-" * string(PARAMSCENARIO)
+SCENARIO = "E18"
 @info "Escenario de evaluación:" SCENARIO
 
 # Obtenemos el directorio de trayectorias resultados 
-savepath = datadir("results", "CoreMai", "Esc-D", SCENARIO, "bestOptim")
+savepath = datadir("results", "CoreMai", "Esc-E", "BestOptim")
 tray_dir = datadir(savepath, "tray_infl")
-plotspath = mkpath(plotsdir("CoreMai", "Esc-D", SCENARIO))
+plotspath = mkpath(plotsdir("CoreMai", "Esc-E"))
 
 # CountryStructure con datos hasta EVALDATE
 gtdata_eval = gtdata[EVALDATE]
