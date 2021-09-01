@@ -71,8 +71,8 @@ makedocs(;
             "Escenario E" => [
                 "eval/EscE/evaluacion-percentiles.md", 
                 "eval/EscE/evaluacion-MT.md",
-                # "eval/EscE/evaluacion-dynEx.md",
-                # "eval/EscE/evaluacion-exclusion-fija.md",
+                "eval/EscE/evaluacion-dynEx.md",
+                "eval/EscE/evaluacion-exclusion-fija.md",
                 "eval/EscE/evaluacion-MAI.md",
             ]   
         ],
