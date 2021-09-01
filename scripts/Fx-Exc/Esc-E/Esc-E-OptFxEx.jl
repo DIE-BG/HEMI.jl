@@ -98,14 +98,12 @@ sort_0019[1,:mse]
 """
 Resultados de Exploración inicial 
 
-JULIA, con 10K simulaciones
-Vector de Exclusión ->  [35  30  190  36  37  40  31  104  162  32  33  159  193  161  50  160  21  163  3  4  97  2  27  1  191  188]
-MSE = 6.388835f0
+[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 """
 ## Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
 
 FxEx_00 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(v_exc[1:50]), 
+    :inflfn => InflationFixedExclusionCPI.(v_exc[10:35]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
@@ -137,17 +135,17 @@ a = collect(sort_0019[1,:params])
 sort_0019[1,:mse]
 
 """
-[35,30,190,36,37,40,31,104,162,32,33,159,193,161,50,160,21,163,3,4,97,2,27,1,191,188]
+[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 """
 
 #################  Optimización Base 2010  ###################################
 
 # Vector óptimo base 2000 encontrado en la primera sección
-exc00 = [35,30,190,36,37,40,31,104,162,32,33,159,193,161,50,160,21,163,3,4,97,2,27,1,191,188]
+exc00 = [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 
-est_10 = std(gtdata_10[2].v |> capitalize |> varinteran, dims=1)
+est_10 = std(gtdata[2].v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(est_10))
 
@@ -203,15 +201,15 @@ a = collect(sort_1019[1,:params])
 sort_1019[1,:mse]
 
 """
-Resultados de Evaluación de exploración con 10_000 simulaciones para los 100 primeros vectores de exlcusión
-Vector para base 2010 
-[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3]
+[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
+
+[29, 46, 39, 31, 116]
 
 """
 
 # Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
 FxEx_10 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(total[1:40]), 
+    :inflfn => InflationFixedExclusionCPI.(total[1:15]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
@@ -244,6 +242,5 @@ a = collect(sort_1019[1,:params])
 sort_1019[1,:mse]
 
 """
-[35, 30, 190, 36, 37, 40, 31, 104, 162, 32  …  21, 163, 3, 4, 97, 2, 27, 1, 191, 188]
- [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3]
+[[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188], [29, 46, 39, 31, 116]]
 """
