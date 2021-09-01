@@ -5,8 +5,11 @@ function makesim(data::CountryStructure, config::CrossEvalConfig; kwargs...)
 
     # Obtener parámetro de inflación 
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
+    # Diccionario de resultados 
     cvinputs = Dict{String, Any}()
-
+    # Opciones extra para pargentrayinfl
+    pargenkwargs = filter(e -> first(e) != :K, kwargs)
+    
     # Generar datos para cada subperíodo de entrenamiento y validación
     for (i, evalperiod) in enumerate(config.evalperiods)
           
@@ -23,6 +26,7 @@ function makesim(data::CountryStructure, config::CrossEvalConfig; kwargs...)
             # final de cada subperíodo de entrenamiento o validación 
             tray_key = "infl_" * Dates.format(finaldate, fmt)
             param_key = "param_" * Dates.format(finaldate, fmt)
+            dates_key = "dates_" * Dates.format(finaldate, fmt)
             sliced_data = data[finaldate]
 
             # Generar trayectorias de inflación 
@@ -33,7 +37,8 @@ function makesim(data::CountryStructure, config::CrossEvalConfig; kwargs...)
                     config.resamplefn, 
                     config.trendfn, 
                     sliced_data; 
-                    K = config.nsim)
+                    K = config.nsim, pargenkwargs...)
+                cvinputs[dates_key] = infl_dates(sliced_data)
             end
 
             # Generar trayectoria paramétrica 
