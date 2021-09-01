@@ -34,6 +34,9 @@ function (ensfn::EnsembleFunction)(base::VarCPIBase{T}) where T
     mapreduce(inflfn -> inflfn(base), hcat, ensfn.functions)::Matrix{T}
 end
 
+function (ensfn::EnsembleFunction)(cs::CountryStructure)
+    mapreduce(inflfn -> inflfn(cs), hcat, ensfn.functions)::Matrix{eltype(cs)}
+end
 
 
 

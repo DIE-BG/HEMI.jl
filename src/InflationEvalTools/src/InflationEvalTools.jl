@@ -66,8 +66,8 @@ module InflationEvalTools
     export AbstractConfig, SimConfig, CrossEvalConfig
     export CompletePeriod, EvalPeriod, eval_periods, period_tag
     export GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010
-    include("config/SimConfig.jl")
     include("config/EvalPeriod.jl")
+    include("config/SimConfig.jl")
     
     ## Funciones de generación de trayectorias
     export gentrayinfl, pargentrayinfl

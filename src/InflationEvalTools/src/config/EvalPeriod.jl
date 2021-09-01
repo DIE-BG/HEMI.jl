@@ -114,3 +114,14 @@ const GT_EVAL_B10 = EvalPeriod(Date(2011, 12), Date(2020, 12), "gt_b10")
 Período por defecto para evaluación en la transición de la década de los años 2000 a 2010. 
 """
 const GT_EVAL_T0010 = EvalPeriod(Date(2011, 1), Date(2011, 11), "gt_t0010")
+
+
+
+## Iteración sobre períodos
+
+# Se definen estos métodos para funciones que involucren CrossEvalConfig con un
+# período o una colección de períodos
+Base.length(::EvalPeriod) = 1
+Base.size(e::EvalPeriod) = (1,)
+Base.iterate(e::EvalPeriod) = e, nothing
+Base.iterate(::EvalPeriod, ::Nothing) = nothing
