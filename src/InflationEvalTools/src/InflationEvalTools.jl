@@ -80,6 +80,7 @@ module InflationEvalTools
     include("simulate/metrics.jl")
     include("simulate/simutils.jl")
     include("simulate/eval_mse_online.jl")
+    include("simulate/cvsimutils.jl") # funciones para metodología de validación cruzada
 
     ## Combinación óptima MSE de estimadores 
     export combination_weights, average_mats

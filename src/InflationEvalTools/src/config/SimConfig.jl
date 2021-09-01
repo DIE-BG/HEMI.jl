@@ -222,5 +222,27 @@ function DrWatson.savename(prefix::String, config::CrossEvalConfig, suffix::Stri
 end
 
 
+# Funciones de ayuda 
+
+
 ## Método para convertir de AbstractConfig a Diccionario 
 # Esto lo hace la función struct2dict() de DrWatson
+
+"""
+    dict_config(params::Dict)
+
+Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalConfig`.
+"""
+function dict_config(params::Dict)
+    # CrossEvalConfig contiene el campo de períodos de evaluación 
+    if (:traindate in keys(params))
+        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
+    else
+        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:evalperiods])
+    end
+    config 
+end
+
+# Método opcional para lista de configuraciones
+dict_config(params::AbstractVector) = dict_config.(params)
+
