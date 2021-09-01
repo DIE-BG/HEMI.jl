@@ -211,13 +211,19 @@ DrWatson.savename(config::CrossEvalConfig, suffix::String = "jld2"; kwargs...) =
 function DrWatson.savename(prefix::String, config::CrossEvalConfig, suffix::String = "jld2"; kwargs...)
     _prefix = prefix == "" ? "" : prefix * "_"
     _suffix = suffix != "" ? "." * suffix : ""
+    num_infl_functions = length(config.inflfn.functions)
+    num_eval_periods = length(config.evalperiods)
+    startdate = minimum(map(p -> p.startdate, config.evalperiods))
+    finaldate = maximum(map(p -> p.finaldate, config.evalperiods))
 
     _prefix * join([
-        "CrossEvalConfig", # Función de inflación de conjunto denotada por CrossEvalConfig
+        # Función de inflación de conjunto denotada por CrossEvalConfig
+        "CrossEvalConfig($num_infl_functions, $num_eval_periods)", 
         method_tag(config.resamplefn), # Función de remuestreo 
         method_tag(config.trendfn), # Función de tendencia
         measure_tag(config.paramfn), # Función de inflación paramétrica de evaluación
         config.nsim >= 1000 ? string(config.nsim ÷ 1000) * "k" : string(config.nsim), # Número de simulaciones, 
+        Dates.format(startdate, COMPACT_DATE_FORMAT) * "-" * Dates.format(finaldate, COMPACT_DATE_FORMAT)
     ], DEFAULT_CONNECTOR) * _suffix
 end
 
