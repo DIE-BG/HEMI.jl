@@ -9,7 +9,8 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
 ## Directorios de resultados 
-savepath = datadir("results", "mse-combination", "Esc-E")
+cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
+test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
 
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
 resamplefn = ResampleSBB(36)
@@ -23,11 +24,11 @@ inflfn = EnsembleFunction(
     InflationTrimmedMeanWeighted(17.63, 96.2), 
     InflationDynamicExclusion(0.5695, 2.6672), 
     InflationFixedExclusionCPI(
-        [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 21, 163, 3, 4, 97, 2, 27, 1, 191, 188], 
-        [29, 46, 39, 31, 116]),
-    InflationCoreMai(MaiFP([0, 0.29, 0.81, 0.98, 1])), 
-    InflationCoreMai(MaiF([0, 0.29, 0.78, 0.98, 1])), 
-    InflationCoreMai(MaiG([0, 0.28, 0.39, 0.98, 1])), 
+        [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 
+        21, 163, 3, 4, 97, 2, 27, 1, 191, 188], [29, 46, 39, 31, 116]),
+    InflationCoreMai(MaiFP([0, 0.2878, 0.8092, 0.9827, 1])), 
+    InflationCoreMai(MaiF([0, 0.2917, 0.7782, 0.9817, 1])), 
+    InflationCoreMai(MaiG([0, 0.2836, 0.3892, 0.9845, 1])), 
 )
 
 CV_PERIODS = (
@@ -38,22 +39,32 @@ CV_PERIODS = (
     EvalPeriod(Date(2017, 1), Date(2018, 12), "cv1718")
 )
 
+TEST_PERIOD = EvalPeriod(Date(2019, 1), Date(2020, 12), "test1920")
+
 cvconfig = CrossEvalConfig(
     inflfn, 
     resamplefn, 
     trendfn, 
     paramfn, 
-    10, 
+    1_00, 
     CV_PERIODS
 )
 
+testconfig = CrossEvalConfig(
+    inflfn, 
+    resamplefn, 
+    trendfn, 
+    paramfn, 
+    1_00, 
+    TEST_PERIOD
+)
 
 ## Generar datos de simulación para algoritmo de validación cruzada
 # La función makesim genera un diccionario con trayectorias de inflación y trayectorias paramétricas generadas datos en diferentes subperíodos. 
 
 # cvdata = makesim(gtdata, cvconfig)
-cvdata, _ = produce_or_load(savepath, cvconfig, c -> makesim(gtdata, c))
-
+cvdata, _ = produce_or_load(cv_savepath, cvconfig, c -> makesim(gtdata, c))
+testdata, _ = produce_or_load(test_savepath, testconfig, c -> makesim(gtdata, c))
 
 ## Datos de entrenamiento 
 TRAIN_DATE = Date(2018,12)
@@ -61,44 +72,43 @@ gtdata_train = gtdata[TRAIN_DATE]
 
 ## Función para obtener error de validación cruzada utilizando CrossEvalConfig 
 
-function makesimcv(data::CountryStructure, config::CrossEvalConfig, weightsfunction)
+function crossvalidate(data, cvdata::Dict{String}, config::CrossEvalConfig, weightsfunction)
+
+    function getkey(prefix, date) 
+        fmt = dateformat"yy" 
+        prefix * "_" * Dates.format(date, fmt)
+    end
 
     cv_mse = zeros(eltype(data), length(config.evalperiods))
 
     # Obtener parámetro de inflación 
-    param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
-
     for (i, evalperiod) in enumerate(config.evalperiods)
     
         @info "Ejecutando iteración $i de validación cruzada" evalperiod 
 
-        # Obtener los datos de entrenamiento 
+        # Obtener los datos de entrenamiento y validación 
         traindate = evalperiod.startdate - Month(1)
-        train_data = data[traindate]
-
-        # Obtener trayectorias de inflación y computar ponderaciones 
-        train_tray_infl = pargentrayinfl(config.inflfn, config.resamplefn, config.trendfn, train_data; K = config.nsim)
-        train_tray_infl_param = param(train_data)
-        @info "Datos de entrenamiento:" traindate size(train_tray_infl) size(train_tray_infl_param)
-
-        a = weightsfunction(train_tray_infl, train_tray_infl_param)
-
-        # Generar datos del subperíodo de validación cruzada 
         cvdate = evalperiod.finaldate
-        cv_data = data[cvdate]
+        
+        train_tray_infl = cvdata[getkey("infl", traindate)]
+        train_tray_infl_param = cvdata[getkey("param", traindate)]
+        cv_tray_infl = cvdata[getkey("infl", cvdate)]
+        cv_tray_infl_param = cvdata[getkey("param", cvdate)]
 
-        cv_tray_infl = pargentrayinfl(config.inflfn, config.resamplefn, config.trendfn, cv_data; K = config.nsim)
-        cv_tray_infl_param = param(cv_data)
-
-        @info "Datos de validación:" cvdate size(cv_tray_infl) size(cv_tray_infl_param)
+        # Ponderadores 
+        a = weightsfunction(train_tray_infl, train_tray_infl_param)
+        println(a)
 
         # Máscara de períodos de evaluación 
+        cv_data = data[cvdate]
         mask = eval_periods(cv_data, evalperiod)
 
         # Obtener métrica de evaluación en subperíodo de CV 
         cv_tray_infl_opt = sum(cv_tray_infl .* a', dims=2)
         mse_cv = eval_metrics(cv_tray_infl_opt[mask, :, :], cv_tray_infl_param[mask], short=true)[:mse]
         cv_mse[i] = mse_cv
+        # test_mse = sum(x -> x^2, (cv_tray_infl .* a') .- cv_tray_infl_param, dims=2)
+        # println(test_mse)
 
         @info "MSE de validación cruzada:" evalperiod mse_cv
     
@@ -108,38 +118,70 @@ function makesimcv(data::CountryStructure, config::CrossEvalConfig, weightsfunct
 
 end
 
+cv_ls = crossvalidate(gtdata_train, cvdata, cvconfig, combination_weights)
+# 0.7869098
+# 0.47194207
+# 0.44733062
+# 0.6802227
+# 0.8701134
+# ------------
+# cv: 0.6513037f0
 
-cv_ls = makesimcv(gtdata_train, config, combination_weights)
+test_ls = crossvalidate(gtdata, testdata, testconfig, combination_weights)
+# weights: [6.580605, -2.405299, -5.39225, 2.1810615, -1.1393241, -0.16767445, 1.0078117, 0.4949687]
+# test: 0.701053
+
+
 ## 
-cv_ridge1 = makesimcv(gtdata_train, config, (t,p) -> ridge_combination_weights(t, p, 0.25))
-cv_ridge2 = makesimcv(gtdata_train, config, (t,p) -> ridge_combination_weights(t, p, 0.75))
-cv_ridge2 = makesimcv(gtdata_train, config, (t,p) -> ridge_combination_weights(t, p, 20))
 
-# AVANCEEEEEEEE
-# julia> mean(cv_ls), mean(cv_ridge1), mean(cv_ridge2)
-# (1.0202167f0, 1.0926495f0, 0.881017f0)
+cv_ridge1 = crossvalidate(gtdata_train, cvdata, cvconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.25))
 
-0.84145176f0
-0.7871582f0
-0.7758907f0
-0.7838515f0
-0.80045414f0
+# 0.9587095
+# 0.60787463
+# 0.6603935
+# 1.1036613
+# 1.2359673
+# ----------
+# cv: 0.9133212f0
+
+crossvalidate(gtdata, testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.25))
+# weights: [0.38536894, -0.23844618, 0.11278257, -0.0899095, -0.19451751, 0.20697166, 0.46780774, 0.39144528]
+# test: 0.6541514
+
+cv_ridge2 = crossvalidate(gtdata_train, cvdata, cvconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.75))
+
+# 0.690221
+# 0.57258
+# 0.62942594
+# 1.133759
+# 1.078821
+# ---------   
+# cv: 0.82096136f0
+
+crossvalidate(gtdata, testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.75))
+
+# test: 0.6800277
 
 
-##993
-
-map(CV_PERIODS) do period 
-    println(period)
-end
-
-
-
-##
-
-function mm(a; kwargs...)
-    @info kwargs
-    prekw = Dict(kwargs)
-    kw = filter(s -> s != :a, prekw)
-    @info kw
+function lasso_estimation(t, p)
+    a, _ = lasso_combination_weights(t, p, 2.5, maxiterations=1000, alpha=0.001)
     a
 end
+
+cv_lasso = crossvalidate(gtdata_train, cvdata, cvconfig, lasso_estimation)
+# 0.56710696
+# 0.5807457
+# 0.6405771
+# 1.0386564
+# 0.73496526
+# -----------
+# cv: 0.7124103f0
+
+
+crossvalidate(gtdata, testdata, testconfig, lasso_estimation)
+# [0.12024018, 0.0, 0.12573409, 0.0, 0.0, 0.10783642, 0.22353297, 0.3683994]
+# test: 0.81518936
