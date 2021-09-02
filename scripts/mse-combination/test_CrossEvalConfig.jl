@@ -46,7 +46,7 @@ cvconfig = CrossEvalConfig(
     resamplefn, 
     trendfn, 
     paramfn, 
-    1_00, 
+    10_000, 
     CV_PERIODS
 )
 
@@ -55,7 +55,7 @@ testconfig = CrossEvalConfig(
     resamplefn, 
     trendfn, 
     paramfn, 
-    1_00, 
+    10_000, 
     TEST_PERIOD
 )
 
@@ -72,14 +72,14 @@ gtdata_train = gtdata[TRAIN_DATE]
 
 ## Función para obtener error de validación cruzada utilizando CrossEvalConfig 
 
-function crossvalidate(data, cvdata::Dict{String}, config::CrossEvalConfig, weightsfunction)
+function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction)
 
     function getkey(prefix, date) 
         fmt = dateformat"yy" 
         prefix * "_" * Dates.format(date, fmt)
     end
 
-    cv_mse = zeros(eltype(data), length(config.evalperiods))
+    cv_mse = zeros(Float32, length(config.evalperiods))
 
     # Obtener parámetro de inflación 
     for (i, evalperiod) in enumerate(config.evalperiods)
@@ -90,22 +90,23 @@ function crossvalidate(data, cvdata::Dict{String}, config::CrossEvalConfig, weig
         traindate = evalperiod.startdate - Month(1)
         cvdate = evalperiod.finaldate
         
-        train_tray_infl = cvdata[getkey("infl", traindate)]
-        train_tray_infl_param = cvdata[getkey("param", traindate)]
-        cv_tray_infl = cvdata[getkey("infl", cvdate)]
-        cv_tray_infl_param = cvdata[getkey("param", cvdate)]
+        train_tray_infl = crossvaldata[getkey("infl", traindate)]
+        train_tray_infl_param = crossvaldata[getkey("param", traindate)]
+        train_dates = crossvaldata[getkey("dates", traindate)]
+        cv_tray_infl = crossvaldata[getkey("infl", cvdate)]
+        cv_tray_infl_param = crossvaldata[getkey("param", cvdate)]
+        cv_dates = crossvaldata[getkey("dates", cvdate)]
 
         # Ponderadores 
         a = weightsfunction(train_tray_infl, train_tray_infl_param)
         println(a)
 
         # Máscara de períodos de evaluación 
-        cv_data = data[cvdate]
-        mask = eval_periods(cv_data, evalperiod)
+        mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
 
         # Obtener métrica de evaluación en subperíodo de CV 
         cv_tray_infl_opt = sum(cv_tray_infl .* a', dims=2)
-        mse_cv = eval_metrics(cv_tray_infl_opt[mask, :, :], cv_tray_infl_param[mask], short=true)[:mse]
+        mse_cv = @views eval_metrics(cv_tray_infl_opt[mask, :, :], cv_tray_infl_param[mask], short=true)[:mse]
         cv_mse[i] = mse_cv
         # test_mse = sum(x -> x^2, (cv_tray_infl .* a') .- cv_tray_infl_param, dims=2)
         # println(test_mse)
@@ -118,7 +119,7 @@ function crossvalidate(data, cvdata::Dict{String}, config::CrossEvalConfig, weig
 
 end
 
-cv_ls = crossvalidate(gtdata_train, cvdata, cvconfig, combination_weights)
+cv_ls = crossvalidate(cvdata, cvconfig, combination_weights)
 # 0.7869098
 # 0.47194207
 # 0.44733062
@@ -127,15 +128,15 @@ cv_ls = crossvalidate(gtdata_train, cvdata, cvconfig, combination_weights)
 # ------------
 # cv: 0.6513037f0
 
-test_ls = crossvalidate(gtdata, testdata, testconfig, combination_weights)
+test_ls = crossvalidate(testdata, testconfig, combination_weights)
 # weights: [6.580605, -2.405299, -5.39225, 2.1810615, -1.1393241, -0.16767445, 1.0078117, 0.4949687]
 # test: 0.701053
 
 
 ## 
 
-cv_ridge1 = crossvalidate(gtdata_train, cvdata, cvconfig, 
-    (t,p) -> ridge_combination_weights(t, p, 0.25))
+cv_ridge1 = crossvalidate(cvdata, cvconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.25)) 
 
 # 0.9587095
 # 0.60787463
@@ -145,12 +146,12 @@ cv_ridge1 = crossvalidate(gtdata_train, cvdata, cvconfig,
 # ----------
 # cv: 0.9133212f0
 
-crossvalidate(gtdata, testdata, testconfig, 
+crossvalidate(testdata, testconfig, 
     (t,p) -> ridge_combination_weights(t, p, 0.25))
 # weights: [0.38536894, -0.23844618, 0.11278257, -0.0899095, -0.19451751, 0.20697166, 0.46780774, 0.39144528]
 # test: 0.6541514
 
-cv_ridge2 = crossvalidate(gtdata_train, cvdata, cvconfig, 
+cv_ridge2 = crossvalidate(cvdata, cvconfig, 
     (t,p) -> ridge_combination_weights(t, p, 0.75))
 
 # 0.690221
@@ -161,18 +162,18 @@ cv_ridge2 = crossvalidate(gtdata_train, cvdata, cvconfig,
 # ---------   
 # cv: 0.82096136f0
 
-crossvalidate(gtdata, testdata, testconfig, 
+crossvalidate(testdata, testconfig, 
     (t,p) -> ridge_combination_weights(t, p, 0.75))
 
 # test: 0.6800277
 
 
 function lasso_estimation(t, p)
-    a, _ = lasso_combination_weights(t, p, 2.5, maxiterations=1000, alpha=0.001)
+    a, _ = lasso_combination_weights(t, p, 0.25, maxiterations=1000, alpha=0.001)
     a
 end
 
-cv_lasso = crossvalidate(gtdata_train, cvdata, cvconfig, lasso_estimation)
+cv_lasso = crossvalidate(cvdata, cvconfig, lasso_estimation)
 # 0.56710696
 # 0.5807457
 # 0.6405771
@@ -182,6 +183,6 @@ cv_lasso = crossvalidate(gtdata_train, cvdata, cvconfig, lasso_estimation)
 # cv: 0.7124103f0
 
 
-crossvalidate(gtdata, testdata, testconfig, lasso_estimation)
+crossvalidate(testdata, testconfig, lasso_estimation)
 # [0.12024018, 0.0, 0.12573409, 0.0, 0.0, 0.10783642, 0.22353297, 0.3683994]
 # test: 0.81518936
