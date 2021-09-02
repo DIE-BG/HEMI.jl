@@ -6,7 +6,8 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
     print_weights = true, 
     return_weights = false,
     metrics = [:mse], 
-    train_start_period = Date(2000, 12)) 
+    train_start_period = Date(2000, 12), 
+    components_mask = Colon()) 
 
     local w
     folds = length(config.evalperiods)
@@ -32,14 +33,17 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
         weights_train_mask = train_dates .> train_start_period
 
         # Obtener ponderadores de combinación lineal con weightsfunction 
-        w = @views weightsfunction(train_tray_infl[weights_train_mask, :, :], train_tray_infl_param[weights_train_mask])
+        w = @views weightsfunction(
+            train_tray_infl[weights_train_mask, components_mask, :], 
+            train_tray_infl_param[weights_train_mask])
 
         # Máscara de períodos de evaluación 
         mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
 
         # Obtener métrica de evaluación en subperíodo de CV 
         cv_metrics = @views combination_metrics(
-            cv_tray_infl[mask, :, :], cv_tray_infl_param[mask], w)
+            cv_tray_infl[mask, components_mask, :], 
+            cv_tray_infl_param[mask], w)
         cv_mse[i, :] = get.(Ref(cv_metrics), metrics, 0)
 
         show_status && @info "Evaluación ($i/$folds):" train_start_period evalperiod traindate cv_mse[i]

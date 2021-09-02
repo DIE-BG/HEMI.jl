@@ -218,3 +218,22 @@ scatter!([lambda_lasso], [minimum(mse_cv_lasso)], label="λ min")
 crossvalidate(testdata, testconfig, lasso_estimation(lambda_lasso), 
     train_start_period = Date(2011, 1))
     
+
+
+## Prueba aplicando una máscara para remover componentes 
+
+## Prueba de funcion crossvalidate con diferentes métricas 
+
+components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in inflfn.functions]
+components_mask = 1:6
+
+cv_ls = crossvalidate(cvdata, cvconfig, combination_weights; 
+    components_mask)
+    
+test_ls = crossvalidate(testdata, testconfig, combination_weights; 
+    components_mask)
+
+crossvalidate(testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.1);
+    components_mask
+)
