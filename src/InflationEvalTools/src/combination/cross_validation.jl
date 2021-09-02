@@ -3,11 +3,14 @@
 # crossvaldata es un diccionario de resultados producido por makesim para un CrossEvalConfig. Se hace de esta forma para que las trayectorias de inflación estén precomputadas, ya que sería muy costoso generarlas al vuelo.
 function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction; 
     show_status = true,
-    print_weights = true) 
-    # return_weights = false)
+    print_weights = true, 
+    return_weights = false,
+    metrics = [:mse], 
+    train_start_period = Date(2000, 12)) 
 
+    local w
     folds = length(config.evalperiods)
-    cv_mse = zeros(Float32, folds)
+    cv_mse = zeros(Float32, folds, length(metrics))
 
     # Obtener parámetro de inflación 
     for (i, evalperiod) in enumerate(config.evalperiods)
@@ -25,25 +28,26 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
         cv_tray_infl_param = crossvaldata[_getkey("param", cvdate)]
         cv_dates = crossvaldata[_getkey("dates", cvdate)]
 
-        # Ponderadores 
-        a = weightsfunction(train_tray_infl, train_tray_infl_param)
+        # Máscara de períodos para ajustar los ponderadores. Los ponderadores se ajustan a partir de train_start_period
+        weights_train_mask = train_dates .> train_start_period
+
+        # Obtener ponderadores de combinación lineal con weightsfunction 
+        w = @views weightsfunction(train_tray_infl[weights_train_mask, :, :], train_tray_infl_param[weights_train_mask])
 
         # Máscara de períodos de evaluación 
         mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
 
         # Obtener métrica de evaluación en subperíodo de CV 
-        cv_tray_infl_opt = sum(cv_tray_infl .* a', dims=2)
-        mse_cv = @views eval_metrics(cv_tray_infl_opt[mask, :, :], cv_tray_infl_param[mask], short=true)[:mse]
-        cv_mse[i] = mse_cv
-        # test_mse = sum(x -> x^2, (cv_tray_infl .* a') .- cv_tray_infl_param, dims=2)
-        # println(test_mse)
+        cv_metrics = @views combination_metrics(
+            cv_tray_infl[mask, :, :], cv_tray_infl_param[mask], w)
+        cv_mse[i, :] = get.(Ref(cv_metrics), metrics, 0)
 
-        show_status && @info "Evaluación ($i/$folds):" evalperiod traindate mse_cv
-        print_weights && println(a)
+        show_status && @info "Evaluación ($i/$folds):" train_start_period evalperiod traindate cv_mse[i]
+        print_weights && println(w)
     
     end
 
-    # return_weights && return cv_mse, a
+    return_weights && return cv_mse, w
     
     cv_mse
 end

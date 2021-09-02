@@ -136,3 +136,85 @@ crossvalidate(testdata, testconfig, lasso_estimation(lambda_lasso))
 
 
 
+## Prueba de funcion crossvalidate con diferentes métricas 
+
+cv_ls = crossvalidate(cvdata, cvconfig, combination_weights; 
+    metrics = [:mse, :me, :corr])
+    
+test_ls = crossvalidate(testdata, testconfig, combination_weights; 
+    metrics = [:mse, :me, :corr])    
+
+
+## Validación cruzada que ajusta ponderaciones en periodo base 2010
+
+cv_ls = crossvalidate(cvdata, cvconfig, combination_weights; 
+    train_start_period = Date(2011, 1))
+    
+test_ls = crossvalidate(testdata, testconfig, combination_weights; 
+    train_start_period = Date(2011, 1))
+
+
+## Ridge
+
+cv_ridge1 = crossvalidate(cvdata, cvconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.25), 
+    train_start_period = Date(2011, 1)) 
+
+crossvalidate(testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.25),
+    train_start_period = Date(2011, 1)
+)
+
+
+λ_range = 0.1:0.1:10
+mse_cv_ridge = map(λ_range) do λ
+    mse_cv = crossvalidate(cvdata, cvconfig, 
+        (t,p) -> ridge_combination_weights(t, p, λ), 
+        show_status=false, 
+        print_weights=false, 
+        train_start_period = Date(2011, 1))
+    mean(mse_cv)  
+end
+plot(λ_range, mse_cv_ridge, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+lambda_ridge = λ_range[argmin(mse_cv_ridge)]
+scatter!([lambda_ridge], [minimum(mse_cv_ridge)], label="λ min")
+
+# Evaluación sobre conjunto de prueba 
+crossvalidate(testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, lambda_ridge), 
+    train_start_period = Date(2011, 1))
+    
+
+## Lasso 
+lasso_estimation(λ) = (t,p) -> lasso_combination_weights(t, p, λ, alpha=0.001)
+
+
+cv_lasso = crossvalidate(cvdata, cvconfig, 
+    lasso_estimation(0.25), 
+    train_start_period = Date(2011, 1))
+
+crossvalidate(testdata, testconfig, lasso_estimation(0.25))
+
+λ_range = 0.1:0.1:10
+mse_cv_lasso = map(λ_range) do λ
+    mse_cv = crossvalidate(cvdata, cvconfig, 
+        (t,p) -> lasso_combination_weights(t, p, λ,
+            alpha=0.001, show_status=false), 
+        show_status=false, 
+        print_weights=true, 
+        train_start_period = Date(2011, 1))
+    mean(mse_cv)  
+end
+
+plot(λ_range, mse_cv_lasso, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+
+lambda_lasso = λ_range[argmin(mse_cv_lasso)]
+scatter!([lambda_lasso], [minimum(mse_cv_lasso)], label="λ min")
+    
+crossvalidate(testdata, testconfig, lasso_estimation(lambda_lasso), 
+    train_start_period = Date(2011, 1))
+    

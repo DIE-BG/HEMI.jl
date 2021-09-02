@@ -132,7 +132,7 @@ function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_par
     β = zeros(F, n)
     cost_vals = zeros(F, max_iterations)
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
-    πᵀπ = sum(x -> x^2, tray_infl_param) / T
+    πᵀπ = mean(x -> x^2, tray_infl_param)
 
     if show_status
         println("Optimización iterativa para LASSO:")
