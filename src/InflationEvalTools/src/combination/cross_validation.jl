@@ -2,16 +2,16 @@
 
 # crossvaldata es un diccionario de resultados producido por makesim para un CrossEvalConfig. Se hace de esta forma para que las trayectorias de inflación estén precomputadas, ya que sería muy costoso generarlas al vuelo.
 function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction; 
-    show_status = true,
-    print_weights = true, 
-    return_weights = false,
-    metrics = [:mse], 
-    train_start_period = Date(2000, 12), 
+    show_status::Bool = true,
+    print_weights::Bool = true, 
+    return_weights::Bool = false,
+    metrics::Vector{Symbol} = [:mse], 
+    train_start_period::Date = Date(2000, 12), 
     components_mask = Colon()) 
 
     local w
     folds = length(config.evalperiods)
-    cv_mse = zeros(Float32, folds, length(metrics))
+    cv_results = zeros(Float32, folds, length(metrics))
 
     # Obtener parámetro de inflación 
     for (i, evalperiod) in enumerate(config.evalperiods)
@@ -43,17 +43,19 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
         # Obtener métrica de evaluación en subperíodo de CV 
         cv_metrics = @views combination_metrics(
             cv_tray_infl[mask, components_mask, :], 
-            cv_tray_infl_param[mask], w)
-        cv_mse[i, :] = get.(Ref(cv_metrics), metrics, 0)
+            cv_tray_infl_param[mask], 
+            w)
+        cv_results[i, :] = get.(Ref(cv_metrics), metrics, 0)
 
-        show_status && @info "Evaluación ($i/$folds):" train_start_period evalperiod traindate cv_mse[i]
+        show_status && @info "Evaluación ($i/$folds):" train_start_period evalperiod traindate cv_results[i]
         print_weights && println(w)
     
     end
 
-    return_weights && return cv_mse, w
-    
-    cv_mse
+    # Retornar ponderaciones si es seleccionado 
+    return_weights && return cv_results, w
+    # Retornar métricas de validación cruzada
+    cv_results
 end
 
 
