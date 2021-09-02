@@ -1,6 +1,8 @@
 using DrWatson
 @quickactivate "HEMI" 
 
+using HEMI 
+using Plots
 using DataFrames
 
 ## Se carga el módulo de `Distributed` para computación paralela
@@ -66,123 +68,71 @@ testconfig = CrossEvalConfig(
 cvdata, _ = produce_or_load(cv_savepath, cvconfig, c -> makesim(gtdata, c))
 testdata, _ = produce_or_load(test_savepath, testconfig, c -> makesim(gtdata, c))
 
-## Datos de entrenamiento 
-TRAIN_DATE = Date(2018,12)
-gtdata_train = gtdata[TRAIN_DATE]
 
-## Función para obtener error de validación cruzada utilizando CrossEvalConfig 
-
-function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction)
-
-    function getkey(prefix, date) 
-        fmt = dateformat"yy" 
-        prefix * "_" * Dates.format(date, fmt)
-    end
-
-    cv_mse = zeros(Float32, length(config.evalperiods))
-
-    # Obtener parámetro de inflación 
-    for (i, evalperiod) in enumerate(config.evalperiods)
-    
-        @info "Ejecutando iteración $i de validación cruzada" evalperiod 
-
-        # Obtener los datos de entrenamiento y validación 
-        traindate = evalperiod.startdate - Month(1)
-        cvdate = evalperiod.finaldate
-        
-        train_tray_infl = crossvaldata[getkey("infl", traindate)]
-        train_tray_infl_param = crossvaldata[getkey("param", traindate)]
-        train_dates = crossvaldata[getkey("dates", traindate)]
-        cv_tray_infl = crossvaldata[getkey("infl", cvdate)]
-        cv_tray_infl_param = crossvaldata[getkey("param", cvdate)]
-        cv_dates = crossvaldata[getkey("dates", cvdate)]
-
-        # Ponderadores 
-        a = weightsfunction(train_tray_infl, train_tray_infl_param)
-        println(a)
-
-        # Máscara de períodos de evaluación 
-        mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
-
-        # Obtener métrica de evaluación en subperíodo de CV 
-        cv_tray_infl_opt = sum(cv_tray_infl .* a', dims=2)
-        mse_cv = @views eval_metrics(cv_tray_infl_opt[mask, :, :], cv_tray_infl_param[mask], short=true)[:mse]
-        cv_mse[i] = mse_cv
-        # test_mse = sum(x -> x^2, (cv_tray_infl .* a') .- cv_tray_infl_param, dims=2)
-        # println(test_mse)
-
-        @info "MSE de validación cruzada:" evalperiod mse_cv
-    
-    end
-
-    cv_mse
-
-end
-
+## Validación de método de mínimos cuadrados 
 cv_ls = crossvalidate(cvdata, cvconfig, combination_weights)
-# 0.7869098
-# 0.47194207
-# 0.44733062
-# 0.6802227
-# 0.8701134
-# ------------
-# cv: 0.6513037f0
 
 test_ls = crossvalidate(testdata, testconfig, combination_weights)
-# weights: [6.580605, -2.405299, -5.39225, 2.1810615, -1.1393241, -0.16767445, 1.0078117, 0.4949687]
-# test: 0.701053
 
 
-## 
+## Validación cruzada de método de combinación Ridge
 
 cv_ridge1 = crossvalidate(cvdata, cvconfig, 
     (t,p) -> ridge_combination_weights(t, p, 0.25)) 
 
-# 0.9587095
-# 0.60787463
-# 0.6603935
-# 1.1036613
-# 1.2359673
-# ----------
-# cv: 0.9133212f0
-
 crossvalidate(testdata, testconfig, 
     (t,p) -> ridge_combination_weights(t, p, 0.25))
-# weights: [0.38536894, -0.23844618, 0.11278257, -0.0899095, -0.19451751, 0.20697166, 0.46780774, 0.39144528]
-# test: 0.6541514
 
-cv_ridge2 = crossvalidate(cvdata, cvconfig, 
-    (t,p) -> ridge_combination_weights(t, p, 0.75))
 
-# 0.690221
-# 0.57258
-# 0.62942594
-# 1.133759
-# 1.078821
-# ---------   
-# cv: 0.82096136f0
 
+λ_range = 0.1:0.1:10
+mse_cv_ridge = map(λ_range) do λ
+    mse_cv = crossvalidate(cvdata, cvconfig, 
+        (t,p) -> ridge_combination_weights(t, p, λ), 
+        show_status=false, 
+        print_weights=false)
+    mean(mse_cv)  
+end
+plot(λ_range, mse_cv_ridge, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+lambda_ridge = λ_range[argmin(mse_cv_ridge)]
+scatter!([lambda_ridge], [minimum(mse_cv_ridge)], label="λ min")
+
+# Evaluación sobre conjunto de prueba 
 crossvalidate(testdata, testconfig, 
-    (t,p) -> ridge_combination_weights(t, p, 0.75))
-
-# test: 0.6800277
+    (t,p) -> ridge_combination_weights(t, p, lambda_ridge))
 
 
-function lasso_estimation(t, p)
-    a, _ = lasso_combination_weights(t, p, 0.25, maxiterations=1000, alpha=0.001)
-    a
+
+## Validación cruzada de método de combinación Lasso
+
+lasso_estimation(λ) = (t,p) -> lasso_combination_weights(t, p, λ, alpha=0.001)
+
+
+cv_lasso = crossvalidate(cvdata, cvconfig, 
+    lasso_estimation(0.25))
+
+crossvalidate(testdata, testconfig, lasso_estimation(0.25))
+
+λ_range = 0.1:0.1:10
+mse_cv_lasso = map(λ_range) do λ
+    mse_cv = crossvalidate(cvdata, cvconfig, 
+        (t,p) -> lasso_combination_weights(t, p, λ,
+            alpha=0.001, show_status=false), 
+        show_status=false, 
+        print_weights=false)
+    mean(mse_cv)  
 end
 
-cv_lasso = crossvalidate(cvdata, cvconfig, lasso_estimation)
-# 0.56710696
-# 0.5807457
-# 0.6405771
-# 1.0386564
-# 0.73496526
-# -----------
-# cv: 0.7124103f0
+plot(λ_range, mse_cv_lasso, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+
+lambda_lasso = λ_range[argmin(mse_cv_lasso)]
+scatter!([lambda_lasso], [minimum(mse_cv_lasso)], label="λ min")
+    
+crossvalidate(testdata, testconfig, lasso_estimation(lambda_lasso))
 
 
-crossvalidate(testdata, testconfig, lasso_estimation)
-# [0.12024018, 0.0, 0.12573409, 0.0, 0.0, 0.10783642, 0.22353297, 0.3683994]
-# test: 0.81518936
+

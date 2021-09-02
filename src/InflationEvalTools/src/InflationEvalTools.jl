@@ -87,6 +87,10 @@ module InflationEvalTools
     export ridge_combination_weights, lasso_combination_weights
     include("combination/combination_weights.jl")
 
+    ## Funciones para evaluación cruzada
+    export crossvalidate
+    include("combination/cross_validation.jl")
+
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")
 

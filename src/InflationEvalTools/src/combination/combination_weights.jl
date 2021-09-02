@@ -17,7 +17,7 @@ Ver también: [`ridge_combination_weights`](@ref),
 function combination_weights(tray_infl, tray_infl_param)
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
-    @info "Determinante de la matriz de coeficientes" det(XᵀX)
+    @debug "Determinante de la matriz de coeficientes" det(XᵀX)
 
     # Ponderadores de combinación óptima de mínimos cuadrados
     a_optim = XᵀX \ Xᵀπ
@@ -85,8 +85,9 @@ function ridge_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_par
     n = size(tray_infl, 2)
     
     # Ponderadores de combinación óptima de Ridge
-    @info "Determinante de la matriz de coeficientes" det(XᵀX)
-    a_ridge = (XᵀX + λ*I(n)) \ Xᵀπ
+    XᵀX′ = XᵀX + λ*I(n)
+    @debug "Determinante de la matriz de coeficientes" det(XᵀX) det(XᵀX′)
+    a_ridge = XᵀX′ \ Xᵀπ
     a_ridge 
 end
 
@@ -94,7 +95,7 @@ end
 # Ponderadores de combinación lasso con parámetro de regularización lambda
 """
     lasso_combination_weights(tray_infl, tray_infl_param, lambda; 
-        maxiterations, alpha, tol, showstatus) -> Vector{<:AbstractFloat}
+        max_iterations, alpha, tol, show_status) -> Vector{<:AbstractFloat}
 
 Obtiene ponderadores óptimos de LASSO a través de una aproximación iterativa al
 problema de minimización del error cuadrático medio de la combinación lineal de
@@ -103,15 +104,17 @@ paramétrica `tray_infl_param`, regularizada con la norma L1 de los ponderadores
 ponderada por el parámetro `lambda`.
 
 Los parámetros opcionales son: 
-- `maxiterations` (`Integer`): número máximo de iteraciones. Por defecto,
+- `max_iterations` (`Integer`): número máximo de iteraciones. Por defecto,
   `1000`. 
 - `alpha` (`AbstractFloat`): parámetro de aproximación o avance del algoritmo de
   gradiente próximo. Por defecto, `0.005`.
 - `tol` (`AbstractFloat`): desviación absoluta de la función de costo. Si la
   función de costo varía en términos absolutos menos que `tol` de una iteración
   a otra, el algoritmo de gradiente se detiene. Por defecto, `1e-4`. 
-- `showstatus` (`Bool`): mostrar estado del algoritmo iterativo. Por defecto,
+- `show_status` (`Bool`): mostrar estado del algoritmo iterativo. Por defecto,
   `true`.
+- `return_cost (`Bool`): indica si devuelve el vector de historia de la función
+  de costo de entrenamiento. Por defecto es `false`. 
 
 Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
@@ -119,19 +122,25 @@ columnas de `tray_infl`.
 Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref)
 """
 function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
-    maxiterations=1000, alpha=F(0.005), tol = F(1e-4), showstatus=true) where F
+    max_iterations=1000, alpha=F(0.005), tol = F(1e-4), show_status=true, 
+    return_cost=false) where F
 
     T, n, _ = size(tray_infl)
 
     λ = convert(F, lambda)
     α = convert(F, alpha)
     β = zeros(F, n)
-    cost_vals = zeros(F, maxiterations)
+    cost_vals = zeros(F, max_iterations)
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
     πᵀπ = sum(x -> x^2, tray_infl_param) / T
 
+    if show_status
+        println("Optimización iterativa para LASSO:")
+        println("----------------------------------")
+    end
+
     # Proximal gradient descent
-    for t in 1:maxiterations
+    for t in 1:max_iterations
         # Computar el gradiente respecto de β
         grad = (XᵀX * β) - Xᵀπ
 		
@@ -143,14 +152,15 @@ function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_par
 		cost_vals[t] = mse + λ*sum(abs, β)
 		abstol = t > 1 ? abs(cost_vals[t] - cost_vals[t-1]) : 10e0
 
-		if showstatus && t % 100 == 0
+		if show_status && t % 100 == 0
 			println("Iter: ", t, " cost = ", cost_vals[t], "  |Δcost| = ", abstol)
 		end
 
         abstol < tol && break 
 	end
 	
-	β, cost_vals
+    return_cost && return β, cost_vals
+	β
 end
 
 # Operador próximo para la norma L1 del vector z
