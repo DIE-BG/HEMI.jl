@@ -237,3 +237,39 @@ crossvalidate(testdata, testconfig,
     (t,p) -> ridge_combination_weights(t, p, 0.1);
     components_mask
 )
+
+
+##93
+
+
+t1infl = _add_ones(tray_infl) 
+
+ridge_combination_weights(t1infl, tray_param, 50)
+ridge_combination_weights(t1infl, tray_param, 50, penalize_all=false)
+
+
+
+lasso_combination_weights(t1infl, tray_param, 5)
+lasso_combination_weights(t1infl, tray_param, 5, penalize_all=false)
+
+
+
+##93
+
+cv_ls = crossvalidate(cvdata, cvconfig, combination_weights; 
+    add_intercept = true)
+    
+test_ls = crossvalidate(testdata, testconfig, combination_weights; 
+    add_intercept = true)
+
+
+crossvalidate(testdata, testconfig, 
+    (t,p) -> ridge_combination_weights(t, p, 0.1, penalize_all=false);
+    train_start_period = Date(2011,1), 
+    add_intercept = true
+)
+
+crossvalidate(testdata, testconfig, 
+    (t,p) -> lasso_combination_weights(t, p, 10, alpha=0.001, penalize_all=false), 
+    # train_start_period = Date(2011, 1), 
+    add_intercept = true)

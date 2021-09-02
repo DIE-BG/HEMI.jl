@@ -7,7 +7,8 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
     return_weights::Bool = false,
     metrics::Vector{Symbol} = [:mse], 
     train_start_period::Date = Date(2000, 12), 
-    components_mask = Colon()) 
+    components_mask = Colon(), 
+    add_intercept::Bool = false) 
 
     local w
     folds = length(config.evalperiods)
@@ -28,6 +29,13 @@ function crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weig
         cv_tray_infl = crossvaldata[_getkey("infl", cvdate)]
         cv_tray_infl_param = crossvaldata[_getkey("param", cvdate)]
         cv_dates = crossvaldata[_getkey("dates", cvdate)]
+
+        # Si se agrega intercepto, agregar 1's a las trayectorias. Esto puede
+        # alterar el significado de components_mask
+        if add_intercept
+            train_tray_infl = _add_ones(train_tray_infl)
+            cv_tray_infl = _add_ones(cv_tray_infl)
+        end
 
         # Máscara de períodos para ajustar los ponderadores. Los ponderadores se ajustan a partir de train_start_period
         weights_train_mask = train_dates .> train_start_period
@@ -62,4 +70,10 @@ end
 function _getkey(prefix, date) 
     fmt = dateformat"yy" 
     prefix * "_" * Dates.format(date, fmt)
+end
+
+# Agrega intercepto al cubo de trayectorias en la primera columna 
+function _add_ones(tray_infl)
+    T, _, K = size(tray_infl)
+    hcat(ones(eltype(tray_infl), T, 1, K), tray_infl)
 end

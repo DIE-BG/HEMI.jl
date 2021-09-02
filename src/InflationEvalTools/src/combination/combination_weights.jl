@@ -76,16 +76,32 @@ ponderada por el parámetro `lambda`.
 Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
 
+Los parámetros opcionales son:  
+- `penalize_all` (`Bool`): indica si aplicar la regularización a todos los
+  ponderadores. Si es falso, se aplica la regularización a partir del segundo al
+  último componente del vector de ponderaciones. Por defecto es `false`. de
+  costo de entrenamiento. Por defecto es `false`. 
+
 Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref)
 """
-function ridge_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda) where F
+function ridge_combination_weights(
+    tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
+    penalize_all = true) where F
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
     λ = convert(F, lambda)
     n = size(tray_infl, 2)
     
     # Ponderadores de combinación óptima de Ridge
-    XᵀX′ = XᵀX + λ*I(n)
+    Iₙ = I(n)
+    # Si penalize_all=false, no se penaliza el primer componente, que debería
+    # corresponder al intercepto de la regresión. Para esto, la primera columna
+    # de tray_infl de contener 1's.
+    if !penalize_all
+        Iₙ[1] = 0
+    end
+
+    XᵀX′ = XᵀX + λ*Iₙ
     @debug "Determinante de la matriz de coeficientes" det(XᵀX) det(XᵀX′)
     a_ridge = XᵀX′ \ Xᵀπ
     a_ridge 
@@ -113,17 +129,22 @@ Los parámetros opcionales son:
   a otra, el algoritmo de gradiente se detiene. Por defecto, `1e-4`. 
 - `show_status` (`Bool`): mostrar estado del algoritmo iterativo. Por defecto,
   `true`.
-- `return_cost (`Bool`): indica si devuelve el vector de historia de la función
+- `return_cost` (`Bool`): indica si devuelve el vector de historia de la función
   de costo de entrenamiento. Por defecto es `false`. 
+- `penalize_all` (`Bool`): indica si aplicar la regularización a todos los
+  ponderadores. Si es falso, se aplica la regularización a partir del segundo al
+  último componente del vector de ponderaciones. Por defecto es `false`. de
+  costo de entrenamiento. Por defecto es `false`. 
 
 Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
 
 Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref)
 """
-function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
+function lasso_combination_weights(
+    tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
     max_iterations=1000, alpha=F(0.005), tol = F(1e-4), show_status=true, 
-    return_cost=false) where F
+    return_cost=false, penalize_all=true) where F
 
     T, n, _ = size(tray_infl)
 
@@ -145,12 +166,13 @@ function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_par
         grad = (XᵀX * β) - Xᵀπ
 		
 		# Proximal gradient 
-		β = proxl1norm(β - α*grad, α*λ)
+		β = proxl1norm(β - α*grad, α*λ; penalize_all)
 
         # Métrica de costo 
         mse = β'*XᵀX*β - 2*β'*Xᵀπ + πᵀπ
-		cost_vals[t] = mse + λ*sum(abs, β)
-		abstol = t > 1 ? abs(cost_vals[t] - cost_vals[t-1]) : 10e0
+        l1cost = penalize_all ? sum(abs, β) : sum(abs, (@view β[2:end]))
+		cost_vals[t] = mse + λ*l1cost
+		abstol = t > 1 ? abs(cost_vals[t] - cost_vals[t-1]) : 100f0
 
 		if show_status && t % 100 == 0
 			println("Iter: ", t, " cost = ", cost_vals[t], "  |Δcost| = ", abstol)
@@ -164,7 +186,13 @@ function lasso_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_par
 end
 
 # Operador próximo para la norma L1 del vector z
-function proxl1norm(z, α)
+function proxl1norm(z, α; penalize_all = true)
     proxl1 = z - clamp.(z, Ref(-α), Ref(α))
+    
+    # penalize_all = false : no penalizar del intercepto 
+    if !penalize_all
+        proxl1[1] = z[1]
+    end
+    
     proxl1
 end
