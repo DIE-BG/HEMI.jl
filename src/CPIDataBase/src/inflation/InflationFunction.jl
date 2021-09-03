@@ -49,7 +49,7 @@ con el conjunto de parámetros utilizado por la función de inflación `inflfn`.
 Este método debe redefinirse en las nuevas medidas de inflación si estas están
 parametrizadas.
 """
-params(inflfn::InflationFunction) = (nothing, )
+params(inflfn::InflationFunction) = getproperty.(Ref(inflfn), propertynames(inflfn))
 
 
 ## Tipos para resultados, utilizados para el despacho de métodos
