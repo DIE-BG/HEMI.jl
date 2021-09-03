@@ -12,6 +12,11 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
 
+##  ----------------------------------------------------------------------------
+#   Configuración para evaluación de validación cruzada de combinaciones
+#   lineales con la métrica de error cuadrático medio 
+#   ----------------------------------------------------------------------------
+
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
 resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk() 
@@ -62,8 +67,14 @@ testconfig = CrossEvalConfig(
     TEST_PERIOD
 )
 
-## Generar datos de simulación para algoritmo de validación cruzada
-# La función makesim genera un diccionario con trayectorias de inflación y trayectorias paramétricas generadas datos en diferentes subperíodos. 
+
+##  ----------------------------------------------------------------------------
+#   Generación de datos de simulación 
+#
+#   Generar datos de simulación para algoritmo de validación cruzada La función
+#   makesim genera un diccionario con trayectorias de inflación y trayectorias
+#   paramétricas generadas datos en diferentes subperíodos. 
+#   ----------------------------------------------------------------------------
 
 cvdata, _ = produce_or_load(cv_savepath, cvconfig) do config 
     makesim(gtdata, config)

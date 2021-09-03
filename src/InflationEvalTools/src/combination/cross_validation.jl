@@ -1,7 +1,10 @@
 ## Función para obtener error de validación cruzada utilizando CrossEvalConfig 
 
 """
-    crossvalidate(crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction::Function; 
+    crossvalidate(
+        weightsfunction::Function,
+        crossvaldata::Dict{String}, 
+        config::CrossEvalConfig = crossvaldata["config"];
         show_status::Bool = true,
         print_weights::Bool = true, 
         return_weights::Bool = false,
@@ -44,7 +47,7 @@ Los parámetros opcionales son:
   combinación.
 - `components_mask = (:)`: máscara a aplicar sobre las columnas de `tray_infl`
   en la combinación y evaluación. Utilizado para excluir una o más medidas del
-  proceso de evaluación.
+  proceso de ajustes de ponderadores y evaluación fuera de muestra.
 - `add_intercept::Bool = false`: indica si se debe agregar una columna de unos
   en las trayectorias de inflación a combinar. Si el `ensemblefn` de `config`
   contiene una [`InflationConstant`](@ref) como primera entrada, este argumento
@@ -53,7 +56,9 @@ Los parámetros opcionales son:
   combinación representen variaciones alrededor de este intercepto.
 """
 function crossvalidate(
-    crossvaldata::Dict{String}, config::CrossEvalConfig, weightsfunction::Function; 
+    weightsfunction::Function,
+    crossvaldata::Dict{String}, 
+    config::CrossEvalConfig = crossvaldata["config"]; 
     show_status::Bool = true,
     print_weights::Bool = true, 
     return_weights::Bool = false,
