@@ -42,7 +42,7 @@ module CPIDataBase
 
     # Estructura básica para medidas de inflación 
     include("inflation/InflationFunction.jl")
-    include("inflation/EnsembleInflationFunction.jl")
+    include("inflation/EnsembleFunction.jl")
     include("inflation/CombinationFunction.jl")
 
     # Medida de inflación básica 
