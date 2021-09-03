@@ -7,6 +7,7 @@ function makesim(data::CountryStructure, config::CrossEvalConfig; kwargs...)
     param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
     # Diccionario de resultados 
     cvinputs = Dict{String, Any}()
+    cvinputs["config"] = config
     # Opciones extra para pargentrayinfl
     pargenkwargs = filter(e -> first(e) != :K, kwargs)
     
