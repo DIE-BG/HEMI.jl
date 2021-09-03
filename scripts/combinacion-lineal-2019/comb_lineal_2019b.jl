@@ -1,7 +1,8 @@
 using DrWatson
 @quickactivate "HEMI"
 
-using DataFrames, Chain
+using DataFrames, Chain, Plots
+using PrettyTables
 using HEMI 
 
 # NOTA: este script asume que ya se cuenta con los resultados y trayectorias de cada
@@ -33,7 +34,7 @@ df_mai[!,:tray] = @chain df_mai.path begin
     joinpath.(tray_dir_mai,_)
     load.(_)
     [x["tray_infl"] for x in _]
-end
+end;
 
 # creamos array con trayectorias y obtenemos ponderadores
 tray_infl_mai = reduce(hcat, df_mai.tray)
@@ -41,6 +42,15 @@ a_mai = combination_weights(tray_infl_mai, tray_infl_param)
 
 # creamos nueva columna con los ponderadores
 df_mai[!, :a_mai] = a_mai
+
+# Creamos unas columnas auxiliares para ayudar en el ordenamiento de los datos
+df_mai[!, :mai_num] = parse.(Int, map(x-> split(x,",")[2][1:end-1], df_mai.measure))
+df_mai[!, :mai_let] = string.( map(x-> split(x,",")[1][end], df_mai.measure))
+
+# ordenamos los resultados utilizando estas columnas recien creadas
+sort!(df_mai, :mai_num)
+sort!(df_mai, :mai_let)
+
 
 # creamos tabla de resultados para la MAI
 RESULTS_MAI = select(df_mai, :measure, :a_mai, :mse)
@@ -51,6 +61,16 @@ metrics_mai = eval_metrics(tray_infl_maiopt, tray_infl_param)
 
 # Funcion de inflación combinada 
 inflfn_mai = CombinationFunction(df_mai.inflfn..., df_mai.a_mai) 
+
+
+# creamos un DataFrame con las métricas de la MAI óptima
+# y le agregamos la medida combinada, su nombre y las trayectorias
+
+mai_df = DataFrame(metrics_mai)
+mai_df[!,:inflfn] = [inflfn_mai]
+mai_df[!,:measure] = ["Subyacente MAI óptima MSE"]
+mai_df[!,:tray] = [tray_infl_maiopt]
+
 
 ## OTRAS MEDIDAS --------------------------------------------------------------------------------------------------------------------------
 
@@ -64,13 +84,10 @@ df[!,:tray] = @chain df.path begin
     joinpath.(tray_dir,_)
     load.(_)
     [x["tray_infl"] for x in _]
-end
-
-# Creamos un DataFrame con los resultados de la MAI para agregar a las demás medidas
-mai_DF = DataFrame(inflfn = inflfn_mai, measure = "Subyacente MAI óptima MSE", tray = [tray_infl_maiopt], mse = [metrics_mai[:mse]])
+end;
 
 # Se combina con las otras medidas para determinar ponderadores
-df = vcat(df,mai_DF, cols=:union)
+df = vcat(df,mai_df, cols=:intersect)
 
 # Se crea el array y se obtienen los ponderadores
 tray_infl = reduce(hcat, df.tray)
@@ -86,13 +103,32 @@ RESULTS = select(df, :measure, :a, :mse)
 tray_infl_opt = sum(tray_infl .* a', dims=2)
 metrics = eval_metrics(tray_infl_opt, tray_infl_param)
 
+metrics_df = DataFrame(metrics)
+metrics_df[!,:inflfn] = [inflfn]
+metrics_df[!,:measure] = ["Combinación lineal óptima MSE"]
+metrics_df[!,:tray] = [tray_infl_opt]
+
 # Creamos una funcion de inflación combinada final
 inflfn = CombinationFunction(df.inflfn..., df.a) 
+
+## GRAFICACION ------------------------------------------------------------------------------
+
+p = plot(InflationTotalCPI(), gtdata_eval, fmt = :svg)
+plot!(Date(2001,12):Month(1):Date(2019,12),   # SE TIENE QUE HACER MANUALMENTE POR 
+    inflfn(gtdata_eval),                      # EL MOMENTO DEBIDO A QUE NO ESTA DEFINIDA
+    label = "Combinación lineal óptima MSE",  # LA FUNCION PLOT PARA COMBINACIONES DE MEDIDAS
+    fmt = :svg)    
+
+# guardamos la imágen en el siguiente directorio
+plotpath = joinpath("docs", "src", "eval", "EscA", "images", "comb_lineal_2019")
+Plots.svg(p, joinpath(plotpath, "comb_lineal_2019"))
+
 
 ## RESULTADOS FINALES -----------------------------------------------------------------------
 
 # se muestran los resultados finales de la optimización
 println(RESULTS_MAI)
+println("MAI_MSE = ", metrics_mai[:mse])
 println(RESULTS)
 println("MSE = ", metrics[:mse])
 
@@ -112,6 +148,8 @@ println("MSE = ", metrics[:mse])
 # 9    │ MAI (G,40)   0.054515   0.786082
 # 10   │ MAI (G,5)   -0.0400753  0.896793
 
+#MAI_MSE = 0.21724673
+
 # Row  │ measure                            a           mse      
 #      │ String?                            Float32     Float32? 
 # ─────┼─────────────────────────────────────────────────────────
@@ -124,3 +162,35 @@ println("MSE = ", metrics[:mse])
 # 7    │ Subyacente MAI óptima MSE           0.177114   0.217247
 
 # MSE = 0.15239142
+
+## --------------------------------------------------------------------------------------------
+# ESTO NO ES PARTE DEL SCRIPT. SE UTILIZA UNICAMENTE PARA ELABORAR LAS TABLAS EN LA PAGINA HEMI
+
+#=
+
+# resultados criterios báasicos
+res1 = select(df, :measure, :mse, :mse_std_error)
+res2 = select(df, :measure, :a)
+res3 = select(metrics_df, :measure, :mse, :mse_std_error)
+
+tab1 = pretty_table(res1, tf=tf_markdown, formatters=ft_round(4))
+tab2 = pretty_table(res2, tf=tf_markdown, formatters=ft_round(4))
+tab3 = pretty_table(res3, tf=tf_markdown, formatters=ft_round(4))
+
+# resultados descomposición aditiva
+res4 = select(df, :measure, :mse, :mse_bias, :mse_var , :mse_cov)
+res5 = select(metrics_df, :measure, :mse, :mse_bias, :mse_var , :mse_cov)
+
+tab4 = pretty_table(res4, tf=tf_markdown, formatters=ft_round(4))
+tab5 = pretty_table(res5, tf=tf_markdown, formatters=ft_round(4))
+
+# resultados metricas de evaluación
+
+res6 = select(df, :measure, :rmse, :me, :mae , :huber, :corr)
+res7 = select(metrics_df, :measure, :rmse, :me, :mae , :huber, :corr)
+
+tab6 = pretty_table(res6, tf=tf_markdown, formatters=ft_round(4))
+tab7 = pretty_table(res7, tf=tf_markdown, formatters=ft_round(4))
+ 
+=#
+
