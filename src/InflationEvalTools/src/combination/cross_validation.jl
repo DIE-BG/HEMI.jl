@@ -91,20 +91,20 @@ function crossvalidate(
 
         # Máscara de períodos para ajustar los ponderadores. Los ponderadores se
         # ajustan a partir de train_start_date
-        weights_train_mask = train_dates .>= train_start_date
+        weights_train_period_mask = train_dates .>= train_start_date
 
         # Obtener ponderadores de combinación lineal con weightsfunction 
         w = @views weightsfunction(
-            train_tray_infl[weights_train_mask, components_mask, :], 
-            train_tray_infl_param[weights_train_mask])
+            train_tray_infl[weights_train_period_mask, components_mask, :], 
+            train_tray_infl_param[weights_train_period_mask])
 
         # Máscara de períodos de evaluación 
-        mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
+        periods_mask = evalperiod.startdate .<= cv_dates .<= evalperiod.finaldate
 
         # Obtener métrica de evaluación en subperíodo de CV 
         cv_metrics = @views combination_metrics(
-            cv_tray_infl[mask, components_mask, :], 
-            cv_tray_infl_param[mask], 
+            cv_tray_infl[periods_mask, components_mask, :], 
+            cv_tray_infl_param[periods_mask], 
             w)
         cv_results[i, :] = get.(Ref(cv_metrics), metrics, 0)
 
