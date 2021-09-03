@@ -65,7 +65,8 @@ end
 
 # Ponderadores de combinación Ridge con parámetro de regularización lambda
 """
-    ridge_combination_weights(tray_infl, tray_infl_param, lambda) -> Vector{<:AbstractFloat}
+    ridge_combination_weights(tray_infl, tray_infl_param, lambda; 
+        penalize_all = true) -> Vector{<:AbstractFloat}
 
 Obtiene ponderadores óptimos de Ridge a través de la solución analítica al
 problema de minimización del error cuadrático medio de la combinación lineal de
@@ -79,10 +80,9 @@ columnas de `tray_infl`.
 Los parámetros opcionales son:  
 - `penalize_all` (`Bool`): indica si aplicar la regularización a todos los
   ponderadores. Si es falso, se aplica la regularización a partir del segundo al
-  último componente del vector de ponderaciones. Por defecto es `false`. de
-  costo de entrenamiento. Por defecto es `false`. 
+  último componente del vector de ponderaciones. Por defecto es `true`.
 
-Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref)
+Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref).
 """
 function ridge_combination_weights(
     tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
@@ -111,7 +111,12 @@ end
 # Ponderadores de combinación lasso con parámetro de regularización lambda
 """
     lasso_combination_weights(tray_infl, tray_infl_param, lambda; 
-        max_iterations, alpha, tol, show_status) -> Vector{<:AbstractFloat}
+        max_iterations::Int = 1000, 
+        alpha = F(0.005), 
+        tol = F(1e-4), 
+        show_status = true, 
+        return_cost = false, 
+        penalize_all = true) -> Vector{<:AbstractFloat}
 
 Obtiene ponderadores óptimos de LASSO a través de una aproximación iterativa al
 problema de minimización del error cuadrático medio de la combinación lineal de
@@ -133,8 +138,7 @@ Los parámetros opcionales son:
   de costo de entrenamiento. Por defecto es `false`. 
 - `penalize_all` (`Bool`): indica si aplicar la regularización a todos los
   ponderadores. Si es falso, se aplica la regularización a partir del segundo al
-  último componente del vector de ponderaciones. Por defecto es `false`. de
-  costo de entrenamiento. Por defecto es `false`. 
+  último componente del vector de ponderaciones. Por defecto es `true`.
 
 Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
@@ -143,8 +147,12 @@ Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref)
 """
 function lasso_combination_weights(
     tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
-    max_iterations=1000, alpha=F(0.005), tol = F(1e-4), show_status=true, 
-    return_cost=false, penalize_all=true) where F
+    max_iterations::Int = 1000, 
+    alpha = F(0.005), 
+    tol = F(1e-4), 
+    show_status = true, 
+    return_cost = false, 
+    penalize_all = true) where F
 
     T, n, _ = size(tray_infl)
 
