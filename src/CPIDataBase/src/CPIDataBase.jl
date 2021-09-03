@@ -22,6 +22,7 @@ module CPIDataBase
     # Exportar tipos para implementar nuevas funciones de inflación
     export InflationFunction, EnsembleInflationFunction
     export EnsembleFunction, CombinationFunction
+    export InflationEnsemble
     export num_measures, weights, measure_name, measure_tag, params
 
     # Exportar tipos necesarios para especificar tipos de los resultados 
