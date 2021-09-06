@@ -122,6 +122,24 @@ obsfn_D = InflationCombination(
 
 
 ##  ----------------------------------------------------------------------------
+#   Evaluación del método de mínimos cuadrados, variante E
+#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   ----------------------------------------------------------------------------
+
+mse_cv_B = crossvalidate(combination_weights, cvdata, 
+    train_start_date = Date(2011, 1))
+
+mse_test_B, w_B = crossvalidate(combination_weights, testdata, 
+    train_start_date = Date(2011, 1), 
+    return_weights = true)
+
+# Obtener la función de inflación asociada 
+obsfn_B = InflationCombination(testconfig.inflfn, w_B, "Óptima MSE B")
+weights_df_B = DataFrame(
+    measure=measure_name(obsfn_B, return_array=true), 
+    weights=w_B)
+
+##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
 #   ----------------------------------------------------------------------------
 
