@@ -67,7 +67,7 @@ weights_df_ridge_A = DataFrame(
 #   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
 #   ----------------------------------------------------------------------------
 
-λ_range = 0.1:0.1:10
+λ_range = 0.1:0.1:1
 mse_cv_ridge_B = map(λ_range) do λ
     mse_cv = crossvalidate(
         (t,p) -> ridge_combination_weights(t, p, λ), cvdata, 
@@ -102,7 +102,7 @@ weights_df_ridge_B = DataFrame(
 #   - Se agrega un intercepto a la combinación lineal 
 #   ----------------------------------------------------------------------------
 
-λ_range = 0.1:0.1:10
+λ_range = 0.1:0.1:1
 mse_cv_ridge_C = map(λ_range) do λ
     mse_cv = crossvalidate(
         (t,p) -> ridge_combination_weights(t, p, λ, penalize_all = false), 
