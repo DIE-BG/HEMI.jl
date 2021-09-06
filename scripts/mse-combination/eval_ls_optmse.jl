@@ -26,7 +26,8 @@ length(readdir(test_savepath)) > 1 &&
 testfile = filter(x -> endswith(x, ".jld2"), readdir(test_savepath))[1]
 testdata = load(joinpath(test_savepath, testfile))
 
-
+cvconfig = cvdata["config"]
+testconfig = testdata["config"]
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante A
@@ -66,9 +67,10 @@ weights_df_B = DataFrame(
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante C
-#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los
+#     ponderadores
 #   - Se agrega un intercepto a la combinación lineal 
-#   ----------------------------------------------------------------------------
+#     ----------------------------------------------------------------------------
 
 mse_cv_C = crossvalidate(combination_weights, cvdata, 
     add_intercept = true, 
@@ -90,10 +92,11 @@ weights_df_C = DataFrame(
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante D
-#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los
+#     ponderadores
 #   - Se agrega un intercepto a la combinación lineal 
 #   - Se elimina la función de exclusión fija 
-#   ----------------------------------------------------------------------------
+#     ----------------------------------------------------------------------------
 
 components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
 

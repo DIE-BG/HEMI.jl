@@ -26,14 +26,15 @@ length(readdir(test_savepath)) > 1 &&
 testfile = filter(x -> endswith(x, ".jld2"), readdir(test_savepath))[1]
 testdata = load(joinpath(test_savepath, testfile))
 
-
+cvconfig = cvdata["config"]
+testconfig = testdata["config"]
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con Ridge, variante A
 #   - Se utiliza el período completo para ajuste de los ponderadores
 #   ----------------------------------------------------------------------------
 
-λ_range = 0.1:0.1:10
+λ_range = 0.1:0.1:2
 mse_cv_ridge_A = map(λ_range) do λ
     mse_cv = crossvalidate(
         (t,p) -> ridge_combination_weights(t, p, λ), cvdata, 
@@ -145,7 +146,7 @@ weights_df_ridge_C = DataFrame(
 components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
 # components_mask = [(fn isa InflationCoreMai) for fn in cvconfig.inflfn.functions]
 
-λ_range = 0.1:0.1:10
+λ_range = 0:0.005:0.05 #(0.01)
 mse_cv_ridge_D = map(λ_range) do λ
     mse_cv = crossvalidate(
         (t,p) -> ridge_combination_weights(t, p, λ, penalize_all = false), 
