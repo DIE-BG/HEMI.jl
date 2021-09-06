@@ -18,6 +18,7 @@ module InflationEvalTools
     using StableRNGs
     using OnlineStats: Mean, fit!, merge, value
     using LinearAlgebra: I, det, mul!
+    using JuMP, Ipopt
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """
@@ -85,6 +86,7 @@ module InflationEvalTools
     ## Combinación óptima MSE de estimadores 
     export combination_weights, average_mats
     export ridge_combination_weights, lasso_combination_weights
+    export share_combination_weights
     include("combination/combination_weights.jl")
 
     ## Funciones para evaluación cruzada

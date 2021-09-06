@@ -176,7 +176,7 @@ function lasso_combination_weights(
 		# Proximal gradient 
 		β = proxl1norm(β - α*grad, α*λ; penalize_all)
 
-        # Métrica de costo 
+        # Métrica de costo = MSE + λΣᵢ|βᵢ|
         mse = β'*XᵀX*β - 2*β'*Xᵀπ + πᵀπ
         l1cost = penalize_all ? sum(abs, β) : sum(abs, (@view β[2:end]))
 		cost_vals[t] = mse + λ*l1cost
@@ -204,3 +204,50 @@ function proxl1norm(z, α; penalize_all = true)
     
     proxl1
 end
+
+
+## Ponderadores de combinación restringidos
+# Se restringe el problema de optimización para que la suma de los ponderadores
+# sea igual a 1 y que todas las ponderaciones sean no negativas.
+"""
+    function share_combination_weights(tray_infl::AbstractArray{F, 3}, tray_infl_param; 
+        restrict_all::Bool = true, 
+        show_status::Bool = false) where F -> Vector{F}
+
+Obtiene ponderadores no negativos, cuya suma es igual a 1. Estos ponderadores se
+pueden interpretar como participaciones en la combinación lineal. 
+
+Los parámetros opcionales son: 
+- `show_status::Bool = false`: mostrar estado del proceso de optimización con
+  Ipopt y JuMP. 
+- `restrict_all::Bool = true`: indica si aplicar la restricción de la suma de
+  ponderadores a todas las entradas del vector de ponderaciones. Si es `false`,
+  se aplica la restricción a partir de la segunda entrada. Esto es para que si
+  el primer ponderador corresponde a un término constante, este no sea
+  restringido. 
+"""
+function share_combination_weights(
+    tray_infl::AbstractArray{F, 3}, tray_infl_param; 
+    restrict_all::Bool = true, 
+    show_status::Bool = false) where F
+
+    # Insumos para la función de pérdida cuadrática 
+    n = size(tray_infl, 2)
+    XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
+    πᵀπ = mean(x -> x^2, tray_infl_param)
+
+    # Si restrict_all == false, se restringe la suma de ponderadores igual a 1 a
+    # partir de la segunda posición del vector de ponderadores β
+    r = restrict_all ? 1 : 2
+
+    # Problema de optimización restringida
+    model = Model(Ipopt.Optimizer)
+	@variable(model, β[1:n] >= 0)
+	@constraint(model, sum(β[r:n]) == 1)
+    @objective(model, Min, β'*XᵀX*β - 2*β'*Xᵀπ + πᵀπ)
+	
+    # Obtener la solución numérica 
+	show_status || set_silent(model)
+	optimize!(model)
+	convert.(F, JuMP.value.(β))
+end 
