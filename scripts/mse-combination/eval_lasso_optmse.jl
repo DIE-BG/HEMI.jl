@@ -191,6 +191,52 @@ weights_df_lasso_D = DataFrame(
 
 
 ##  ----------------------------------------------------------------------------
+#   Evaluación del método de mínimos cuadrados con Lasso, variante E
+#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   - Se elimina la función de exclusión fija 
+#   ----------------------------------------------------------------------------
+
+components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
+
+λ_range = 0.1:0.1:5 
+mse_cv_lasso_E = map(λ_range) do λ
+    mse_cv = crossvalidate(
+        (t,p) -> lasso_combination_weights(t, p, λ, alpha = 0.001), 
+        cvdata, 
+        show_status = false,
+        train_start_date = Date(2011, 1), 
+        components_mask = components_mask)
+    @info "MSE CV" mean(mse_cv)
+    mean(mse_cv)  
+end
+
+# Gráfica del MSE de validación cruzada
+plot(λ_range, mse_cv_lasso_E, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+lambda_lasso = λ_range[argmin(mse_cv_lasso_E)]
+scatter!([lambda_lasso], [minimum(mse_cv_lasso_E)], label="λ min")
+
+# Evaluación sobre conjunto de prueba 
+mse_test_lasso_E, w_E = crossvalidate(
+    (t,p) -> lasso_combination_weights(t, p, lambda_lasso, alpha = 0.001), 
+    testdata, 
+    train_start_date = Date(2011, 1),
+    components_mask = components_mask,
+    return_weights = true)
+
+# Obtener la función de inflación asociada 
+obsfn_lasso_E = InflationCombination(
+    testconfig.inflfn.functions[components_mask]..., 
+    w_E, 
+    "Óptima MSE Lasso E")
+
+weights_df_lasso_E = DataFrame(
+    measure=measure_name(obsfn_lasso_E, return_array=true), 
+    weights=w_E)
+
+
+##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
 #   ----------------------------------------------------------------------------
 
@@ -199,18 +245,30 @@ pretty_table(weights_df_lasso_A, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_lasso_B, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_lasso_C, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_lasso_D, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(weights_df_lasso_E, tf=tf_markdown, formatters=ft_round(4))
 
 ## Evaluación de CV y prueba 
 results = DataFrame( 
-    scenario=["A", "B", "C", "D"], 
-    mse_cv = map(minimum, [mse_cv_lasso_A, mse_cv_lasso_B, mse_cv_lasso_C, mse_cv_lasso_D]),
-    mse_test = map(mean, [mse_test_lasso_A, mse_test_lasso_B, mse_test_lasso_C, mse_test_lasso_D])
+    scenario=["A", "B", "C", "D", "E"], 
+    mse_cv = map(minimum, [
+        mse_cv_lasso_A, 
+        mse_cv_lasso_B, 
+        mse_cv_lasso_C, 
+        mse_cv_lasso_D, 
+        mse_cv_lasso_E]),
+    mse_test = map(mean, [
+        mse_test_lasso_A, 
+        mse_test_lasso_B, 
+        mse_test_lasso_C, 
+        mse_test_lasso_D, 
+        mse_test_lasso_E])
 )
 
 ## Gráfica para comparar las variantes de optimización
 
 plot(InflationTotalCPI(), gtdata)
 plot!(obsfn_lasso_A, gtdata, linewidth = 3, color = :blue)
-plot!(obsfn_lasso_B, gtdata, alpha = 0.7)
-plot!(obsfn_lasso_C, gtdata, alpha = 0.7)
-plot!(obsfn_lasso_D, gtdata, alpha = 0.7)
+# plot!(obsfn_lasso_B, gtdata, alpha = 0.7)
+# plot!(obsfn_lasso_C, gtdata, alpha = 0.7)
+# plot!(obsfn_lasso_D, gtdata, alpha = 0.7)
+plot!(obsfn_lasso_E, gtdata, alpha = 0.7)

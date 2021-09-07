@@ -188,6 +188,52 @@ weights_df_ridge_D = DataFrame(
 
 
 ##  ----------------------------------------------------------------------------
+#   Evaluación del método de mínimos cuadrados con Ridge, variante E
+#   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   - Se elimina la función de exclusión fija 
+#   ----------------------------------------------------------------------------
+
+components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
+
+λ_range = 0:0.005:0.05 
+mse_cv_ridge_E = map(λ_range) do λ
+    mse_cv = crossvalidate(
+        (t,p) -> ridge_combination_weights(t, p, λ), 
+        cvdata, 
+        show_status = false,
+        train_start_date = Date(2011, 1), 
+        components_mask = components_mask)
+    @info "MSE CV" mean(mse_cv)
+    mean(mse_cv)  
+end
+
+# Gráfica del MSE de validación cruzada
+plot(λ_range, mse_cv_ridge_E, 
+    label="Cross-validation MSE", 
+    legend=:topleft)
+lambda_ridge = λ_range[argmin(mse_cv_ridge_E)]
+scatter!([lambda_ridge], [minimum(mse_cv_ridge_E)], label="λ min")
+
+# Evaluación sobre conjunto de prueba 
+mse_test_ridge_E, w_E = crossvalidate(
+    (t,p) -> ridge_combination_weights(t, p, lambda_ridge), 
+    testdata, 
+    train_start_date = Date(2011, 1),
+    components_mask = components_mask,
+    return_weights = true)
+
+# Obtener la función de inflación asociada 
+obsfn_ridge_E = InflationCombination(
+    testconfig.inflfn.functions[components_mask]..., 
+    w_E, 
+    "Óptima MSE Ridge E")
+
+weights_df_ridge_E = DataFrame(
+    measure=measure_name(obsfn_ridge_E, return_array=true), 
+    weights=w_E)
+
+
+##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
 #   ----------------------------------------------------------------------------
 
@@ -196,12 +242,23 @@ pretty_table(weights_df_ridge_A, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_ridge_B, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_ridge_C, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_ridge_D, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(weights_df_ridge_E, tf=tf_markdown, formatters=ft_round(4))
 
 ## Evaluación de CV y prueba 
 results = DataFrame( 
-    scenario=["A", "B", "C", "D"], 
-    mse_cv = map(minimum, [mse_cv_ridge_A, mse_cv_ridge_B, mse_cv_ridge_C, mse_cv_ridge_D]),
-    mse_test = map(mean, [mse_test_ridge_A, mse_test_ridge_B, mse_test_ridge_C, mse_test_ridge_D])
+    scenario=["A", "B", "C", "D", "E"], 
+    mse_cv = map(minimum, [
+        mse_cv_ridge_A, 
+        mse_cv_ridge_B, 
+        mse_cv_ridge_C, 
+        mse_cv_ridge_D, 
+        mse_cv_ridge_E]),
+    mse_test = map(mean, [
+        mse_test_ridge_A, 
+        mse_test_ridge_B, 
+        mse_test_ridge_C, 
+        mse_test_ridge_D, 
+        mse_test_ridge_E])
 )
 
 ## Gráfica para comparar las variantes de optimización
@@ -211,3 +268,4 @@ plot!(obsfn_ridge_A, gtdata, alpha = 0.5)
 plot!(obsfn_ridge_B, gtdata, alpha = 0.7)
 plot!(obsfn_ridge_C, gtdata, alpha = 0.7)
 plot!(obsfn_ridge_D, gtdata, linewidth = 3, color = :blue)
+plot!(obsfn_ridge_E, gtdata, alpha = 0.7)
