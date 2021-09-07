@@ -12,6 +12,8 @@ using DataFrames, Chain, PrettyTables
 ## Directorios de resultados 
 cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
+results_path = datadir("results", "mse-combination", "Esc-E", "results")
+plots_path = mkpath(plotsdir("mse-combination", "Esc-E", "lasso"))
 
 ##  ----------------------------------------------------------------------------
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
@@ -41,7 +43,6 @@ mse_cv_lasso_A = map(λ_range) do λ
         cvdata, 
         show_status=false, 
         print_weights=false)          
-
     mean(mse_cv)  
 end
 
@@ -51,6 +52,8 @@ plot(λ_range, mse_cv_lasso_A,
     legend=:topleft)
 lambda_lasso = λ_range[argmin(mse_cv_lasso_A)]
 scatter!([lambda_lasso], [minimum(mse_cv_lasso_A)], label="λ min")
+savefig(joinpath(plots_path, 
+    savename("hyperparams", (@strdict method="lasso" scenario="A"), "svg")))
 
 # Evaluación sobre conjunto de prueba 
 mse_test_lasso_A, w_A = crossvalidate(
@@ -64,6 +67,20 @@ weights_df_lasso_A = DataFrame(
     measure=measure_name(obsfn_lasso_A, return_array=true), 
     weights=w_A)
     
+# Guardar resultados
+res_A = (
+    method="lasso", 
+    scenario="A", 
+    hyperparams_space=λ_range,
+    opthyperparams = lambda_lasso, 
+    mse_cv = mse_cv_lasso_A, 
+    mse_test = mse_test_lasso_A, 
+    combfn = obsfn_lasso_A
+)
+dict_res_A = tostringdict(struct2dict(res_A))
+wsave(joinpath(results_path, savename(dict_res_A, "jld2")), dict_res_A)
+
+
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con Lasso, variante B
 #   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
@@ -85,6 +102,8 @@ plot(λ_range, mse_cv_lasso_B,
     legend=:topleft)
 lambda_lasso = λ_range[argmin(mse_cv_lasso_B)]
 scatter!([lambda_lasso], [minimum(mse_cv_lasso_B)], label="λ min")
+savefig(joinpath(plots_path, 
+    savename("hyperparams", (@strdict method="lasso" scenario="B"), "svg")))
 
 # Evaluación sobre conjunto de prueba 
 mse_test_lasso_B, w_B = crossvalidate(
@@ -98,6 +117,19 @@ obsfn_lasso_B = InflationCombination(testconfig.inflfn, w_B, "Óptima MSE Lasso 
 weights_df_lasso_B = DataFrame(
     measure=measure_name(obsfn_lasso_B, return_array=true), 
     weights=w_B)
+
+# Guardar resultados
+res_B = (
+    method="lasso", 
+    scenario="B", 
+    hyperparams_space=λ_range,
+    opthyperparams = lambda_lasso, 
+    mse_cv = mse_cv_lasso_B, 
+    mse_test = mse_test_lasso_B, 
+    combfn = obsfn_lasso_B
+)
+dict_res_B = tostringdict(struct2dict(res_B))
+wsave(joinpath(results_path, savename(dict_res_B, "jld2")), dict_res_B)
 
 
 ##  ----------------------------------------------------------------------------
@@ -123,6 +155,8 @@ plot(λ_range, mse_cv_lasso_C,
     legend=:topleft)
 lambda_lasso = λ_range[argmin(mse_cv_lasso_C)]
 scatter!([lambda_lasso], [minimum(mse_cv_lasso_C)], label="λ min")
+savefig(joinpath(plots_path, 
+    savename("hyperparams", (@strdict method="lasso" scenario="C"), "svg")))
 
 # Evaluación sobre conjunto de prueba 
 mse_test_lasso_C, w_C = crossvalidate(
@@ -138,6 +172,19 @@ obsfn_lasso_C = InflationCombination(
 weights_df_lasso_C = DataFrame(
     measure=measure_name(obsfn_lasso_C, return_array=true), 
     weights=w_C)
+
+# Guardar resultados
+res_C = (
+    method="lasso", 
+    scenario="C", 
+    hyperparams_space=λ_range,
+    opthyperparams = lambda_lasso, 
+    mse_cv = mse_cv_lasso_C, 
+    mse_test = mse_test_lasso_C, 
+    combfn = obsfn_lasso_C
+)
+dict_res_C = tostringdict(struct2dict(res_C))
+wsave(joinpath(results_path, savename(dict_res_C, "jld2")), dict_res_C)
 
 
 ##  ----------------------------------------------------------------------------
@@ -168,6 +215,8 @@ plot(λ_range, mse_cv_lasso_D,
     legend=:topleft)
 lambda_lasso = λ_range[argmin(mse_cv_lasso_D)]
 scatter!([lambda_lasso], [minimum(mse_cv_lasso_D)], label="λ min")
+savefig(joinpath(plots_path, 
+    savename("hyperparams", (@strdict method="lasso" scenario="D"), "svg")))
 
 # Evaluación sobre conjunto de prueba 
 mse_test_lasso_D, w_D = crossvalidate(
@@ -188,6 +237,19 @@ obsfn_lasso_D = InflationCombination(
 weights_df_lasso_D = DataFrame(
     measure=measure_name(obsfn_lasso_D, return_array=true), 
     weights=w_D)
+
+# Guardar resultados
+res_D = (
+    method="lasso", 
+    scenario="D", 
+    hyperparams_space=λ_range,
+    opthyperparams = lambda_lasso, 
+    mse_cv = mse_cv_lasso_D, 
+    mse_test = mse_test_lasso_D, 
+    combfn = obsfn_lasso_D
+)
+dict_res_D = tostringdict(struct2dict(res_D))
+wsave(joinpath(results_path, savename(dict_res_D, "jld2")), dict_res_D)
 
 
 ##  ----------------------------------------------------------------------------
@@ -216,6 +278,8 @@ plot(λ_range, mse_cv_lasso_E,
     legend=:topleft)
 lambda_lasso = λ_range[argmin(mse_cv_lasso_E)]
 scatter!([lambda_lasso], [minimum(mse_cv_lasso_E)], label="λ min")
+savefig(joinpath(plots_path, 
+    savename("hyperparams", (@strdict method="lasso" scenario="E"), "svg")))
 
 # Evaluación sobre conjunto de prueba 
 mse_test_lasso_E, w_E = crossvalidate(
@@ -235,6 +299,18 @@ weights_df_lasso_E = DataFrame(
     measure=measure_name(obsfn_lasso_E, return_array=true), 
     weights=w_E)
 
+# Guardar resultados
+res_E = (
+    method="lasso", 
+    scenario="E", 
+    hyperparams_space=λ_range,
+    opthyperparams = lambda_lasso, 
+    mse_cv = mse_cv_lasso_E, 
+    mse_test = mse_test_lasso_E, 
+    combfn = obsfn_lasso_E
+)
+dict_res_E = tostringdict(struct2dict(res_E))
+wsave(joinpath(results_path, savename(dict_res_E, "jld2")), dict_res_E)
 
 ##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
@@ -267,8 +343,9 @@ results = DataFrame(
 ## Gráfica para comparar las variantes de optimización
 
 plot(InflationTotalCPI(), gtdata)
-plot!(obsfn_lasso_A, gtdata, linewidth = 3, color = :blue)
-# plot!(obsfn_lasso_B, gtdata, alpha = 0.7)
-# plot!(obsfn_lasso_C, gtdata, alpha = 0.7)
-# plot!(obsfn_lasso_D, gtdata, alpha = 0.7)
+plot!(obsfn_lasso_A, gtdata, alpha = 0.7)
+plot!(obsfn_lasso_C, gtdata, alpha = 0.7)
 plot!(obsfn_lasso_E, gtdata, alpha = 0.7)
+plot!(obsfn_lasso_D, gtdata, linewidth = 2, color = :red)
+plot!(obsfn_lasso_B, gtdata, linewidth = 3, color = :blue)
+savefig(joinpath(plots_path, "trajectories.svg"))

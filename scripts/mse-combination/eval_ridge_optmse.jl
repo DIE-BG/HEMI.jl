@@ -66,6 +66,7 @@ weights_df_ridge_A = DataFrame(
     measure=measure_name(obsfn_ridge_A, return_array=true), 
     weights=w_A)
 
+# Guardar resultados
 res_A = (
     method="ridge", 
     scenario="A", 
@@ -113,6 +114,7 @@ weights_df_ridge_B = DataFrame(
     measure=measure_name(obsfn_ridge_B, return_array=true), 
     weights=w_B)
 
+# Guardar resultados
 res_B = (
     method="ridge", 
     scenario="B", 
@@ -166,6 +168,7 @@ weights_df_ridge_C = DataFrame(
     measure=measure_name(obsfn_ridge_C, return_array=true), 
     weights=w_C)
 
+# Guardar resultados
 res_C = (
     method="ridge", 
     scenario="C", 
@@ -231,7 +234,7 @@ weights_df_ridge_D = DataFrame(
     measure=measure_name(obsfn_ridge_D, return_array=true), 
     weights=w_D)
 
-
+# Guardar resultados
 res_D = (
     method="ridge", 
     scenario="D", 
@@ -293,6 +296,7 @@ weights_df_ridge_E = DataFrame(
     measure=measure_name(obsfn_ridge_E, return_array=true), 
     weights=w_E)
 
+# Guardar resultados
 res_E = (
     method="ridge", 
     scenario="E", 
