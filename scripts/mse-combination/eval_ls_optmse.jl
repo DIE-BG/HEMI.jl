@@ -124,20 +124,25 @@ obsfn_D = InflationCombination(
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante E
 #   - Se utilizan datos de la base 2010 del IPC para el ajuste de los ponderadores
+#   - Se elimina la función de exclusión fija 
 #   ----------------------------------------------------------------------------
 
-mse_cv_B = crossvalidate(combination_weights, cvdata, 
+components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
+
+mse_cv_E = crossvalidate(combination_weights, cvdata, 
+    components_mask = components_mask,
     train_start_date = Date(2011, 1))
 
-mse_test_B, w_B = crossvalidate(combination_weights, testdata, 
+mse_test_E, w_E = crossvalidate(combination_weights, testdata, 
     train_start_date = Date(2011, 1), 
+    components_mask = components_mask,
     return_weights = true)
 
 # Obtener la función de inflación asociada 
-obsfn_B = InflationCombination(testconfig.inflfn, w_B, "Óptima MSE B")
-weights_df_B = DataFrame(
-    measure=measure_name(obsfn_B, return_array=true), 
-    weights=w_B)
+obsfn_E = InflationCombination(testconfig.inflfn.functions[components_mask]..., w_E, "Óptima MSE E")
+weights_df_E = DataFrame(
+    measure=measure_name(obsfn_E, return_array=true), 
+    weights=w_E)
 
 ##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
@@ -149,19 +154,21 @@ pretty_table(weights_df_A, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_B, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_C, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_df_D, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(weights_df_E, tf=tf_markdown, formatters=ft_round(4))
 
 ## Evaluación de CV y prueba 
 results = DataFrame( 
-    scenario=["A", "B", "C", "D"], 
-    mse_cv = map(mean, [mse_cv_A, mse_cv_B, mse_cv_C, mse_cv_D]),
-    mse_test = map(mean, [mse_test_A, mse_test_B, mse_test_C, mse_test_D])
+    scenario=["A", "B", "C", "D", "E"], 
+    mse_cv = map(mean, [mse_cv_A, mse_cv_B, mse_cv_C, mse_cv_D, mse_cv_E]),
+    mse_test = map(mean, [mse_test_A, mse_test_B, mse_test_C, mse_test_D, mse_test_E])
 )
 
 ## Gráfica para comparar las variantes de optimización
 
 plot(InflationTotalCPI(), gtdata)
-plot!(obsfn_lsA, gtdata, alpha = 0.5)
-plot!(obsfn_lsB, gtdata, alpha = 0.7)
-plot!(obsfn_lsC, gtdata, alpha = 0.7)
-plot!(obsfn_lsD, gtdata, linewidth = 3, color = :blue)
+plot!(obsfn_A, gtdata, alpha = 0.5)
+plot!(obsfn_B, gtdata, alpha = 0.7)
+plot!(obsfn_C, gtdata, alpha = 0.7)
+plot!(obsfn_D, gtdata, alpha = 0.7)
+plot!(obsfn_E, gtdata, linewidth = 3, color = :blue)
 
