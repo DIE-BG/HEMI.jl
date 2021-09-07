@@ -12,6 +12,8 @@ using DataFrames, Chain, PrettyTables
 ## Directorios de resultados 
 cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
+results_path = datadir("results", "mse-combination", "Esc-E", "results")
+plots_path = mkpath(plotsdir("mse-combination", "Esc-E", "share"))
 
 ##  ----------------------------------------------------------------------------
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
@@ -46,10 +48,22 @@ mse_test_share_A, w_A = crossvalidate(
     return_weights = true)
 
 # Obtener la función de inflación asociada 
-obsfn_share_A = InflationCombination(testconfig.inflfn, w_A, "Óptima MSE LS restringido A")
+obsfn_share_A = InflationCombination(
+    testconfig.inflfn, w_A, "Óptima MSE LS restringido A")
 weights_df_share_A = DataFrame(
     measure=measure_name(obsfn_share_A, return_array=true), 
     weights=w_A)
+
+# Guardar resultados
+res_A = (
+    method="share", 
+    scenario="A", 
+    mse_cv = mse_cv_share_A, 
+    mse_test = mse_test_share_A, 
+    combfn = obsfn_share_A
+)
+dict_res_A = tostringdict(struct2dict(res_A))
+wsave(joinpath(results_path, savename(dict_res_A, "jld2")), dict_res_A)
     
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con LS restringido, variante B
@@ -70,11 +84,22 @@ mse_test_share_B, w_B = crossvalidate(
     return_weights = true)
 
 # Obtener la función de inflación asociada 
-obsfn_share_B = InflationCombination(testconfig.inflfn, w_B, "Óptima MSE LS restringido B")
+obsfn_share_B = InflationCombination(
+    testconfig.inflfn, w_B, "Óptima MSE LS restringido B")
 weights_df_share_B = DataFrame(
     measure=measure_name(obsfn_share_B, return_array=true), 
     weights=w_B)
 
+# Guardar resultados
+res_B = (
+    method="share", 
+    scenario="B", 
+    mse_cv = mse_cv_share_B, 
+    mse_test = mse_test_share_B, 
+    combfn = obsfn_share_B
+)
+dict_res_B = tostringdict(struct2dict(res_B))
+wsave(joinpath(results_path, savename(dict_res_B, "jld2")), dict_res_B)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con LS restringido, variante C
@@ -106,6 +131,16 @@ weights_df_share_C = DataFrame(
     measure=measure_name(obsfn_share_C, return_array=true), 
     weights=w_C)
 
+# Guardar resultados
+res_C = (
+    method="share", 
+    scenario="C", 
+    mse_cv = mse_cv_share_C, 
+    mse_test = mse_test_share_C, 
+    combfn = obsfn_share_C
+)
+dict_res_C = tostringdict(struct2dict(res_C))
+wsave(joinpath(results_path, savename(dict_res_C, "jld2")), dict_res_C)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con LS restringido, variante D
@@ -146,6 +181,16 @@ weights_df_share_D = DataFrame(
     measure=measure_name(obsfn_share_D, return_array=true), 
     weights=w_D)
 
+# Guardar resultados
+res_D = (
+    method="share", 
+    scenario="D", 
+    mse_cv = mse_cv_share_D, 
+    mse_test = mse_test_share_D, 
+    combfn = obsfn_share_D
+)
+dict_res_D = tostringdict(struct2dict(res_D))
+wsave(joinpath(results_path, savename(dict_res_D, "jld2")), dict_res_D)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados con LS restringido, variante E
@@ -180,6 +225,16 @@ weights_df_share_E = DataFrame(
     measure=measure_name(obsfn_share_E, return_array=true), 
     weights=w_E)
 
+# Guardar resultados
+res_E = (
+    method="share", 
+    scenario="E", 
+    mse_cv = mse_cv_share_E, 
+    mse_test = mse_test_share_E, 
+    combfn = obsfn_share_E
+)
+dict_res_E = tostringdict(struct2dict(res_E))
+wsave(joinpath(results_path, savename(dict_res_E, "jld2")), dict_res_E)
 
 ##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
@@ -203,7 +258,8 @@ results = DataFrame(
 
 plot(InflationTotalCPI(), gtdata)
 plot!(obsfn_share_A, gtdata, alpha = 0.7)
-plot!(obsfn_share_B, gtdata, alpha = 0.7)
 plot!(obsfn_share_C, gtdata, alpha = 0.7)
-plot!(obsfn_share_D, gtdata, linewidth = 3, color = :blue)
 plot!(obsfn_share_E, gtdata, alpha = 0.7)
+plot!(obsfn_share_D, gtdata, linewidth = 2, color = :red)
+plot!(obsfn_share_B, gtdata, linewidth = 3, color = :blue)
+savefig(joinpath(plots_path, "trajectories.svg"))
