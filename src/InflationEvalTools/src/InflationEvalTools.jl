@@ -87,6 +87,7 @@ module InflationEvalTools
     export combination_weights, average_mats
     export ridge_combination_weights, lasso_combination_weights
     export share_combination_weights
+    export elastic_combination_weights
     include("combination/combination_weights.jl")
 
     ## Funciones para evaluación cruzada

@@ -12,7 +12,8 @@ Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
 
 Ver también: [`ridge_combination_weights`](@ref),
-[`lasso_combination_weights`](@ref)
+[`lasso_combination_weights`](@ref), [`share_combination_weights`](@ref),
+[`elastic_combination_weights`](@ref). 
 """
 function combination_weights(tray_infl, tray_infl_param)
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
@@ -71,7 +72,7 @@ end
 Obtiene ponderadores óptimos de Ridge a través de la solución analítica al
 problema de minimización del error cuadrático medio de la combinación lineal de
 estimadores de inflación en `tray_infl` utilizando la trayectoria de inflación
-paramétrica `tray_infl_param`, regularizada con la norma L2 de los ponderadores, 
+paramétrica `tray_infl_param`, regularizada con la norma L2 de los ponderadores,
 ponderada por el parámetro `lambda`.
 
 Devuelve un vector con los ponderadores asociados a cada estimador en las
@@ -82,11 +83,16 @@ Los parámetros opcionales son:
   ponderadores. Si es falso, se aplica la regularización a partir del segundo al
   último componente del vector de ponderaciones. Por defecto es `true`.
 
-Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref).
+Ver también: [`combination_weights`](@ref), [`lasso_combination_weights`](@ref),
+[`share_combination_weights`](@ref), [`elastic_combination_weights`](@ref).
 """
 function ridge_combination_weights(
     tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
     penalize_all = true) where F
+
+    # Si lambda == 0, solución de mínimos cuadrados
+    lambda == 0 && return combination_weights(tray_infl, tray_infl_param)
+
     # Obtener matriz de ponderadores XᵀX y vector Xᵀπ
     XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
     λ = convert(F, lambda)
@@ -125,34 +131,36 @@ paramétrica `tray_infl_param`, regularizada con la norma L1 de los ponderadores
 ponderada por el parámetro `lambda`.
 
 Los parámetros opcionales son: 
-- `max_iterations` (`Integer`): número máximo de iteraciones. Por defecto,
-  `1000`. 
-- `alpha` (`AbstractFloat`): parámetro de aproximación o avance del algoritmo de
-  gradiente próximo. Por defecto, `0.005`.
-- `tol` (`AbstractFloat`): desviación absoluta de la función de costo. Si la
+- `max_iterations::Int = 1000`: número máximo de iteraciones. 
+- `alpha::AbstractFloat = 0.001`: parámetro de aproximación o avance del
+  algoritmo de gradiente próximo. 
+- `tol::AbstractFloat = 1e-4`: desviación absoluta de la función de costo. Si la
   función de costo varía en términos absolutos menos que `tol` de una iteración
-  a otra, el algoritmo de gradiente se detiene. Por defecto, `1e-4`. 
-- `show_status` (`Bool`): mostrar estado del algoritmo iterativo. Por defecto,
-  `true`.
-- `return_cost` (`Bool`): indica si devuelve el vector de historia de la función
-  de costo de entrenamiento. Por defecto es `false`. 
-- `penalize_all` (`Bool`): indica si aplicar la regularización a todos los
+  a otra, el algoritmo de gradiente se detiene. 
+- `show_status::Bool = true`: mostrar estado del algoritmo iterativo.
+- `return_cost::Bool = false`: indica si devuelve el vector de historia de la
+  función de costo de entrenamiento. 
+- `penalize_all::Bool = true`: indica si aplicar la regularización a todos los
   ponderadores. Si es falso, se aplica la regularización a partir del segundo al
-  último componente del vector de ponderaciones. Por defecto es `true`.
+  último componente del vector de ponderaciones.
 
 Devuelve un vector con los ponderadores asociados a cada estimador en las
 columnas de `tray_infl`.
 
-Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref)
+Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref),
+[`share_combination_weights`](@ref), [`elastic_combination_weights`](@ref).
 """
 function lasso_combination_weights(
     tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda; 
     max_iterations::Int = 1000, 
-    alpha = F(0.005), 
+    alpha = F(0.001), 
     tol = F(1e-4), 
     show_status = true, 
     return_cost = false, 
     penalize_all = true) where F
+
+    # Si lambda == 0, solución de mínimos cuadrados
+    lambda == 0 && return combination_weights(tray_infl, tray_infl_param)
 
     T, n, _ = size(tray_infl)
 
@@ -251,3 +259,97 @@ function share_combination_weights(
 	optimize!(model)
 	convert.(F, JuMP.value.(β))
 end 
+
+
+
+# Elastic net
+"""
+    elastic_combination_weights(tray_infl, tray_infl_param, lambda, gamma; 
+        max_iterations::Int = 1000, 
+        alpha = 0.001, 
+        tol = 1e-4, 
+        show_status = true, 
+        return_cost = false, 
+        penalize_all = true) -> Vector{<:AbstractFloat}
+
+Obtiene ponderadores óptimos de [Elastic
+Net](https://en.wikipedia.org/wiki/Elastic_net_regularization) a través de una
+aproximación iterativa al problema de minimización del error cuadrático medio de
+la combinación lineal de estimadores de inflación en `tray_infl` utilizando la
+trayectoria de inflación paramétrica `tray_infl_param`, regularizada con la
+norma L1 y L2 de los ponderadores, ponderada por el parámetro `lambda`. El
+porcentaje de regularización de la norma L1 se controla con el parámetro
+`gamma`.
+
+Los parámetros opcionales son: 
+- `max_iterations::Int = 1000`: número máximo de iteraciones. 
+- `alpha::AbstractFloat = 0.001`: parámetro de aproximación o avance del
+  algoritmo de gradiente próximo. 
+- `tol::AbstractFloat = 1e-4`: desviación absoluta de la función de costo. Si la
+  función de costo varía en términos absolutos menos que `tol` de una iteración
+  a otra, el algoritmo de gradiente se detiene. 
+- `show_status::Bool = true`: mostrar estado del algoritmo iterativo.
+- `return_cost::Bool = false`: indica si devuelve el vector de historia de la
+  función de costo de entrenamiento. 
+- `penalize_all::Bool = true`: indica si aplicar la regularización a todos los
+  ponderadores. Si es falso, se aplica la regularización a partir del segundo al
+  último componente del vector de ponderaciones.
+
+Devuelve un vector con los ponderadores asociados a cada estimador en las
+columnas de `tray_infl`.
+
+Ver también: [`combination_weights`](@ref), [`ridge_combination_weights`](@ref),
+[`share_combination_weights`](@ref), [`lasso_combination_weights`](@ref).
+"""
+function elastic_combination_weights(
+    tray_infl::AbstractArray{F, 3}, tray_infl_param, lambda, gamma; 
+    max_iterations::Int = 1000, 
+    alpha = F(0.001), 
+    tol = F(1e-4), 
+    show_status::Bool = true, 
+    return_cost::Bool = false, 
+    penalize_all::Bool = true) where F
+
+    # Si lambda == 0, solución de mínimos cuadrados
+    lambda == 0 && return combination_weights(tray_infl, tray_infl_param)
+
+    n = size(tray_infl, 2)
+
+    λ = convert(F, lambda)
+    γ = convert(F, gamma)
+    α = convert(F, alpha)
+    β = zeros(F, n)
+    cost_vals = zeros(F, max_iterations)
+    XᵀX, Xᵀπ = average_mats(tray_infl, tray_infl_param)
+    πᵀπ = mean(x -> x^2, tray_infl_param)
+
+    if show_status
+        println("Optimización iterativa para Elastic Net:")
+        println("----------------------------------------")
+    end
+
+    # Proximal gradient descent
+    for t in 1:max_iterations
+        # Computar el gradiente respecto de β
+        grad = (XᵀX * β) - Xᵀπ + λ*(1-γ)*β
+		
+		# Proximal gradient 
+		β = proxl1norm(β - α*grad, α*λ*γ; penalize_all)
+
+        # Métrica de costo = 0.5MSE + 0.5λ(1-γ)Σᵢ||βᵢ||^2 + γλΣᵢ|βᵢ|
+        mse = β'*XᵀX*β - 2*β'*Xᵀπ + πᵀπ
+        l1cost = penalize_all ? sum(abs, β) : sum(abs, (@view β[2:end]))
+        l2cost = penalize_all ? sum(x -> x^2, β) : sum(x -> x^2, (@view β[2:end]))
+		cost_vals[t] = (1//2)mse + λ*γ*l1cost + (1//2)λ*(1-γ)*l2cost 
+		abstol = t > 1 ? abs(cost_vals[t] - cost_vals[t-1]) : 100f0
+
+		if show_status && t % 100 == 0
+			println("Iter: ", t, " cost = ", cost_vals[t], "  |Δcost| = ", abstol)
+		end
+
+        abstol < tol && break 
+	end
+	
+    return_cost && return β, cost_vals
+	β
+end
