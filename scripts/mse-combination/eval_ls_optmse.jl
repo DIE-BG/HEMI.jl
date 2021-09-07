@@ -12,6 +12,7 @@ using DataFrames, Chain, PrettyTables
 ## Directorios de resultados 
 cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
+results_path = datadir("results", "mse-combination", "Esc-E", "results")
 
 ##  ----------------------------------------------------------------------------
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
@@ -111,14 +112,15 @@ mse_test_D, w_D = crossvalidate(combination_weights, testdata,
     train_start_date = Date(2011, 1), 
     return_weights = true)
 
+    
+# Obtener la función de inflación asociada 
+obsfn_D = InflationCombination(
+    InflationConstant(), 
+    testconfig.inflfn.functions[components_mask]..., 
+    w_D, "Óptima MSE D")
 weights_df_D = DataFrame(
     measure=measure_name(obsfn_D, return_array=true), 
     weights=w_D)
-
-# Obtener la función de inflación asociada 
-obsfn_D = InflationCombination(
-    InflationEnsemble(InflationConstant(), testconfig.inflfn.functions[components_mask]...), 
-    w_D, "Óptima MSE D")
 
 
 ##  ----------------------------------------------------------------------------
@@ -172,3 +174,17 @@ plot!(obsfn_C, gtdata, alpha = 0.7)
 plot!(obsfn_D, gtdata, alpha = 0.7)
 plot!(obsfn_E, gtdata, linewidth = 3, color = :blue)
 
+
+## Guardar los resultados 
+
+a = (@strdict method="ls" scenario="A" mse_cv=mse_cv_A mse_test=mse_test_A combfn=obsfn_A)
+b = (@strdict method="ls" scenario="B" mse_cv=mse_cv_B mse_test=mse_test_B combfn=obsfn_B)
+c = (@strdict method="ls" scenario="C" mse_cv=mse_cv_C mse_test=mse_test_C combfn=obsfn_C)
+d = (@strdict method="ls" scenario="D" mse_cv=mse_cv_D mse_test=mse_test_D combfn=obsfn_D)
+e = (@strdict method="ls" scenario="E" mse_cv=mse_cv_E mse_test=mse_test_E combfn=obsfn_E)
+
+wsave(joinpath(results_path, savename(a, "jld2")), a)
+wsave(joinpath(results_path, savename(b, "jld2")), b)
+wsave(joinpath(results_path, savename(c, "jld2")), c)
+wsave(joinpath(results_path, savename(d, "jld2")), d)
+wsave(joinpath(results_path, savename(e, "jld2")), e)
