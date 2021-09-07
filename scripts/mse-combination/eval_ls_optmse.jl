@@ -13,6 +13,7 @@ using DataFrames, Chain, PrettyTables
 cv_savepath = datadir("results", "mse-combination", "Esc-E", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
 results_path = datadir("results", "mse-combination", "Esc-E", "results")
+plots_path = mkpath(plotsdir("mse-combination", "Esc-E", "ls"))
 
 ##  ----------------------------------------------------------------------------
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
@@ -46,6 +47,16 @@ weights_df_A = DataFrame(
     measure=measure_name(obsfn_A, return_array=true), 
     weights=w_A)
 
+# Guardar resultados
+res_A = (
+    method="ls", 
+    scenario="A", 
+    mse_cv = mse_cv_A, 
+    mse_test = mse_test_A, 
+    combfn = obsfn_A
+)
+dict_res_A = tostringdict(struct2dict(res_A))
+wsave(joinpath(results_path, savename(dict_res_A, "jld2")), dict_res_A)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante B
@@ -64,6 +75,17 @@ obsfn_B = InflationCombination(testconfig.inflfn, w_B, "Óptima MSE B")
 weights_df_B = DataFrame(
     measure=measure_name(obsfn_B, return_array=true), 
     weights=w_B)
+
+# Guardar resultados
+res_B = (
+    method="ls", 
+    scenario="B", 
+    mse_cv = mse_cv_B, 
+    mse_test = mse_test_B, 
+    combfn = obsfn_B
+)
+dict_res_B = tostringdict(struct2dict(res_B))
+wsave(joinpath(results_path, savename(dict_res_B, "jld2")), dict_res_B)
 
 
 ##  ----------------------------------------------------------------------------
@@ -89,7 +111,17 @@ obsfn_C = InflationCombination(
 weights_df_C = DataFrame(
     measure=measure_name(obsfn_C, return_array=true), 
     weights=w_C)
-    
+
+# Guardar resultados
+res_C = (
+    method="ls", 
+    scenario="C", 
+    mse_cv = mse_cv_C, 
+    mse_test = mse_test_C, 
+    combfn = obsfn_C
+)
+dict_res_C = tostringdict(struct2dict(res_C))
+wsave(joinpath(results_path, savename(dict_res_C, "jld2")), dict_res_C)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante D
@@ -122,6 +154,16 @@ weights_df_D = DataFrame(
     measure=measure_name(obsfn_D, return_array=true), 
     weights=w_D)
 
+# Guardar resultados
+res_D = (
+    method="ls", 
+    scenario="D", 
+    mse_cv = mse_cv_D, 
+    mse_test = mse_test_D, 
+    combfn = obsfn_D
+)
+dict_res_D = tostringdict(struct2dict(res_D))
+wsave(joinpath(results_path, savename(dict_res_D, "jld2")), dict_res_D)
 
 ##  ----------------------------------------------------------------------------
 #   Evaluación del método de mínimos cuadrados, variante E
@@ -141,10 +183,22 @@ mse_test_E, w_E = crossvalidate(combination_weights, testdata,
     return_weights = true)
 
 # Obtener la función de inflación asociada 
-obsfn_E = InflationCombination(testconfig.inflfn.functions[components_mask]..., w_E, "Óptima MSE E")
+obsfn_E = InflationCombination(
+    testconfig.inflfn.functions[components_mask]..., w_E, "Óptima MSE E")
 weights_df_E = DataFrame(
     measure=measure_name(obsfn_E, return_array=true), 
     weights=w_E)
+
+# Guardar resultados
+res_E = (
+    method="ls", 
+    scenario="E", 
+    mse_cv = mse_cv_E, 
+    mse_test = mse_test_E, 
+    combfn = obsfn_E
+)
+dict_res_E = tostringdict(struct2dict(res_E))
+wsave(joinpath(results_path, savename(dict_res_E, "jld2")), dict_res_E)
 
 ##  ----------------------------------------------------------------------------
 #   Compilación de resultados 
@@ -168,23 +222,9 @@ results = DataFrame(
 ## Gráfica para comparar las variantes de optimización
 
 plot(InflationTotalCPI(), gtdata)
-plot!(obsfn_A, gtdata, alpha = 0.5)
-plot!(obsfn_B, gtdata, alpha = 0.7)
+plot!(obsfn_A, gtdata, alpha = 0.7)
 plot!(obsfn_C, gtdata, alpha = 0.7)
-plot!(obsfn_D, gtdata, alpha = 0.7)
-plot!(obsfn_E, gtdata, linewidth = 3, color = :blue)
-
-
-## Guardar los resultados 
-
-a = (@strdict method="ls" scenario="A" mse_cv=mse_cv_A mse_test=mse_test_A combfn=obsfn_A)
-b = (@strdict method="ls" scenario="B" mse_cv=mse_cv_B mse_test=mse_test_B combfn=obsfn_B)
-c = (@strdict method="ls" scenario="C" mse_cv=mse_cv_C mse_test=mse_test_C combfn=obsfn_C)
-d = (@strdict method="ls" scenario="D" mse_cv=mse_cv_D mse_test=mse_test_D combfn=obsfn_D)
-e = (@strdict method="ls" scenario="E" mse_cv=mse_cv_E mse_test=mse_test_E combfn=obsfn_E)
-
-wsave(joinpath(results_path, savename(a, "jld2")), a)
-wsave(joinpath(results_path, savename(b, "jld2")), b)
-wsave(joinpath(results_path, savename(c, "jld2")), c)
-wsave(joinpath(results_path, savename(d, "jld2")), d)
-wsave(joinpath(results_path, savename(e, "jld2")), e)
+plot!(obsfn_E, gtdata, alpha = 0.7)
+plot!(obsfn_D, gtdata, linewidth = 2, color = :red)
+plot!(obsfn_B, gtdata, linewidth = 3, color = :blue)
+savefig(joinpath(plots_path, "trajectories.svg"))
