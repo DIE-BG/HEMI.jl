@@ -257,7 +257,7 @@ wsave(joinpath(results_path, savename(dict_res_D, "jld2")), dict_res_D)
 components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflfn.functions]
 
 # Obtener el MSE de validación cruzada para diferentes lambdas
-λ_range = 0:0.005:0.05 
+λ_range = 0.005:0.005:0.02
 mse_cv_ridge_E = map(λ_range) do λ
     mse_cv = crossvalidate(
         (t,p) -> ridge_combination_weights(t, p, λ), 
