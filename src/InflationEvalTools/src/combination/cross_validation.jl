@@ -90,8 +90,8 @@ function crossvalidate(
         # Si se agrega intercepto, agregar 1's a las trayectorias. Esto puede
         # alterar el significado de components_mask
         if add_intercept
-            train_tray_infl = _add_ones(train_tray_infl)
-            cv_tray_infl = _add_ones(cv_tray_infl)
+            train_tray_infl = add_ones(train_tray_infl)
+            cv_tray_infl = add_ones(cv_tray_infl)
         end
 
         # Máscara de períodos para ajustar los ponderadores. Los ponderadores se
@@ -130,8 +130,15 @@ function _getkey(prefix, date)
     prefix * "_" * Dates.format(date, fmt)
 end
 
-# Agrega intercepto al cubo de trayectorias en la primera columna 
-function _add_ones(tray_infl)
+
+"""
+    add_ones(tray_infl) -> Array{<:AbstractFloat, 3}
+
+Agrega intercepto al cubo de trayectorias en la primera columna. Si las
+dimensiones de entrada de `tray_infl` son `(T, n, K)`, esta función devuelve un
+arreglo con dimensiones `(T+1, n, K)`.
+"""
+function add_ones(tray_infl)
     T, _, K = size(tray_infl)
     hcat(ones(eltype(tray_infl), T, 1, K), tray_infl)
 end

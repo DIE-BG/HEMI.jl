@@ -93,6 +93,7 @@ module InflationEvalTools
     include("combination/combination_weights.jl")
 
     ## Funciones para evaluación cruzada
+    export add_ones
     export crossvalidate
     include("combination/cross_validation.jl")
 
