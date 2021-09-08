@@ -80,7 +80,7 @@ En esta sección se documentan los resultados del proceso de evaluación de las 
 
 | Medida          |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :-------------- | -----: | ----------: | -------------: | ---------------: |
-| Combinación MAI | 1.3934 |      0.1107 |         1.2384 |           0.0443 |
+| Combinación MAI | 1.3934 |      0.1107 |         0.0443 |           1.2384 |
 
 ### Métricas de evaluación 
 
@@ -244,7 +244,7 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 
 | Medida          |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :-------------- | -----: | ----------: | -------------: | ---------------: |
-| Combinación MAI | 1.5586 |      0.1369 |         1.3686 |           0.0532 |
+| Combinación MAI | 1.5586 |      0.1369 |         0.0532 |           1.3686 |
 
 ### Métricas de evaluación 
 
@@ -409,7 +409,7 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 
 | Medida          |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :-------------- | -----: | ----------: | -------------: | ---------------: |
-| Combinación MAI | 1.5887 |      0.1223 |         1.4199 |           0.0466 |
+| Combinación MAI | 1.5887 |      0.1223 |         0.0466 |           1.4199 |
 
 
 ### Métricas de evaluación 
@@ -576,7 +576,7 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 
 | Medida          |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
 | :-------------- | -----: | ----------: | -------------: | ---------------: |
-| Combinación MAI | 1.7544 |      0.1501 |          1.548 |           0.0563 |
+| Combinación MAI | 1.7544 |      0.1501 |         0.0563 |            1.548 |
 
 ### Métricas de evaluación 
 
@@ -620,38 +620,38 @@ Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3
 
 Resultados del proceso de optimización de cuantiles utilizando $n \in \lbrace 3,4,5,10 \rbrace$. 
 
-| Medida |  MSE | Error estándar |
-| :----- | ---: | -------------: |
-| MAI (FP,4,[0.31, 0.77, 0.98]) |    1.815 |        0.0018 |
-|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.8657 |        0.0018 |
-|  MAI (G,4,[0.29, 0.48, 0.98]) |   2.5139 |        0.0024 |
-|               Combinación MAI |    1.805 |        0.0017 |
+| Medida                        |    MSE | Error estándar |
+| :---------------------------- | -----: | -------------: |
+| MAI (FP,4,[0.31, 0.77, 0.98]) |  1.815 |         0.0018 |
+| MAI (F,4,[0.31, 0.74, 0.98])  | 1.8657 |         0.0018 |
+| MAI (G,4,[0.29, 0.48, 0.98])  | 2.5139 |         0.0024 |
+| Combinación MAI               |  1.805 |         0.0017 |
 
 #### Ponderadores de combinación lineal 
 
-| Medida | Ponderador |
-| :----- | ---------: |
-| MAI (FP,4,[0.31, 0.77, 0.98]) |          0.8528 |
-|  MAI (F,4,[0.31, 0.74, 0.98]) |          0.1448 |
-|  MAI (G,4,[0.29, 0.48, 0.98]) |          0.0118 |
+| Medida                        | Ponderador |
+| :---------------------------- | ---------: |
+| MAI (FP,4,[0.31, 0.77, 0.98]) |     0.8528 |
+| MAI (F,4,[0.31, 0.74, 0.98])  |     0.1448 |
+| MAI (G,4,[0.29, 0.48, 0.98])  |     0.0118 |
 
 #### Descomposición aditiva del MSE
 
-| Medida |  MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
-| :----- | ---: | ----------: | -------------: | ---------------: |
-|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.8657 |   0.1175 |    0.063 |   1.6852 |
-| MAI (FP,4,[0.31, 0.77, 0.98]) |    1.815 |   0.1742 |   0.0379 |   1.6029 |
-|  MAI (G,4,[0.29, 0.48, 0.98]) |   2.5139 |   0.1158 |   0.1036 |   2.2945 |
-|               Combinación MAI |    1.805 |   0.1298 |    0.044 |   1.6312 |
+| Medida                        |    MSE | Comp. Sesgo | Comp. Varianza | Comp. Covarianza |
+| :---------------------------- | -----: | ----------: | -------------: | ---------------: |
+| MAI (F,4,[0.31, 0.74, 0.98])  | 1.8657 |      0.1175 |          0.063 |           1.6852 |
+| MAI (FP,4,[0.31, 0.77, 0.98]) |  1.815 |      0.1742 |         0.0379 |           1.6029 |
+| MAI (G,4,[0.29, 0.48, 0.98])  | 2.5139 |      0.1158 |         0.1036 |           2.2945 |
+| Combinación MAI               |  1.805 |      0.1298 |          0.044 |           1.6312 |
 
 #### Métricas de evaluación 
 
-| Medida | RMSE | Error medio |  MAE | Huber | Correlación |
-| :----- | ---: | ----------: | ---: | ----: | ----------: |
-|  MAI (F,4,[0.31, 0.74, 0.98]) |   1.3467 |   -0.105 |   1.0455 |   0.6503 |   0.8751 |     
-| MAI (FP,4,[0.31, 0.77, 0.98]) |   1.3273 |  -0.2898 |   1.0314 |   0.6389 |   0.8764 |     
-|  MAI (G,4,[0.29, 0.48, 0.98]) |   1.5622 |   0.1019 |   1.1897 |   0.7897 |   0.8323 |     
-|               Combinación MAI |   1.3241 |  -0.2075 |   1.0284 |   0.6358 |   0.8762 |
+| Medida                        |   RMSE | Error medio |    MAE |  Huber | Correlación |
+| :---------------------------- | -----: | ----------: | -----: | -----: | ----------: |
+| MAI (F,4,[0.31, 0.74, 0.98])  | 1.3467 |      -0.105 | 1.0455 | 0.6503 |      0.8751 |
+| MAI (FP,4,[0.31, 0.77, 0.98]) | 1.3273 |     -0.2898 | 1.0314 | 0.6389 |      0.8764 |
+| MAI (G,4,[0.29, 0.48, 0.98])  | 1.5622 |      0.1019 | 1.1897 | 0.7897 |      0.8323 |
+| Combinación MAI               | 1.3241 |     -0.2075 | 1.0284 | 0.6358 |      0.8762 |
 
 #### Trayectoria de inflación observada
 
