@@ -94,8 +94,18 @@ function _mse(tray_infl, tray_infl_pob)
     mean(x -> x^2, tray_infl .- tray_infl_pob)
 end
 
-# Error cuadrático medio de combinación lineal de métodos de inflación en
-# tray_infl
+
+# Métricas para combinaciones lineales de estimadores 
+"""
+    combination_metrics(tray_infl, tray_infl_param, w; kwargs...) 
+
+Métricas para medidas de combinación lineal. Se combinan las trayectorias en
+`tray_infl` con las ponderaciones `w` y se computan las métricas de evaluación
+utilizando la trayectoria paramétrica `tray_infl_param`. 
+
+Los argumentos opcionales (`kwargs...`) son pasados a la función
+[`eval_metrics`](@ref).
+"""
 function combination_metrics(tray_infl, tray_infl_param, w; kwargs...) 
     tray_infl_comb = sum(tray_infl .* w', dims=2)
     eval_metrics(tray_infl_comb, tray_infl_param; kwargs...)

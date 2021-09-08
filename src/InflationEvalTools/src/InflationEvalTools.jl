@@ -76,8 +76,9 @@ module InflationEvalTools
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
     
-    ## Funciones de evaluación  
-    export evalsim, makesim, dict_config, run_batch, eval_metrics
+    ## Funciones de evaluación y métricas   
+    export evalsim, makesim, dict_config, run_batch
+    export eval_metrics, combination_metrics
     export eval_mse_online # Función de evaluación de MSE online 
     include("simulate/metrics.jl")
     include("simulate/simutils.jl")
