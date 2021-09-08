@@ -7,7 +7,7 @@ using DrWatson
 using Distributed
 
 # Se agregan procesos trabajadores
-addprocs(4, exeflags="--project")
+nprocs() < 5 && addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI 
 

@@ -32,7 +32,7 @@ function eval_mse_online(inflfn::InflationFunction,
     csdata::CountryStructure, tray_infl_param; K = 100, rndseed = DEFAULT_SEED)
 
     # Tarea de cómputo de trayectorias
-    mse = @showprogress @distributed merge for k in 1:K 
+    mse = @showprogress @distributed (OnlineStats.merge) for k in 1:K 
         # Configurar la semilla en el proceso
         Random.seed!(LOCAL_RNG, rndseed + k)
 
@@ -44,9 +44,9 @@ function eval_mse_online(inflfn::InflationFunction,
         # Computar la medida de inflación y el MSE
         tray_infl = inflfn(trended_sample)
         sq_err = (tray_infl - tray_infl_param) .^ 2
-        o = Mean(eltype(csdata))
-        fit!(o, sq_err)
+        o = OnlineStats.Mean(eltype(csdata))
+        OnlineStats.fit!(o, sq_err)
     end 
 
-    value(mse)::eltype(csdata)
+    OnlineStats.value(mse)::eltype(csdata)
 end

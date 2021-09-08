@@ -10,13 +10,14 @@ module InflationEvalTools
     using Dates
     using CPIDataBase
     using InflationFunctions
-    using Random, Distributions
+    import Random
+    using Distributions
     using ProgressMeter
     using Distributed
     using SharedArrays
     using Reexport
     using StableRNGs
-    using OnlineStats: Mean, fit!, merge, value
+    import OnlineStats
     using LinearAlgebra: I, det, mul!
     using JuMP, Ipopt
 
