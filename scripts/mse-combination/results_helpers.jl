@@ -48,13 +48,11 @@ function get_components(results::DataFrame, scenario::String)
     components
 end
 
-
+# Obtiene las métricas de evaluación en el período especificado a partir de
+# date_start, utilizando las trayectorias de inflación en testdata. Las
+# trayectorias son generadas con el ensemble de testconfig 
 function get_metrics(results::DataFrame, testconfig, testdata; 
     date_start = Date(2001,12), metricskwargs...)
-    
-    # Ordenar resultados y obtener la mejor medida en el test 
-    sorted_results = DataFrames.sort(results, :test)
-    @info "DataFrame de resultados: " sorted_results
     
     # Trayectorias y parámetro de evaluación 
     tray_infl = testdata["infl_20"]
@@ -63,34 +61,43 @@ function get_metrics(results::DataFrame, testconfig, testdata;
 
     # Filtro de fechas para evaluación 
     datemask = dates .>= date_start
-
-    inflfn = sorted_results.combfn[1]
-    w = inflfn.weights
-    combfns = [inflfn.ensemble.functions...]
-
-    @info "Medidas de la óptima" wdf=DataFrame(measure = measure_name.(combfns), weight = w)
-
-    hasconst = any(fn isa InflationConstant for fn in combfns)
-    hasfx = any(fn isa InflationFixedExclusionCPI for fn in combfns)
-
+    # Funciones de inflación en la configuración 
     datafns = [testconfig.inflfn.functions...]
-    
-    if hasfx 
-        mask = (:)
-    else
-        mask = [!(fn isa InflationFixedExclusionCPI) for fn in datafns]
+
+    # Obtener DataFrame de métricas para cada fila 
+    result_metrics = mapreduce(vcat, eachrow(results)) do r
+        @info "Métricas de evaluación" r
+        inflfn = r.combfn
+        w = inflfn.weights
+        combfns = [inflfn.ensemble.functions...]
+
+        @debug "Medidas de la óptima" wdf=DataFrame(measure = measure_name.(combfns), weight = w)
+
+        hasconst = any(fn isa InflationConstant for fn in combfns)
+        hasfx = any(fn isa InflationFixedExclusionCPI for fn in combfns)
+
+        if hasfx 
+            mask = [true for _ in datafns]
+        else
+            mask = [!(fn isa InflationFixedExclusionCPI) for fn in datafns]
+        end
+
+        if hasconst
+            tray_infl_final = @views add_ones(tray_infl[datemask, mask, :])
+            finalfns = [InflationConstant(); datafns[mask]]
+        else
+            tray_infl_final = tray_infl[datemask, mask, :]
+            finalfns = datafns[mask]
+        end
+
+        @debug "Funciones" datafns combfns finalfns 
+        @assert all(measure_name.(finalfns) .== measure_name.(combfns))
+        
+        metrics = DataFrame(combination_metrics(tray_infl_final, tray_param[datemask], w; metricskwargs...))
+        metrics[!, :method] .= r.method
+        metrics[!, :scenario] .= r.scenario 
+        metrics
     end
 
-    if hasconst
-        tray_infl_final = @views add_ones(tray_infl[datemask, mask, :])
-        finalfns = [InflationConstant(); datafns[mask]]
-    else
-        tray_infl_final = tray_infl[datemask, mask, :]
-        finalfns = datafns[mask]
-    end
-
-    @debug "Funciones" datafns combfns finalfns 
-    @assert all(measure_name.(finalfns) .== measure_name.(combfns))
-    
-    combination_metrics(tray_infl_final, tray_param[datemask], w; metricskwargs...)
+    result_metrics
 end

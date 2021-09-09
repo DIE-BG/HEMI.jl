@@ -14,6 +14,7 @@ using DataFrames, Chain, PrettyTables
 # Rutas de datos y resultados 
 test_savepath = datadir("results", "mse-combination", "Esc-E", "testdata")
 results_path = datadir("results", "mse-combination", "Esc-E", "results")
+compilation_path = datadir("results", "mse-combination", "Esc-E", "compilation")
 plots_path = mkpath(plotsdir("mse-combination", "Esc-E", "compilation-results"))
 
 includet(scriptsdir("mse-combination", "results_helpers.jl"))
@@ -50,7 +51,7 @@ df = collect_results(results_path)
 
 ls_results = @chain df begin 
     filter(r -> r.method == "ls", _)
-    select(:scenario, 
+    select(:method, :scenario, 
         :mse_cv => ByRow(mean) => :cv, 
         :mse_test => ByRow(mean) => :test,
         :combfn)
@@ -59,7 +60,7 @@ end
 
 # Graficar trayectorias observadas, menor test en azul
 plot_trajectories(ls_results, plots_path, "ls_combination.svg")
-pretty_table(select(ls_results, Not(:combfn)); fmtoptions...)
+pretty_table(select(ls_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(ls_results); fmtoptions...)
 
 # Métricas de evaluación 
@@ -73,7 +74,7 @@ ls_metrics = get_metrics(ls_results, testconfig, testdata; metrics_config...)
 
 ridge_results = @chain df begin 
     filter(r -> r.method == "ridge", _)
-    select(:scenario, 
+    select(:method, :scenario, 
         :opthyperparams => :lambda, 
         :mse_cv => ByRow(minimum) => :cv, 
         :mse_test => ByRow(mean) => :test,
@@ -83,7 +84,7 @@ end
 
 # Graficar trayectorias observadas, menor test en azul
 plot_trajectories(ridge_results, plots_path, "ridge_combination.svg")
-pretty_table(select(ridge_results, Not(:combfn)); fmtoptions...)
+pretty_table(select(ridge_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(ridge_results); fmtoptions...)
 
 # Métricas de evaluación 
@@ -94,7 +95,7 @@ ridge_metrics = get_metrics(ridge_results, testconfig, testdata; metrics_config.
 
 lasso_results = @chain df begin 
     filter(r -> r.method == "lasso", _)
-    select(:scenario, 
+    select(:method, :scenario, 
         :opthyperparams => :lambda, 
         :mse_cv => ByRow(minimum) => :cv,
         :mse_test => ByRow(mean) => :test,  
@@ -104,7 +105,7 @@ end
 
 # Graficar trayectorias observadas, menor test en azul
 plot_trajectories(lasso_results, plots_path, "lasso_combination.svg")
-pretty_table(select(lasso_results, Not(:combfn)); fmtoptions...)
+pretty_table(select(lasso_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(lasso_results); fmtoptions...)
 
 # Métricas de evaluación 
@@ -115,7 +116,7 @@ lasso_metrics = get_metrics(lasso_results, testconfig, testdata; metrics_config.
 
 share_results = @chain df begin 
     filter(r -> r.method == "share", _)
-    select(:scenario, 
+    select(:method, :scenario, 
         :mse_cv => ByRow(mean) => :cv,
         :mse_test => ByRow(mean) => :test, 
         :combfn)
@@ -124,7 +125,7 @@ end
 
 # Graficar trayectorias observadas, menor test en azul
 plot_trajectories(share_results, plots_path, "share_combination.svg")
-pretty_table(select(share_results, Not(:combfn)); fmtoptions...)
+pretty_table(select(share_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(share_results); fmtoptions...)
 
 # Métricas de evaluación 
@@ -136,7 +137,7 @@ share_metrics = get_metrics(share_results, testconfig, testdata; metrics_config.
 
 elasticnet_results = @chain df begin 
     filter(r -> r.method == "elasticnet", _)
-    select(:scenario, 
+    select(:method, :scenario, 
         :opthyperparams => [:lambda, :gamma], 
         :mse_cv => ByRow(minimum) => :cv, 
         :mse_test => ByRow(mean) => :test, 
@@ -146,7 +147,7 @@ end
 
 # Graficar trayectorias observadas, menor test en azul
 plot_trajectories(elasticnet_results, plots_path, "elasticnet_combination.svg")
-pretty_table(select(elasticnet_results, Not(:combfn)); fmtoptions...)
+pretty_table(select(elasticnet_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(elasticnet_results); fmtoptions...)
 
 # Métricas de evaluación 
@@ -158,12 +159,6 @@ elasticnet_metrics = get_metrics(elasticnet_results, testconfig, testdata; metri
 #   ----------------------------------------------------------------------------
 
 # Lista de DataFrames de resultados 
-ls_results[!, :method] .= "LS"
-ridge_results[!, :method] .= "Ridge"
-lasso_results[!, :method] .= "Lasso"
-share_results[!, :method] .= "Share"
-elasticnet_results[!, :method] .= "Elastic Net"
-
 all_results = [
     ls_results, 
     ridge_results, 
@@ -172,29 +167,39 @@ all_results = [
     elasticnet_results
 ]
 
-# Mejores escenarios de cada método 
-scenarios = map(all_results) do results 
-    results.scenario[1]
+# Se seleccionan métricas comunes entre métodos de combinación 
+# Métodos de combinación y resultados de validación cruzada 
+cv_results = mapreduce(vcat, all_results) do results 
+    select(results, :method, :scenario, :cv, :test, :combfn)
 end
 
-# Combinar las métricas 
+# Combinar las métricas de evaluación en período extendido 
 all_metrics = mapreduce(DataFrame, vcat, 
     [ls_metrics, ridge_metrics, lasso_metrics, share_metrics, elasticnet_metrics])
-
-all_metrics[!, :method] = ["LS", "Ridge", "Lasso", "Share", "Elastic Net"]
-all_metrics[!, :scenario] = scenarios
-all_metrics
 
 final_metrics = @chain all_metrics begin 
     select(:method, :scenario, :mse, :huber, :me, :corr)
 end
 
+# Combinar resultados de CV con métricas de evaluación de período extendido
+compilation_results = leftjoin(cv_results, all_metrics, on=[:method, :scenario])
 
-# Métodos de combinación y resultados de validación cruzada 
-cv_results = mapreduce(vcat, all_results) do results 
-    select(results, :method, :scenario, :cv, :test)
-end
+# Guardar los resultados
+wsave(joinpath(compilation_path, "compilation_results.jld2"), 
+    "compilation_results", compilation_results)
 
-@chain cv_results begin 
+compilation_results = wload(joinpath(compilation_path, "compilation_results.jld2"), 
+    "compilation_results")
+
+# Revisión de resultados ...
+select(compilation_results, Not(:combfn))
+
+@chain compilation_results begin 
+    select(Not(:combfn))
+    transform(:me => ByRow(abs) => :absme)
+    sort(:absme)
+end 
+
+@chain compilation_results begin 
     sort(:test)
 end
