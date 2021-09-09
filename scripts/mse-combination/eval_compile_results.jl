@@ -23,7 +23,7 @@ fmtoptions = Dict(:tf => tf_markdown, :formatters => ft_round(4))
 
 # Métricas de evaluación se obtienen en el período de la base 2010 (sin la
 # transición)
-metrics_config = Dict(:date_start => Date(2011, 12))
+metrics_config = Dict(:date_start => Date(2001, 12))
 
 ##  ----------------------------------------------------------------------------
 #   Cargar datos y configuración de prueba 
@@ -59,7 +59,7 @@ ls_results = @chain df begin
 end
 
 # Graficar trayectorias observadas, menor test en azul
-plot_trajectories(ls_results, plots_path, "ls_combination.svg")
+plot_trajectories(ls_results, plots_path, "ls_combination")
 pretty_table(select(ls_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(ls_results); fmtoptions...)
 
@@ -83,7 +83,7 @@ ridge_results = @chain df begin
 end
 
 # Graficar trayectorias observadas, menor test en azul
-plot_trajectories(ridge_results, plots_path, "ridge_combination.svg")
+plot_trajectories(ridge_results, plots_path, "ridge_combination")
 pretty_table(select(ridge_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(ridge_results); fmtoptions...)
 
@@ -104,7 +104,7 @@ lasso_results = @chain df begin
 end
 
 # Graficar trayectorias observadas, menor test en azul
-plot_trajectories(lasso_results, plots_path, "lasso_combination.svg")
+plot_trajectories(lasso_results, plots_path, "lasso_combination")
 pretty_table(select(lasso_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(lasso_results); fmtoptions...)
 
@@ -124,7 +124,7 @@ share_results = @chain df begin
 end
 
 # Graficar trayectorias observadas, menor test en azul
-plot_trajectories(share_results, plots_path, "share_combination.svg")
+plot_trajectories(share_results, plots_path, "share_combination")
 pretty_table(select(share_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(share_results); fmtoptions...)
 
@@ -146,7 +146,7 @@ elasticnet_results = @chain df begin
 end
 
 # Graficar trayectorias observadas, menor test en azul
-plot_trajectories(elasticnet_results, plots_path, "elasticnet_combination.svg")
+plot_trajectories(elasticnet_results, plots_path, "elasticnet_combination")
 pretty_table(select(elasticnet_results, Not([:method, :combfn])); fmtoptions...)
 pretty_table(get_components(elasticnet_results); fmtoptions...)
 
@@ -194,12 +194,25 @@ compilation_results = wload(joinpath(compilation_path, "compilation_results.jld2
 # Revisión de resultados ...
 select(compilation_results, Not(:combfn))
 
+# Resultados de MSE intramuestra de todos los escenarios de acuerdo con metrics_config
+@chain compilation_results begin 
+    select(Not(:combfn))
+    sort(:test)
+    select(:method, :scenario, :cv, :test, :mse, :mse_std_error)
+    pretty_table(_; fmtoptions...)
+end
+
+# Otras métricas 
+@chain compilation_results begin 
+    select(Not(:combfn))
+    sort(:test)
+    select(:method, :scenario, :cv, :test, :rmse, :me, :mae, :huber, :corr)
+    pretty_table(_; fmtoptions...)
+end
+
+# Ordenar resultados por valor absoluto de error medio 
 @chain compilation_results begin 
     select(Not(:combfn))
     transform(:me => ByRow(abs) => :absme)
     sort(:absme)
 end 
-
-@chain compilation_results begin 
-    sort(:test)
-end

@@ -1,5 +1,5 @@
 ## Graficar el mejor escenario en test 
-function plot_trajectories(results, savepath="", filename="")
+function plot_trajectories(results, savepath="", filename=""; extension="svg")
 
     # Ordenar resultados por test
     sorted_results = DataFrames.sort(results, :test)
@@ -18,7 +18,7 @@ function plot_trajectories(results, savepath="", filename="")
 
     # Guardar la gráfica 
     if savepath != "" && filename != "" 
-        savefig(p, joinpath(savepath, filename))
+        savefig(p, joinpath(savepath, filename*"."*extension))
     end
 
     p
