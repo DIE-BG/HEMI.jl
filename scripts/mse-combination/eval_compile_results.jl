@@ -20,6 +20,25 @@ includet(scriptsdir("mse-combination", "results_helpers.jl"))
 
 fmtoptions = Dict(:tf => tf_markdown, :formatters => ft_round(4))
 
+# Métricas de evaluación se obtienen en el período de la base 2010 (sin la
+# transición)
+metrics_config = Dict(:date_start => Date(2011, 12))
+
+##  ----------------------------------------------------------------------------
+#   Cargar datos y configuración de prueba 
+#   ----------------------------------------------------------------------------
+
+length(readdir(test_savepath)) > 1 && 
+    @warn "Existen varios archivos en directorio de datos, cargando únicamente el primero"
+testfile = filter(x -> endswith(x, ".jld2"), readdir(test_savepath))[1]
+testdata = load(joinpath(test_savepath, testfile))
+testconfig = testdata["config"]
+
+tray_infl = testdata["infl_20"]
+tray_param = testdata["param_20"]
+dates = testdata["dates_20"]
+
+
 ##  ----------------------------------------------------------------------------
 #   Resumen de resultados de validación cruzada y período de prueba 
 #   ----------------------------------------------------------------------------
@@ -43,8 +62,11 @@ plot_trajectories(ls_results, plots_path, "ls_combination.svg")
 pretty_table(select(ls_results, Not(:combfn)); fmtoptions...)
 pretty_table(get_components(ls_results); fmtoptions...)
 
+# Métricas de evaluación 
+ls_metrics = get_metrics(ls_results, testconfig, testdata; metrics_config...)
+
 # Resultados del escenario B - ajuste ponderadores en periodo base 2010
-pretty_table(get_components(ls_results, "B"); fmtoptions...)
+# pretty_table(get_components(ls_results, "B"); fmtoptions...)
 
 
 ## Resultados de ridge 
@@ -64,6 +86,9 @@ plot_trajectories(ridge_results, plots_path, "ridge_combination.svg")
 pretty_table(select(ridge_results, Not(:combfn)); fmtoptions...)
 pretty_table(get_components(ridge_results); fmtoptions...)
 
+# Métricas de evaluación 
+ridge_metrics = get_metrics(ridge_results, testconfig, testdata; metrics_config...)
+
 
 ## Resultados de Lasso 
 
@@ -82,6 +107,10 @@ plot_trajectories(lasso_results, plots_path, "lasso_combination.svg")
 pretty_table(select(lasso_results, Not(:combfn)); fmtoptions...)
 pretty_table(get_components(lasso_results); fmtoptions...)
 
+# Métricas de evaluación 
+lasso_metrics = get_metrics(lasso_results, testconfig, testdata; metrics_config...)
+
+
 ## Optimización de míminos cuadrados restringida (share)  
 
 share_results = @chain df begin 
@@ -97,6 +126,11 @@ end
 plot_trajectories(share_results, plots_path, "share_combination.svg")
 pretty_table(select(share_results, Not(:combfn)); fmtoptions...)
 pretty_table(get_components(share_results); fmtoptions...)
+
+# Métricas de evaluación 
+share_metrics = get_metrics(share_results, testconfig, testdata; metrics_config...)
+
+
 
 ## Resultados de Elastic Net
 
@@ -115,32 +149,52 @@ plot_trajectories(elasticnet_results, plots_path, "elasticnet_combination.svg")
 pretty_table(select(elasticnet_results, Not(:combfn)); fmtoptions...)
 pretty_table(get_components(elasticnet_results); fmtoptions...)
 
+# Métricas de evaluación 
+elasticnet_metrics = get_metrics(elasticnet_results, testconfig, testdata; metrics_config...)
+
 
 ##  ----------------------------------------------------------------------------
 #   Métricas de evaluación de las combinaciones lineales 
 #   ----------------------------------------------------------------------------
 
-# Cargar datos y configuración de prueba 
-length(readdir(test_savepath)) > 1 && 
-    @warn "Existen varios archivos en directorio de datos, cargando únicamente el primero"
-testfile = filter(x -> endswith(x, ".jld2"), readdir(test_savepath))[1]
-testdata = load(joinpath(test_savepath, testfile))
-testconfig = testdata["config"]
+# Lista de DataFrames de resultados 
+ls_results[!, :method] .= "LS"
+ridge_results[!, :method] .= "Ridge"
+lasso_results[!, :method] .= "Lasso"
+share_results[!, :method] .= "Share"
+elasticnet_results[!, :method] .= "Elastic Net"
 
-tray_infl = testdata["infl_20"]
-tray_param = testdata["param_20"]
-dates = testdata["dates_20"]
+all_results = [
+    ls_results, 
+    ridge_results, 
+    lasso_results, 
+    share_results, 
+    elasticnet_results
+]
 
-# Métricas de combinación lineal en la base 2010
-f = dates .>= Date(2011, 1)
-wr = ridge_results.combfn[1].weights
-mask = [!(fn isa InflationFixedExclusionCPI) for fn in testconfig.inflfn.functions]
-components = @views add_ones(tray_infl[f, mask, :])
-metrics = @views combination_metrics(components, tray_param[f], wr)
+# Mejores escenarios de cada método 
+scenarios = map(all_results) do results 
+    results.scenario[1]
+end
 
-# Trayectoria promedio de simulación y parámetro en la base 2010
-combination = sum(components .* wr', dims=2)
-m_tray_infl = mean(combination, dims=3) |> vec
-plot(dates[f], [m_tray_infl tray_param[f]], 
-    label=["Trayectoria promedio" "Paramétrica"]
-)
+# Combinar las métricas 
+all_metrics = mapreduce(DataFrame, vcat, 
+    [ls_metrics, ridge_metrics, lasso_metrics, share_metrics, elasticnet_metrics])
+
+all_metrics[!, :method] = ["LS", "Ridge", "Lasso", "Share", "Elastic Net"]
+all_metrics[!, :scenario] = scenarios
+all_metrics
+
+final_metrics = @chain all_metrics begin 
+    select(:method, :scenario, :mse, :huber, :me, :corr)
+end
+
+
+# Métodos de combinación y resultados de validación cruzada 
+cv_results = mapreduce(vcat, all_results) do results 
+    select(results, :method, :scenario, :cv, :test)
+end
+
+@chain cv_results begin 
+    sort(:test)
+end

@@ -2,7 +2,7 @@
 function plot_trajectories(results, savepath="", filename="")
 
     # Ordenar resultados por test
-    sorted_results = sort(results, :test)
+    sorted_results = DataFrames.sort(results, :test)
     p = plot(InflationTotalCPI(), gtdata, alpha=0.5)
     f = true
     for r in eachrow(sorted_results)
@@ -26,7 +26,7 @@ end
 
 # Obtener ingredientes y ponderadores de la mejor medida 
 function get_components(results::DataFrame, position::Int=1)
-    sorted_results = sort(results, :test)
+    sorted_results = DataFrames.sort(results, :test)
     bestfn = sorted_results.combfn[position]
     components = DataFrame(
         measure = measure_name(bestfn.ensemble), 
@@ -46,4 +46,51 @@ function get_components(results::DataFrame, scenario::String)
     )
 
     components
+end
+
+
+function get_metrics(results::DataFrame, testconfig, testdata; 
+    date_start = Date(2001,12), metricskwargs...)
+    
+    # Ordenar resultados y obtener la mejor medida en el test 
+    sorted_results = DataFrames.sort(results, :test)
+    @info "DataFrame de resultados: " sorted_results
+    
+    # Trayectorias y parámetro de evaluación 
+    tray_infl = testdata["infl_20"]
+    tray_param = testdata["param_20"]
+    dates = testdata["dates_20"]
+
+    # Filtro de fechas para evaluación 
+    datemask = dates .>= date_start
+
+    inflfn = sorted_results.combfn[1]
+    w = inflfn.weights
+    combfns = [inflfn.ensemble.functions...]
+
+    @info "Medidas de la óptima" wdf=DataFrame(measure = measure_name.(combfns), weight = w)
+
+    hasconst = any(fn isa InflationConstant for fn in combfns)
+    hasfx = any(fn isa InflationFixedExclusionCPI for fn in combfns)
+
+    datafns = [testconfig.inflfn.functions...]
+    
+    if hasfx 
+        mask = (:)
+    else
+        mask = [!(fn isa InflationFixedExclusionCPI) for fn in datafns]
+    end
+
+    if hasconst
+        tray_infl_final = @views add_ones(tray_infl[datemask, mask, :])
+        finalfns = [InflationConstant(); datafns[mask]]
+    else
+        tray_infl_final = tray_infl[datemask, mask, :]
+        finalfns = datafns[mask]
+    end
+
+    @debug "Funciones" datafns combfns finalfns 
+    @assert all(measure_name.(finalfns) .== measure_name.(combfns))
+    
+    combination_metrics(tray_infl_final, tray_param[datemask], w; metricskwargs...)
 end
