@@ -21,12 +21,18 @@ legacy_param = InflationParameter(
 
 tray_infl_param = legacy_param(gtdata_eval)
 
+
+## Directorios de resultados 
+path_mai_results = datadir("tray2019", "MAI")
+path_all_results = datadir("tray2019")
+plotpath = joinpath("docs", "src", "eval", "EscA", "images", "comb_lineal_2019")
+
 ## MAI ---------------------------------------------------------------------------------
 
 
 # cargamos los resultados y definimos directorio de trayectorias
-df_mai = collect_results(datadir("tray2019","MAI"))
-tray_dir_mai = datadir("tray2019", "MAI", "tray_infl")
+df_mai = collect_results(path_mai_results)
+tray_dir_mai = datadir(path_mai_results, "tray_infl")
 
 # agregamos una columna con las trayectorias
 df_mai[!,:tray] = @chain df_mai.path begin
@@ -75,8 +81,8 @@ mai_df[!,:tray] = [tray_infl_maiopt]
 ## OTRAS MEDIDAS --------------------------------------------------------------------------------------------------------------------------
 
 # cargamos los resultados y definimos directorio de trayectorias
-df = collect_results(datadir("tray2019"))
-tray_dir = datadir("tray2019", "tray_infl")
+df = collect_results(path_all_results)
+tray_dir = datadir(path_all_results, "tray_infl")
 
 # agregamos una columna con las trayectorias
 df[!,:tray] = @chain df.path begin
@@ -111,6 +117,9 @@ metrics_df[!,:tray] = [tray_infl_opt]
 # Creamos una funcion de inflación combinada final
 inflfn = CombinationFunction(df.inflfn..., df.a) 
 
+# Guardar la función de inflación para utilizarla posteriormente
+wsave(joinpath(path_all_results, "optmse2019"), "inflfn", inflfn)
+
 ## GRAFICACION ------------------------------------------------------------------------------
 
 p = plot(InflationTotalCPI(), gtdata_eval, fmt = :svg)
@@ -120,7 +129,6 @@ plot!(Date(2001,12):Month(1):Date(2019,12),   # SE TIENE QUE HACER MANUALMENTE P
     fmt = :svg)    
 
 # guardamos la imágen en el siguiente directorio
-plotpath = joinpath("docs", "src", "eval", "EscA", "images", "comb_lineal_2019")
 Plots.svg(p, joinpath(plotpath, "comb_lineal_2019"))
 
 
