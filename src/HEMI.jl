@@ -21,20 +21,23 @@ module HEMI
     export gt00, gt10, gtdata
     
     function __init__()
+        # Datos de prueba del proyecto 
+        testdata = datadir("guatemala", "gtdata32_test.jld2")
+        # Archivo de datos principales 
         datafile = datadir("guatemala", "gtdata32.jld2")
-        @info "Ruta del archivo de datos" datafile
-        
-        # Si el archivo está presente, cargarlo 
-        if isfile(datafile)
-            # @info "Cargando datos de Guatemala"
-            global gt00, gt10 = load(datafile, "gt00", "gt10")
-            global gtdata = UniformCountryStructure(gt00, gt10)
 
-            # Exportar datos del módulo 
-            @info "Archivo de datos cargado" gtdata
-        else
-            @warn "Correr el script de carga de datos `load_data.jl` y ejecutar `HEMI.__init__()`"
-        end
+        if !isfile(datafile) 
+            datafile = testdata
+            @warn "Correr el script de actualización de datos `load_data.jl` y ejecutar `HEMI.__init__()`"
+        end 
+        
+        @info "Cargando datos de Guatemala..."
+        global gt00, gt10 = load(datafile, "gt00", "gt10")
+        global gtdata = UniformCountryStructure(gt00, gt10)
+
+        # Exportar datos del módulo 
+        @info "Archivo de datos cargado" data=datafile gtdata
+            
     end
     
 end

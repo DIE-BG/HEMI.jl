@@ -1,2 +1,5 @@
 gtdata.jld2
 gtdata32.jld2
+
+# Datos de prueba para el paquete HEMI a diciembre de 2020
+!gtdata32_test.jld2
