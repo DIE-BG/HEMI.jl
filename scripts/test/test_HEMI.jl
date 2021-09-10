@@ -17,7 +17,7 @@ using Test
 
 totalfn = InflationTotalCPI()
 @test totalfn(gtdata) isa Vector{<:AbstractFloat}
-plot(infl_dates(gtdata), totalfn(gtdata)) 
+# plot(infl_dates(gtdata), totalfn(gtdata)) 
 
 pkfn = InflationEnsemble(
     InflationPercentileEq(72), 
@@ -25,4 +25,4 @@ pkfn = InflationEnsemble(
 )
 
 @test pkfn isa EnsembleFunction
-plot(pkfn, gtdata)
+# plot(pkfn, gtdata)
