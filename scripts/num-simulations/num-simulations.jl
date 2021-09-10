@@ -113,3 +113,9 @@ pretty_table(menusims2, tf=tf_markdown, formatters=ft_round(4))
 # Obtenemos ϵ si γ = 0.99 y consideramos K simulaciones 
 K = 125_000
 eps99 = mse_std / sqrt(K*(1-0.99))
+
+# Obtenemos ϵ si γ = 0.95 y consideramos K simulaciones 
+K = 10_000
+eps95 = mse_std / sqrt(K*(1-0.95))
+eps99 = mse_std / sqrt(K*(1-0.99))
+eps99 = mse_std / sqrt(K*(1-0.90))

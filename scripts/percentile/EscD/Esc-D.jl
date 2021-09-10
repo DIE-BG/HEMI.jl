@@ -102,6 +102,7 @@ end
 # Descomposición aditiva del MSE 
 mse_decomp = @chain scenario_results begin 
     select(:measure, :mse, r"^mse_[bvc]")
+    select(:measure, :mse, :mse_bias, :mse_var, :mse_cov)
 end
 
 # Otras métricas de evaluación 
