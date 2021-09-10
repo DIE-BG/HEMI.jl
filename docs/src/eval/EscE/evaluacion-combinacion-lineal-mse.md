@@ -89,7 +89,7 @@ Se consideran cinco escenarios de calibración de hiperparámetros:
 |     B     | 0.4142 |     0.7877 |
 |     A     | 0.4979 |     1.0028 |
 
-Las componentes de la combinación lineal con la mejor métrica de prueba son: 
+Las componentes de la combinación lineal del escenario con la mejor métrica de prueba son: 
 
 | Medida de inflación                          | Ponderación |
 | :------------------------------------------- | ----------: |
@@ -120,7 +120,7 @@ Las componentes de la combinación lineal con la mejor métrica de prueba son:
 |     A     |       0.7 | 0.6138 |     0.6217 |
 |     B     |       0.1 | 0.4867 |     0.7754 |
 
-Las componentes de la combinación lineal con la mejor métrica de prueba son: 
+Las componentes de la combinación lineal del escenario con la mejor métrica de prueba son: 
 
 | Medida de inflación                          | Ponderación |
 | :------------------------------------------- | ----------: |
@@ -151,7 +151,7 @@ Las componentes de la combinación lineal con la mejor métrica de prueba son:
 |     C     |       4.6 | 0.3853 |     1.1185 |
 |     E     |       2.4 | 0.5822 |     1.1284 |
 
-Las componentes de la combinación lineal con la mejor métrica de prueba son: 
+Las componentes de la combinación lineal del escenario con la mejor métrica de prueba son: 
 
 | Medida de inflación                          | Ponderación |
 | :------------------------------------------- | ----------: |
@@ -185,7 +185,7 @@ Las componentes de la combinación lineal con la mejor métrica de prueba son:
 |     E     | 0.6537 |     0.7137 |
 |     B     | 0.6537 |     0.7137 |
 
-Las componentes de la combinación lineal con la mejor métrica de prueba son: 
+Las componentes de la combinación lineal del escenario con la mejor métrica de prueba son: 
 
 | Medida de inflación                          | Ponderación |
 | :------------------------------------------- | ----------: |
@@ -218,7 +218,7 @@ Las componentes de la combinación lineal con la mejor métrica de prueba son:
 |     C     |       3.7 |      0.8 | 0.4791 |     1.0142 |
 |     B     |       2.0 |      0.8 | 0.6369 |     1.0986 |
 
-Las componentes de la combinación lineal con la mejor métrica de prueba son: 
+Las componentes de la combinación lineal del escenario con la mejor métrica de prueba son: 
 
 | Medida de inflación                          | Ponderación |
 | :------------------------------------------- | ----------: |
