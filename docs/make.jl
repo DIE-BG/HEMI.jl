@@ -46,7 +46,7 @@ makedocs(;
                 "eval/EscA/evaluacion-dynEx.md", 
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md",
-                "eval/EscA/evaluacion-combinacion-lineal-2019.md", 
+                "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
             ],            
             "Escenario B" => [
                 "eval/EscB/evaluacion-percentiles.md", 
