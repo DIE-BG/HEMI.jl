@@ -1,6 +1,8 @@
+# Funciones de simulación para SimConfig
+
 # Esta función puede evaluar solo una medida de inflación
 """
-    evalsim(data_eval::CountryStructure, config::SimConfig; 
+    evalsim(data::CountryStructure, config::SimConfig; 
         rndseed = DEFAULT_SEED, 
         short = false) -> (Dict, Array{<:AbstractFloat, 3})
 
@@ -137,7 +139,7 @@ julia> results, tray_infl = makesim(gtdata, config)
 └   ... (otras métricas)
 ```
 """
-function makesim(data, config::AbstractConfig; 
+function makesim(data::CountryStructure, config::SimConfig; 
     rndseed = DEFAULT_SEED, 
     short = false)
         
@@ -226,22 +228,3 @@ function run_batch(data, dict_list_params, savepath;
 end
 
 
-# Funciones de ayuda 
-
-"""
-    dict_config(params::Dict)
-
-Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalConfig`.
-"""
-function dict_config(params::Dict)
-    # CrossEvalConfig contiene el campo de períodos de evaluación 
-    if !(:eval_size in keys(params))
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
-    else
-        config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate], params[:eval_size])        
-    end
-    config 
-end
-
-# Método opcional para lista de configuraciones
-dict_config(params::AbstractVector) = dict_config.(params)

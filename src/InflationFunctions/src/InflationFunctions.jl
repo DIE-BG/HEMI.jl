@@ -63,6 +63,10 @@ module InflationFunctions
     export InflationDynamicExclusion
     include("InflationDynamicExclusion.jl")
 
+    ## Inflación constante 
+    export InflationConstant
+    include("InflationConstant.jl")
+    
     ## Etiquetas 
     include("inflation_tags.jl")
 

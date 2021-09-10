@@ -74,6 +74,7 @@ makedocs(;
                 # "eval/EscE/evaluacion-dynEx.md",
                 # "eval/EscE/evaluacion-exclusion-fija.md",
                 "eval/EscE/evaluacion-MAI.md",
+                "eval/EscE/evaluacion-combinacion-lineal-mse.md",
             ]   
         ],
         "API" => 

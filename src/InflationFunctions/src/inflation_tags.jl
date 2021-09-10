@@ -49,3 +49,5 @@ measure_tag(inflfn::InflationCoreMai) = "MAI" * string(inflfn.method)
 # colocar acá el tag para InflationMovingAverage...
 measure_tag(esfn::InflationExpSmoothing) = "ES$(round(esfn.alpha, digits=4))_" * measure_tag(esfn.inflfn)
 
+# Inflación constante 
+measure_tag(inflfn::InflationConstant) = "C" * string(round(inflfn.c, digits=2))

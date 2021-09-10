@@ -1,8 +1,9 @@
 # Datos de simulación JLD2
 **/*.jld2
 
-# Archivos comprimidos en zip 
+# Archivos comprimidos en zip y 7z
 **/*.zip
+**/*.7z
 
 # Resultados en CSV 
 results/**/*.csv
