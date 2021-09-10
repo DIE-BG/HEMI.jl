@@ -2,15 +2,19 @@
 using DrWatson
 @quickactivate :HEMI 
 
+using Test 
 using Plots
 
 # Esta función se utiliza para generar la trayectoria paramétrica de inflación: 
 totalfn = InflationTotalRebaseCPI()
 
+# Datos de prueba 
+evaldata = gtdata[Date(2020, 12)]
+
 # Se genera una función de remuestreo para obtener los datos paramétricos y generar así la trayectoria de inflación paramétrica 
 resamplefn = ResampleSBB(36)
 paramfn = get_param_function(resamplefn)
-param_data = paramfn(gtdata)
+param_data = paramfn(evaldata)
 
 # Veamos una gráfica de la trayectoria paramétrica sin aplicación de tendencia:
 plot(infl_dates(param_data), totalfn(param_data))
@@ -20,6 +24,7 @@ plot(infl_dates(param_data), totalfn(param_data))
 # Para utilizar la función de tendencia de caminata aleatoria, debemos generar
 # una instancia de la función `TrendRandomWalk`: 
 trendfn = TrendRandomWalk()
+@test trendfn isa InflationEvalTools.TrendFunction
 
 # Posteriormente, esta instancia es llamable sobre objetos de tipo
 # `CountryStructure`, por lo que, para aplicar la función de tendencia hacemos: 
@@ -62,11 +67,12 @@ plot(infl_dates(trended_data), totalfn(trended_data))
 # ## Función de tendencia exponencial
 # Para utilizar la función de tendencia con crecimiento exponencial, debemos generar
 # una instancia de la función `TrendExponential`: 
-trendfn = TrendExponential(gtdata, 0.02) 
+trendfn = TrendExponential(evaldata, 0.02) 
 
 # Posteriormente, esta instancia es llamable sobre objetos de tipo
 # `CountryStructure`, por lo que, para aplicar la función de tendencia hacemos: 
 trended_data = trendfn(param_data)
+@test trended_data isa CountryStructure
 
 # Veamos una gráfica de la trayectoria paramétrica al aplicar
 # la función de tendencia identidad: 

@@ -13,12 +13,16 @@ using DrWatson
 # @load datadir("guatemala", "gtdata32.jld2") gt00 gt10
 # gtdata = UniformCountryStructure(gt00, gt10)
 
+using Test 
+
 totalfn = InflationTotalCPI()
+@test totalfn(gtdata) isa Vector{<:AbstractFloat}
 plot(infl_dates(gtdata), totalfn(gtdata)) 
 
-using InflationFunctions
+pkfn = InflationEnsemble(
+    InflationPercentileEq(72), 
+    InflationPercentileEq(74)
+)
 
-pkfn = EnsembleFunction(InflationPercentileEq(72), InflationPercentileEq(74))
-plot(infl_dates(gtdata), pkfn(gtdata), 
-    label=["PK72" "PK74"], 
-    title="Inflación interanual basada en percentiles 72 y 74 ") 
+@test pkfn isa EnsembleFunction
+plot(pkfn, gtdata)
