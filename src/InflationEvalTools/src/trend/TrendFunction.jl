@@ -263,6 +263,6 @@ end
 
 # Nombre para la función de tendencia identidad
 method_name(trendfn::TrendExponential) = "Tendencia de crecimiento exponencial al " * string(round(100 * trendfn.rate, digits=2)) * "%"
-method_tag(::TrendExponential) = "EXP" * string(round(100 * trendfn.rate, digits=2)) * "%"
+method_tag(trendfn::TrendExponential) = "EXP" * string(round(100 * trendfn.rate, digits=2)) * "%"
 
 

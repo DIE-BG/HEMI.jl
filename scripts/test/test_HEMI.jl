@@ -15,14 +15,19 @@ using DrWatson
 
 using Test 
 
+@testset "Pruebas instanciar funciones de inflación" begin 
+
 totalfn = InflationTotalCPI()
+println(totalfn)
 @test totalfn(gtdata) isa Vector{<:AbstractFloat}
-# plot(infl_dates(gtdata), totalfn(gtdata)) 
 
 pkfn = InflationEnsemble(
     InflationPercentileEq(72), 
     InflationPercentileEq(74)
 )
+println(pkfn)
 
 @test pkfn isa EnsembleFunction
-# plot(pkfn, gtdata)
+
+
+end 
