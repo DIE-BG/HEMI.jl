@@ -22,9 +22,9 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: actions/cache@v1
         env:
-          cache-name: cache-artifacts
+          cache-name: cache-packages
         with:
-          path: ~/.julia/artifacts
+          path: ~/.julia
           key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
@@ -35,4 +35,5 @@ jobs:
             using Pkg
             Pkg.instantiate() 
             Pkg.test(["CPIDataBase", "InflationFunctions", "InflationEvalTools"])' 
-            
+      - run: |
+          julia --project=@. -e 'include(joinpath("scripts", "test", "runtests.jl"))'            

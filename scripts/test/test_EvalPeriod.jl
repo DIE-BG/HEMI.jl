@@ -2,6 +2,9 @@ using DrWatson
 @quickactivate "HEMI"
 
 using HEMI
+using Test 
+
+@testset "Pruebas de EvalPeriod" begin
 
 # Creamos dos períodos de evaluación 
 comp = CompletePeriod() 
@@ -12,9 +15,11 @@ t = InflationTotalCPI()(gtdata)
 
 # Obtenemos las máscaras para evaluar sobre períodos específicos 
 m = eval_periods(gtdata, b2010)
+@test m isa BitVector
 t[m, :, :]
 
 m = eval_periods(gtdata, comp)
+@test m isa AbstractRange
 t[m, :, :]
 
 
@@ -41,11 +46,20 @@ config2 = SimConfig(
     (CompletePeriod(), EvalPeriod(Date(2008,1), Date(2009,12), "crisis"))
 )
 
+@test config isa SimConfig 
+@test config2 isa SimConfig 
+
 # Comprobamos que la máscara funciona bien aún si los datos tienen menor rango
 # de fechas 
 gtdata19 = gtdata[Date(2019, 12)]
-eval_periods(gtdata19, CompletePeriod())
-eval_periods(gtdata19, GT_EVAL_B10)
+@test eval_periods(gtdata19, CompletePeriod()) isa AbstractRange
+@test eval_periods(gtdata19, GT_EVAL_B10) isa BitVector
 
 # O si el período de evaluación dado contiene al rango de fechas de los datos
-eval_periods(gtdata, EvalPeriod(Date(2000,1), Date(2025,2), "custom"))
+m = eval_periods(gtdata, EvalPeriod(Date(2000,1), Date(2025,2), "custom"))
+
+@test length(m) == infl_periods(gtdata)
+@test all(m) 
+
+
+end 
