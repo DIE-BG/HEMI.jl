@@ -48,7 +48,7 @@ function scramblevar(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG)
     # Para cada mes y cada gasto básico, tomar aleatoriamente de los mismos
     # meses de vmat y llenar v_sc (v_scrambled)
     for i in 1:min(periods, 12), g in 1:n 
-        rand!(rng, view(v_sc, i:12:periods, g), view(vmat, i:12:periods, g))        
+        Random.rand!(rng, view(v_sc, i:12:periods, g), view(vmat, i:12:periods, g))        
     end    
     v_sc
 end
