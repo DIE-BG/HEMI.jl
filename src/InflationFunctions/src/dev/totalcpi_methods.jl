@@ -1,14 +1,14 @@
 ## Versión in-place intermedia para evaluación: 
 #  capitaliza las matrices de variaciones in-place para ahorrar memoria
 
-export TotalEvalCPI
+# export InflationTotalEvalCPI
 
-Base.@kwdef struct TotalEvalCPI <: InflationFunction
+Base.@kwdef struct InflationTotalEvalCPI <: InflationFunction
     name::String = "Variación interanual IPC"
 end
 
 # Función para bases cuyo índice base es un escalar
-function (inflfn::TotalEvalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
+function (inflfn::InflationTotalEvalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloat} 
     base_ipc = convert(IndexCPIBase, base)
     ipc = base_ipc.ipc * base.w / base.baseindex
     varinterm!(ipc, ipc, 100)
@@ -16,7 +16,7 @@ function (inflfn::TotalEvalCPI)(base::VarCPIBase{T, T}) where {T <: AbstractFloa
 end
 
 # # Variación interanual 
-# function (inflfn::TotalEvalCPI)(cs::CountryStructure) 
+# function (inflfn::InflationTotalEvalCPI)(cs::CountryStructure) 
 #     vm = mapfoldl(inflfn, vcat, cs.base)
 #     capitalize!(vm, vm, 100)
 #     varinteran!(vm)

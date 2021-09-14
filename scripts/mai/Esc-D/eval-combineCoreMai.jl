@@ -130,7 +130,8 @@ end
 
 # Descomposición del MSE 
 mse_decomp = @chain combined_metrics begin 
-    select(:measure, :mse, r"mse_[bvc]")
+    select(:measure, :mse, r"^mse_[bvc]")
+    select(:measure, :mse, :mse_bias, :mse_var, :mse_cov)
 end 
 
 # Otras métricas 

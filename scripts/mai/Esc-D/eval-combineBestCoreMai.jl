@@ -124,8 +124,9 @@ end
 
 # Descomposición del MSE 
 mse_decomp = @chain df_mai begin 
-    select(:measure, :mse, r"mse_[bvc]")
-    [_; select(combined_metrics, :measure, :mse, r"mse_[bvc]")]
+    select(:measure, :mse, r"^mse_[bvc]")
+    [_; select(combined_metrics, :measure, :mse, r"^mse_[bvc]")]
+    select(:measure, :mse, :mse_bias, :mse_var, :mse_cov)
 end 
 
 # Otras métricas 
