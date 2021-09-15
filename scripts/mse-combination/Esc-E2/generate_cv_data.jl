@@ -9,6 +9,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
 ## Directorios de resultados 
+config_savepath = datadir("results", "mse-combination", "Esc-E2")
 cv_savepath = datadir("results", "mse-combination", "Esc-E2", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E2", "testdata")
 
@@ -18,13 +19,14 @@ test_savepath = datadir("results", "mse-combination", "Esc-E2", "testdata")
 #   ----------------------------------------------------------------------------
 
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
-resamplefn = ResampleSBB(36)
+resamplefn = ResampleScrambleVarMonths() # ResampleSBB(36)
 trendfn = TrendRandomWalk() 
 paramfn = InflationTotalRebaseCPI(60)
 
 # Medidas óptimas del escenario E 
 
 ## Funciones de inflación MAI
+#=
 maifn = InflationEnsemble(
     InflationCoreMai(MaiF(4)),
     InflationCoreMai(MaiF(5)),
@@ -54,8 +56,10 @@ w_mai = combination_weights(tray_infl_mai, tray_infl_param)
 plot(maifn, gtdata)
 plot!(InflationCombination(maifn, w_mai), gtdata, legend=false, linewidth=3, color=:black)
 
+=#
+
 ##
-inflfn = EnsembleFunction(
+inflfn = InflationEnsemble(
     InflationPercentileEq(71.43), 
     InflationPercentileWeighted(69.04), 
     InflationTrimmedMeanEq(43.78, 90), 
@@ -65,6 +69,9 @@ inflfn = EnsembleFunction(
         [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 
         21, 163, 3, 4, 97, 2, 27, 1, 191, 188], [29, 46, 39, 31, 116]),
     #InflationCombination(inflfn, [...]) 
+    InflationCoreMai(MaiFP([0, 0.27, 0.72, 0.77, 1])), 
+    InflationCoreMai(MaiF([0, 0.22, 0.64, 0.86, 1])), 
+    InflationCoreMai(MaiG([0, 0.06, 0.27, 0.36, 0.67, 0.67, 0.68, 0.7194, 0.7247, 0.73, 1])), 
 )
 
 # Períodos para validación cruzada 
@@ -95,6 +102,11 @@ testconfig = CrossEvalConfig(
     paramfn, 
     10_000, 
     TEST_PERIOD
+)
+
+wsave(joinpath(config_savepath, "cv_test_config.jld2"), 
+    "cvconfig", cvconfig, 
+    "testconfig", testconfig
 )
 
 
