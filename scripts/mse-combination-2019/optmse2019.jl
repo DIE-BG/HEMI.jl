@@ -1,10 +1,6 @@
 # Función de combinación lineal óptima MSE 2019
 
-optmse2019 = let 
-    # Listas de exclusión óptima 
-    excOpt00 = [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
-    excOpt10 = [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]
-
+optmai2019 = let 
     # Componentes metodologías MAI 
     maifns = [
         InflationCoreMai(MaiF(4)),
@@ -37,8 +33,16 @@ optmse2019 = let
     optmai = CombinationFunction(
         maifns..., 
         mai_weights, 
-        "MAI óptima MSE"
+        "MAI óptima MSE 2019"
     )
+
+    optmai
+end
+
+optmse2019 = let 
+    # Listas de exclusión óptima 
+    excOpt00 = [35,30,190,36,37,40,31,104,162,32,33,159,193,161]
+    excOpt10 = [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]
 
     # Componentes de inflación subyacente 
     components = [
@@ -48,7 +52,7 @@ optmse2019 = let
         InflationTrimmedMeanWeighted(15,97),
         InflationDynamicExclusion(0.3222, 1.7283), 
         InflationFixedExclusionCPI(excOpt00, excOpt10), 
-        optmai 
+        optmai2019 
     ]
 
     # Ponderaciones de las demás componentes 
