@@ -75,7 +75,7 @@ end
 
 # Optimizar con mayor número de simulaciones 
 K = 10_000
-MAXITER = 30
+MAXITER = 50
 
 for r in eachrow(prelim_methods)
     # Crear configuración para optimizar 
@@ -92,7 +92,7 @@ for r in eachrow(prelim_methods)
 end
 
 
-## Evaluar los mejores métodos utilizando criterios básicos 
+# Evaluar los mejores métodos utilizando criterios básicos 
 
 df = collect_results(savepath)
 best_methods = @chain df begin
@@ -113,3 +113,13 @@ config_mai = merge(genconfig, Dict(:inflfn => bestmaifns)) |> dict_list
 
 # Ejecutar evaluaciones finales
 run_batch(gtdata, config_mai, savepath_best, savetrajectories=true)
+ 
+
+## Revisión de resultados
+@chain df begin 
+    filter(:K => k -> k == 10_000, _)
+    select(:method,:n, :K, :mse, 
+        :q => ByRow(first),
+        :q => ByRow(last)
+    )
+end
