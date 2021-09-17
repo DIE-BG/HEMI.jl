@@ -13,52 +13,33 @@ config_savepath = datadir("results", "mse-combination", "Esc-E2")
 cv_savepath = datadir("results", "mse-combination", "Esc-E2", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E2", "testdata")
 
+# Resultados de combinación MAI: combinación de medidas estándar de inflación
+# subyacente MAI del escenario E
+mai_weights_file = datadir("results", "CoreMai", "Esc-E", "Standard", "mse-weights", "mai-mse-weights.jld2")
+
 ##  ----------------------------------------------------------------------------
 #   Configuración para evaluación de validación cruzada de combinaciones
 #   lineales con la métrica de error cuadrático medio 
 #   ----------------------------------------------------------------------------
 
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
-resamplefn = ResampleScrambleVarMonths() # ResampleSBB(36)
+resamplefn = ResampleSBB(36)
 trendfn = TrendRandomWalk() 
 paramfn = InflationTotalRebaseCPI(60)
 
 # Medidas óptimas del escenario E 
 
 ## Funciones de inflación MAI
-#=
-maifn = InflationEnsemble(
-    InflationCoreMai(MaiF(4)),
-    InflationCoreMai(MaiF(5)),
-    InflationCoreMai(MaiF(10)),
-    InflationCoreMai(MaiF(20)),
-    InflationCoreMai(MaiF(40)),
-    InflationCoreMai(MaiG(4)),
-    InflationCoreMai(MaiG(5)),
-    InflationCoreMai(MaiG(10)),
-    InflationCoreMai(MaiG(20)),
-    InflationCoreMai(MaiG(40)),
-    # InflationCoreMai(MaiFP(4)),
-    # InflationCoreMai(MaiFP(5)),
-    # InflationCoreMai(MaiFP(10)),
-    # InflationCoreMai(MaiFP(20)),
-    # InflationCoreMai(MaiFP(40)),
+mai_results = wload(mai_weights_file, "mai_mse_weights")
+
+maifn = InflationCombination(
+    mai_results.inflfn...,
+    mai_results.analytic_weight, 
+    "MAI óptima MSE 2020"
 )
 
 
-tray_infl_mai = pargentrayinfl(maifn, ResampleScrambleVarMonths(), trendfn, gtdata[Date(2018, 12)]; K = 1000)
-
-param = InflationParameter(paramfn, resamplefn, trendfn)
-tray_infl_param = param(gtdata[Date(2018, 12)])
-
-w_mai = combination_weights(tray_infl_mai, tray_infl_param)
-
-plot(maifn, gtdata)
-plot!(InflationCombination(maifn, w_mai), gtdata, legend=false, linewidth=3, color=:black)
-
-=#
-
-##
+## Resto de funciones de inflación subyacente 
 inflfn = InflationEnsemble(
     InflationPercentileEq(71.43), 
     InflationPercentileWeighted(69.04), 
@@ -68,13 +49,28 @@ inflfn = InflationEnsemble(
     InflationFixedExclusionCPI(
         [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161, 50, 160, 
         21, 163, 3, 4, 97, 2, 27, 1, 191, 188], [29, 46, 39, 31, 116]),
-    #InflationCombination(inflfn, [...]) 
-    InflationCoreMai(MaiFP([0, 0.27, 0.72, 0.77, 1])), 
-    InflationCoreMai(MaiF([0, 0.22, 0.64, 0.86, 1])), 
-    InflationCoreMai(MaiG([0, 0.06, 0.27, 0.36, 0.67, 0.67, 0.68, 0.7194, 0.7247, 0.73, 1])), 
+    maifn 
 )
 
-# Períodos para validación cruzada 
+## Combinación óptima simple
+
+combfn = InflationCombination(
+    inflfn, 
+    # ones(Float32, 7) / 7, 
+    Float32[1, 1, 1, 1, 1, 0, 1] / 6,
+    "Subyacente óptima MSE 2020 (naïve)" 
+)
+
+# include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
+# plot(inflfn, gtdata, alpha = 0.5)
+# plot!(combfn, gtdata, linewidth=2, color=:black)
+# plot!(optmse2019, gtdata, linewidth=2, color=:blue)
+# hline!([3], label=false, alpha=0.4, color=:gray)
+
+
+## Configuración para validación cruzada 
+
+# Períodos de validación cruzada
 CV_PERIODS = (
     EvalPeriod(Date(2013, 1), Date(2014, 12), "cv1314"),
     EvalPeriod(Date(2014, 1), Date(2015, 12), "cv1415"),
