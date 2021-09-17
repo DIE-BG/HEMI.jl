@@ -1,5 +1,6 @@
 ## Graficar el mejor escenario en test 
-function plot_trajectories(results, savepath="", filename=""; extension="svg")
+function plot_trajectories(results, savepath="", filename=""; 
+    extension=(Plots.backend_name() == :gr ? "svg" : "html"))
 
     # Ordenar resultados por test
     sorted_results = DataFrames.sort(results, :test)
