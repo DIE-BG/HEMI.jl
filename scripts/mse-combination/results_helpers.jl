@@ -1,10 +1,20 @@
+
+
 ## Graficar el mejor escenario en test 
 function plot_trajectories(results, savepath="", filename=""; 
     extension=(Plots.backend_name() == :gr ? "svg" : "html"))
 
     # Ordenar resultados por test
     sorted_results = DataFrames.sort(results, :test)
-    p = plot(InflationTotalCPI(), gtdata, alpha=0.5)
+
+    dates = Date(2001, 12):Year(1):Date(2020, 12)
+
+    p = plot(InflationTotalCPI(), gtdata, alpha = 0.7,
+        xticks = (dates, Dates.format.(dates, dateformat"u-yy")),
+        xrotation = 45
+    )
+    plot!(p, optmse2019, gtdata, linewidth = 2, color = :black)
+    
     f = true
     for r in eachrow(sorted_results)
         if f 
@@ -16,6 +26,7 @@ function plot_trajectories(results, savepath="", filename="";
             plot!(p, r.combfn, gtdata, alpha=0.7)
         end
     end
+    hline!(p, [3], alpha=0.5, color = :gray, label=false)
 
     # Guardar la gráfica 
     if savepath != "" && filename != "" 

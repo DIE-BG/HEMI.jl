@@ -20,7 +20,7 @@ plots_path = mkpath(plotsdir("mse-combination", "Esc-E-Scramble", "ls"))
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
 #   ----------------------------------------------------------------------------
 cvconfig, testconfig = wload(
-    joinpath(config_savepath, "cv_test_config.jld2"), 
+    joinpath(config_savepath, "cv_test_config_20.jld2"), 
     "cvconfig", "testconfig"
 )
     

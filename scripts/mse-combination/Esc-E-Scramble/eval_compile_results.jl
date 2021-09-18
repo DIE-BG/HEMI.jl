@@ -17,6 +17,8 @@ results_path = datadir("results", "mse-combination", "Esc-E-Scramble", "results"
 compilation_path = datadir("results", "mse-combination", "Esc-E-Scramble", "compilation")
 plots_path = mkpath(plotsdir("mse-combination", "Esc-E-Scramble", "compilation-results"))
 
+# Funciones de apoyo
+include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 includet(scriptsdir("mse-combination", "results_helpers.jl"))
 
 fmtoptions = Dict(:tf => tf_markdown, :formatters => ft_round(4))
@@ -30,7 +32,7 @@ metrics_config = Dict(:date_start => Date(2011, 12))
 #   ----------------------------------------------------------------------------
 
 cvconfig, testconfig = wload(
-    joinpath(config_savepath, "cv_test_config.jld2"), 
+    joinpath(config_savepath, "cv_test_config_20.jld2"), 
     "cvconfig", "testconfig"
 )
 

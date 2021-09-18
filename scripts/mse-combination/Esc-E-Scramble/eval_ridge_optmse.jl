@@ -23,7 +23,7 @@ include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
 #   ----------------------------------------------------------------------------
 cvconfig, testconfig = wload(
-    joinpath(config_savepath, "cv_test_config.jld2"), 
+    joinpath(config_savepath, "cv_test_config_20.jld2"), 
     "cvconfig", "testconfig"
 )
 

@@ -23,7 +23,7 @@ include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 #   Cargar los datos de validación y prueba producidos con generate_cv_data.jl
 #   ----------------------------------------------------------------------------
 cvconfig, testconfig = wload(
-    joinpath(config_savepath, "cv_test_config.jld2"), 
+    joinpath(config_savepath, "cv_test_config_20.jld2"), 
     "cvconfig", "testconfig"
 )
 
@@ -114,16 +114,16 @@ wsave(joinpath(results_path, savename(dict_res_B, "jld2")), dict_res_B)
 
 # Evaluación de validación cruzada 
 mse_cv_share_C = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     cvdata, 
     add_intercept = true, 
     train_start_date = TRAIN_START_DATE)
 
 # Evaluación sobre conjunto de prueba 
 mse_test_share_C, w_C = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     testdata, 
     add_intercept = true, 
     train_start_date = TRAIN_START_DATE,
@@ -158,8 +158,8 @@ components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflf
 
 # Evaluación de validación cruzada 
 mse_cv_share_D = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     cvdata, 
     add_intercept = true, 
     components_mask = [true; components_mask],
@@ -167,8 +167,8 @@ mse_cv_share_D = crossvalidate(
 
 # Evaluación sobre conjunto de prueba 
 mse_test_share_D, w_D = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     testdata, 
     add_intercept = true, 
     components_mask = [true; components_mask],

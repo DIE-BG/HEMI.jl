@@ -13,7 +13,7 @@ config_savepath = datadir("results", "mse-combination", "Esc-E-Scramble")
 cv_savepath = datadir("results", "mse-combination", "Esc-E-Scramble", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E-Scramble", "testdata")
 
-# Funciones de inflación óptima MSE 2019
+# Funciones de inflación óptima MSE 2019: optmse2019 y optmai2019
 include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 
 
@@ -46,11 +46,12 @@ CV_PERIODS = (
     EvalPeriod(Date(2014, 1), Date(2015, 12), "cv1415"),
     EvalPeriod(Date(2015, 1), Date(2016, 12), "cv1516"),
     EvalPeriod(Date(2016, 1), Date(2017, 12), "cv1617"),
-    EvalPeriod(Date(2017, 1), Date(2018, 12), "cv1718")
+    EvalPeriod(Date(2017, 1), Date(2018, 12), "cv1718"),
+    EvalPeriod(Date(2018, 1), Date(2019, 12), "cv1819"),
 )
 
 # Período de prueba 
-TEST_PERIOD = EvalPeriod(Date(2019, 1), Date(2020, 12), "test1920")
+TEST_PERIOD = EvalPeriod(Date(2020, 1), Date(2020, 12), "test20")
 
 cvconfig = CrossEvalConfig(
     inflfn, 
@@ -70,7 +71,7 @@ testconfig = CrossEvalConfig(
     TEST_PERIOD
 )
 
-wsave(joinpath(config_savepath, "cv_test_config.jld2"), 
+wsave(joinpath(config_savepath, "cv_test_config_20.jld2"), 
     "cvconfig", cvconfig, 
     "testconfig", testconfig
 )
