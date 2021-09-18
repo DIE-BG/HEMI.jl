@@ -1,6 +1,8 @@
 using DrWatson
 @quickactivate "HEMI" 
 using HEMI 
+using DataFrames, PrettyTables
+using Plots
 
 ## Se carga el módulo de `Distributed` para computación paralela
 using Distributed
@@ -11,7 +13,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 data_savepath = datadir("results", "mse-combination", "naive-2020", "data")
 plots_path = mkpath(plotsdir("mse-combination", "naive-2020"))
 
-# Función de inflación óptima MSE 2020
+# Función de inflación óptima MSE 2019
 include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 
 ##  ----------------------------------------------------------------------------
