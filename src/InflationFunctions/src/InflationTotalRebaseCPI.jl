@@ -30,7 +30,7 @@ function (totalrebasefn::InflationTotalRebaseCPI)(base::VarCPIBase)
     T = periods(base)
     
     # Obtener vector de índices
-    startidxs, endidxs = _getranges(1:period:T, T, period, totalrebasefn.maxchanges)
+    startidxs, endidxs = _getranges(T, period, totalrebasefn.maxchanges)
     
     # Mapear cada rango de índices en el resumen intermensual obtenido con
     # fórmula del IPC
@@ -47,17 +47,33 @@ end
 
 
 # Función de ayuda para obtener vector de rangos
-function _getranges(startidxs, T, period, max_changes=0)
-    finalidxs = broadcast(x -> x + period - 1, startidxs) .|> x -> (x > T) ? T : x
-    
-    # Devolver solo hasta los cambios de base solicitados 
-    if max_changes != 0
-        startidxs = startidxs[1:max_changes+1]
-        finalidxs = finalidxs[1:max_changes+1]
-        finalidxs[end] = T
+function _getranges(T, period, max_changes=0)
+
+    # Si hay menos observaciones que el período, devolver el único rango
+    T <= period && return 1, T
+
+    # max_changes == 0 => todos los cambios de base posibles
+    if max_changes == 0
+        blocks = cld(T, period)
+    else
+        blocks = min(cld(T, period), max_changes+1)
     end
 
-    startidxs, finalidxs
+    startidxs = 1:period:T # índices iniciales
+    finalidxs = Vector{Int}(undef, blocks) # vector de índices finales
+    c = 0 # contador de cambios de base
+
+    # Completar los índices finales
+    for j in 1:blocks
+        finalidxs[j] = startidxs[j] + period - 1
+        c += 1
+        if finalidxs[j] >= T || (max_changes != 0 && c > max_changes)
+            finalidxs[j] = T 
+            break
+        end
+    end
+    
+    startidxs[1:blocks], finalidxs
 end
 
 
