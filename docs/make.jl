@@ -47,6 +47,7 @@ makedocs(;
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md",
                 "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
+                "eval/EscA/evaluacion-mse-validacion-cruzada.md", 
             ],            
             "Escenario B" => [
                 "eval/EscB/evaluacion-percentiles.md", 
