@@ -24,7 +24,7 @@ includet(scriptsdir("mai", "mai-optimization.jl"))
 
 # Parámetros de configuración general del escenario de evaluación 
 genconfig = Dict(
-    :paramfn => InflationTotalRebaseCPI(60),
+    :paramfn => InflationTotalRebaseCPI(36, 2),
     :resamplefn => ResampleScrambleVarMonths(),
     :trendfn => TrendRandomWalk(),
     :traindate => Date(2018, 12),
@@ -75,7 +75,7 @@ end
 
 # Optimizar con mayor número de simulaciones 
 K = 10_000
-MAXITER = 50
+MAXITER = 30
 
 for r in eachrow(prelim_methods)
     # Crear configuración para optimizar 
