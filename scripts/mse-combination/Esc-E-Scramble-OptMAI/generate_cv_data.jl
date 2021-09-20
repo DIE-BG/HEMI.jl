@@ -29,15 +29,15 @@ paramfn = InflationTotalRebaseCPI(36, 2)
 
 # Medidas óptimas a diciembre de 2018
 inflfn = InflationEnsemble(
-    InflationPercentileEq(72), 
+    InflationPercentileEq(72.4), 
     InflationPercentileWeighted(70), 
-    InflationTrimmedMeanEq(57.5, 84.0), 
-    InflationTrimmedMeanWeighted(15.0, 97.0), 
-    InflationDynamicExclusion(0.3222, 1.7283), 
+    # InflationTrimmedMeanEq(57.5, 84.0), 
+    # InflationTrimmedMeanWeighted(15.0, 97.0), 
+    InflationDynamicExclusion(0.3158, 1.6832), 
     InflationFixedExclusionCPI(
         [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
-        [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]),
-    optmai2019, 
+        [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]),
+    # optmai2019, 
 )
 
 # Períodos para validación cruzada 
@@ -47,11 +47,10 @@ CV_PERIODS = (
     EvalPeriod(Date(2015, 1), Date(2016, 12), "cv1516"),
     EvalPeriod(Date(2016, 1), Date(2017, 12), "cv1617"),
     EvalPeriod(Date(2017, 1), Date(2018, 12), "cv1718"),
-    EvalPeriod(Date(2018, 1), Date(2019, 12), "cv1819"),
 )
 
 # Período de prueba 
-TEST_PERIOD = EvalPeriod(Date(2020, 1), Date(2020, 12), "test20")
+TEST_PERIOD = EvalPeriod(Date(2019, 1), Date(2020, 12), "test1920")
 
 cvconfig = CrossEvalConfig(
     inflfn, 
@@ -71,7 +70,7 @@ testconfig = CrossEvalConfig(
     TEST_PERIOD
 )
 
-wsave(joinpath(config_savepath, "cv_test_config_20.jld2"), 
+wsave(joinpath(config_savepath, "cv_test_config.jld2"), 
     "cvconfig", cvconfig, 
     "testconfig", testconfig
 )
