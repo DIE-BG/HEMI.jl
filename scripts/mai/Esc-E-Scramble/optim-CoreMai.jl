@@ -62,15 +62,11 @@ prelim_methods = @chain df begin
             first(2)
         end
     end
-    select(:method, :n, :mse, :q)
+    select(:method, :n, :mse, :q, 
+        :q => ByRow(first), 
+        :q => ByRow(last), 
+    )
 end
-
-# @chain prelim_methods begin 
-#     filter(r -> r.n == 5, _)
-#     select(:method, :n, :mse, 
-#         :q => [Symbol("q", i) for i in 1:4]
-#     )
-# end
 
 
 # Optimizar con mayor número de simulaciones 
