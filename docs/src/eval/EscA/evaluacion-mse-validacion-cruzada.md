@@ -1,4 +1,4 @@
-# Combinación lineal MSE  
+# Ejercicio de validación cruzada y prueba de combinación lineal MSE  
 
 En esta sección se documentan los resultados del proceso de combinación y
 evaluación fuera de muestra de los estimadores de inflación obtenidos. 
