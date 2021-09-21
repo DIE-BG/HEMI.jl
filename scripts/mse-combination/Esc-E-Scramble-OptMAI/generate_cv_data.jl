@@ -13,9 +13,8 @@ config_savepath = datadir("results", "mse-combination", "Esc-E-Scramble-OptMAI")
 cv_savepath = datadir("results", "mse-combination", "Esc-E-Scramble-OptMAI", "cvdata")
 test_savepath = datadir("results", "mse-combination", "Esc-E-Scramble-OptMAI", "testdata")
 
-# Funciones de inflación óptima MSE 2019: optmse2019 y optmai2019
-include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
-
+# Directorios de resultados de combinación MAI 
+maifn_path = datadir("results", "CoreMai", "Esc-E-Scramble", "BestOptim", "mse-weights", "maioptfn.jld2")
 
 ##  ----------------------------------------------------------------------------
 #   Configuración para evaluación de validación cruzada de combinaciones
@@ -28,16 +27,21 @@ trendfn = TrendRandomWalk()
 paramfn = InflationTotalRebaseCPI(36, 2)
 
 # Medidas óptimas a diciembre de 2018
+
+# Cargar función de inflación MAI óptima
+optmai2018 = wload(maifn_path, "maioptfn")
+
+# Configurar el conjunto de medidas a combinar
 inflfn = InflationEnsemble(
-    InflationPercentileEq(72.4), 
-    InflationPercentileWeighted(70), 
-    # InflationTrimmedMeanEq(57.5, 84.0), 
-    # InflationTrimmedMeanWeighted(15.0, 97.0), 
+    InflationPercentileEq(72.3966), 
+    InflationPercentileWeighted(69.9966), 
+    InflationTrimmedMeanEq(58.7573, 83.1520), 
+    InflationTrimmedMeanWeighted(21.0019, 95.8886), 
     InflationDynamicExclusion(0.3158, 1.6832), 
     InflationFixedExclusionCPI(
         [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
         [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]),
-    # optmai2019, 
+    optmai2018
 )
 
 # Períodos para validación cruzada 
