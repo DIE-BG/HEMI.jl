@@ -75,7 +75,7 @@ wsave(weightsfile, "mai_mse_weights", a_optim)
 maioptfn = InflationCombination(
     dfweights.inflfn...,
     dfweights.analytic_weight, 
-    "MAI óptima MSE"
+    "MAI óptima MSE 2018"
 )
 
 wsave(datadir(savepath, "mse-weights", "maioptfn.jld2"), "maioptfn", maioptfn)
