@@ -77,7 +77,10 @@ makedocs(;
                 # "eval/EscE/evaluacion-exclusion-fija.md",
                 "eval/EscE/evaluacion-MAI.md",
                 "eval/EscE/evaluacion-combinacion-lineal-mse.md",
-            ]   
+            ]
+        ],
+        "Resultados 2020" => [
+            "Combinación lineal MSE" => "eval/2020/combinacion-lineal-mse.md"
         ],
         "API" => 
             ["modules/API.md",
