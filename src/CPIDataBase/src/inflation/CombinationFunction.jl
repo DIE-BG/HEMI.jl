@@ -99,3 +99,21 @@ function (combfn::CombinationFunction)(cst::CountryStructure)
     # Return weighted sum
     tray_infl * combfn.weights
 end
+
+
+
+## Métodos de ayuda
+
+"""
+    components(inflfn::CombinationFunction)
+
+Devuelve un `DataFrame` con las componentes de la función de combinación lineal
+y las ponderaciones asociadas.
+"""
+function components(inflfn::CombinationFunction)
+    components = DataFrame(
+        measure = measure_name(inflfn, return_array=true),
+        weights = inflfn.weights
+    )
+    components
+end

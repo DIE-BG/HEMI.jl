@@ -23,6 +23,7 @@ module CPIDataBase
     export InflationFunction, EnsembleInflationFunction
     export EnsembleFunction, CombinationFunction
     export InflationEnsemble, InflationCombination # alias de los 2 anteriores
+    export components # componentes de una InflationCombination
     export num_measures, weights, measure_name, measure_tag, params
 
     # Exportar tipos necesarios para especificar tipos de los resultados 
