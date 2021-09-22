@@ -249,14 +249,5 @@ function get_components_2020(metricsdf, method, scenario)
     result = filter(r -> r.method == method && r.scenario == scenario, metricsdf)
     inflfn = result.inflfn20[1]
 
-    get_components(inflfn)
-end
-
-
-function get_components(inflfn::CombinationFunction)
-    components = DataFrame(
-        measure = measure_name(inflfn, return_array=true),
-        weights = inflfn.weights
-    )
-    inflfn, components
+    inflfn, components(inflfn)
 end
