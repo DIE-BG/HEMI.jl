@@ -121,8 +121,8 @@ mse_cv_share_C = crossvalidate(
 
 # Evaluación sobre conjunto de prueba 
 mse_test_share_C, w_C = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     testdata, 
     add_intercept = true, 
     train_start_date = TRAIN_START_DATE,
@@ -157,8 +157,8 @@ components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in cvconfig.inflf
 
 # Evaluación de validación cruzada 
 mse_cv_share_D = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     cvdata, 
     add_intercept = true, 
     components_mask = [true; components_mask],
@@ -166,8 +166,8 @@ mse_cv_share_D = crossvalidate(
 
 # Evaluación sobre conjunto de prueba 
 mse_test_share_D, w_D = crossvalidate(
-    share_combination_weights,
-    # (t, p) -> share_combination_weights(t, p, restrict_all = false),
+    # share_combination_weights,
+    (t, p) -> share_combination_weights(t, p, restrict_all = false),
     testdata, 
     add_intercept = true, 
     components_mask = [true; components_mask],
