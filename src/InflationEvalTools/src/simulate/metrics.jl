@@ -67,6 +67,7 @@ function eval_metrics(tray_infl, tray_infl_pob; short=false, prefix="")
         Symbol(_prefix, "rmse") => rmse, 
         Symbol(_prefix, "mae") => mae, 
         Symbol(_prefix, "me") => me, 
+        Symbol(_prefix, "absme") => abs(me), 
         Symbol(_prefix, "corr") => corr, 
         Symbol(_prefix, "huber") => huber,
         Symbol(_prefix, "mse_bias") => mse_bias, 
