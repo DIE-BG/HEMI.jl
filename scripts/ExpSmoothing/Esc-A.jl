@@ -33,6 +33,7 @@ dict_config = Dict(
     :traindate => Date(2019, 12)
 ) |> dict_list
 
+
 # ## Ejecución de evaluación
 run_batch(DATA, dict_config, SAVEPATH)
 

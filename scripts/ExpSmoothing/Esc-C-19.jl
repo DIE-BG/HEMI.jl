@@ -26,7 +26,7 @@ DATA = gtdata
 # crea un vector con  diccionarios con una opción del parámetro de decaimiento
 # en este caso alpha =0.7
 dict_config = Dict(
-    :inflfn => InflationExpSmoothing.(InflationTotalCPI(), 0.7), 
+    :inflfn => InflationExpSmoothing.(InflationTotalCPI(), 0.0:0.1:1.0), 
     :resamplefn => ResampleScrambleVarMonths(), 
     :trendfn => TrendRandomWalk(),
     :paramfn => InflationTotalRebaseCPI(60),
@@ -41,13 +41,19 @@ run_batch(DATA, dict_config, SAVEPATH)
 df = collect_results(SAVEPATH)
 p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
 
+# Obteniendo el minimo MSE en función del parámetro de decaimiento
+infle=minimum(df.mse[:,:])
+bas = df[df[!,:mse].==infle,:]
 
-plot!(InflationExpSmoothing(InflationTotalCPI(), df.params[1][1]), gtdata, fmt = :svg)
+plot!(InflationExpSmoothing(InflationTotalCPI(), bas.params[1][1]), gtdata, fmt = :svg)
 
-PLOTSPATH = joinpath("docs", "src", "eval", SETTINGNAME, "images", "exponential_smoothing")
-Plots.svg(p, joinpath(PLOTSPATH, "obs_trajectory"))
+PLOTSPATH = joinpath("docs", "src", "eval", SETTINGNAME[begin:end-2], "images", "exponential_smoothing")
+Plots.svg(p, joinpath(PLOTSPATH, "obs_trajectoryc19"))
 
-
+dots = DataFrame(df.params[:,1])
+dots = dots[:,:1]
+q= plot(dots,df.mse[:,:], seriestype =:scatter, title= "MSE vs smoothing parameter", label=["MSE"], xlabel="Smoothing parameter", ylabel="MSE")
+Plots.svg(q, joinpath(PLOTSPATH, "Minimization"))
 
 
 

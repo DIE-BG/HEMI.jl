@@ -1,4 +1,4 @@
-# # Escenario A: replica del trabajo efectuado en 2020 (hasta diciembre 2020) 
+# # Escenario B: replica del trabajo efectuado en 2020 (hasta diciembre 2020) 
 using DrWatson
 using Plots
 using Chain
