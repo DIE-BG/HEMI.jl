@@ -47,6 +47,7 @@ makedocs(;
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md",
                 "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
+                "eval/EscA/evaluacion-suavizamiento-exponencial.md",
             ],            
             "Escenario B" => [
                 "eval/EscB/evaluacion-percentiles.md", 
@@ -54,6 +55,7 @@ makedocs(;
                 "eval/EscB/evaluacion-dynEx.md",
                 "eval/EscB/evaluacion-exclusion-fija.md",
                 "eval/EscB/evaluacion-MAI.md",
+                "eval/EscB/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario C" => [
                 "eval/EscC/evaluacion-percentiles.md",
@@ -61,6 +63,7 @@ makedocs(;
                 "eval/EscC/evaluacion-MT.md", 
                 "eval/EscC/evaluacion-exclusion-fija.md", 
                 "eval/EscC/evaluacion-MAI.md",
+                "eval/EscC/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario D" => [
                 "eval/EscD/evaluacion-percentiles.md",
