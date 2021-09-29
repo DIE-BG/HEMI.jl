@@ -38,14 +38,17 @@ dict_config = Dict(
 run_batch(DATA, dict_config, SAVEPATH)
 
 # ## Revisión de resultados
+using DataFrames
 df = collect_results(SAVEPATH)
-p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
 
 # Obteniendo el minimo MSE en función del parámetro de decaimiento
 infle=minimum(df.mse[:,:])
 bas = df[df[!,:mse].==infle,:]
 
-plot!(InflationExpSmoothing(InflationTotalCPI(), bas.params[1][1]), gtdata, fmt = :svg)
+p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
+plot!(InflationExpSmoothing(InflationTotalCPI(), bas.params[1][1]), 
+      gtdata, fmt = :svg, label = "Suavizamiento exponencial con λ= $(df.params[1][1])",
+      legend =:best, legendfontsize=5)
 
 PLOTSPATH = joinpath("docs", "src", "eval", SETTINGNAME[begin:end-2], "images", "exponential_smoothing")
 Plots.svg(p, joinpath(PLOTSPATH, "obs_trajectoryc19"))

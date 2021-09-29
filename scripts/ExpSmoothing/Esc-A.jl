@@ -42,11 +42,13 @@ df = collect_results(SAVEPATH)
 
 ## Gráfica de trayectorias 
 p = plot(InflationTotalCPI(), gtdata, fmt = :svg)
-plot!(InflationExpSmoothing(InflationTotalCPI(), df.params[1][1]), gtdata, 
-    label = "Suavizamiento exponencial con parámetro $(df.params[1][1])",
-    fmt = :svg
-)
+plot!(InflationExpSmoothing(InflationTotalCPI(),
+      df.params[1][1]),gtdata, label = 
+      "Suavizamiento exponencial con λ= $(df.params[1][1])", 
+      fmt = :svg, legend=:best
+      )
 
+     
 PLOTSPATH = joinpath("docs", "src", "eval", SETTINGNAME, "images", "exponential_smoothing")
 Plots.svg(p, joinpath(PLOTSPATH, "obs_trajectory"))
 
