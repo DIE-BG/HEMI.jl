@@ -7,6 +7,7 @@
 
 # Resultados en CSV 
 results/**/*.csv
+updates/**/*.csv
 
 # Datos de bootstrap_methods 
 bootstrap_methods/**/*.csv
