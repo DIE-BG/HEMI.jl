@@ -1,4 +1,4 @@
-# Función de combinación lineal óptima MSE 2020
+# Función de combinación lineal óptima MSE 2022
 
 # Definir la subyacente MAI óptima, calibrada con datos hasta 2018
 optmai2018 = let 
@@ -28,9 +28,9 @@ optfx2018 = InflationFixedExclusionCPI(
     [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]
 )
 
-# Definir la combinación óptima MSE 2020, con componentes optimizadas hasta 2018
+# Definir la combinación óptima MSE 2022, con componentes optimizadas hasta 2018
 # y ponderadores ajustados con datos hasta 2020.
-optmse2020 = let 
+optmse2022 = let 
     # Componentes de inflación subyacente 
     components = [
         InflationPercentileEq(72.3966), 
@@ -53,14 +53,14 @@ optmse2020 = let
         0.2547185
     ]
 
-    # Subyacente óptima MSE v2020
-    optmse2020 = CombinationFunction(
+    # Subyacente óptima MSE v2022
+    optmse2022 = CombinationFunction(
         components...,
         mse_weights, 
-        "Subyacente óptima MSE 2020"
+        "Subyacente óptima MSE 2022"
     )
 
-    optmse2020
+    optmse2022
 end
 
-@info "Definición de funciones óptimas MSE" optmai2018 optfx2018 optmse2020
+@info "Definición de funciones óptimas MSE" optmai2018 optfx2018 optmse2022
