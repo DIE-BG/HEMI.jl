@@ -36,7 +36,7 @@ weights_period = GT_EVAL_B10
 periods_mask = eval_periods(gtdata_20, weights_period)
 mask = [!(fn isa InflationFixedExclusionCPI) for fn in testconfig.inflfn.functions]
 
-# Ponderadores de correlación 
+## Ponderadores de correlación 
 t1 = metric_combination_weights(tray_infl[periods_mask, mask, :], tray_param[periods_mask], max_iterations = 250, metric = :corr)
 t2 = metric_combination_weights(tray_infl[periods_mask, :, :], tray_param[periods_mask], max_iterations = 250, metric = :corr)
 
@@ -46,9 +46,8 @@ combination_metrics(tray_infl[periods_mask, :, :], tray_param[periods_mask], t2)
 
 ## Ponderadores de absme
 t1 = metric_combination_weights(tray_infl[periods_mask, mask, :], tray_param[periods_mask], max_iterations = 250, metric = :absme)
-t2 = metric_combination_weights(tray_infl[periods_mask, :, :], tray_param[periods_mask], max_iterations = 250, metric = :absme)
+t2 = metric_combination_weights(tray_infl[periods_mask, :, :], tray_param[periods_mask], max_iterations = 1000, metric = :absme, sum_abstol = 1f-4)
 
 combination_metrics(tray_infl[periods_mask, mask, :], tray_param[periods_mask], t1)[:absme]
 combination_metrics(tray_infl[periods_mask, :, :], tray_param[periods_mask], t2)[:absme]
 
-t1 = metric_combination_weights(tray_infl[periods_mask, mask, :], tray_param[periods_mask], metric = :absme)
