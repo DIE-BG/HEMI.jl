@@ -84,8 +84,15 @@ CSV.write(joinpath(config_savepath, "metrics.csv"), opt_metrics)
 
 ## Intervalos de confianza simples óptima MSE
 
-# Distribución de errores en período de ajuste de ponderadores
-err_dist_b10 = vec(tray_infl_optmse[evalmask, :, :] .- tray_param[evalmask])
+
+
+# Distribución de errores 
+
+b00_mask = eval_periods(gtdata_20, GT_EVAL_B00)
+b10_mask = eval_periods(gtdata_20, GT_EVAL_B10)
+t0010_mask = eval_periods(gtdata_20, GT_EVAL_T0010)
+
+err_dist_b10 = vec(tray_infl_optmse[b10_mask, :, :] .- tray_param[b10_mask])
 q_975 = quantile(err_dist_b10, [0.0125, 0.9875])
 # q_95 = quantile(err_dist_b10, [0.025, 0.975])
 histogram(err_dist_b10, normalize=:pdf)
@@ -98,6 +105,23 @@ optmse_ci = [fill(missing, 120, 2); opt_limits[dates .>= Date(2011,12), :]]
 plot(optmse2022, gtdata, lw=2)
 plot!(dates, opt_ci, label=["Lim. inf 97.5%" "Lim. sup 97.5%"])
 
+
+# Tabla de límites por subperíodos
+lims = mapreduce(vcat, [b00_mask, t0010_mask, b10_mask]) do mask 
+    err_dist = vec(tray_param[mask] .- tray_infl_optmse[mask, :, :])
+    q = quantile(err_dist, [0.0125, 0.9875])
+    q'
+end
+
+df_lims = hcat(
+    DataFrame(
+        period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 
+        evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, EvalPeriod(Date(2011, 12), Date(2022,12), "upd20")]
+    ),
+    DataFrame(lims, [:inf_limit, :sup_limit])
+)
+
+CSV.write(joinpath(config_savepath, "optmse_period_limits.csv"), df_lims)
 
 # Distribución de errores en período completo
 err_dist = vec(tray_infl_optmse .- tray_param)
