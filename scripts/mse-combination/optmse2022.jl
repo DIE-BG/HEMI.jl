@@ -63,4 +63,12 @@ optmse2022 = let
     optmse2022
 end
 
-@info "Definición de funciones óptimas MSE" optmai2018 optfx2018 optmse2022
+# Límites de confianza al 97.5%
+optmse2022_ci = DataFrame(
+    period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 
+    evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, EvalPeriod(Date(2011, 12), Date(2022,12), "upd20")], 
+    inf_limit = Float32[-0.8578267216682434, -0.33864724040031435, -0.47227502465248106], 
+    sup_limit = Float32[1.1448965072631836, 1.7413304984569544, 0.6401736915111531]
+)
+
+@info "Definición de funciones óptimas MSE" optmai2018 optfx2018 optmse2022 optmse2022_ci
