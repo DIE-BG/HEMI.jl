@@ -452,7 +452,7 @@ uuid = "9b13fd28-a010-5f03-acff-a1bbcff69959"
 version = "0.5.1"
 
 [[InflationEvalTools]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LinearAlgebra", "OnlineStats", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
+deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LinearAlgebra", "OnlineStats", "Optim", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics"]
 path = "src/InflationEvalTools"
 uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 version = "0.2.0"
@@ -704,9 +704,9 @@ version = "5.1.0+5"
 
 [[MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
-git-tree-sha1 = "c253236b0ed414624b083e6b72bfe891fbd2c7af"
+git-tree-sha1 = "5455aef09b40e5020e1520f551fa3135040d4ed0"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-version = "2021.1.1+1"
+version = "2021.1.1+2"
 
 [[MUMPS_seq_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "METIS_jll", "OpenBLAS32_jll", "Pkg"]
