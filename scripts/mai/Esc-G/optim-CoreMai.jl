@@ -92,13 +92,13 @@ for r in eachrow(prelim_methods)
         metric = METRIC)
 end
 
-
+##
 # Evaluar los mejores métodos utilizando criterios básicos 
 
 df = collect_results(savepath)
 best_methods = @chain df begin
     filter(:K => k -> k == K, _) 
-    combine(gdf -> gdf[argmin(gdf.mse), :], groupby(_, :method))
+    combine(gdf -> gdf[argmin(gdf[!, METRIC]), :], groupby(_, :method))
     select(:method, :n, METRIC, :q)
 end
 

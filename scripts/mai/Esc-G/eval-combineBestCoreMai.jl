@@ -28,8 +28,8 @@ df_mai = collect_results(savepath)
 
 # Obtener variantes de MAI a combinar
 combine_df = @chain df_mai begin 
-    select(:measure, :corr, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
-    sort(:corr)
+    select(:measure, :absme, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
+    sort(:absme)
 end
 
 # Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
@@ -52,8 +52,10 @@ tray_infl_pob = param(gtdata_eval)
 # Obtener los ponderadores de combinación óptimos para el cubo de trayectorias
 # de inflación MAI 
 
-# Combinar las variantes MAI para correlación ... (to-do)
-# a_optim = corr_combination_weights(tray_infl_mai, tray_infl_pob)
+# Combinar las variantes MAI para valor absoluto de error medio ... (to-do)
+ a_optim = metric_combination_weights(tray_infl_mai, tray_infl_pob,
+           metric =:absme,
+           )
 
 
 ## Conformar un DataFrame de ponderadores y guardarlos en un directorio 
@@ -65,20 +67,20 @@ dfweights = DataFrame(
 )
 
 # Guardar el DataFrame de medidas y ponderaciones 
-wsave(datadir(savepath, "corr-weights", "dfweights.jld2"), "dfweights", dfweights)
+wsave(datadir(savepath, "absme-weights", "dfweights.jld2"), "dfweights", dfweights)
 
 # Guardar el vector de ponderaciones 
-weightsfile = datadir(savepath, "corr-weights", "mai-corr-weights.jld2")
-wsave(weightsfile, "mai_mse_weights", a_optim)
+weightsfile = datadir(savepath, "absme-weights", "mai-absme-weights.jld2")
+wsave(weightsfile, "mai_absme_weights", a_optim)
 
 # Guardar la función de inflación MAI óptima 
 maioptfn = InflationCombination(
     dfweights.inflfn...,
     dfweights.analytic_weight, 
-    "MAI óptima de correlación 2018"
+    "MAI óptima de absme 2018"
 )
 
-wsave(datadir(savepath, "corr-weights", "maioptfn.jld2"), "maioptfn", maioptfn)
+wsave(datadir(savepath, "absme-weights", "maioptfn.jld2"), "maioptfn", maioptfn)
 
 
 ## Evaluación de combinación lineal óptima 
@@ -91,10 +93,10 @@ metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
 
 plot(InflationTotalCPI(), gtdata)
 plot!(maioptfn, gtdata, 
-    label="Combinación lineal MAI óptima de correlación ($SCENARIO)", 
+    label="Combinación lineal MAI óptima de absme ($SCENARIO)", 
     legend=:topright)
 
-savefig(plotsdir(plotspath, "MAI-optima-bestOptim-CORR-$SCENARIO.svg"))
+savefig(plotsdir(plotspath, "MAI-optima-bestOptim-ABSME-$SCENARIO.svg"))
 
 ## Tablas de resultados 
 
@@ -104,22 +106,22 @@ combined_metrics
 
 # Resultados principales 
 main_results = @chain df_mai begin 
-    select(:measure, :corr, :mse_std_error)
-    sort(:corr)
-    [_; select(combined_metrics, :measure, :corr, :mse_std_error)]
+    select(:measure, :absme, :mse_std_error)
+    sort(:absme)
+    [_; select(combined_metrics, :measure, :absme, :mse_std_error)]
 end
 
-# Descomposición del CORR 
+# Descomposición del ABSME
 mse_decomp = @chain df_mai begin 
-    select(:measure, :corr, r"^mse_[bvc]")
-    [_; select(combined_metrics, :measure, :corr, :mse_bias, :mse_var, :mse_cov)]
-    select(:measure, :corr, :mse_bias, :mse_var, :mse_cov)
+    select(:measure, :absme, r"^mse_[bvc]")
+    [_; select(combined_metrics, :measure, :absme, :mse_bias, :mse_var, :mse_cov)]
+    select(:measure, :absme, :mse_bias, :mse_var, :mse_cov)
 end 
 
 # Otras métricas 
 sens_metrics = @chain df_mai begin 
-    select(:measure, :rmse, :me, :mae, :huber, :corr)
-    [_; select(combined_metrics, :measure, :rmse, :me, :mae, :huber, :corr)]
+    select(:measure, :rmse, :me, :mae, :huber, :absme)
+    [_; select(combined_metrics, :measure, :rmse, :me, :mae, :huber, :absme)]
 end 
 
 # Tabla de ponderadores analíticos 
@@ -136,7 +138,7 @@ pretty_table(weights_results, tf=tf_markdown, formatters=ft_round(4))
 ## Revisión de métodos 
 
 @chain combine_df begin 
-    select(:measure, :corr, 
+    select(:measure, :absme, 
         :inflfn => ByRow(fn -> fn.method.p) => :q, 
     )
     select(:, 
