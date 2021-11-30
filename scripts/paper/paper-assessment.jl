@@ -8,7 +8,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 
 ## Helper packages
 using DataFrames, Chain, PrettyTables
-
+using Plots
 
 ## TIMA settings 
 
@@ -61,17 +61,27 @@ main_results = @chain df_results begin
     select(:measure, :mse, :mse_std_error)
 end
 
-# Descomposición aditiva del MSE 
+# Additive decomposition of mean squuare error
 mse_decomp = @chain df_results begin 
     select(:measure, :mse, :mse_bias, :mse_var, :mse_cov)
 end
 
-# Otras métricas de evaluación 
+# Other sensitivity assessment metrics 
 sens_metrics = @chain df_results begin 
     select(:measure, :rmse, :me, :mae, :huber, :corr)
 end 
 
-
+# Results tables 
 pretty_table(main_results, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(mse_decomp, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
+
+
+## Historic trajectories 
+
+# We create an Ensemble of inflation estimators
+obsfn = InflationEnsemble(inflfns...)
+obsfn(gtdata)
+
+# Plot historic series of core inflation measures
+plot(obsfn, gtdata)
