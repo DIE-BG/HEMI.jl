@@ -242,7 +242,11 @@ Función para convertir diccionario de parámetros a `SimConfig` o `CrossEvalCon
 function dict_config(params::Dict)
     # CrossEvalConfig contiene el campo de períodos de evaluación 
     if (:traindate in keys(params))
-        config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
+        if (:evalperiods in keys(params))
+            config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate], params[:evalperiods])
+        else 
+            config = SimConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:traindate])
+        end
     else
         config = CrossEvalConfig(params[:inflfn], params[:resamplefn], params[:trendfn], params[:paramfn], params[:nsim], params[:evalperiods])
     end
