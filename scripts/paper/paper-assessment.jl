@@ -18,13 +18,13 @@ resamplefn = ResampleScrambleVarMonths()
 trendfn = TrendRandomWalk()
 
 # Inflation excluding food & energy: indexes to exclude for every CPI dataset
-core_spec = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
+core_specs = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
 
 # Inflation estimators to assess 
 inflfns = [
     InflationTotalCPI(), 
-    InflationFixedExclusion(core_spec),
-    InflationFixedExclusionCPI(core_spec),
+    InflationFixedExclusion(core_specs),
+    InflationFixedExclusionCPI(core_specs),
     InflationTrimmedMeanEq(24, 31),
     InflationTrimmedMeanEq(8, 92),
     InflationTrimmedMeanWeighted(24, 31),
