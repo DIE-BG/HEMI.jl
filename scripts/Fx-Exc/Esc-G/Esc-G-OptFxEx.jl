@@ -1,5 +1,5 @@
 """
-Escenario F: Optimización de correlación con criterios básicos a dic-18
+Escenario G: Optimización de ABSME (valor absoluto de error medio) con criterios básicos a dic-18
 
 Los parámetros de configuración en este caso son los siguientes:
 
@@ -37,13 +37,13 @@ NSIM = 10_000 # 10_000
 ff00 = Date(2010, 12) # Fecha de optimización base 2000
 ff10 = Date(2018, 12) # Fecha de optimización base 2010
 # Métrica de evaluación
-METRIC_B00 = :gt_b00_corr
-METRIC_B10 = :corr # Correlación de período completo 
+METRIC_B00 = :gt_b00_absme
+METRIC_B10 = :absme # Correlación de período completo 
 
 # Rutas de guardado
-savepath_b00 = datadir("results", "Fx-Exc", "Esc-F", "Base00") 
-savepath_b10 = datadir("results", "Fx-Exc", "Esc-F", "Base10")
-savepath_final = datadir("results", "Fx-Exc", "Esc-F", "FxOpt")
+savepath_b00 = datadir("results", "Fx-Exc", "Esc-G", "Base00") 
+savepath_b10 = datadir("results", "Fx-Exc", "Esc-G", "Base10")
+savepath_final = datadir("results", "Fx-Exc", "Esc-G", "FxOpt")
 
 #################  Optimización Base 2000  ###################################
  
@@ -84,15 +84,15 @@ df00 = collect_results(savepath_b00)
 df00opt = @chain df00 begin
     transform(:params => ByRow(x -> length(x[1])) => :exclusiones)
     sort(:exclusiones)
-    sort(METRIC_B00, rev=(METRIC_B00 == :gt_b00_corr))
+    sort(METRIC_B00)#, rev=(METRIC_B00 == :gt_b00_absme))
     first(5)
     select(:params, :exclusiones, METRIC_B00, :gt_b00_me)
 end 
 
 exc_opt_00 = df00opt[1, :params][1]
 println(exc_opt_00)
-# Base 2000 (100 simulaciones): [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
-# Base 2000 (10,000 simulaciones): [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159]
+# Base 2000 (100 simulaciones): [35, 30, 190, 36, 37, 40, 31, 104, 162]
+# Base 2000 (10,000 simulaciones): [35, 30, 190, 36, 37, 40, 31, 104, 162]
 
 #################  Optimización Base 2010  ###################################
 
@@ -139,7 +139,7 @@ df10 = collect_results(savepath_b10)
 df10opt = @chain df10 begin
     transform(:params => ByRow(x -> length(x[2])) => :exclusiones)
     sort(:exclusiones)
-    sort(METRIC_B10, rev=(METRIC_B10 == :corr))
+    sort(METRIC_B10)#, rev=(METRIC_B10 == :corr))
     first(5)
     transform(:params => ByRow(x -> x[2]) => :exclusiones_b10)
     select(:exclusiones_b10, :exclusiones, METRIC_B10, :gt_b10_me)
@@ -147,8 +147,9 @@ end
 
 exc_opt_10 = df10opt[1, :exclusiones_b10]
 println(exc_opt_10)
-# Base 2010 (100 simulaciones): [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184, 41, 47, 37, 22, 25, 229, 38, 32, 274, 3, 45, 44, 33, 237, 19, 10, 24, 275, 115, 15, 59, 42, 61, 43, 113, 49, 27, 71, 23, 268, 9]
-# Base 2010 (10,000 simulaciones):  [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184, 41, 47, 37, 22, 25, 229, 38, 32, 274, 3, 45, 44, 33, 237, 19, 10, 24, 275, 115, 15, 59, 42, 61, 43, 113, 49, 27, 71, 23, 268, 9, 36, 236, 78, 20, 213, 273, 26]
+# Base 2000 (100 simulaciones): [29, 116, 31, 46, 39]
+# Base 2010 (10,000 simulaciones): [29, 116, 31, 46, 39, 40]
+
 
 ## Observar la trayectoria observada 
 
