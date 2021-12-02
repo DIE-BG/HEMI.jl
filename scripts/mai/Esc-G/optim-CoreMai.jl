@@ -7,8 +7,8 @@ using Optim
 using CSV, DataFrames, Chain 
 
 # Directorios de resultados 
-savepath = datadir("results", "CoreMai", "Esc-F", "Optim")
-savepath_best = datadir("results", "CoreMai", "Esc-F", "BestOptim")
+savepath = datadir("results", "CoreMai", "Esc-G", "Optim")
+savepath_best = datadir("results", "CoreMai", "Esc-G", "BestOptim")
 
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -19,7 +19,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 includet(scriptsdir("mai", "mai-corr-optimization.jl"))
 
 # Métrica de optimización 
-METRIC = :corr
+METRIC = :mse_bias
 
 ## Configuración para simulaciones
 
@@ -92,7 +92,7 @@ for r in eachrow(prelim_methods)
         metric = METRIC)
 end
 
-
+##
 # Evaluar los mejores métodos utilizando criterios básicos 
 
 df = collect_results(savepath)
@@ -124,10 +124,3 @@ run_batch(gtdata, config_mai, savepath_best, savetrajectories=true)
         :q => ByRow(last)
     )
 end
-
-
-## Evaluación de óptima G corregida
-
-maigfn = InflationCoreMai(MaiG([0, 0.3231946132649845, 0.7717202163095981, 1])) 
-maig_config = dict_list(merge(genconfig, Dict(:inflfn => maigfn)))
-run_batch(gtdata, maig_config, savepath_best, savetrajectories=true)
