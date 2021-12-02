@@ -98,7 +98,7 @@ end
 df = collect_results(savepath)
 best_methods = @chain df begin
     filter(:K => k -> k == K, _) 
-    combine(gdf -> gdf[argmin(gdf.mse), :], groupby(_, :method))
+    combine(gdf -> gdf[argmin(gdf[!, METRIC]), :], groupby(_, :method))
     select(:method, :n, METRIC, :q)
 end
 
@@ -124,3 +124,10 @@ run_batch(gtdata, config_mai, savepath_best, savetrajectories=true)
         :q => ByRow(last)
     )
 end
+
+
+## Evaluación de óptima G corregida
+
+maigfn = InflationCoreMai(MaiG([0, 0.3231946132649845, 0.7717202163095981, 1])) 
+maig_config = dict_list(merge(genconfig, Dict(:inflfn => maigfn)))
+run_batch(gtdata, maig_config, savepath_best, savetrajectories=true)

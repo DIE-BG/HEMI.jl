@@ -7,7 +7,6 @@ using DataFrames, Chain, PrettyTables
 using Optim
 using Plots
 
-
 # Configuración de escenario
 EVALDATE = Date(2018, 12)
 PARAMSCENARIO = 36
@@ -29,6 +28,7 @@ df_mai = collect_results(savepath)
 # Obtener variantes de MAI a combinar
 combine_df = @chain df_mai begin 
     select(:measure, :corr, :inflfn, :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
+    filter(r -> !(r.inflfn.method isa MaiG && r.inflfn.method.n == 4),_) # Mejora para óptima de tipo G
     sort(:corr)
 end
 
@@ -52,8 +52,10 @@ tray_infl_pob = param(gtdata_eval)
 # Obtener los ponderadores de combinación óptimos para el cubo de trayectorias
 # de inflación MAI 
 
-# Combinar las variantes MAI para correlación ... (to-do)
-# a_optim = corr_combination_weights(tray_infl_mai, tray_infl_pob)
+# Combinar las variantes MAI para correlación
+a_optim = metric_combination_weights(tray_infl_mai, tray_infl_pob, 
+    metric = :corr,
+)
 
 
 ## Conformar un DataFrame de ponderadores y guardarlos en un directorio 
