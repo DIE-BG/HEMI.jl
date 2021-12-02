@@ -32,7 +32,7 @@ combine_df = @chain df_mai begin
     sort(:absme)
 end
 
-# Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
+## Obtener las trayectorias de los archivos guardados en el directorio tray_infl 
 # Genera un arreglo de 3 dimensiones de trayectorias (T, n, K)
 tray_infl_mai = mapreduce(hcat, combine_df.tray_path) do path
     load(path, "tray_infl")
@@ -53,9 +53,10 @@ tray_infl_pob = param(gtdata_eval)
 # de inflación MAI 
 
 # Combinar las variantes MAI para valor absoluto de error medio ... (to-do)
- a_optim = metric_combination_weights(tray_infl_mai, tray_infl_pob,
-           metric =:absme,
-           )
+a_optim = metric_combination_weights(tray_infl_mai, tray_infl_pob,
+    metric =:absme,
+    max_iterations = 250
+)
 
 
 ## Conformar un DataFrame de ponderadores y guardarlos en un directorio 
@@ -84,6 +85,10 @@ wsave(datadir(savepath, "absme-weights", "maioptfn.jld2"), "maioptfn", maioptfn)
 
 
 ## Evaluación de combinación lineal óptima 
+
+a_optim = wload(weightsfile, "mai_absme_weights")
+dfweights = wload(datadir(savepath, "absme-weights", "dfweights.jld2"), "dfweights")
+maioptfn = wload(datadir(savepath, "absme-weights", "maioptfn.jld2"), "maioptfn")
 
 tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
 metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)

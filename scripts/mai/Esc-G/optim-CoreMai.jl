@@ -19,7 +19,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 includet(scriptsdir("mai", "mai-corr-optimization.jl"))
 
 # Métrica de optimización 
-METRIC = :absme
+METRIC = :mse_bias
 
 ## Configuración para simulaciones
 
