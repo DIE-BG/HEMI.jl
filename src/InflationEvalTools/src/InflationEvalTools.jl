@@ -18,8 +18,9 @@ module InflationEvalTools
     using Reexport
     using StableRNGs
     import OnlineStats
-    using LinearAlgebra: I, det, mul!
+    using LinearAlgebra: I, det, mul!, dot
     using JuMP, Ipopt
+    import Optim 
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """
@@ -90,7 +91,11 @@ module InflationEvalTools
     export ridge_combination_weights, lasso_combination_weights
     export share_combination_weights
     export elastic_combination_weights
+    export metric_combination_weights
+    export absme_combination_weights
     include("combination/combination_weights.jl")
+    include("combination/metric_combination_weights.jl")
+    include("combination/absme_combination_weights.jl")
 
     ## Funciones para evaluación cruzada
     export add_ones

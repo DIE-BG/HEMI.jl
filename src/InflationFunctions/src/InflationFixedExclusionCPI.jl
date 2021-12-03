@@ -1,4 +1,4 @@
-# ## InflationFixedExclusionCPI.jl - Función de inflación de exclusión fija de gastos básicos
+# ## InflationFixedExclusionCPI.jl - Función de inflación de exclusión fija de gastos básicos utilizando fórmula del IPC
 
 
 """
@@ -74,7 +74,7 @@ end
 InflationFixedExclusionCPI(v_exc...) = InflationFixedExclusionCPI(v_exc)
 
 # Extender el método de nombre y de tag
-measure_name(inflfn::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos" * string(map(length, inflfn.v_exc))
+measure_name(inflfn::InflationFixedExclusionCPI) = "Exclusión fija de gastos básicos IPC " * string(map(length, inflfn.v_exc))
 
 # Método para obtener parámetros
 params(inflfn::InflationFixedExclusionCPI) = inflfn.v_exc

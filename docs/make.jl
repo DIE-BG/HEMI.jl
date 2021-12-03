@@ -48,6 +48,7 @@ makedocs(;
                 "eval/EscA/evaluacion-MAI.md",
                 "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
                 "eval/EscA/evaluacion-suavizamiento-exponencial.md",
+                "eval/EscA/evaluacion-mse-validacion-cruzada.md", 
             ],            
             "Escenario B" => [
                 "eval/EscB/evaluacion-percentiles.md", 
@@ -79,7 +80,10 @@ makedocs(;
                 # "eval/EscE/evaluacion-exclusion-fija.md",
                 "eval/EscE/evaluacion-MAI.md",
                 "eval/EscE/evaluacion-combinacion-lineal-mse.md",
-            ]   
+            ]
+        ],
+        "Resultados 2020" => [
+            "Combinación lineal MSE" => "eval/2020/combinacion-lineal-mse.md"
         ],
         "API" => 
             ["modules/API.md",

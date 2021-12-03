@@ -49,8 +49,9 @@ module InflationFunctions
     include("InflationTrimmedMeanWeighted.jl")
 
     ## Exclusión Fija de gastos básicos
-    export InflationFixedExclusionCPI
+    export InflationFixedExclusion, InflationFixedExclusionCPI
     include("InflationFixedExclusionCPI.jl")
+    include("InflationFixedExclusion.jl")
 
     ## Subyacente MAI (muestra ampliada implícitamente)
     export MaiG, MaiF, MaiFP
