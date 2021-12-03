@@ -46,8 +46,10 @@ makedocs(;
                 "eval/EscA/evaluacion-dynEx.md", 
                 "eval/EscA/evaluacion-exclusion-fija.md",
                 "eval/EscA/evaluacion-MAI.md",
-                "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
+                "eval/EscA/evaluacion-MediaSimple.md",
+                "eval/EscA/evaluacion-MediaPonderada.md",
                 "eval/EscA/evaluacion-suavizamiento-exponencial.md",
+                "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
                 "eval/EscA/evaluacion-mse-validacion-cruzada.md", 
             ],            
             "Escenario B" => [
@@ -56,6 +58,8 @@ makedocs(;
                 "eval/EscB/evaluacion-dynEx.md",
                 "eval/EscB/evaluacion-exclusion-fija.md",
                 "eval/EscB/evaluacion-MAI.md",
+                "eval/EscB/evaluacion-MediaSimple.md",
+                "eval/EscB/evaluacion-MediaPonderada.md",
                 "eval/EscB/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario C" => [
@@ -64,6 +68,8 @@ makedocs(;
                 "eval/EscC/evaluacion-MT.md", 
                 "eval/EscC/evaluacion-exclusion-fija.md", 
                 "eval/EscC/evaluacion-MAI.md",
+                "eval/EscC/evaluacion-MediaSimple.md",
+                "eval/EscC/evaluacion-MediaPonderada.md",
                 "eval/EscC/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario D" => [
