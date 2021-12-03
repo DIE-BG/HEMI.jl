@@ -1,25 +1,29 @@
-# varinteran.jl - basic operations to compute annual price change arrays
+# varinteran.jl - operaciones básicas para computar variaciones interanuales de
+# ìndices de precios 
 
 """
-    varinteran!(idx, base_index::Real = 100)
+    varinteran(idx::AbstractVector, base_index::Real = 100) -> Vector{<:AbstractFloat}
+    varinteran(cpimat::AbstractMatrix, base_index::Real = 100) -> Matrix{<:AbstractFloat}
+    varinteran(cpimat::AbstractMatrix, base_index::AbstractVector) -> Matrix{<:AbstractFloat}
 
-Compute annual price changes of `idx` index vector in place, using `base_index` as starting point.
-Fills observations 1 to 11 with NaN values.
+Obtiene variaciones interanuales del vector `idx` o de la matriz `cpimat`
+utilizando como índice base el número o vector `base_index`. 
+
+- Si `base_index` es un vector, se obtienen las variaciones interanuales
+  utilizando diferentes índices base para cada columna de `cpimat`. El vector
+  `base_index` debe tener la misma cantidad de columnas que `cpimat`.
 """
-function varinteran!(idx::AbstractVector, base_index::Real = 100)
-    l = length(idx)
-    for i in l:-1:13
-        @inbounds idx[i] = 100 * (idx[i] / idx[i-12] - 1)
-    end
-    idx[12] = 100 * (idx[12] / base_index - 1)
-    idx[1:11] .= NaN
-end
+function varinteran end 
+
 
 """
-    varinteran!(v, idx, base_index::Real = 100)
+    varinteran!(v::AbstractVector, idx::AbstractVector, base_index::Real = 100) -> Vector{<:AbstractFloat}
 
-Fill `v` vector of annual price changes of `idx` index vector using `base_index` as starting point.
-Usually `v` has 11 observations less than `idx`.
+Computa las variaciones interanuales del vector `idx` utilizando como índice
+base `base_index`. Si se provee `v`, los resultados son guardados en este
+vector, en vez del mismo `idx`.
+
+- El vector `v` tiene 11 observaciones menos que `idx`.
 """
 function varinteran!(v::AbstractVector, idx::AbstractVector, base_index::Real = 100)
     l = length(v)
@@ -29,12 +33,7 @@ function varinteran!(v::AbstractVector, idx::AbstractVector, base_index::Real = 
     v[1] = 100 * (idx[12] / base_index - 1)
 end
 
-
-"""
-    varinteran(idx::AbstractVector, base_index::Real = 100)
-
-Function to get a vector of annual price changes from a price index vector starting with `base_index`.
-"""
+# Implementación sobre AbstractVector
 function varinteran(idx::AbstractVector, base_index::Real = 100)
     r = length(idx)
     v = zeros(eltype(idx), r-11)
@@ -42,11 +41,7 @@ function varinteran(idx::AbstractVector, base_index::Real = 100)
     v
 end
 
-"""
-    varinteran(cpimat::AbstractMatrix, base_index::Real = 100)
-
-Function to get a matrix of annual price changes from a price index matrix starting with `base_index`.
-"""
+# Implementación sobre AbstractMatrix
 function varinteran(cpimat::AbstractMatrix, base_index::Real = 100)
     r, c = size(cpimat)
     vmat = zeros(eltype(cpimat), r-11, c)
@@ -58,11 +53,7 @@ function varinteran(cpimat::AbstractMatrix, base_index::Real = 100)
     vmat
 end
 
-"""
-    varinteran(cpimat::AbstractMatrix, base_index::AbstractVector)
-
-Function to get a matrix of annual price changes from a price index matrix starting with **vector** `base_index`.
-"""
+# Implementación que utiliza diferentes índices base 
 function varinteran(cpimat::AbstractMatrix, base_index::AbstractVector)
     r, c = size(cpimat)
     vmat = zeros(eltype(cpimat), r-11, c)

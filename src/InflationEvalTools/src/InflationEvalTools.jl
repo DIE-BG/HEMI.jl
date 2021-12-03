@@ -10,14 +10,17 @@ module InflationEvalTools
     using Dates
     using CPIDataBase
     using InflationFunctions
-    using Random, Distributions
+    import Random
+    using Distributions
     using ProgressMeter
     using Distributed
     using SharedArrays
     using Reexport
     using StableRNGs
-    using OnlineStats: Mean, fit!, merge, value
-    using LinearAlgebra: det, mul!
+    import OnlineStats
+    using LinearAlgebra: I, det, mul!
+    using JuMP, Ipopt
+    import Optim 
 
     ## Configuración por defecto de la semilla para el proceso de simulación
     """
@@ -64,7 +67,9 @@ module InflationEvalTools
 
     # Tipos para configuración de simulaciones
     export AbstractConfig, SimConfig, CrossEvalConfig
-    export convert_dict
+    export CompletePeriod, EvalPeriod, eval_periods, period_tag
+    export GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010
+    include("config/EvalPeriod.jl")
     include("config/SimConfig.jl")
     
     ## Funciones de generación de trayectorias
@@ -72,16 +77,28 @@ module InflationEvalTools
     include("simulate/gentrayinfl.jl")
     include("simulate/pargentrayinfl.jl") 
     
-    ## Funciones de evaluación  
-    export evalsim, makesim, dict_config, run_batch, eval_metrics
+    ## Funciones de evaluación y métricas   
+    export evalsim, makesim, dict_config, run_batch
+    export eval_metrics, combination_metrics
     export eval_mse_online # Función de evaluación de MSE online 
     include("simulate/metrics.jl")
     include("simulate/simutils.jl")
     include("simulate/eval_mse_online.jl")
+    include("simulate/cvsimutils.jl") # funciones para metodología de validación cruzada
 
     ## Combinación óptima MSE de estimadores 
-    export combination_weights
+    export combination_weights, average_mats
+    export ridge_combination_weights, lasso_combination_weights
+    export share_combination_weights
+    export elastic_combination_weights
+    export metric_combination_weights
     include("combination/combination_weights.jl")
+    include("combination/metric_combination_weights.jl")
+
+    ## Funciones para evaluación cruzada
+    export add_ones
+    export crossvalidate
+    include("combination/cross_validation.jl")
 
     ## Funciones en desarrollo 
     include("dev/dev_pargentrayinfl.jl")

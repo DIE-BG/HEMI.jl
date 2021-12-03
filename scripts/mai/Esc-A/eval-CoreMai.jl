@@ -10,6 +10,10 @@ addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 
+# Definimos directorios para almacenar los resultados 
+savepath = datadir("results", "CoreMai", "Esc-A")
+plotspath = mkpath(plotsdir("CoreMai", "Esc-A"))
+
 ##
 # ## Configuración para simulaciones
 
@@ -34,9 +38,6 @@ config_mai = Dict(
     :traindate => Date(2019,12),
     :nsim => 125_000) |> dict_list
 
-
-# Definimos el folder para almacenar los resultados 
-savepath = datadir("results", "CoreMai", "Esc-A")
 
 ## Ejecutar la simulación 
 # Usamos run_batch para gnenerar la evaluación de las configuraciones en config_mai
@@ -70,8 +71,6 @@ vscodedisplay(sens_metrics)
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 
 ## Gráficas de resultados
-
-plotspath = mkpath(plotsdir("CoreMai"))
 
 using Plots
 
