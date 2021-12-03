@@ -8,6 +8,7 @@ measure_tag(::InflationWeightedMean) = "WM"
 
 # Exclusión fija de gastos básicos 
 measure_tag(inflfn::InflationFixedExclusionCPI) = "FxEx-" * string(map(length, inflfn.v_exc))
+measure_tag(inflfn::InflationFixedExclusion) = "FxEx-" * string(map(length, inflfn.v_exc))
 
 # Percentiles Equiponderados
 measure_tag(inflfn::InflationPercentileEq) = "PerEq-" * string(round(100inflfn.k, digits=2))

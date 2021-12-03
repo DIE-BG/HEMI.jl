@@ -48,6 +48,7 @@ makedocs(;
                 "eval/EscA/evaluacion-MAI.md",
                 "eval/EscA/evaluacion-MediaSimple.md",
                 "eval/EscA/evaluacion-MediaPonderada.md",
+                "eval/EscA/evaluacion-suavizamiento-exponencial.md",
                 "eval/EscA/evaluacion-combinacion-lineal-mse.md", 
                 "eval/EscA/evaluacion-mse-validacion-cruzada.md", 
             ],            
@@ -59,6 +60,7 @@ makedocs(;
                 "eval/EscB/evaluacion-MAI.md",
                 "eval/EscB/evaluacion-MediaSimple.md",
                 "eval/EscB/evaluacion-MediaPonderada.md",
+                "eval/EscB/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario C" => [
                 "eval/EscC/evaluacion-percentiles.md",
@@ -68,6 +70,7 @@ makedocs(;
                 "eval/EscC/evaluacion-MAI.md",
                 "eval/EscC/evaluacion-MediaSimple.md",
                 "eval/EscC/evaluacion-MediaPonderada.md",
+                "eval/EscC/evaluacion-suavizamiento-exponencial.md",
             ],
             "Escenario D" => [
                 "eval/EscD/evaluacion-percentiles.md",
