@@ -81,10 +81,15 @@ module InflationEvalTools
     export evalsim, makesim, dict_config, run_batch
     export eval_metrics, combination_metrics
     export eval_mse_online # Función de evaluación de MSE online 
+    export eval_absme_online # Función de evaluación de ABSME online 
+    export eval_corr_online # Función de evaluación de CORR online 
     include("simulate/metrics.jl")
     include("simulate/simutils.jl")
     include("simulate/eval_mse_online.jl")
+    include("simulate/eval_absme_online.jl")
+    include("simulate/eval_corr_online.jl")
     include("simulate/cvsimutils.jl") # funciones para metodología de validación cruzada
+    
 
     ## Combinación óptima MSE de estimadores 
     export combination_weights, average_mats
