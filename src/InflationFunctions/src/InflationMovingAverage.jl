@@ -18,6 +18,9 @@ struct InflationMovingAverage{F <: InflationFunction} <: InflationFunction
     periods::Int
 end
 
+# 2. Extender el método de nombre 
+measure_name(mafn::InflationMovingAverage) = "Promedios Móvil de $(mafn.periods) períodos de " * measure_name(mafn.inflfn)
+
 # Método que opera sobre CountryStructure: computa la trayectoria de inflación
 # con la función inflfn y luego computa el promedio móvil de k períodos
 function (mafn::InflationMovingAverage)(cs::CountryStructure)
