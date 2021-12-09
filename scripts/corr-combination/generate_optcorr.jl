@@ -132,6 +132,7 @@ optcorr2022 = InflationCombination(
 
 # Guardar función de inflación 
 wsave(datadir(config_savepath, "optcorr2022", "optcorr2022.jld2"), "optcorr2022", optcorr2022)
+# optcorr2022 = wload(datadir(config_savepath, "optcorr2022", "optcorr2022.jld2"), "optcorr2022")
 
 
 ## Evaluación de la combinación lineal a dic-20
