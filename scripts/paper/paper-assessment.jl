@@ -60,7 +60,7 @@ run_batch(gtdata, assessment_config, savepath)
 
 df_results = collect_results(savepath)
 # prefix = "gt_b10_"
-prefix = ""
+prefix = "" # Empty means metrics over the full historical data
 
 main_results = @chain df_results begin 
     select(:measure, Symbol(prefix, :mse), Symbol(prefix, :mse_std_error))
@@ -85,11 +85,3 @@ pretty_table(main_results, tf=tf_latex_booktabs, formatters=ft_round(4))
 pretty_table(mse_decomp, tf=tf_latex_booktabs, formatters=ft_round(4))
 pretty_table(sens_metrics, tf=tf_latex_booktabs, formatters=ft_round(4))
 
-## Historic trajectories 
-
-# We create an Ensemble of inflation estimators
-obsfn = InflationEnsemble(inflfns...)
-obsfn(gtdata)
-
-# Plot historic series of core inflation measures
-plot(obsfn, gtdata)
