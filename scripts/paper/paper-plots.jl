@@ -114,8 +114,10 @@ end
 # Get parametric inflation trajectory 
 param = InflationParameter(paramfn, resamplefn, trendfn)
 
+dates = infl_dates(gtdata20)
 population_traj = param(gtdata20)
-plot(infl_dates(gtdata20), population_traj,
+
+plot(dates, population_traj,
     label = false, 
     linewidth = 3, 
     grid = false, 
@@ -123,6 +125,133 @@ plot(infl_dates(gtdata20), population_traj,
 )
 
 savefig(joinpath(plots_savepath, "parametric_inflation.png"))
+
+
+## Population trajectory, with and without stochastic trend 
+# Shows the population parameter with and without trend 
+
+# Plot the untrended parametric inflation
+untrended_param = InflationParameter(paramfn, resamplefn, TrendIdentity())
+
+untrended_traj = untrended_param(gtdata20)
+date_ticks = first(dates):Month(24):last(dates)
+date_str = Dates.format.(date_ticks, dateformat"Y-m")
+
+p1 = plot(dates, untrended_traj, 
+    label = "Untrended parametric inflation", 
+    ylabel = "% change, year-on-year",
+    ylims = (1, 12),
+    linewidth = 2, 
+    xticks = (date_ticks, date_str),
+    xrotation = 45, 
+    legend = :bottomleft
+)
+
+# Plot the trended parametric inflation
+trended_param = InflationParameter(paramfn, resamplefn, trendfn)
+
+trended_traj = trended_param(gtdata20)
+p2 = plot(dates, trended_traj, 
+    label = "Trended parametric inflation", 
+    ylims = (1, 12),
+    linewidth = 2, 
+    xticks = (date_ticks, date_str),
+    xrotation = 45, 
+    legend = :bottomleft
+)
+
+# Make comparison plot
+plot(p1, p2, 
+    size = (800, 400),
+    layout = (1, 2),
+)
+
+savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
+
+
+## Comparison of inflation estimator formulas to apply to the population CPI data 
+
+
+# Evaluate the parametric inflation for the next inflation formulas
+formulas = [paramfn, InflationTotalCPI(), InflationWeightedMean()]
+label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"]
+# For this comparison, use this trend function 
+trendfn_comp = TrendIdentity() 
+
+param_traj_formulas = mapreduce(hcat, formulas) do fn 
+    param = InflationParameter(fn, resamplefn, trendfn_comp)
+    param(gtdata20)
+end
+
+# Get the trended formulas with the Random Walk function
+param_traj_trended_formulas = mapreduce(hcat, formulas) do fn 
+    param = InflationParameter(fn, resamplefn, trendfn)
+    param(gtdata20)
+end
+
+actual_rebase = [Date(2010, 12)]
+synthetic_rebase = [Date(2005, 12), Date(2015, 12)]
+
+# Untrended formulas
+
+p1 = plot(dates, param_traj_formulas,
+    label = label_formulas, 
+    ylabel = "% change, year-on-year",
+    ylims = (1, 15),
+    linewidth = 2, 
+    xticks = (date_ticks, date_str),
+    xrotation = 45, 
+    legend = :topleft
+)
+
+vline!(p1, actual_rebase, 
+    linewidth = 2, 
+    color = :black, 
+    alpha = 0.5,
+    label = "Actual CPI rebase"
+)
+
+vline!(p1, synthetic_rebase, 
+    linewidth = 1.5, #[1.5 1.5], 
+    color = :black, #[:blue :blue], 
+    linestyle = :dash, #[:dash :dash], 
+    alpha = 0.5, #[0.5 0.5],
+    label = "Synthetic CPI rebase"
+)
+
+# Trended formulas
+p2 = plot(dates, param_traj_trended_formulas,
+    label = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"], 
+    ylims = (1, 15),
+    linewidth = 2, 
+    xticks = (date_ticks, date_str),
+    xrotation = 45, 
+    legend = false
+)
+
+vline!(p2, actual_rebase, 
+    linewidth = 2, 
+    color = :black, 
+    alpha = 0.5,
+    label = "Actual CPI rebase"
+)
+
+vline!(p2, synthetic_rebase, 
+    linewidth = 1.5, #[1.5 1.5], 
+    color = :black, #[:blue :blue], 
+    linestyle = :dash, #[:dash :dash], 
+    alpha = 0.5, #[0.5 0.5],
+    label = "Synthetic CPI rebase"
+)
+
+
+# Make comparison plot
+plot(p1, p2, 
+    size = (800, 400),
+    layout = (1, 2),
+)
+
+savefig(joinpath(plots_savepath, "inflation_formulas.pdf"))
 
 
 ## Plot historic trajectories 
