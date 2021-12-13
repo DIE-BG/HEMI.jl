@@ -134,6 +134,7 @@ savefig(joinpath(plots_savepath, "parametric_inflation.png"))
 untrended_param = InflationParameter(paramfn, resamplefn, TrendIdentity())
 
 untrended_traj = untrended_param(gtdata20)
+dates = infl_dates(gtdata20)
 date_ticks = first(dates):Month(24):last(dates)
 date_str = Dates.format.(date_ticks, dateformat"Y-m")
 
@@ -142,6 +143,7 @@ p1 = plot(dates, untrended_traj,
     ylabel = "% change, year-on-year",
     ylims = (1, 12),
     linewidth = 2, 
+    guidefontsize = 8,
     xticks = (date_ticks, date_str),
     xrotation = 45, 
     legend = :bottomleft
@@ -155,15 +157,36 @@ p2 = plot(dates, trended_traj,
     label = "Trended parametric inflation", 
     ylims = (1, 12),
     linewidth = 2, 
+    guidefontsize = 8,
     xticks = (date_ticks, date_str),
     xrotation = 45, 
     legend = :bottomleft
 )
 
+factor_period = Date(2001, 1):Month(1):Date(2020, 12)
+factor = log.(trendfn.trend[1:length(factor_period)])
+p3 = plot(factor_period, factor,
+    label = "Random walk process", 
+    # ylabel = "",
+    ylims = (-1, 1),
+    linewidth = 2, 
+    guidefontsize = 8,
+    xticks = (date_ticks, date_str),
+    xrotation = 45, 
+    legend = :bottomleft
+)
+hline!([0],
+    linewidth = 2, 
+    color = :gray, 
+    linestyle = :dash, 
+    alpha = 0.5,
+    label = false
+)
+
 # Make comparison plot
-plot(p1, p2, 
+plot(p3, p1, p2, 
     size = (800, 400),
-    layout = (1, 2),
+    layout = (1, 3),
 )
 
 savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
@@ -199,6 +222,7 @@ p1 = plot(dates, param_traj_formulas,
     ylabel = "% change, year-on-year",
     ylims = (1, 15),
     linewidth = 2, 
+    guidefontsize = 8,
     xticks = (date_ticks, date_str),
     xrotation = 45, 
     legend = :topleft
@@ -224,6 +248,7 @@ p2 = plot(dates, param_traj_trended_formulas,
     label = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"], 
     ylims = (1, 15),
     linewidth = 2, 
+    guidefontsize = 8,
     xticks = (date_ticks, date_str),
     xrotation = 45, 
     legend = false
