@@ -138,10 +138,36 @@ optabsme2022 = wload(datadir(config_savepath, "optabsme2022", "optabsme2022.jld2
 
 ## Evaluación de la combinación lineal a dic-20
 
-tray_infl_opt = sum(tray_infl[:, components_mask, :] .* a_optim', dims=2)
-metrics = eval_metrics(tray_infl_opt, tray_infl_pob)
-@info "Métricas de evaluación:" metrics...
+a_optim = optabsme2022.weights[1:end-1]
 
+eval_window = periods_filter
+tray_infl_opt = sum(tray_infl[eval_window, components_mask, :] .* a_optim', dims=2)
+metrics = eval_metrics(tray_infl_opt, tray_infl_pob[eval_window])
+combined_results_10 = DataFrame(metrics)
+combined_results_10[!, :measure] = [optabsme2022.name]
+combined_results_10
+
+eval_window = (:)
+tray_infl_opt = sum(tray_infl[eval_window, components_mask, :] .* a_optim', dims=2)
+metrics = eval_metrics(tray_infl_opt, tray_infl_pob[eval_window])
+historic_df = DataFrame(metrics)
+historic_df[!, :measure] = [optabsme2022.name]
+historic_df
+
+## DataFrame de resultados
+
+weights_period_results = [
+    df_results[:, [:measure, :gt_b10_absme]]; 
+    select(combined_results_10, :measure, :absme => :gt_b10_absme)
+]
+
+historic_results = [
+    df_results[:, [:measure, :absme]]; 
+    select(historic_df, :measure, :absme)
+]
+
+optabsme_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
+wsave(datadir(config_savepath, "optabsme2022", "optabsme2022_evalresults.jld2"), "optabsme_evalresults", optabsme_evalresults)
 
 ## Trayectorias históricas
 
