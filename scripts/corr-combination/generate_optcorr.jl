@@ -2,11 +2,15 @@ using DrWatson
 @quickactivate "HEMI" 
 
 using HEMI 
+
+## Parallel processing
 using Distributed
 nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
+## Other libraries
 using DataFrames, Chain
+using Plots
 
 ## Directorios de resultados 
 config_savepath = datadir("results", "corr-combination", "Esc-F")
@@ -72,7 +76,7 @@ config_corr = Dict(
 
 run_batch(gtdata, config_corr, config_savepath)
 
-## Combinación de valor absoluto de error medio 
+## Combinación de correlacion 
 df_results = collect_results(config_savepath)
 
 @chain df_results begin 
@@ -107,8 +111,12 @@ functions = combine_df.inflfn
 components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in functions]
 # components_mask = [true for _ in functions]
 
+# Filtro de períodos, optimización de combinación lineal en período dic-2011 - dic-2020
+combine_period = EvalPeriod(Date(2011, 12), Date(2020, 12), "combperiod") 
+periods_filter = eval_periods(gtdata_eval, combine_period)
+
 # Combinación de estimadores para minimizar el CORR
-c_optim = metric_combination_weights(tray_infl[:, components_mask, :], tray_infl_pob;
+c_optim = metric_combination_weights(tray_infl[periods_filter, components_mask, :], tray_infl_pob[periods_filter];
     metric = :corr, 
     w_start = Float32[0.05, 0.05, 0.20, 0.20, 0.25, 0.25]
 )
@@ -132,29 +140,50 @@ optcorr2022 = InflationCombination(
 
 # Guardar función de inflación 
 wsave(datadir(config_savepath, "optcorr2022", "optcorr2022.jld2"), "optcorr2022", optcorr2022)
-# optcorr2022 = wload(datadir(config_savepath, "optcorr2022", "optcorr2022.jld2"), "optcorr2022")
+optcorr2022 = wload(datadir(config_savepath, "optcorr2022", "optcorr2022.jld2"), "optcorr2022")
 
 
 ## Evaluación de la combinación lineal a dic-20
 
-tray_infl_opt = sum(tray_infl[:, components_mask, :] .* c_optim', dims=2)
-metrics = eval_metrics(tray_infl_opt, tray_infl_pob)
-@info "Métricas de evaluación:" metrics...
+eval_window = periods_filter
+eval_window_hist = (:)
 
+tray_infl_opt = sum(tray_infl[eval_window, components_mask, :] .* c_optim', dims=2)
+metrics = eval_metrics(tray_infl_opt, tray_infl_pob[eval_window], prefix = "gt_b10")
+
+tray_infl_opt_hist = sum(tray_infl[eval_window_hist, components_mask, :] .* c_optim', dims=2)
+metrics_hist = eval_metrics(tray_infl_opt_hist, tray_infl_pob[eval_window_hist])
+
+combined_results_10 = DataFrame(metrics)
+combined_results_10[!, :measure] = [optcorr2022.name]
+
+historic_df = DataFrame(metrics_hist)
+historic_df[!, :measure] = [optcorr2022.name]
+
+weights_period_results = [
+    df_results[:, [:measure, :gt_b10_corr]]; 
+    select(combined_results_10, :measure, :gt_b10_corr)
+]
+
+historic_results = [
+    df_results[:, [:measure, :corr]]; 
+    select(historic_df, :measure, :corr)
+]
+
+optcorr_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
+wsave(datadir(config_savepath, "optcorr2022", "optcorr2022_evalresults.jld2"), "optcorr_evalresults", optcorr_evalresults)
 
 ## Trayectorias históricas
 
 historic_df = DataFrame(dates = infl_dates(gtdata), 
     optmse2022 = optmse2022(gtdata),
     optabsme2022 = optabsme2022(gtdata), 
-    optcorr2022 = optcorr2022(gtdata)
+    optcorr2022 = optcorr2022(gtdata),
 )
 
 println(historic_df)
 
 ## Grafica de trayectorias y comparación con óptima MSE 
-
-using Plots
 
 p1 = plot(InflationTotalCPI(), gtdata)
 plot!(optmse2022, gtdata)
