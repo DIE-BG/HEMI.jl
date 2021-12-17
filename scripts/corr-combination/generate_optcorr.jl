@@ -181,6 +181,8 @@ historic_df = DataFrame(dates = infl_dates(gtdata),
     optcorr2022 = optcorr2022(gtdata),
 )
 
+
+
 println(historic_df)
 
 ## Grafica de trayectorias y comparación con óptima MSE 
