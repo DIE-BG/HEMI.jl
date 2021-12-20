@@ -56,14 +56,14 @@ MSE_optimization = DataFrame(
 ABSME_optimization = DataFrame(
     "Fecha"  => idx_dates,
     "Índice" => optabsme2022(gtdata, CPIIndex()),
-    "Combinación lineal óptima ABSME" =>  vcat(fill(missing, 11), optmse2022(gtdata))
+    "Combinación lineal óptima ABSME" =>  vcat(fill(missing, 11), optabsme2022(gtdata))
 )
 
 # CORR_optimization
 CORR_optimization = DataFrame(
     "Fecha"  => idx_dates,
     "Índice" => optcorr2022(gtdata, CPIIndex()),
-    "Combinación lineal óptima CORR" =>  vcat(fill(missing, 11), optmse2022(gtdata))
+    "Combinación lineal óptima CORR" =>  vcat(fill(missing, 11), optcorr2022(gtdata))
 )
 
 # MSE_optimization_final_weights
