@@ -73,14 +73,14 @@ temp1 = reshape(temp1, (1,7))
 MSE_optimization_final_weights = DataFrame(temp1,temp2)
 
 # ABSME_optimization_final_weights
-temp1 = components(optabsme2022).weights
-temp2 = components(optabsme2022).measure
+temp1 = components(optabsme2022)[[5,6,1,3,4,7,2],:].weights   #Para orden correcto
+temp2 = components(optabsme2022)[[5,6,1,3,4,7,2],:].measure   #Para orden correcto
 temp1 = reshape(temp1, (1,7))
 ABSME_optimization_final_weights = DataFrame(temp1,temp2)
 
 # CORR_optimization_final_weights
-temp1 = components(optcorr2022).weights
-temp2 = components(optcorr2022).measure
+temp1 = components(optcorr2022)[[4,1,6,3,2,7,5],:].weights   #Para orden correcto
+temp2 = components(optcorr2022)[[4,1,6,3,2,7,5],:].measure   #Para orden correcto
 temp1 = reshape(temp1, (1,7))
 CORR_optimization_final_weights = DataFrame(temp1,temp2)
 
@@ -93,7 +93,7 @@ MSE_optimization_index_components = hcat(df1, df2)
 insertcols!(MSE_optimization_index_components, 1, "Fecha" => idx_dates)
 
 #ABSME_optimization_index_components
-opt_components = components(optabsme2022)
+opt_components = components(optabsme2022)[[5,6,1,3,4,7,2],:]   #Para orden correcto
 mai_components = components(optmai2018_absme)
 df1 = DataFrame(optabsme2022.ensemble(gtdata, CPIIndex()), opt_components.measure)
 df2 = DataFrame(optmai2018_absme.ensemble(gtdata, CPIIndex()), mai_components.measure)
@@ -101,7 +101,7 @@ ABSME_optimization_index_components = hcat(df1, df2)
 insertcols!(ABSME_optimization_index_components, 1, "Fecha" => idx_dates)
 
 #CORR_optimization_index_components
-opt_components = components(optcorr2022)
+opt_components = components(optcorr2022)[[4,1,6,3,2,7,5],:]   #Para orden correcto
 mai_components = components(optmai2018_corr)
 df1 = DataFrame(optcorr2022.ensemble(gtdata, CPIIndex()), opt_components.measure)
 df2 = DataFrame(optmai2018_corr.ensemble(gtdata, CPIIndex()), mai_components.measure)
@@ -117,7 +117,7 @@ MSE_optimization_interannual_components = hcat(df1, df2)
 insertcols!(MSE_optimization_interannual_components, 1, "Fecha" => dates)
 
 #ABSME_optimization_interannual_components
-opt_components = components(optabsme2022)
+opt_components = components(optabsme2022)[[5,6,1,3,4,7,2],:]  #Para orden correcto
 mai_components = components(optmai2018_absme)
 df1 = DataFrame(optabsme2022.ensemble(gtdata), opt_components.measure)
 df2 = DataFrame(optmai2018_absme.ensemble(gtdata), mai_components.measure)
@@ -125,7 +125,7 @@ ABSME_optimization_interannual_components = hcat(df1, df2)
 insertcols!(ABSME_optimization_interannual_components, 1, "Fecha" => dates)
 
 #CORR_optimization_interannual_components
-opt_components = components(optcorr2022)
+opt_components = components(optcorr2022)[[4,1,6,3,2,7,5],:]   #Para orden correcto
 mai_components = components(optmai2018_corr)
 df1 = DataFrame(optcorr2022.ensemble(gtdata), opt_components.measure)
 df2 = DataFrame(optmai2018_corr.ensemble(gtdata), mai_components.measure)
@@ -186,15 +186,15 @@ evalmse_savepath = datadir("results","mse-combination","Esc-E-Scramble-OptMAI","
 optmse2022_eval = wload(evalmse_savepath,"optmse_evalresults")
 
 evalabsme_savepath = datadir("results","absme-combination","Esc-G","optabsme2022", "optabsme2022_evalresults.jld2")
-optabsme2022_eval = wload(evalabsme_savepath,"optabsme_evalresults")
+optabsme2022_eval = wload(evalabsme_savepath,"optabsme_evalresults")[[6,7,4,5,2,3,1,8],:]  #Para orden correcto
 
 evalcorr_savepath = datadir("results","corr-combination","Esc-F","optcorr2022", "optcorr2022_evalresults.jld2")
-optcorr2022_eval = wload(evalcorr_savepath,"optcorr_evalresults")
+optcorr2022_eval = wload(evalcorr_savepath,"optcorr_evalresults")[[6,7,4,5,2,3,1,8],:]  #Para orden correcto
 
 mai_savepath = datadir("results","CoreMai","metrics-2022","opt_mai_eval")
 mse_mai = wload(joinpath(mai_savepath,  "optmaimse_evalresults.jld2"), "optmai_mse")
-absme_mai = wload(joinpath(mai_savepath,  "optmaiabsme_evalresults.jld2"), "optmai_absme")
-corr_mai = wload(joinpath(mai_savepath,  "optmaicorr_evalresults.jld2"), "optmai_corr")
+absme_mai = wload(joinpath(mai_savepath,  "optmaiabsme_evalresults.jld2"), "optmai_absme")[[2,3,1],:]  #Para orden correcto
+corr_mai = wload(joinpath(mai_savepath,  "optmaicorr_evalresults.jld2"), "optmai_corr")[[3,2,1],:]  #Para orden correcto
 
 
 ## ------------------------------------------------------------------------------
