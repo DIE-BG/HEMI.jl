@@ -197,6 +197,7 @@ absme_mai = wload(joinpath(mai_savepath,  "optmaiabsme_evalresults.jld2"), "optm
 corr_mai = wload(joinpath(mai_savepath,  "optmaicorr_evalresults.jld2"), "optmai_corr")[[3,2,1],:]  #Para orden correcto
 
 
+
 ## ------------------------------------------------------------------------------
 # DATAFRAMES DE EVALUACION 
 

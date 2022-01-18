@@ -2,11 +2,15 @@ using DrWatson
 @quickactivate "HEMI" 
 
 using HEMI 
+
+## Parallel processing
 using Distributed
 nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
+## Otras librerías
 using DataFrames, Chain
+using Plots
 
 ## Directorios de resultados 
 config_savepath = datadir("results", "absme-combination", "Esc-G")
@@ -105,8 +109,12 @@ functions = combine_df.inflfn
 components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in functions]
 # components_mask = [true for _ in functions]
 
+# Filtro de períodos, optimización de combinación lineal en período dic-2011 - dic-2020
+combine_period = EvalPeriod(Date(2011, 12), Date(2020, 12), "combperiod") 
+periods_filter = eval_periods(gtdata_eval, combine_period)
+
 # Combinación de estimadores para minimizar el ABSME
-a_optim = absme_combination_weights(tray_infl[:, components_mask, :], tray_infl_pob,
+a_optim = absme_combination_weights(tray_infl[periods_filter, components_mask, :], tray_infl_pob[periods_filter],
     show_status = true
 )
 
@@ -125,20 +133,48 @@ optabsme2022 = InflationCombination(
 
 # Guardar función de inflación 
 wsave(datadir(config_savepath, "optabsme2022", "optabsme2022.jld2"), "optabsme2022", optabsme2022)
+optabsme2022 = wload(datadir(config_savepath, "optabsme2022", "optabsme2022.jld2"), "optabsme2022")
 
 
 ## Evaluación de la combinación lineal a dic-20
 
-tray_infl_opt = sum(tray_infl[:, components_mask, :] .* a_optim', dims=2)
-metrics = eval_metrics(tray_infl_opt, tray_infl_pob)
-@info "Métricas de evaluación:" metrics...
+a_optim = optabsme2022.weights[1:end-1]
 
+eval_window = periods_filter
+tray_infl_opt = sum(tray_infl[eval_window, components_mask, :] .* a_optim', dims=2)
+metrics = eval_metrics(tray_infl_opt, tray_infl_pob[eval_window])
+combined_results_10 = DataFrame(metrics)
+combined_results_10[!, :measure] = [optabsme2022.name]
+combined_results_10
+
+eval_window = (:)
+tray_infl_opt = sum(tray_infl[eval_window, components_mask, :] .* a_optim', dims=2)
+metrics = eval_metrics(tray_infl_opt, tray_infl_pob[eval_window])
+historic_df = DataFrame(metrics)
+historic_df[!, :measure] = [optabsme2022.name]
+historic_df
+
+## DataFrame de resultados
+
+weights_period_results = [
+    df_results[:, [:measure, :gt_b10_absme]]; 
+    select(combined_results_10, :measure, :absme => :gt_b10_absme)
+]
+
+historic_results = [
+    df_results[:, [:measure, :absme]]; 
+    select(historic_df, :measure, :absme)
+]
+
+optabsme_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
+wsave(datadir(config_savepath, "optabsme2022", "optabsme2022_evalresults.jld2"), "optabsme_evalresults", optabsme_evalresults)
 
 ## Trayectorias históricas
 
 historic_df = DataFrame(dates = infl_dates(gtdata), 
-    optabsme2022 = optabsme2022(gtdata), 
-    optmse2022 = optmse2022(gtdata))
+    optmse2022 = optmse2022(gtdata),
+    optabsme2022 = optabsme2022(gtdata)
+)
 println(historic_df)
 
 ## Grafica de trayectorias y comparación con óptima MSE 
