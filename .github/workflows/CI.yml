@@ -25,6 +25,7 @@ jobs:
           cache-name: cache-packages
         with:
           path: ~/.julia
+          cache-registries: "true"
           key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
