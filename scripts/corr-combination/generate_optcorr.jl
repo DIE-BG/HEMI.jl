@@ -29,7 +29,7 @@ include(scriptsdir("mse-combination", "optmse2022.jl"))
 
 ##  ----------------------------------------------------------------------------
 #   Configuración de simulación para generación de trayectorias de combinación
-#   de valor absoluto de error medio
+#   de correlación
 #   ----------------------------------------------------------------------------
 
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
@@ -63,8 +63,7 @@ inflfn = InflationEnsemble(
 ##  ----------------------------------------------------------------------------
 #   Generación de datos de simulación 
 #
-#   Generar datos de simulación para algoritmo de combinación de valor absoluto
-#   de error medio. 
+#   Generar datos de simulación para algoritmo de combinación de correlación. 
 #   ----------------------------------------------------------------------------
 
 config_corr = Dict(
@@ -132,7 +131,7 @@ dfweights = DataFrame(
     inflfn = functions[components_mask]
 )
 
-# Combinación lineal óptima para valor absoluto de error medio
+# Combinación lineal óptima para correlación
 optcorr2022 = InflationCombination(
     dfweights.inflfn..., infxexc,
     Float32[dfweights.weight..., 0], 
