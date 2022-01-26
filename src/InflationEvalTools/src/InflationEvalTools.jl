@@ -18,6 +18,7 @@ module InflationEvalTools
     using Reexport
     using StableRNGs
     import OnlineStats
+    import StatsBase
     using LinearAlgebra: I, det, mul!, dot
     using JuMP, Ipopt
     import Optim 
@@ -34,6 +35,7 @@ module InflationEvalTools
 
     ## Funciones de remuestreo de bases del IPC
     export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths, ResampleGSBBMod
+    export ResampleScrambleTrended
     export get_param_function, method_name, method_tag
     
     # Métodos generales para funciones de remuestreo 
@@ -49,6 +51,10 @@ module InflationEvalTools
     include("resample/ResampleGSBBMod.jl")
     # Método de remuestreo con Generalized Seasonal Block Bootstrap 
     include("resample/ResampleGSBB.jl")
+    # Método de remuestreo de remuestreo utilizando selección de mismos meses de
+    # ocurrencia con distribuciones ponderadas para mantener la correlación en
+    # el remuestreo
+    include("resample/ResampleScrambleTrended.jl")
     
     ## Funciones para aplicación de tendencia
     export RWTREND
