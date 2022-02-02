@@ -109,3 +109,8 @@ function (inflfn::InflationPercentileWeighted)(base::VarCPIBase{T}) where T
     
     k_interm
 end
+
+function InflationPercentileWeighted(vec::Vector{<:Real})
+    x = vec[1]
+    return InflationPercentileWeighted(x)
+end

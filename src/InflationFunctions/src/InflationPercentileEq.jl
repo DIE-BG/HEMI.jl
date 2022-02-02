@@ -110,3 +110,8 @@ function (inflfn::InflationPercentileEq)(base::VarCPIBase{T}) where T
     
     k_interm
 end
+
+function InflationPercentileEq(vec::Vector{<:Real})
+    x = vec[1]
+    return InflationPercentileEq(x)
+end
