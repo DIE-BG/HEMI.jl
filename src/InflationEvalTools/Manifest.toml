@@ -45,10 +45,10 @@ uuid = "6e34b625-4abd-537c-b88f-471c36dfa7a0"
 version = "1.0.8+0"
 
 [[CPIDataBase]]
-deps = ["DataFrames", "Dates", "LinearAlgebra", "Random"]
-path = "../CPIDataBase"
-uuid = "e4c88d09-b53c-432a-84e8-7deb46235234"
-version = "0.2.0"
+deps = ["AbstractTrees", "DataFrames", "Dates", "PrettyTables"]
+git-tree-sha1 = "c26ce411de6dac15e20c77977d05fdc5d75bbb33"
+uuid = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
+version = "0.6.2"
 
 [[CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
@@ -228,9 +228,9 @@ version = "0.1.1"
 
 [[InflationFunctions]]
 deps = ["CPIDataBase", "RecipesBase", "SparseArrays", "Statistics", "StatsBase"]
-path = "../InflationFunctions"
-uuid = "1672e640-55d7-4545-bfdd-2ddb9b2bdcf6"
-version = "0.1.0"
+git-tree-sha1 = "707f2222178f92c1822e55a5d4fdd03cc9bd20a6"
+uuid = "3d0454e0-948f-4743-b998-4d73da99f8a8"
+version = "0.2.1"
 
 [[InlineStrings]]
 deps = ["Parsers"]
