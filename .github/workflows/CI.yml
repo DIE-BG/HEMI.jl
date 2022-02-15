@@ -31,10 +31,11 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
+      - run: julia -e 'import Pkg; Pkg.Registry.add(Pkg.RegistrySpec(url = "https://github.com/DIE-BG/RegistryDIE"))'
       - run: |
           julia --project=@. -e '
             using Pkg
             Pkg.instantiate() 
-            Pkg.test(["CPIDataBase", "InflationFunctions", "InflationEvalTools"])' 
+            Pkg.test(["InflationEvalTools"])' 
       - run: |
           julia --project=@. -e 'include(joinpath("scripts", "test", "runtests.jl"))'            
