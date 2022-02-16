@@ -61,12 +61,6 @@ git-tree-sha1 = "ecdec412a9abc8db54c0efc5548c64dfce072058"
 uuid = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 version = "0.5.10"
 
-[[BufferedStreams]]
-deps = ["Compat", "Test"]
-git-tree-sha1 = "5d55b9486590fdda5905c275bb21ce1f0754020f"
-uuid = "e1450e63-4bb3-523b-b2a4-4ffa8c0fd77d"
-version = "1.0.0"
-
 [[Bzip2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "19a35467a82e236ff51bc17a3a44b69ef35185a2"
@@ -78,12 +72,6 @@ deps = ["AbstractTrees", "DataFrames", "Dates", "PrettyTables"]
 git-tree-sha1 = "c26ce411de6dac15e20c77977d05fdc5d75bbb33"
 uuid = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
 version = "0.6.2"
-
-[[CPIDataGT]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "JLD2", "Reexport"]
-git-tree-sha1 = "6db359b7037b0463aea17bd5523c1e8a52640dc8"
-uuid = "39a16359-57f0-4aba-960c-77dbb3b4d29c"
-version = "0.2.1"
 
 [[CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
@@ -434,20 +422,8 @@ git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.2"
 
-[[HDF5]]
-deps = ["Compat", "HDF5_jll", "Libdl", "Mmap", "Random", "Requires"]
-git-tree-sha1 = "ed6c28c220375a214d07fba0e3d3382d8edd779e"
-uuid = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
-version = "0.16.2"
-
-[[HDF5_jll]]
-deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "OpenSSL_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "bab67c0d1c4662d2c4be8c6007751b0b6111de5c"
-uuid = "0234f1f7-429e-5d53-9886-15a909be8d59"
-version = "1.12.1+0"
-
 [[HEMI]]
-deps = ["BenchmarkTools", "CPIDataBase", "CPIDataGT", "CSV", "Chain", "Compose", "DataFrames", "Dates", "Distributions", "DrWatson", "Gadfly", "InflationEvalTools", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LaTeXStrings", "MAT", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "RecipesBase", "Reexport", "StaticArrays", "Statistics", "StatsBase", "StringEncodings", "TerminalPager"]
+deps = ["BenchmarkTools", "CPIDataBase", "CSV", "Chain", "Compose", "DataFrames", "Dates", "Distributions", "DrWatson", "Gadfly", "InflationEvalTools", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LaTeXStrings", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "RecipesBase", "Reexport", "StaticArrays", "Statistics", "StatsBase", "StringEncodings", "TerminalPager"]
 path = ".."
 uuid = "e7656710-d5c8-11eb-389b-4b79a3cea986"
 version = "0.1.0"
@@ -730,12 +706,6 @@ version = "0.3.6"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
-
-[[MAT]]
-deps = ["BufferedStreams", "CodecZlib", "HDF5", "SparseArrays"]
-git-tree-sha1 = "971be550166fe3f604d28715302b58a3f7293160"
-uuid = "23992714-dd62-5051-b70f-ba57cb901cac"
-version = "0.10.3"
 
 [[METIS_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]

@@ -68,12 +68,6 @@ git-tree-sha1 = "c26ce411de6dac15e20c77977d05fdc5d75bbb33"
 uuid = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
 version = "0.6.2"
 
-[[CPIDataGT]]
-deps = ["CPIDataBase", "CSV", "DataFrames", "Dates", "JLD2", "Reexport"]
-git-tree-sha1 = "6db359b7037b0463aea17bd5523c1e8a52640dc8"
-uuid = "39a16359-57f0-4aba-960c-77dbb3b4d29c"
-version = "0.2.1"
-
 [[CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
 git-tree-sha1 = "9519274b50500b8029973d241d32cfbf0b127d97"
