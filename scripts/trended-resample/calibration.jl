@@ -80,10 +80,10 @@ savefig(joinpath(plots_path, "mse_difference.png"))
 
 ## Using Optim to find the minimum 
 
-res = optimize(p -> abs(mse_med(p) - mse_obs(p)), 0.3, 0.6)
+res = optimize(p -> abs(mse_med(p) - mse_obs(p)), 0.6, 0.8)
 @info "Valor óptimo con este criterio" Optim.minimizer(res)
 # ┌ Info: Valor óptimo con este criterio
-# └   Optim.minimizer(res) = 0.5050245612703521
+# └   Optim.minimizer(res) = 0.7036687156959144
 
 
 ## 
@@ -105,6 +105,7 @@ function plot_mse_obs(p; data=evaldata)
 end
 
 plot_mse_obs(p_opt)
+savefig(joinpath(plots_path, "mpa_vs_param_$p_opt.png"))
 
 function plot_mse_med(p; data=evaldata, K=10_000)
     inflfn = InflationWeightedMean() 
@@ -141,3 +142,4 @@ function plot_mse_med(p; data=evaldata, K=10_000)
 end
 
 plot_mse_med(p_opt)
+savefig(joinpath(plots_path, "simu_mpa_vs_param_$p_opt.png"))

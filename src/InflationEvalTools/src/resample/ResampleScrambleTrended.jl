@@ -12,11 +12,18 @@ get_param_function(fn::ResampleScrambleTrended) = cs -> param_rst(cs, fn.p)
 
 # Definition to operate over arbitrary matrix
 function (resamplefn::ResampleScrambleTrended)(vmat::AbstractMatrix, rng = Random.GLOBAL_RNG)
-    periods = size(vmat, 1)
+    periods, ngoods = size(vmat)
     indexes = Vector{Int}(undef, periods)
-    trended_inds!(indexes, resamplefn.p, rng)
-    # Create and return the scrambled copy of data
-    vmat[indexes, :]
+    
+    # Create and return the resampled series
+    resampled_vmat = similar(vmat)
+    # Procedure of weighted resampling is applied for every good or service in
+    # the vmat matrix
+    for j in 1:ngoods
+        trended_inds!(indexes, resamplefn.p, rng)
+        resampled_vmat[:, j] .= vmat[indexes, j]
+    end
+    resampled_vmat
 end
 
 ##  ----------------------------------------------------------------------------
