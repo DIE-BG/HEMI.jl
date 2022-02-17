@@ -107,7 +107,8 @@ function optimize_config(config, data;
     f = k -> eval_config(k, config, evaldata, tray_infl_param; K=config[:nsim], measure)
 
     if infl_constructor<:Union{InflationPercentileEq, InflationPercentileWeighted}
-        optres =  optimize(f, x0, LBFGS() , Optim.Options(iterations=maxiterations, x_tol= x_tol, f_tol=f_tol))
+        # optres =  optimize(f, 0.5f0, 0.8f0, Brent(), Optim.Options(iterations=maxiterations, x_tol= x_tol, f_tol=f_tol))
+        optres =  optimize(f, 0.5f0, 0.8f0)
 
     elseif infl_constructor<:Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, InflationDynamicExclusion}
         optres = optimize(f, bounds[1], bounds[2], x0, NelderMead(), Optim.Options(iterations=maxiterations, x_tol= x_tol, f_tol=f_tol))
@@ -165,13 +166,13 @@ end
         
 D = dict_list(Dict(
     :infltypefn => [InflationPercentileEq, 
-                    #=InflationPercentileWeighted, 
-                    InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, 
+                    InflationPercentileWeighted, 
+                    #=InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, 
                     InflationDynamicExclusion=#],
-    :resamplefn => ResampleScrambleTrended(0.5050245),
+    :resamplefn => ResampleScrambleTrended(0.7036687156959144),
     :trendfn => TrendIdentity(),
     :paramfn => InflationTotalRebaseCPI(36,2),
-    :nsim => 10_000,
+    :nsim => 100,
     :traindate => Date(2018, 12))
 )
 
