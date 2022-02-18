@@ -26,14 +26,14 @@ BOUNDS(x::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}})
 BOUNDS(x::Type{InflationDynamicExclusion}) = [[0,0],[5,5]]
 
 # Iniciales para instancias
-INITIAL(x::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [25.0, 75.0]
+INITIAL(x::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [15.0, 85.0]
 INITIAL(x::Union{InflationPercentileEq, InflationPercentileWeighted}) = [0.5]
-INITIAL(x::InflationDynamicExclusion) = [2.0,2.0]
+INITIAL(x::InflationDynamicExclusion) = [1.0, 1.0]
 
 # Iniciales para constructores
-INITIAL(x::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [25.0, 75.0]
+INITIAL(x::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [15.0, 85.0]
 INITIAL(x::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = [0.5]
-INITIAL(x::Type{InflationDynamicExclusion}) = [2.0,2.0]
+INITIAL(x::Type{InflationDynamicExclusion}) = [1.0, 1.0]
 
 
 function inside(x, bounds)
@@ -165,14 +165,15 @@ end
 
         
 D = dict_list(Dict(
-    :infltypefn => [InflationPercentileEq, 
+    :infltypefn => [#=InflationPercentileEq, 
                     InflationPercentileWeighted, 
-                    #=InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, 
-                    InflationDynamicExclusion=#],
+                    InflationTrimmedMeanEq, =#
+                    InflationTrimmedMeanWeighted, 
+                    InflationDynamicExclusion],
     :resamplefn => ResampleScrambleTrended(0.7036687156959144),
     :trendfn => TrendIdentity(),
     :paramfn => InflationTotalRebaseCPI(36,2),
-    :nsim => 100,
+    :nsim => 10_000,
     :traindate => Date(2018, 12))
 )
 
@@ -215,11 +216,23 @@ L
 #  Any[InflationTrimmedMeanWeighted, :mse, [16.61674875987502, 96.06609858745875], 0.718515157699585]
 #  Any[InflationDynamicExclusion, :mse, [0.6946824711747468, 2.4818083385471237], 0.6820622682571411]
 
+# Resultados con (0.5050245)ResampleScrambleTrended(0.7036687156959144)
+# 5-element Vector{Any}:
+#  Any[InflationPercentileEq, :mse, 0.7122512f0, 0.90292084f0]
+#  Any[InflationPercentileWeighted, :mse, 0.68783885f0, 0.8846867f0]
+#  Any[InflationTrimmedMeanEq, :mse, [29.390259825438264, 94.08079745918512], 0.8105813264846802]
+#  Any[InflationTrimmedMeanWeighted, :mse, [3.688406795488648, 99.08927255341023], 0.3123916983604431]
+#  Any[InflationDynamicExclusion, :mse, [1.5180517760790662, 3.6835528914126927], 0.40942177176475525]
 
+# Repetición de 100 simulaciones de estas familias
+# 2-element Vector{Any}:
+#  Any[InflationTrimmedMeanWeighted, :mse, [3.7399935508043645, 99.08745445245047], 0.3295079469680786]
+#  Any[InflationDynamicExclusion, :mse, [1.2463722449397676, 3.2525567985301906], 0.42266032099723816]
 
-
-
-
+# Repetición de 10000 simulaciones de estas familias
+# 2-element Vector{Any}:
+#  Any[InflationTrimmedMeanWeighted, :mse, [3.688400731807736, 99.08868544455818], 0.31238046288490295]
+#  Any[InflationDynamicExclusion, :mse, [1.5210907535757554, 3.698630036432531], 0.4094146490097046]
     
 
 

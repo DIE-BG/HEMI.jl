@@ -49,7 +49,7 @@ end
 
 # Diccionarios para exploración inicial (primero 100 vectores de exclusión)
 FxEx_00 = Dict(
-    :inflfn => INFL_FAMILY.(v_exc[1:100]), 
+    :inflfn => INFL_FAMILY.(v_exc[1:25]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
@@ -105,7 +105,7 @@ total
 
 # Diccionarios para exploración inicial (primero 100 vectores de exclusión)
 FxEx_10 = Dict(
-    :inflfn => INFL_FAMILY.(total[1:100]), 
+    :inflfn => INFL_FAMILY.(total[1:25]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
@@ -133,11 +133,15 @@ end
 
 exc_opt_10 = df10opt[1, :exclusiones_b10]
 println(exc_opt_10)
-
+FGT10.names[exc_opt_10]
 
 ## Observar la trayectoria observada 
 
 # Resultados con 100 simulaciones: 
+# ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
+# [29, 116, 31, 46, 39, 40, 186, 30, 35, 185])
+
+# Resultados con 10_000 simulaciones: 
 # ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
 # [29, 116, 31, 46, 39, 40, 186, 30, 35, 185])
 
