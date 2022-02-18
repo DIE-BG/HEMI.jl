@@ -9,6 +9,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 
 ## Otras librerías
 using DataFrames, Chain
+using PrettyTables
 using Plots
 
 ## Directorios de resultados 
@@ -166,8 +167,20 @@ historic_results = [
     select(historic_df, :measure, :mse)
 ]
 
-optabsme_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
-wsave(datadir(config_savepath, "ex_optmse2022", "optabsme2022_evalresults.jld2"), "optabsme_evalresults", optabsme_evalresults)
+optmse_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
+wsave(datadir(config_savepath, "ex_optmse2022", "optabsme2022_evalresults.jld2"), "optmse_evalresults", optmse_evalresults)
+
+pretty_table(
+    leftjoin(optmse_evalresults, components(ex_optmse2022), on=:measure),
+    tf=tf_markdown, 
+    formatters=ft_round(4)
+)
+
+pretty_table(
+    components(maioptfn),
+    tf=tf_markdown, 
+    formatters=ft_round(4)
+)
 
 ## Trayectorias históricas
 
