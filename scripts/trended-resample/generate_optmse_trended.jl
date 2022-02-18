@@ -12,41 +12,67 @@ using DataFrames, Chain
 using Plots
 
 ## Directorios de resultados 
-config_savepath = datadir("results", "trended-resample", "exercise-optmse2022")
-tray_dir = joinpath(config_savepath, "tray_infl")
-plots_savepath = mkpath(plotsdir("trended-resample", "mse-combination"))
+config_savepath = datadir("results", "trended-resample", "mse-combination")
+tray_dir = datadir(config_savepath, "tray_infl")
+plots_savepath = mkdir(plotsdir("trended-resample", "mse-combination"))
+
+# Directorios de resultados de combinación MAI 
+maioptfn_path = datadir("results", "trended-resample", "CoreMai", "BestOptim", "mse-weights", "maioptfn.jld2")
 
 # CountryStructure con datos hasta período de evaluación 
 FINAL_DATE = Date(2020, 12)
 gtdata_eval = GTDATA[FINAL_DATE]
 
-# Medidas que componen las óptima mse 2022
+# Para comparación con la óptima MSE 2022
 include(scriptsdir("mse-combination", "optmse2022.jl"))
 
 ##  ----------------------------------------------------------------------------
-#   Configuración de simulación para generación de trayectorias
+#   Configuración de simulación para generación de trayectorias de combinación
 #   ----------------------------------------------------------------------------
 
 ## Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
-resamplefn = ResampleScrambleTrended(0.5050245)
-trendfn = TrendIdentity() 
+resamplefn = ResampleScrambleTrended(0.7036687156959144)
+trendfn = TrendIdentity()
 paramfn = InflationTotalRebaseCPI(36, 2)
+
+## Medidas óptimas a diciembre de 2018
+
+# Cargar función de inflación MAI óptima
+optmai2018_mse = wload(maioptfn_path, "maioptfn")
+
+# Medida de exclusión fija óptima para minimizar el ABSME
+infxexc = InflationFixedExclusionCPI(
+    [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
+    [29, 116, 31, 46, 39, 40, 186, 30, 35, 185])
+
+inflfn = InflationEnsemble(
+    InflationPercentileEq(0.7122512f0), 
+    InflationPercentileWeighted(0.68783885f0), 
+    InflationTrimmedMeanEq(29.390259825438264, 94.08079745918512), 
+    InflationTrimmedMeanWeighted(3.688406795488648, 99.08927255341023), 
+    InflationDynamicExclusion(1.5180517760790662, 3.6835528914126927), 
+    infxexc,
+    optmai2018_mse
+)
 
 ##  ----------------------------------------------------------------------------
 #   Generación de datos de simulación 
+#
+#   Generar datos de simulación para algoritmo de combinación de valor absoluto
+#   de error medio. 
 #   ----------------------------------------------------------------------------
 
-config_ex_optmse2022 = Dict(
-    :inflfn => [optmse2022.ensemble.functions...], 
+config_mse = Dict(
+    :inflfn => [inflfn.functions...], 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
     :traindate => FINAL_DATE,
     :nsim => 10_000) |> dict_list
 
-run_batch(GTDATA, config_ex_optmse2022, config_savepath)
+run_batch(GTDATA, config_mse, config_savepath)
 
-## Combinación óptima 
+## Combinación de valor absoluto de error medio 
 df_results = collect_results(config_savepath)
 
 @chain df_results begin 
@@ -55,7 +81,7 @@ end
 
 # DataFrame de combinación 
 combine_df = @chain df_results begin 
-    select(:measure, :mse, :me, :inflfn, 
+    select(:measure, :mse, :me, :corr, :inflfn, 
         :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path)
     sort(:mse)
 end
@@ -85,8 +111,10 @@ components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in functions]
 combine_period = EvalPeriod(Date(2011, 12), FINAL_DATE, "combperiod") 
 periods_filter = eval_periods(gtdata_eval, combine_period)
 
-# Combinación de estimadores para minimizar el mse
-a_optim = share_combination_weights(tray_infl[periods_filter, components_mask, :], tray_infl_pob[periods_filter],
+# Combinación de estimadores para minimizar el ABSME
+a_optim = share_combination_weights(
+    tray_infl[periods_filter, components_mask, :], 
+    tray_infl_pob[periods_filter],
     show_status = true
 )
 
@@ -98,9 +126,9 @@ dfweights = DataFrame(
 
 # Combinación lineal óptima para valor absoluto de error medio
 ex_optmse2022 = InflationCombination(
-    dfweights.inflfn..., functions[.!components_mask]...,
+    dfweights.inflfn..., infxexc,
     Float32[dfweights.weight..., 0], 
-    "Subyacente óptima MSE 2022 (ejercicio)"
+    "Subyacente óptima MSE 2022 (experimental)"
 )
 
 # Guardar función de inflación 
@@ -138,9 +166,8 @@ historic_results = [
     select(historic_df, :measure, :mse)
 ]
 
-optmse_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
-@info "Resultados de evaluación" optmse_evalresults
-wsave(datadir(config_savepath, "ex_optmse2022", "ex_optmse2022_evalresults.jld2"), "optmse_evalresults", optmse_evalresults)
+optabsme_evalresults = innerjoin(historic_results, weights_period_results, on = :measure)
+wsave(datadir(config_savepath, "ex_optmse2022", "optabsme2022_evalresults.jld2"), "optabsme_evalresults", optabsme_evalresults)
 
 ## Trayectorias históricas
 
