@@ -39,7 +39,7 @@ paramfn = InflationTotalRebaseCPI(36, 2)
 ## Medidas óptimas a diciembre de 2018
 
 # Cargar función de inflación MAI óptima
-optmai2018_mse = wload(maioptfn_path, "maioptfn")
+maioptfn = wload(maioptfn_path, "maioptfn")
 
 # Medida de exclusión fija óptima para minimizar el ABSME
 infxexc = InflationFixedExclusionCPI(
@@ -53,7 +53,7 @@ inflfn = InflationEnsemble(
     InflationTrimmedMeanWeighted(3.688406795488648, 99.08927255341023), 
     InflationDynamicExclusion(1.5180517760790662, 3.6835528914126927), 
     infxexc,
-    optmai2018_mse
+    maioptfn
 )
 
 ##  ----------------------------------------------------------------------------
