@@ -12,21 +12,12 @@ using Distributed
 nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
-
-## Fronteras para instancias
-BOUNDS(::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = ([0, 0], [100, 100])
-BOUNDS(::Union{InflationPercentileEq, InflationPercentileWeighted}) = (0f0, 1f0)
-BOUNDS(::InflationDynamicExclusion) = ([0,0],[5,5])
+## Optimización de medidas
 
 # Fronteras para constructores
 BOUNDS(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = ([0, 0], [100, 100])
 BOUNDS(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = (0f0, 1f0)
 BOUNDS(::Type{InflationDynamicExclusion}) = ([0,0],[5,5])
-
-# Iniciales para instancias
-INITIAL(::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [15.0, 75.0]
-INITIAL(::Union{InflationPercentileEq, InflationPercentileWeighted}) = 0.5f0
-INITIAL(::InflationDynamicExclusion) = [2.0,2.0]
 
 # Iniciales para constructores
 INITIAL(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [15.0, 75.0]
@@ -49,7 +40,7 @@ function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :ms
     trendfn = config[:trendfn]
 
     # obtener los bordes
-    bounds = BOUNDS(inflfn)
+    bounds = BOUNDS(infl_constructor)
 
     s = measure == :corr ? -1 : 1 # signo de la métrica
     eval_fn_online = eval(Symbol("eval_", measure, "_online"))
@@ -62,7 +53,7 @@ function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :ms
         # maximizar la correlacion
         return s * metric
     else
-        return 1_000 + sum(abs.(k .- INITIAL(inflfn)))
+        return 1_000 + sum(abs.(k .- INITIAL(infl_constructor)))
     end
 end
 
