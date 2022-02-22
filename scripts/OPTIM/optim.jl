@@ -5,35 +5,33 @@ using DataFrames
 using Chain
 using PrettyTables
 using Optim
-
+using BlackBoxOptim
 
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
-# Agregar procesos trabajadores
-addprocs(4, exeflags="--project")
-# Cargar los paquetes utilizados en todos los procesos
+nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 
-# Fronteras para instancias
-BOUNDS(x::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [[0,0],[100,100]]
-BOUNDS(x::Union{InflationPercentileEq, InflationPercentileWeighted}) = [[0], [1]]
-BOUNDS(x::InflationDynamicExclusion) = [[0,0],[5,5]]
+## Fronteras para instancias
+BOUNDS(::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = ([0, 0], [100, 100])
+BOUNDS(::Union{InflationPercentileEq, InflationPercentileWeighted}) = (0f0, 1f0)
+BOUNDS(::InflationDynamicExclusion) = ([0,0],[5,5])
 
 # Fronteras para constructores
-BOUNDS(x::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [[0,0],[100,100]]
-BOUNDS(x::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = [[0], [1]]
-BOUNDS(x::Type{InflationDynamicExclusion}) = [[0,0],[5,5]]
+BOUNDS(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = ([0, 0], [100, 100])
+BOUNDS(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = (0f0, 1f0)
+BOUNDS(::Type{InflationDynamicExclusion}) = ([0,0],[5,5])
 
 # Iniciales para instancias
-INITIAL(x::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [25.0, 75.0]
-INITIAL(x::Union{InflationPercentileEq, InflationPercentileWeighted}) = [0.5]
-INITIAL(x::InflationDynamicExclusion) = [2.0,2.0]
+INITIAL(::Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted}) = [15.0, 75.0]
+INITIAL(::Union{InflationPercentileEq, InflationPercentileWeighted}) = 0.5f0
+INITIAL(::InflationDynamicExclusion) = [2.0,2.0]
 
 # Iniciales para constructores
-INITIAL(x::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [25.0, 75.0]
-INITIAL(x::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = [0.5]
-INITIAL(x::Type{InflationDynamicExclusion}) = [2.0,2.0]
+INITIAL(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [15.0, 75.0]
+INITIAL(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = 0.5f0
+INITIAL(::Type{InflationDynamicExclusion}) = [2.0,2.0]
 
 
 function inside(x, bounds)
@@ -82,7 +80,8 @@ function optimize_config(config, data;
     measure = :mse,
     x_tol=1e-1, 
     f_tol=1e-2,
-    maxiterations = 100,
+    g_tol = 1e-4,
+    maxiterations = 100
     )
 
     # Configuración de remuestreo, tendencia y parámetro
@@ -104,83 +103,88 @@ function optimize_config(config, data;
     x0     = INITIAL(infl_constructor)
 
     # Función cerradura 
-    f = k -> eval_config(k, config, evaldata, tray_infl_param; K=config[:nsim], measure)
+    f = k -> eval_config(k, config, evaldata, tray_infl_param; 
+        K = config[:nsim], 
+        measure)
 
-    if infl_constructor<:Union{InflationPercentileEq, InflationPercentileWeighted}
-        optres =  optimize(f, x0, LBFGS() , Optim.Options(iterations=maxiterations, x_tol= x_tol, f_tol=f_tol))
+    
 
-    elseif infl_constructor<:Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, InflationDynamicExclusion}
-        optres = optimize(f, bounds[1], bounds[2], x0, NelderMead(), Optim.Options(iterations=maxiterations, x_tol= x_tol, f_tol=f_tol))
+    if infl_constructor <: Union{InflationPercentileEq, InflationPercentileWeighted}
+        @info "Optimizando percentil"
+        optres =  optimize(f, first(bounds), last(bounds), 
+            show_trace = true, 
+            iterations = maxiterations,
+            abs_tol = f_tol
+        )
+
+    elseif infl_constructor <: Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, InflationDynamicExclusion}
+        options = Optim.Options(
+            iterations=maxiterations, 
+            x_tol=x_tol, 
+            f_tol=f_tol, 
+            g_tol = g_tol,
+            show_trace=true
+        )
+        optres = optimize(f, bounds[1], bounds[2], x0, NelderMead(), options)
+
+        # BlackBoxOptim      
+        # lowerbounds = first(bounds)
+        # upperbounds = last(bounds)
+        # optres = bboptimize(f, 
+        #     SearchRange = [(1.0*lowerbounds[1], 1.0*upperbounds[1]), (1.0*lowerbounds[2], 1.0*upperbounds[2])], 
+        #     MaxSteps = maxiterations, 
+        #     TraceMode = :verbose
+        # )
 
     end
 
-    if measure == :mse
-        @info "Resultados de optimización:" min_mse=minimum(optres) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
-        
-        # Guardar resultados de optimización
-        results = Dict(
-            # Resultados de optimización 
-            "k" => Optim.minimizer(optres), 
-            "mse" => minimum(optres),
-            # Parámetros para evaluación completa 
-            "param" => config[:paramfn].period,
-            "optres" => optres
-        )
-    elseif measure == :absme
-        @info "Resultados de optimización:" min_absme=minimum(optres) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
-        
-        # Guardar resultados de optimización
-        results = Dict(
-            # Resultados de optimización 
-            "k" => Optim.minimizer(optres), 
-            "absme" => minimum(optres),
-            # Parámetros para evaluación completa 
-            "param" => config[:paramfn].period,
-            "optres" => optres
-        )
-    elseif measure == :corr
-        @info "Resultados de optimización:" max_corr=-minimum(optres) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
-        
-        # Guardar resultados de optimización
-        results = Dict(
-            # Resultados de optimización 
-            "k" => Optim.minimizer(optres), 
-            "corr" => -minimum(optres),
-            # Parámetros para evaluación completa 
-            "param" => config[:paramfn].period,
-            "optres" => optres
-        )
-    end
+    s = measure == :corr ? -1 : 1
+
+    # Guardar resultados de optimización
+    # @info "Resultados de optimización:" min_mse=(s*minimum(optres)) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
+    @info "Resultados de optimización:" optres minimizer=s*Optim.minimizer(optres)
+    results = Dict(
+        # Resultados de optimización 
+        "measure" => measure, 
+        "minimizer" => Optim.minimizer(optres), 
+        "optimal" => s * minimum(optres),
+        "optres" => optres
+    )
+    
     merge!(results, tostringdict(config))
 
     # Guardar los resultados de evaluación para collect_results 
     filename = savename(results, "jld2", allowedtypes=(Real, String, Date), digits=4)
     isnothing(savepath) || wsave(joinpath(savepath, filename), tostringdict(results))
 
-    return optres 
+    return results 
 end
 
 
 
-        
 D = dict_list(Dict(
-    :infltypefn => [InflationPercentileEq, InflationPercentileWeighted, 
-                    InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, 
-                    InflationDynamicExclusion],
-    :resamplefn => ResampleScrambleVarMonths() ,
+    :infltypefn => [
+        # InflationPercentileEq, 
+        # InflationPercentileWeighted, 
+        InflationTrimmedMeanEq, 
+        # InflationTrimmedMeanWeighted, 
+        # InflationDynamicExclusion,
+    ],
+    :resamplefn => ResampleScrambleVarMonths(),
     :trendfn => TrendRandomWalk(),
     :paramfn => InflationTotalRebaseCPI(36,2),
-    :nsim => 10_000,
+    :nsim => 1_000,
     :traindate => Date(2018, 12))
 )
 
-M = [:mse, :absme, :corr]
+# M = [:mse, :absme, :corr]
+M = [:mse]
 L = []
 
-for m in M
+for measure in M
     for config in D
-        optres = optimize_config(config, gtdata; measure = m)
-        append!(L,[[config[:infltypefn], m, optres.minimizer, optres.minimum]])
+        optres = optimize_config(config, gtdata; measure)
+        append!(L,[[optres["infltypefn"], optres["measure"], optres["minimizer"], optres["optimal"]]])
     end
 end
 
@@ -199,20 +203,3 @@ end
 # Any[InflationTrimmedMeanEq, :corr, [55.90512060523032, 92.17767125368118], -0.9857175350189209]
 # Any[InflationTrimmedMeanWeighted, :corr, [46.44323324480888, 98.54608364886394], -0.9776228070259094]
 # Any[InflationDynamicExclusion, :corr, [0.46832260901857126, 4.974514492691691], -0.9767531156539917]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
