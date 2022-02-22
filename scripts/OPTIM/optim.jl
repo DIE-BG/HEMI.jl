@@ -51,24 +51,16 @@ function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :ms
     # obtener los bordes
     bounds = BOUNDS(inflfn)
 
+    s = measure == :corr ? -1 : 1 # signo de la métrica
+    eval_fn_online = eval(Symbol("eval_", measure, "_online"))
+
     if inside(k, bounds)
-        if measure == :mse
-            mse = eval_mse_online(inflfn, 
-            resamplefn, trendfn, data, 
-            tray_infl_param; K)
-            return mse
-        elseif measure == :absme
-            mse = eval_absme_online(inflfn, 
-            resamplefn, trendfn, data, 
-            tray_infl_param; K)
-            return mse
-        elseif measure == :corr
-            corr = eval_corr_online(inflfn, 
-            resamplefn, trendfn, data, 
-            tray_infl_param; K)
-            # se retorna el negativo porque buscamos maximizar la correlacion
-            return -corr 
-        end
+        metric = eval_fn_online(inflfn, 
+            resamplefn, trendfn, data, tray_infl_param; 
+            K)
+        # cuando measure==:corr, se retorna el negativo porque buscamos
+        # maximizar la correlacion
+        return s * metric
     else
         return 1_000 + sum(abs.(k .- INITIAL(inflfn)))
     end
@@ -107,11 +99,10 @@ function optimize_config(config, data;
         K = config[:nsim], 
         measure)
 
-    
 
     if infl_constructor <: Union{InflationPercentileEq, InflationPercentileWeighted}
         @info "Optimizando percentil"
-        optres =  optimize(f, first(bounds), last(bounds), 
+        optres =  optimize(f, first(bounds), last(bounds),
             show_trace = true, 
             iterations = maxiterations,
             abs_tol = f_tol
@@ -164,9 +155,9 @@ end
 
 D = dict_list(Dict(
     :infltypefn => [
-        # InflationPercentileEq, 
+        InflationPercentileEq, 
         # InflationPercentileWeighted, 
-        InflationTrimmedMeanEq, 
+        # InflationTrimmedMeanEq, 
         # InflationTrimmedMeanWeighted, 
         # InflationDynamicExclusion,
     ],
@@ -178,7 +169,7 @@ D = dict_list(Dict(
 )
 
 # M = [:mse, :absme, :corr]
-M = [:mse]
+M = [:corr]
 L = []
 
 for measure in M
