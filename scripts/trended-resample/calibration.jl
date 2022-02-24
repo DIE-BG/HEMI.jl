@@ -59,7 +59,7 @@ p_ = 0:0.1:1
 
 vals_sim = mapreduce((p -> [mse_med(p)...]), hcat, p_) |> transpose
 vals_mse_obs = map(mse_obs, p_)
-diff_mse = vals_sim[:, 2] - vals_mse_obs
+diff_mse = vals_sim .- vals_mse_obs
 
 
 
@@ -71,8 +71,12 @@ p1 = plot(p_, vals_sim,
 )
 plot!(p1, p_, vals_mse_obs, label="Observado entre MPA y parámetro")
 
-p2 = plot(p_, abs.(diff_mse), label="Diferencia absoluta",
-    color=:blue, linewidth=2, 
+p2 = plot(p_, abs.(diff_mse), 
+    label=["Diferencia absoluta con la media" "Diferencia absoluta con la mediana" "Diferencia absoluta con la moda"],
+    color=[:red :blue :black], 
+    linestyle = [:dot :solid :dash],
+    # alpha = [0.5, 0.7, 0.9],
+    linewidth=2, 
     ylabel="Error cuadrático medio",
     xlabel="Probabilidad de selección de período t"
 )
@@ -87,7 +91,7 @@ savefig(joinpath(plots_path, "mse_difference.png"))
 
 ## Using Optim to find the minimum 
 
-res = optimize(p -> abs(mse_med(p) - mse_obs(p)), 0.6, 0.8)
+res = optimize(p -> abs(mse_med(p)[2] - mse_obs(p)), 0.6, 0.8)
 @info "Valor óptimo con este criterio" Optim.minimizer(res)
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.7036687156959144
