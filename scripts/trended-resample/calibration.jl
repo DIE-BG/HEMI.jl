@@ -29,7 +29,7 @@ function mse_obs(p; data=evaldata)
 end
 
 # Mediana del MSE de las realizaciones 
-function mse_med(p; data=evaldata, K=10_000)
+function mse_simu(p; data=evaldata, K=10_000)
     inflfn = InflationWeightedMean() 
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity() 
@@ -45,6 +45,11 @@ function mse_med(p; data=evaldata, K=10_000)
 
     # MSE por realizaciones 
     mse_dist = mean(x -> x^2, tray_infl .- tray_param, dims=1)
+    vec(mse_dist)
+end
+
+function mse_simu_stats(p; data=evaldata, K=10_000)
+    mse_dist = mse_simu(p; data, K)
     _median = median(mse_dist) # mediana de la distribución
     _mean = mean(mse_dist)
     _mode = mode(mse_dist)
@@ -55,15 +60,14 @@ end
 ## Generar métrica de calibración para diferentes valores de p
 p_ = 0:0.1:1
 # plot(mse_obs, p_)
-# plot(mse_med, p_)
+# plot(mse_simu_stats, p_)
 
-vals_sim = mapreduce((p -> [mse_med(p)...]), hcat, p_) |> transpose
+vals_sim = mapreduce((p -> [mse_simu_stats(p)...]), hcat, p_) |> transpose
 vals_mse_obs = map(mse_obs, p_)
 diff_mse = vals_sim .- vals_mse_obs
 
+## Gráficas de MSE 
 
-
-## 
 p1 = plot(p_, vals_sim, 
     label=["Media de la distribución de simulación" "Mediana de la distribución de simulación" "Moda de la distribución de simulación"],
     ylabel="Error cuadrático medio",
@@ -91,15 +95,37 @@ savefig(joinpath(plots_path, "mse_difference.png"))
 
 ## Using Optim to find the minimum 
 
-res = optimize(p -> abs(mse_med(p)[2] - mse_obs(p)), 0.6, 0.8)
+res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.6, 0.8)
 @info "Valor óptimo con este criterio" Optim.minimizer(res)
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.7036687156959144
 
-
-## 
-
 p_opt = Optim.minimizer(res)
+
+## Histograma con p óptimo 
+
+mse_dist = mse_simu(p_opt)
+stats_opt = mse_simu_stats(p_opt)
+ph = histogram(mse_dist, bins=0:0.025:4, 
+    label="Distribución de MSE", 
+    normalize = :probability, 
+    linealpha = 0.05, 
+    # color = :blue, 
+    xlims = (0, 3)
+)
+opts = Dict(:linewidth => 1.5, :linestyle => :dash, )
+vline!(ph, [stats_opt[1]]; label="Media", color = :red, opts...)
+vline!(ph, [stats_opt[2]]; label="Mediana", color = :blue, opts...)
+
+h = fit(Histogram, mse_dist, 0:0.025:4)
+i = argmax(h.weights)
+_mode = h.edges[1][i]
+vline!(ph, [_mode]; label="Moda", color = :black, opts...)
+
+plot(ph, size = (800, 600))
+savefig(joinpath(plots_path, "mse_dist.png"))
+
+## Gráficas de trayectorias con el p óptimo
 
 function plot_mse_obs(p; data=evaldata)
     inflfn = InflationWeightedMean()
@@ -118,7 +144,7 @@ end
 plot_mse_obs(p_opt)
 savefig(joinpath(plots_path, "mpa_vs_param_$p_opt.png"))
 
-function plot_mse_med(p; data=evaldata, K=10_000)
+function plot_mse_simu_stats(p; data=evaldata, K=10_000)
     inflfn = InflationWeightedMean() 
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity() 
@@ -152,5 +178,5 @@ function plot_mse_med(p; data=evaldata, K=10_000)
         color=2, linewidth=2)
 end
 
-plot_mse_med(p_opt)
+plot_mse_simu_stats(p_opt)
 savefig(joinpath(plots_path, "simu_mpa_vs_param_$p_opt.png"))
