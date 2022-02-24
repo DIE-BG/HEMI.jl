@@ -1,5 +1,6 @@
 using DrWatson
 @quickactivate :HEMI 
+using StatsBase
 using Plots
 using Optim
 
@@ -44,8 +45,11 @@ function mse_med(p; data=evaldata, K=10_000)
 
     # MSE por realizaciones 
     mse_dist = mean(x -> x^2, tray_infl .- tray_param, dims=1)
-    median(mse_dist) # mediana de la distribución
-    # quantile(vec(mse_dist), 0.75)
+    _median = median(mse_dist) # mediana de la distribución
+    _mean = mean(mse_dist)
+    _mode = mode(mse_dist)
+
+    _mean, _median, _mode
 end
 
 ## Generar métrica de calibración para diferentes valores de p
@@ -53,12 +57,15 @@ p_ = 0:0.1:1
 # plot(mse_obs, p_)
 # plot(mse_med, p_)
 
-vals_mse_med = map(mse_med, p_)
+vals_sim = mapreduce((p -> [mse_med(p)...]), hcat, p_) |> transpose
 vals_mse_obs = map(mse_obs, p_)
-diff_mse = vals_mse_med - vals_mse_obs
+diff_mse = vals_sim[:, 2] - vals_mse_obs
+
+
 
 ## 
-p1 = plot(p_, vals_mse_med, label="Mediana de la distribución de simulación",
+p1 = plot(p_, vals_sim, 
+    label=["Media de la distribución de simulación" "Mediana de la distribución de simulación" "Moda de la distribución de simulación"],
     ylabel="Error cuadrático medio",
     # xlabel="Probabilidad de selección de período t"
 )
