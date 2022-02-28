@@ -196,8 +196,8 @@ savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
 
 
 # Evaluate the parametric inflation for the next inflation formulas
-formulas = [paramfn, InflationTotalCPI(), InflationWeightedMean()]
-label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"]
+formulas = [paramfn, InflationTotalCPI()]
+label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation"]
 # For this comparison, use this trend function 
 trendfn_comp = TrendIdentity() 
 
@@ -271,9 +271,14 @@ vline!(p2, synthetic_rebase,
 
 
 # Make comparison plot
+l = @layout [
+    a{0.5w, 0.975h} b{0.5w}
+]
+
 plot(p1, p2, 
+    left_margin=2*Plots.mm,
     size = (800, 400),
-    layout = (1, 2),
+    layout = l
 )
 
 savefig(joinpath(plots_savepath, "inflation_formulas.pdf"))
