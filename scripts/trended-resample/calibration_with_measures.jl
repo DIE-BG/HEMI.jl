@@ -15,26 +15,38 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 ## Configuration of period to calibrate
 # Change between :b00, :b10 and :b0010
 PERIOD = :b0010
-USE_OPTIMALS = true
+USE_OPTIMALS = false
 const PARAM_INFLFN = InflationTotalCPI() 
 
 # Calibration data used 
+period1 = EvalPeriod(Date(2001,1), Date(2005,12), "b00_5y")
+period2 = EvalPeriod(Date(2011,12), Date(2015,12), "b10_5y")
+
 if PERIOD == :b00 
     evaldata = GTDATA[Date(2010,12)] # CPI 2000 base 
+    mask1 = eval_periods(evaldata, period1)
+    evalmask = mask1
 elseif PERIOD == :b10 
     evaldata = UniformCountryStructure(GTDATA[2]) # CPI 2010 base 
+    mask2 = eval_periods(evaldata, period2)
+    evalmask = mask2
 else
+    # All available data 
     evaldata = GTDATA[Date(2021,12)]
+    mask1 = eval_periods(evaldata, period1)
+    mask2 = eval_periods(evaldata, period2)
+    evalmask = mask1 .| mask2 
 end
 
 # Plots folder
-plots_path = mkpath(plotsdir("trended-resample", "total-cpi-rebase-calibration", "historical_calibration"))
+plots_path = mkpath(plotsdir("trended-resample", "total-cpi-calibration", 
+    "historical-calibration",
+    "five-years"
+))
 
 # Load optimal mse combination
 include(scriptsdir("mse-combination-2019", "optmse2019.jl"))
 include(scriptsdir("mse-combination", "optmse2022.jl"))
-
-# df = CSV.read(scriptsdir("trended-resample", "infl_suby.csv"), DataFrame)
 
 ## Experimental calibration procedure with several inflation measures
 
@@ -79,6 +91,9 @@ infl_measures = [
     InflationPercentileWeighted(50) # Fed Cleveland & Bank of Canada
 ]
 
+# f = [fn isa InflationFixedExclusionCPI for fn in infl_measures]
+# infl_measures = infl_measures[.!f]
+
 # Removing already calibrated components, i.e. previous optimal measures  obtained
 f = BitVector(Bool[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 if !USE_OPTIMALS
@@ -98,7 +113,7 @@ mse_medians = @showprogress pmap(p_range) do p
         # Compute the historic trajectory 
         tray_infl = inflfn(evaldata)
         # Compute the MSE against the parametric trajectory 
-        mean(x -> x^2, tray_infl - tray_infl_param)
+        mean(x -> x^2, tray_infl[evalmask] - tray_infl_param[evalmask])
     end
 
     @debug "Valores de MSE" mses
