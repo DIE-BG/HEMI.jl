@@ -8,18 +8,23 @@ using Distributed
 nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
+## Configuration 
+const PARAM_INFLFN = InflationTotalCPI() 
+
 # Datos de calibración 
 evaldata = GTDATA[Date(2021,12)]
+# evaldata = UniformCountryStructure(GTDATA[1])
+# evaldata = UniformCountryStructure(GTDATA[2])
 
 # Directorio de gráficas 
-plots_path = mkpath(plotsdir("trended-resample"))
+plots_path = mkpath(plotsdir("trended-resample", "total-cpi-calibration"))
 
 ## Funciones para calibrar el parámetro de probabilidad de ocurrencia contemporánea (p) 
 # MSE observado
 function mse_obs(p; data=evaldata)
-    inflfn = InflationWeightedMean()
+    inflfn = PARAM_INFLFN
 
-    paramfn = InflationWeightedMean()
+    paramfn = PARAM_INFLFN
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity()
     param = InflationParameter(paramfn, resamplefn, trendfn)
@@ -30,13 +35,13 @@ end
 
 # Mediana del MSE de las realizaciones 
 function mse_simu(p; data=evaldata, K=10_000)
-    inflfn = InflationWeightedMean() 
+    inflfn = PARAM_INFLFN 
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity() 
 
     tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, data; K)
     
-    paramfn = InflationWeightedMean()
+    paramfn = PARAM_INFLFN
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity()
     param = InflationParameter(paramfn, resamplefn, trendfn)
@@ -73,7 +78,7 @@ p1 = plot(p_, vals_sim,
     ylabel="Error cuadrático medio",
     # xlabel="Probabilidad de selección de período t"
 )
-plot!(p1, p_, vals_mse_obs, label="Observado entre MPA y parámetro")
+plot!(p1, p_, vals_mse_obs, label="Observado entre Total y parámetro")
 
 p2 = plot(p_, abs.(diff_mse), 
     label=["Diferencia absoluta con la media" "Diferencia absoluta con la mediana" "Diferencia absoluta con la moda"],
@@ -95,10 +100,21 @@ savefig(joinpath(plots_path, "mse_difference.png"))
 
 ## Using Optim to find the minimum 
 
-res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.6, 0.8)
+res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.01, 0.99)
 @info "Valor óptimo con este criterio" Optim.minimizer(res)
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.7036687156959144
+
+# Período completo 
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.674591082486356
+# Base 2000
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.8445503239179435
+# Base 2010
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.3979484811865918
+
 
 p_opt = Optim.minimizer(res)
 
@@ -128,9 +144,9 @@ savefig(joinpath(plots_path, "mse_dist.png"))
 ## Gráficas de trayectorias con el p óptimo
 
 function plot_mse_obs(p; data=evaldata)
-    inflfn = InflationWeightedMean()
+    inflfn = InflationTotalCPI()
 
-    paramfn = InflationWeightedMean()
+    paramfn = InflationTotalCPI()
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity()
     param = InflationParameter(paramfn, resamplefn, trendfn)
@@ -142,16 +158,16 @@ function plot_mse_obs(p; data=evaldata)
 end
 
 plot_mse_obs(p_opt)
-savefig(joinpath(plots_path, "mpa_vs_param_$p_opt.png"))
+savefig(joinpath(plots_path, "total_vs_param_$(p_opt).png"))
 
 function plot_mse_simu_stats(p; data=evaldata, K=10_000)
-    inflfn = InflationWeightedMean() 
+    inflfn = InflationTotalCPI() 
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity() 
 
     tray_infl = pargentrayinfl(inflfn, resamplefn, trendfn, data; K)
     
-    paramfn = InflationWeightedMean()
+    paramfn = InflationTotalCPI()
     resamplefn = ResampleScrambleTrended(p)
     trendfn = TrendIdentity()
     param = InflationParameter(paramfn, resamplefn, trendfn)
@@ -179,4 +195,4 @@ function plot_mse_simu_stats(p; data=evaldata, K=10_000)
 end
 
 plot_mse_simu_stats(p_opt)
-savefig(joinpath(plots_path, "simu_mpa_vs_param_$p_opt.png"))
+savefig(joinpath(plots_path, "simu_total_vs_param_$(p_opt).png"))
