@@ -23,7 +23,7 @@ period1 = EvalPeriod(Date(2001,1), Date(2005,12), "b00_5y")
 period2 = EvalPeriod(Date(2011,12), Date(2015,12), "b10_5y")
 
 if PERIOD == :b00 
-    evaldata = GTDATA[Date(2010,12)] # CPI 2000 base 
+    evaldata = UniformCountryStructure(GTDATA[1]) # CPI 2000 base 
     mask1 = eval_periods(evaldata, period1)
     evalmask = mask1
 elseif PERIOD == :b10 
@@ -71,12 +71,29 @@ function energy_specs(period)
     end
 end
 
+# Fixes exclusion specs for the InflationFixedExclusionCPI included in the combination ensemble combfn, using specs for period specified.
+function cmb_specs(combfn, period)
+    fns = [combfn.ensemble.functions...]
+    f = [fn isa InflationFixedExclusionCPI for fn in fns]
+
+    exc_specs = fns[f][].v_exc
+    if period == :b00 
+        specs = exc_specs[1]
+    elseif period == :b10 
+        specs = exc_specs[2]
+    else
+        specs = exc_specs
+    end
+    fxfn = InflationFixedExclusionCPI(specs)
+    fns[.!f]..., fxfn
+end
+
 infl_measures = [
     InflationTotalCPI(), 
     InflationWeightedMean(), 
     optmse2019,
-    optmse2022, 
-    optmse2022.ensemble.functions...,
+    optmse2022,
+    cmb_specs(optmse2022, PERIOD)..., 
     # Other measures used in DIE-BG 
     InflationTrimmedMeanEq(8,92), 
     InflationTrimmedMeanEq(6,94),
@@ -99,6 +116,8 @@ f = BitVector(Bool[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 if !USE_OPTIMALS
     infl_measures = infl_measures[f]
 end
+
+## Comparing median of MSEs for historical realizations comparing to the population parameter
 
 p_range = 0:0.05:1
 
@@ -141,3 +160,41 @@ scatter!(p1, [p_range[imin]], [mse_medians[imin]],
 
 filename = savename("historical_calibration", (period = PERIOD, optimals=USE_OPTIMALS), "png")
 savefig(joinpath(plots_path, filename))
+
+
+
+## Explore historical trajectories comparing to the inflation parameter with p 
+
+p_range = 0:0.01:1
+
+anim = @animate for p in p_range
+    # Get parametric inflation
+    resamplefn = ResampleScrambleTrended(p)
+    param = InflationParameter(PARAM_INFLFN, resamplefn, TrendIdentity())
+    tray_infl_param = param(evaldata)
+    
+    dates = infl_dates(evaldata)
+    plot(dates, tray_infl_param, 
+        label="Parametric trajectory p=$(round(p,digits=5))",
+        linewidth = 2,
+        ylims = (0, 12),
+    )
+
+    # Plot actual trajectory 
+    plot!(InflationTotalCPI(), evaldata)
+
+    # # Get the MSE against all historic inflation measures
+    # mses = map(infl_measures) do inflfn 
+    #     # Compute the historic trajectory 
+    #     tray_infl = inflfn(evaldata)
+    #     # Compute the MSE against the parametric trajectory 
+    #     mean(x -> x^2, tray_infl[evalmask] - tray_infl_param[evalmask])
+    # end
+
+    # @debug "Valores de MSE" mses
+    # # Get the median value of the MSEs 
+    # mse_median = median(mses)
+end
+
+animfile = savename("param_evolution", (period = PERIOD, optimals=USE_OPTIMALS), "mp4")
+mp4(anim, joinpath(plots_path, animfile), fps=15)
