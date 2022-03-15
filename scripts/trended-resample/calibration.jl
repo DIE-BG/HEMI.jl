@@ -9,15 +9,38 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
 ## Configuration 
+# Change between :b00, :b10 and :b0010
+PERIOD = :b00
+
+# Inflation measure for calibrating
 const PARAM_INFLFN = InflationTotalCPI() 
 
-# Datos de calibración 
-evaldata = GTDATA[Date(2021,12)]
-# evaldata = UniformCountryStructure(GTDATA[1])
-# evaldata = UniformCountryStructure(GTDATA[2])
+# Calibration evaluation periods used 
+period1 = EvalPeriod(Date(2001,1), Date(2005,12), "b00_5y")
+period2 = EvalPeriod(Date(2011,12), Date(2015,12), "b10_5y")
+
+# Calibration data
+if PERIOD == :b00 
+    evaldata = UniformCountryStructure(GTDATA[1]) # CPI 2000 base 
+    mask1 = eval_periods(evaldata, period1)
+    evalmask = mask1
+elseif PERIOD == :b10 
+    evaldata = UniformCountryStructure(GTDATA[2]) # CPI 2010 base 
+    mask2 = eval_periods(evaldata, period2)
+    evalmask = mask2
+else
+    # All available data 
+    evaldata = GTDATA[Date(2021,12)]
+    mask1 = eval_periods(evaldata, period1)
+    mask2 = eval_periods(evaldata, period2)
+    evalmask = mask1 .| mask2 
+end
 
 # Directorio de gráficas 
-plots_path = mkpath(plotsdir("trended-resample", "total-cpi-calibration"))
+plots_path = mkpath(plotsdir("trended-resample", 
+    "total-cpi-calibration", 
+    "five-years"
+))
 
 ## Funciones para calibrar el parámetro de probabilidad de ocurrencia contemporánea (p) 
 # MSE observado
@@ -29,7 +52,9 @@ function mse_obs(p; data=evaldata)
     trendfn = TrendIdentity()
     param = InflationParameter(paramfn, resamplefn, trendfn)
 
-    mse = mean(x -> x^2, inflfn(data) - param(data))
+    tray_infl = inflfn(data)
+    tray_infl_param = param(data)
+    mse = mean(x -> x^2, tray_infl[evalmask] - tray_infl_param[evalmask])
     mse
 end
 
@@ -49,7 +74,7 @@ function mse_simu(p; data=evaldata, K=10_000)
     tray_param = param(data)
 
     # MSE por realizaciones 
-    mse_dist = mean(x -> x^2, tray_infl .- tray_param, dims=1)
+    mse_dist = mean(x -> x^2, tray_infl[evalmask, :, :] .- tray_param[evalmask], dims=1)
     vec(mse_dist)
 end
 
@@ -95,7 +120,8 @@ plot(p1, p2,
     layout = (2, 1)
 )
 
-savefig(joinpath(plots_path, "mse_difference.png"))
+filename = savename("mse_difference", (period=PERIOD,), "png")
+savefig(joinpath(plots_path, filename))
 
 
 ## Using Optim to find the minimum 
@@ -105,6 +131,7 @@ res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.01, 0.99)
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.7036687156959144
 
+# InflationTotalCPI
 # Período completo 
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.674591082486356
@@ -115,6 +142,17 @@ res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.01, 0.99)
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.3979484811865918
 
+
+# # InflationTotalCPI con evaluación de 5 años 
+# Período completo 
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.46031723899305166
+# Base 2000
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.5695731554158409
+# Base 2010
+# ┌ Info: Valor óptimo con este criterio
+# └   Optim.minimizer(res) = 0.42360815127381435
 
 p_opt = Optim.minimizer(res)
 
@@ -139,7 +177,8 @@ _mode = h.edges[1][i]
 vline!(ph, [_mode]; label="Moda", color = :black, opts...)
 
 plot(ph, size = (800, 600))
-savefig(joinpath(plots_path, "mse_dist.png"))
+filename = savename("mse_dist", (period=PERIOD,), "png")
+savefig(joinpath(plots_path, filename))
 
 ## Gráficas de trayectorias con el p óptimo
 
@@ -158,7 +197,8 @@ function plot_mse_obs(p; data=evaldata)
 end
 
 plot_mse_obs(p_opt)
-savefig(joinpath(plots_path, "total_vs_param_$(p_opt).png"))
+filename = savename("total_vs_param", (period=PERIOD, p=p_opt), "png")
+savefig(joinpath(plots_path, filename))
 
 function plot_mse_simu_stats(p; data=evaldata, K=10_000)
     inflfn = InflationTotalCPI() 
@@ -195,4 +235,5 @@ function plot_mse_simu_stats(p; data=evaldata, K=10_000)
 end
 
 plot_mse_simu_stats(p_opt)
-savefig(joinpath(plots_path, "simu_total_vs_param_$(p_opt).png"))
+filename = savename("simu_total_vs_param", (period=PERIOD, p=p_opt), "png")
+savefig(joinpath(plots_path, filename))
