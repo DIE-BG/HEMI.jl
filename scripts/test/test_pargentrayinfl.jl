@@ -12,7 +12,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
 
 # ## Generar trayectorias de inflación 
-evaldata = gtdata[Date(2019, 12)]
+evaldata = GTDATA[Date(2019, 12)]
 
 # Se obtiene la función de inflación, de remuestreo y de tendencia a aplicar
 inflfn = InflationTotalCPI() 

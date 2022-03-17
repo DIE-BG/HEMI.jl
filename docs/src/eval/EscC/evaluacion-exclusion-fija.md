@@ -78,7 +78,7 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 ![Trayectoria Óptima observada](images/Fx-Ex/optima-c19.svg)
 
 #### Medidas de Exclusión Fija
-![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-c19.svg)
+![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-C19.svg)
 
 
 ## Resultados de evaluación con criterios básicos a diciembre de 2020 modificando el parámetro de evaluación
@@ -158,4 +158,4 @@ En total, luego del proceso de optimización, se excluyen 13 gastos básicos de 
 ![Trayectoria Óptima observada](images/Fx-Ex/optima-c20.svg)
 
 #### Medidas de Exclusión Fija
-![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-c20.svg)
+![Trayectoria Óptima observada](images/Fx-Ex/Trayectorias-FxEx-C20.svg)

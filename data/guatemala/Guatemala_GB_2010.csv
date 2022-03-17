@@ -1,280 +1,280 @@
-Codigo,GastoBasico,Ponderacion
-0111101,Arroz,0.63244
-0111201,Harina,0.17119
-0111202,Maíz,1.33671
-0111203,Cereales,0.93761
-0111301,Pan,2.61053
-0111302,Galletas,0.08589
-0111303,Productos de repostrería,0.1179
-0111401,Pastas,0.47925
-0111501,Productos de tortillería,3.01265
-0112101,Carne de res,2.31192
-0112201,Carne de cerdo,0.31303
-0112301,Carne de pollo,2.34753
-0112401,Embutidos,0.68868
-0113101,Pescados,0.29265
-0113201,Mariscos,0.02759
-0114101,Leche,0.67302
-0114102,Yogur,0.04854
-0114301,Quesos,0.78757
-0114401,Huevos,1.6646
-0115101,Margarina,0.06572
-0115201,Aceites,0.47821
-0116101,Aguacate,0.16707
-0116102,Banano,0.10142
-0116103,Manzana,0.07284
-0116104,Naranja,0.06213
-0116105,Plátano,0.1739
-0116106,Frutas de estación,0.31913
-0116201,Frutas en conserva,0.01607
-0117101,Tomate,0.92386
-0117102,Güisquil,0.1709
-0117103,Chile pimiento,0.05247
-0117104,Pepino,0.04363
-0117105,Güicoy,0.03236
-0117106,Repollo,0.06225
-0117107,Lechuga,0.03506
-0117108,Frijol,1.43142
-0117109,Ejotes,0.06273
-0117110,Elote,0.0469
-0117111,Cebolla,0.33668
-0117112,Papa,0.50577
-0117113,Zanahoria,0.11521
-0117114,Rábano,0.02637
-0117115,Remolacha,0.01255
-0117116,Yuca,0.02138
-0117117,Brocoli,0.02672
-0117118,Culantro,0.03903
-0117119,Hierbabuena,0.00774
-0117120,Otras legumbres y hortalizas,0.11258
-0118101,Azúcar,1.26957
-0118201,Jaleas,0.00202
-0118202,Compotas,0.00998
-0118301,Dulces,0.05395
-0118401,Helados,0.02008
-0119101,Salsa de tomate,0.14512
-0119102,Pasta de tomate,0.00898
-0119103,Mayonesa y mostaza,0.06549
-0119104,Sazonadores,0.02862
-0119105,Sal,0.05886
-0119201,Canela,0.01127
-0119202,Pepitoria y manía,0.01734
-0119203,Chiles picantes,0.03895
-0119301,Consomé de pollo,0.17745
-0119302,Sopas concentradas en sobre,0.13894
-0119303,Sopas instantaneas,0.22911
-0119304,Polvos para gelatina,0.00921
-0119305,Alimentos enlatados,0.22394
-0121101,Café instantaneo,0.19835
-0121102,Otras bebidas,0.26236
-0121201,Agua envasada,0.3389
-0121301,Aguas gaseosas,0.93963
-0121401,Polvo para refresco,0.14155
-0121402,Jugos de frutas,0.21301
-0121501,Refrescos naturales,0.05462
-0121502,Refrescos artificiales,0.03039
-0211101,Licores varios,0.04282
-0212101,Vino blanco,0.00133
-0212102,Vino tinto,0.00263
-0213101,Cerveza,0.15639
-0221101,Cigarrillos de tabaco,0.07253
-0311101,Telas para confección de vestuario,0.07867
-0312101,Pantalón para hombre,0.79139
-0312102,Camisa para hombre,0.41351
-0312103,Traje para hombre,0.06553
-0312104,Ropa deportiva para hombre,0.17061
-0312105,Ropa interior y de dormir para hombre,0.14171
-0312201,Pantalón y falda para mujer,0.50875
-0312202,Blusa para mujer,0.68391
-0312203,Otro vestuario de mujer,0.22983
-0312204,Ropa interior y de dormir para mujer,0.30877
-0312301,Pantalón y pantaloneta para niño,0.274
-0312302,"Pantalón, falda y short  para niña",0.07286
-0312303,Camisa y playera para niño ,0.06685
-0312304,Blusa para niña,0.07299
-0312305,Vestido para niña,0.054
-0312306,Camiseta para niño,0.01024
-0312401,Pijama para bebé,0.02168
-0312501,Uniforme escolar ,0.21075
-0313101,Artículos varios de vestuario,0.27892
-0313102,Otras prendas de vestir,0.43821
-0314101,Servicio de limpieza de prendas de vestir,0.04023
-0321101,Zapatos para hombre,1.06972
-0321201,Zapatos varios para mujer,0.10553
-0321202,Zapatos para mujer,0.47625
-0321203,Zapatos varios para mujer,0.30705
-0321301,Calzado para niño,0.29982
-0321302,Calzado para niña,0.20269
-0322101,Servicio de reparación de calzado,0.01128
-0411101,Alquiler de vivienda,3.05838
-0421101,Materiales diversos para reparación  de vivienda,0.95035
-0421102,Trabajos para vivienda,0.1302
-0421103,Artículos para electricidad y grifería,0.05534
-0422101,Servicio de mantenimiento de vivienda,0.7796
-0431101,Agua potable,0.75775
-0432101,Servicio de retiro de basura,0.23389
-0441101,Servicio de electricidad,3.29469
-0442101,Gas propano,1.19963
-0443101,Carbón,0.02683
-0443102,Leña,2.12782
-0511101,Cama,0.23131
-0511102,Cuna,0.01425
-0511103,Juego de comedor,0.02852
-0511104,Muebles para cocina,0.04743
-0511105,Juego de sala,0.07145
-0511106,Muebles modulares,0.13286
-0511201,Alfombra,0.00341
-0511202,"Puertas, lamparas y varios",0.07586
-0521101,Cubrecama,0.12067
-0521102,Sábana,0.09676
-0521103,Poncho y frazadas,0.09029
-0521104,Mantel,0.07037
-0521105,Cortinas,0.03955
-0522101,Estufa,0.16627
-0522102,Refrigerador,0.27033
-0522103,Lavadora,0.12162
-0523101,Horno de microondas,0.04205
-0523102,Licuadora,0.00722
-0523103,Ventilador,0.01391
-0523104,Plancha eléctrica,0.02929
-0531101,Vajillas,0.06167
-0531102,Baterias de cocina,0.16766
-0531103,Juegos de vasos,0.04953
-0531104,Utencilios de cocina,0.09689
-0541101,Barreno eléctrico,0.00198
-0541201,Martillo,0.00373
-0541202,Machete,0.01654
-0541203,Serrucho,0.00394
-0541204,Desarmadores,0.00029
-0551101,Aromatizador y desinfectante,0.0316
-0551102,Detergente para ropa,1.96872
-0551103,Jabón varias clases,0.30491
-0551201,Artículos para limpieza del hogar,0.62636
-0551202,Fosforos,0.12998
-0551203,Servilletas de papel,0.06648
-0551204,Veladoras y candelas,0.17985
-0552101,Servicio doméstico por mes,0.01608
-0552102,Lavado de ropa diversa,0.02567
-0611101,Analgésico y antiinflamatorio,0.18978
-0611102,Antiacido y antiulceroso,0.11085
-0611103,Antialérgico,0.03747
-0611104,Antibiótico,0.28968
-0611105,Antigripal,0.3175
-0611106,Antihipertensor,0.27507
-0611107,Vacunas de prevención,0.0614
-0611108,Dermatológico,0.0517
-0611109,Mucolítico y broncodilatador,0.20233
-0611110,Vitaminas y minerales,0.69252
-0612101,"Vendas, parches, apósitos",0.05861
-0612102,Preservativos,0.0466
-0613101,Lentes de corrección,0.1569
-0621101,Consulta médica,0.52042
-0621102,Consulta con ginecólogo,0.06713
-0622101,Consulta odontológica,0.11788
-0622102,Tratamiento odontológico,0.16005
-0623101,Exámen de radiología y otros,0.20773
-0623102,Exámen de laboratorio clínico,0.20961
-0631101,Servicio de hospitalización,0.27852
-0631102,Intervención hospitalaria,0.171
-0711101,Automóvil y pickup,2.54274
-0712101,Motocicletas,0.48733
-0713101,Bicicletas,0.06749
-0721101,Repuestos para vehículos en general (amortiguador),0.1319
-0721102,Llantas para automóvil,0.2339
-0721103,Baterías y lubricantes,0.11669
-0722101,Gasolina superior,2.06641
-0722102,Gasolina regular,0.6952
-0722103,Diesel,0.13937
-0723101,Servicio de mantenimiento de automóvil,0.43832
-0723102,Reparación de automóvil,0.30621
-0723103,Lavado de automóvil,0.05681
-0724101,Parqueo,0.10859
-0724201,Servicio de pinchazo,0.04865
-0724202,Licencia de conducir,0.04619
-0731101,Servicio de taxi,0.11485
-0731102,Servicio de transporte escolar,0.32321
-0731103,Servicio de bus urbano,0.68383
-0731104,Servicio de bus extraurbano,1.69766
-0732101,Servicio de transporte aéreo,0.12482
-0811101,Servicio postal,0.01717
-0821101,Equipo de telefonía móvil,0.6195
-0831101,Servicio de internet residencial,0.27557
-0831102,"Servicio de paquete de telecomunicaciones (internet, tv, etc)",0.8416
-0831103,Servicio de telefonía móvil,2.652
-0831104,Servicio de telefonía residencial,0.5936
-0831201,Servicio público de comunicaciones,0.05114
-0831202,Servicio público de internet,0.09606
-0911101,Televisor,0.83406
-0911102,Reproductor portátil de audio y video,0.06169
-0912101,Cámara de video,0.01617
-0912102,Cámara fotográfica,0.06246
-0913101,Computadora,0.44966
-0913102,Tintas y toner para impresora,0.04954
-0914101,Música y película digital,0.0908
-0914102,Unidad de respaldo magnético,0.05021
-0921101,Auto de juguete,0.05898
-0921102,Juegos de salón,0.00242
-0921103,Muñecas y muñecos,0.03977
-0921104,Consola de videojuego,0.06483
-0922101,Implementos deportivos,0.39719
-0922102,Instrumentos musicales,0.00928
-0922103,Máquinas para ejercicios,0.01175
-0923101,Flores,0.00104
-0924101,Alimento para mascotas,0.19972
-0925101,Servicio vetererinario,0.02909
-0931101,Entrada al estadio,0.02506
-0931102,Servicio de fiestas ,0.66522
-0931201,Clases deportivas,0.05834
-0931202,Clases recreativas,0.02385
-0932101,Entrada al cine,0.08871
-0932102,Presentaciones artísticas,0.0685
-0933101,Juegos de azar,0.01389
-0941101,Textos escolares,1.01377
-0942101,Diarios,0.01149
-0942102,"Revistas, periódicos y otros",0.08269
-0943101,Cuadernos  y utiles,0.36366
-0943102,Lápices  y reglas,0.10054
-0951101,Servicios de viajes todo incluido dentro del país,0.40299
-0951102,Servicios de viajes todo incluido fuera del país,0.27295
-1011101,Servicio de educación preprimaria,0.19327
-1011102,Servicio de educación de primaria,0.63374
-1021101,Servicio de educación de la enseñanza media,1.02677
-1031102,Servicios de enseñanza universitaria,1.20983
-1041101,Cursos de capacitación,0.65493
-1111101,Desayuno consumido fuera del hogar,1.5608
-1111102,Almuerzo consumido fuera del hogar,4.72181
-1111103,Otras comidas consumidas  fuera del hogar,2.35458
-1111201,Platos preparados para llevar,0.12772
-1111202,Pollo frito para llevar,0.1445
-1111203,Papas fritas y frituras para llevar,0.04034
-1121101,Servicio de alojamiento estudiantil,0.20229
-1121102,Servicio de alojamiento turístico y otros,0.08351
-1211101,Servicio de peluquería,0.4915
-1211102,Servicio de salón de belleza,0.50367
-1212101,Artículos eléctricos para el cabello,0.02865
-1212102,Máquina de afeitar desechable,0.23341
-1212103,Artículos diversos para el cuidado personal,0.25623
-1212201,Pastas dentales,0.49077
-1212202,Papel higiénico,0.65327
-1212203,Jabón,0.36101
-1212204,Pañales,0.24282
-1212205,Protección higiénica femenina,0.24493
-1212206,Champú,0.6831
-1212301,Productos de belleza varios,0.27435
-1212302, Cremas y maquillaje,0.03959
-1212303,Colonias y perfumes,0.86135
-1212304,Cremas para la piel,0.25492
-1212305,Desodorantes y antitranspirantes,0.39189
-1212306,Artículos de maquillaje,0.15567
-1221101,Joyas,0.08107
-1221102,Reloj de pulsera,0.01088
-1222101,Carteras y bolsos,0.04454
-1222102,Artículos para el transporte del bebé,0.00506
-1222103,"Artículos personales diversos (lentes de sol, encendedores etc.)",0.00669
-1231101,Seguro ,0.26618
-1241101,Creditos de consumo (tarjeta de crédito),0.07885
-1251101,Servicio de emisión de certificado de todo tipo,0.1155
-1251102,Servicio de fotocopiado,0.01797
-1251103,Servicio notarial,0.06603
-1251104,Servicio funerario,0.14453
-1251105,Mantenimiento de condominio,0.15128
+Code,GoodOrService,Weight
+_0111101,Arroz,0.63244
+_0111201,Harina,0.17119
+_0111202,Maíz,1.33671
+_0111203,Cereales,0.93761
+_0111301,Pan,2.61053
+_0111302,Galletas,0.08589
+_0111303,Productos de repostería,0.1179
+_0111401,Pastas,0.47925
+_0111501,Productos de tortillería,3.01265
+_0112101,Carne de res,2.31192
+_0112201,Carne de cerdo,0.31303
+_0112301,Carne de pollo,2.34753
+_0112401,Embutidos,0.68868
+_0113101,Pescados,0.29265
+_0113201,Mariscos,0.02759
+_0114101,Leche,0.67302
+_0114102,Yogur,0.04854
+_0114301,Quesos,0.78757
+_0114401,Huevos,1.6646
+_0115101,Margarina,0.06572
+_0115201,Aceites,0.47821
+_0116101,Aguacate,0.16707
+_0116102,Banano,0.10142
+_0116103,Manzana,0.07284
+_0116104,Naranja,0.06213
+_0116105,Plátano,0.1739
+_0116106,Frutas de estación,0.31913
+_0116201,Frutas en conserva,0.01607
+_0117101,Tomate,0.92386
+_0117102,Güisquil,0.1709
+_0117103,Chile pimiento,0.05247
+_0117104,Pepino,0.04363
+_0117105,Güicoy,0.03236
+_0117106,Repollo,0.06225
+_0117107,Lechuga,0.03506
+_0117108,Frijol,1.43142
+_0117109,Ejotes,0.06273
+_0117110,Elote,0.0469
+_0117111,Cebolla,0.33668
+_0117112,Papa,0.50577
+_0117113,Zanahoria,0.11521
+_0117114,Rábano,0.02637
+_0117115,Remolacha,0.01255
+_0117116,Yuca,0.02138
+_0117117,Brócoli,0.02672
+_0117118,Culantro,0.03903
+_0117119,Hierbabuena,0.00774
+_0117120,Otras legumbres y hortalizas,0.11258
+_0118101,Azúcar,1.26957
+_0118201,Jaleas,0.00202
+_0118202,Compotas,0.00998
+_0118301,Dulces,0.05395
+_0118401,Helados,0.02008
+_0119101,Salsa de tomate,0.14512
+_0119102,Pasta de tomate,0.00898
+_0119103,Mayonesa y mostaza,0.06549
+_0119104,Sazonadores,0.02862
+_0119105,Sal,0.05886
+_0119201,Canela,0.01127
+_0119202,Pepitoria y manía,0.01734
+_0119203,Chiles picantes,0.03895
+_0119301,Consomé de pollo,0.17745
+_0119302,Sopas concentradas en sobre,0.13894
+_0119303,Sopas instantaneas,0.22911
+_0119304,Polvos para gelatina,0.00921
+_0119305,Alimentos enlatados,0.22394
+_0121101,Café instantaneo,0.19835
+_0121102,Otras bebidas,0.26236
+_0121201,Agua envasada,0.3389
+_0121301,Aguas gaseosas,0.93963
+_0121401,Polvo para refresco,0.14155
+_0121402,Jugos de frutas,0.21301
+_0121501,Refrescos naturales,0.05462
+_0121502,Refrescos artificiales,0.03039
+_0211101,Licores varios,0.04282
+_0212101,Vino blanco,0.00133
+_0212102,Vino tinto,0.00263
+_0213101,Cerveza,0.15639
+_0221101,Cigarrillos de tabaco,0.07253
+_0311101,Telas para confección de vestuario,0.07867
+_0312101,Pantalón para hombre,0.79139
+_0312102,Camisa para hombre,0.41351
+_0312103,Traje para hombre,0.06553
+_0312104,Ropa deportiva para hombre,0.17061
+_0312105,Ropa interior y de dormir para hombre,0.14171
+_0312201,Pantalón y falda para mujer,0.50875
+_0312202,Blusa para mujer,0.68391
+_0312203,Otro vestuario de mujer,0.22983
+_0312204,Ropa interior y de dormir para mujer,0.30877
+_0312301,Pantalón y pantaloneta para niño,0.274
+_0312302,"Pantalón, falda y short  para niña",0.07286
+_0312303,Camisa y playera para niño,0.06685
+_0312304,Blusa para niña,0.07299
+_0312305,Vestido para niña,0.054
+_0312306,Camiseta para niño,0.01024
+_0312401,Pijama para bebé,0.02168
+_0312501,Uniforme escolar,0.21075
+_0313101,Artículos varios de vestuario,0.27892
+_0313102,Otras prendas de vestir,0.43821
+_0314101,Servicio de limpieza de prendas de vestir,0.04023
+_0321101,Zapatos para hombre,1.06972
+_0321201,Zapatos varios para mujer,0.10553
+_0321202,Zapatos para mujer,0.47625
+_0321203,Zapatos varios para mujer,0.30705
+_0321301,Calzado para niño,0.29982
+_0321302,Calzado para niña,0.20269
+_0322101,Servicio de reparación de calzado,0.01128
+_0411101,Alquiler de vivienda,3.05838
+_0421101,Materiales diversos para reparación  de vivienda,0.95035
+_0421102,Trabajos para vivienda,0.1302
+_0421103,Artículos para electricidad y grifería,0.05534
+_0422101,Servicio de mantenimiento de vivienda,0.7796
+_0431101,Agua potable,0.75775
+_0432101,Servicio de retiro de basura,0.23389
+_0441101,Servicio de electricidad,3.29469
+_0442101,Gas propano,1.19963
+_0443101,Carbón,0.02683
+_0443102,Leña,2.12782
+_0511101,Cama,0.23131
+_0511102,Cuna,0.01425
+_0511103,Juego de comedor,0.02852
+_0511104,Muebles para cocina,0.04743
+_0511105,Juego de sala,0.07145
+_0511106,Muebles modulares,0.13286
+_0511201,Alfombra,0.00341
+_0511202,"Puertas, lamparas y varios",0.07586
+_0521101,Cubrecama,0.12067
+_0521102,Sábana,0.09676
+_0521103,Poncho y frazadas,0.09029
+_0521104,Mantel,0.07037
+_0521105,Cortinas,0.03955
+_0522101,Estufa,0.16627
+_0522102,Refrigerador,0.27033
+_0522103,Lavadora,0.12162
+_0523101,Horno de microondas,0.04205
+_0523102,Licuadora,0.00722
+_0523103,Ventilador,0.01391
+_0523104,Plancha eléctrica,0.02929
+_0531101,Vajillas,0.06167
+_0531102,Baterias de cocina,0.16766
+_0531103,Juegos de vasos,0.04953
+_0531104,Utencilios de cocina,0.09689
+_0541101,Barreno eléctrico,0.00198
+_0541201,Martillo,0.00373
+_0541202,Machete,0.01654
+_0541203,Serrucho,0.00394
+_0541204,Desarmadores,0.00029
+_0551101,Aromatizador y desinfectante,0.0316
+_0551102,Detergente para ropa,1.96872
+_0551103,Jabón varias clases,0.30491
+_0551201,Artículos para limpieza del hogar,0.62636
+_0551202,Fosforos,0.12998
+_0551203,Servilletas de papel,0.06648
+_0551204,Veladoras y candelas,0.17985
+_0552101,Servicio doméstico por mes,0.01608
+_0552102,Lavado de ropa diversa,0.02567
+_0611101,Analgésico y antiinflamatorio,0.18978
+_0611102,Antiacido y antiulceroso,0.11085
+_0611103,Antialérgico,0.03747
+_0611104,Antibiótico,0.28968
+_0611105,Antigripal,0.3175
+_0611106,Antihipertensor,0.27507
+_0611107,Vacunas de prevención,0.0614
+_0611108,Dermatológico,0.0517
+_0611109,Mucolítico y broncodilatador,0.20233
+_0611110,Vitaminas y minerales,0.69252
+_0612101,"Vendas, parches, apósitos",0.05861
+_0612102,Preservativos,0.0466
+_0613101,Lentes de corrección,0.1569
+_0621101,Consulta médica,0.52042
+_0621102,Consulta con ginecólogo,0.06713
+_0622101,Consulta odontológica,0.11788
+_0622102,Tratamiento odontológico,0.16005
+_0623101,Exámen de radiología y otros,0.20773
+_0623102,Exámen de laboratorio clínico,0.20961
+_0631101,Servicio de hospitalización,0.27852
+_0631102,Intervención hospitalaria,0.171
+_0711101,Automóvil y pickup,2.54274
+_0712101,Motocicletas,0.48733
+_0713101,Bicicletas,0.06749
+_0721101,Repuestos para vehículos en general (amortiguador),0.1319
+_0721102,Llantas para automóvil,0.2339
+_0721103,Baterías y lubricantes,0.11669
+_0722101,Gasolina superior,2.06641
+_0722102,Gasolina regular,0.6952
+_0722103,Diesel,0.13937
+_0723101,Servicio de mantenimiento de automóvil,0.43832
+_0723102,Reparación de automóvil,0.30621
+_0723103,Lavado de automóvil,0.05681
+_0724101,Parqueo,0.10859
+_0724201,Servicio de pinchazo,0.04865
+_0724202,Licencia de conducir,0.04619
+_0731101,Servicio de taxi,0.11485
+_0731102,Servicio de transporte escolar,0.32321
+_0731103,Servicio de bus urbano,0.68383
+_0731104,Servicio de bus extraurbano,1.69766
+_0732101,Servicio de transporte aéreo,0.12482
+_0811101,Servicio postal,0.01717
+_0821101,Equipo de telefonía móvil,0.6195
+_0831101,Servicio de internet residencial,0.27557
+_0831102,"Servicio de paquete de telecomunicaciones (internet, tv, etc)",0.8416
+_0831103,Servicio de telefonía móvil,2.652
+_0831104,Servicio de telefonía residencial,0.5936
+_0831201,Servicio público de comunicaciones,0.05114
+_0831202,Servicio público de internet,0.09606
+_0911101,Televisor,0.83406
+_0911102,Reproductor portátil de audio y video,0.06169
+_0912101,Cámara de video,0.01617
+_0912102,Cámara fotográfica,0.06246
+_0913101,Computadora,0.44966
+_0913102,Tintas y toner para impresora,0.04954
+_0914101,Música y película digital,0.0908
+_0914102,Unidad de respaldo magnético,0.05021
+_0921101,Auto de juguete,0.05898
+_0921102,Juegos de salón,0.00242
+_0921103,Muñecas y muñecos,0.03977
+_0921104,Consola de videojuego,0.06483
+_0922101,Implementos deportivos,0.39719
+_0922102,Instrumentos musicales,0.00928
+_0922103,Máquinas para ejercicios,0.01175
+_0923101,Flores,0.00104
+_0924101,Alimento para mascotas,0.19972
+_0925101,Servicio vetererinario,0.02909
+_0931101,Entrada al estadio,0.02506
+_0931102,Servicio de fiestas,0.66522
+_0931201,Clases deportivas,0.05834
+_0931202,Clases recreativas,0.02385
+_0932101,Entrada al cine,0.08871
+_0932102,Presentaciones artísticas,0.0685
+_0933101,Juegos de azar,0.01389
+_0941101,Textos escolares,1.01377
+_0942101,Diarios,0.01149
+_0942102,"Revistas, periódicos y otros",0.08269
+_0943101,Cuadernos  y utiles,0.36366
+_0943102,Lápices  y reglas,0.10054
+_0951101,Servicios de viajes todo incluido dentro del país,0.40299
+_0951102,Servicios de viajes todo incluido fuera del país,0.27295
+_1011101,Servicio de educación preprimaria,0.19327
+_1011102,Servicio de educación de primaria,0.63374
+_1021101,Servicio de educación de la enseñanza media,1.02677
+_1031102,Servicios de enseñanza universitaria,1.20983
+_1041101,Cursos de capacitación,0.65493
+_1111101,Desayuno consumido fuera del hogar,1.5608
+_1111102,Almuerzo consumido fuera del hogar,4.72181
+_1111103,Otras comidas consumidas  fuera del hogar,2.35458
+_1111201,Platos preparados para llevar,0.12772
+_1111202,Pollo frito para llevar,0.1445
+_1111203,Papas fritas y frituras para llevar,0.04034
+_1121101,Servicio de alojamiento estudiantil,0.20229
+_1121102,Servicio de alojamiento turístico y otros,0.08351
+_1211101,Servicio de peluquería,0.4915
+_1211102,Servicio de salón de belleza,0.50367
+_1212101,Artículos eléctricos para el cabello,0.02865
+_1212102,Máquina de afeitar desechable,0.23341
+_1212103,Artículos diversos para el cuidado personal,0.25623
+_1212201,Pastas dentales,0.49077
+_1212202,Papel higiénico,0.65327
+_1212203,Jabón,0.36101
+_1212204,Pañales,0.24282
+_1212205,Protección higiénica femenina,0.24493
+_1212206,Champú,0.6831
+_1212301,Productos de belleza varios,0.27435
+_1212302,Cremas y maquillaje,0.03959
+_1212303,Colonias y perfumes,0.86135
+_1212304,Cremas para la piel,0.25492
+_1212305,Desodorantes y antitranspirantes,0.39189
+_1212306,Artículos de maquillaje,0.15567
+_1221101,Joyas,0.08107
+_1221102,Reloj de pulsera,0.01088
+_1222101,Carteras y bolsos,0.04454
+_1222102,Artículos para el transporte del bebé,0.00506
+_1222103,"Artículos personales diversos (lentes de sol, encendedores etc.)",0.00669
+_1231101,Seguro,0.26618
+_1241101,Creditos de consumo (tarjeta de crédito),0.07885
+_1251101,Servicio de emisión de certificado de todo tipo,0.1155
+_1251102,Servicio de fotocopiado,0.01797
+_1251103,Servicio notarial,0.06603
+_1251104,Servicio funerario,0.14453
+_1251105,Mantenimiento de condominio,0.15128

@@ -19,7 +19,7 @@ using Test
 
 totalfn = InflationTotalCPI()
 println(totalfn)
-@test totalfn(gtdata) isa Vector{<:AbstractFloat}
+@test totalfn(GTDATA) isa Vector{<:AbstractFloat}
 
 pkfn = InflationEnsemble(
     InflationPercentileEq(72), 

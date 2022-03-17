@@ -105,4 +105,4 @@ En esta sección se documentan los resultados del proceso de evaluación de la m
 
 ## Trayectoria de inflación observada
 
-![Trayectoria observada](images/WeightedMean/obs_trajectory.svg)
+![Trayectoria observada](images/WeightedMean/obs_trajectory.png)

@@ -11,14 +11,14 @@ comp = CompletePeriod()
 b2010 = EvalPeriod(Date(2011,1), Date(2019,12), "b2010")
 
 # Se obtiene una trayectoria de inflación 
-t = InflationTotalCPI()(gtdata)
+t = InflationTotalCPI()(GTDATA)
 
 # Obtenemos las máscaras para evaluar sobre períodos específicos 
-m = eval_periods(gtdata, b2010)
+m = eval_periods(GTDATA, b2010)
 @test m isa BitVector
 t[m, :, :]
 
-m = eval_periods(gtdata, comp)
+m = eval_periods(GTDATA, comp)
 @test m isa AbstractRange
 t[m, :, :]
 
@@ -29,7 +29,7 @@ t[m, :, :]
 config = SimConfig(
     InflationTotalCPI(),
     ResampleScrambleVarMonths(), 
-    TrendAnalytical(gtdata, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal"), 
+    TrendAnalytical(GTDATA, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal"), 
     InflationTotalRebaseCPI(36, 2), 
     1_000, 
     Date(2020, 12)
@@ -39,7 +39,7 @@ config = SimConfig(
 config2 = SimConfig(
     InflationTotalCPI(),
     ResampleScrambleVarMonths(), 
-    TrendAnalytical(gtdata, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal"), 
+    TrendAnalytical(GTDATA, t -> 1 + sin(2π*t/12), "Tendencia sinusoidal"), 
     InflationTotalRebaseCPI(36, 2), 
     10_000, 
     Date(2020, 12), 
@@ -51,14 +51,14 @@ config2 = SimConfig(
 
 # Comprobamos que la máscara funciona bien aún si los datos tienen menor rango
 # de fechas 
-gtdata19 = gtdata[Date(2019, 12)]
+gtdata19 = GTDATA[Date(2019, 12)]
 @test eval_periods(gtdata19, CompletePeriod()) isa AbstractRange
 @test eval_periods(gtdata19, GT_EVAL_B10) isa BitVector
 
 # O si el período de evaluación dado contiene al rango de fechas de los datos
-m = eval_periods(gtdata, EvalPeriod(Date(2000,1), Date(2025,2), "custom"))
+m = eval_periods(GTDATA, EvalPeriod(Date(2000,1), Date(2025,2), "custom"))
 
-@test length(m) == infl_periods(gtdata)
+@test length(m) == infl_periods(GTDATA)
 @test all(m) 
 
 

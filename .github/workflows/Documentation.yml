@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
         with:
-          version: '1'
+          version: '1.6'
       - uses: actions/cache@v1
         env:
           cache-name: cache-packages
@@ -29,6 +29,7 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
+      - run: julia -e 'import Pkg; Pkg.Registry.add(Pkg.RegistrySpec(url = "https://github.com/JuliaRegistries/General")); Pkg.Registry.add(Pkg.RegistrySpec(url = "https://github.com/DIE-BG/RegistryDIE"))'
       - run: |
           julia --project=docs -e '
             using Pkg

@@ -2,6 +2,7 @@ using HEMI
 using Documenter, Literate
 
 DocMeta.setdocmeta!(HEMI, :DocTestSetup, :(using HEMI); recursive=true)
+DocMeta.setdocmeta!(CPIDataBase, :DocTestSetup, :(using HEMI); recursive=true)
 DocMeta.setdocmeta!(InflationFunctions, :DocTestSetup, :(using HEMI); recursive=true)
 DocMeta.setdocmeta!(InflationEvalTools, :DocTestSetup, :(using HEMI); recursive=true)
 
@@ -25,12 +26,12 @@ example_pages = [
 
 makedocs(;
     modules=[HEMI, CPIDataBase, InflationFunctions, InflationEvalTools],
-    authors="DIEBG",
-    repo="https://github.com/DIE-BG/HEMI/blob/{commit}{path}#{line}",
+    authors="DIE-BG contributors",
+    repo="https://github.com/DIE-BG/HEMI.jl/blob/{commit}{path}#{line}",
     sitename="HEMI",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://die-bg.github.io/HEMI",
+        canonical="https://die-bg.github.io/HEMI.jl",
         assets=String[],
     ),
     doctest = true, 
@@ -101,7 +102,7 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/DIE-BG/HEMI",
+    repo="github.com/DIE-BG/HEMI.jl",
     devbranch = "main",
     push_preview = true 
 )

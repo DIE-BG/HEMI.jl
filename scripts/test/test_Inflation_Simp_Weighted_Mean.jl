@@ -13,13 +13,13 @@ using Test
 # ##MEDIA SIMPLE
 
 simplemeanfn = InflationSimpleMean()
-simplemeanfn(gtdata)
+simplemeanfn(GTDATA)
 
 # ##MEDIA PONDERADA 
 
 weightedmeanfn = InflationWeightedMean()
-a=weightedmeanfn(gt10)
-t = weightedmeanfn(gtdata)
+a=weightedmeanfn(GT10)
+t = weightedmeanfn(GTDATA)
 
 fns = [simplemeanfn, weightedmeanfn]
 for fn in fns 
@@ -33,18 +33,18 @@ end
 inflfn = InflationMovingAverage(InflationTotalCPI(), 3)
 
 # Prueba para computar media móvil de función de inflación 
-@test inflfn(gtdata) isa Vector{<:AbstractFloat}
+@test inflfn(GTDATA) isa Vector{<:AbstractFloat}
 
-all_ma = [InflationMovingAverage(InflationTotalCPI(), i)(gtdata) for i in 1:12] |> 
+all_ma = [InflationMovingAverage(InflationTotalCPI(), i)(GTDATA) for i in 1:12] |> 
     x -> hcat(x...)
 
 @test all_ma isa Matrix
 
 #=
-plot(infl_dates(gtdata), all_ma,
+plot(infl_dates(GTDATA), all_ma,
     # xlims=(Date(2001,12), Date(2005,12)),
     legend=false)
-plot!(infl_dates(gtdata), InflationTotalCPI()(gtdata), 
+plot!(infl_dates(GTDATA), InflationTotalCPI()(GTDATA), 
     linewidth=3, color=:black) 
 =#
 end 

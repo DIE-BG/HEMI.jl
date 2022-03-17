@@ -11,7 +11,7 @@ using Test
 totalfn = InflationTotalRebaseCPI()
 
 # Datos de prueba 
-evaldata = gtdata[Date(2020, 12)]
+evaldata = GTDATA[Date(2020, 12)]
 
 # Se genera una función de remuestreo para obtener los datos paramétricos y generar así la trayectoria de inflación paramétrica 
 resamplefn = ResampleSBB(36)

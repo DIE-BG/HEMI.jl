@@ -4,7 +4,6 @@ CurrentModule = CPIDataBase
 
 # CPIDataBase
 
-
 ```@index
 Modules = [CPIDataBase, CPIDataBase.TestHelpers]
 ```
