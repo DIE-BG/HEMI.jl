@@ -4,9 +4,9 @@ BOUNDS(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) 
 BOUNDS(::Type{InflationDynamicExclusion}) = ([0,0],[5,5])
 
 # Iniciales para constructores
-INITIAL(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [15.0, 75.0]
+INITIAL(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [25.0, 75.0]
 INITIAL(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = 0.5f0
-INITIAL(::Type{InflationDynamicExclusion}) = [2.0,2.0]
+INITIAL(::Type{InflationDynamicExclusion}) = [1.0,1.0]
 
 
 function inside(x, bounds)
@@ -70,9 +70,9 @@ function optimize_config(config, data;
     x0     = INITIAL(infl_constructor)
 
     # Función cerradura 
-    f = k -> eval_config(k, config, evaldata, tray_infl_param; 
+    f = k -> Float64(eval_config(k, config, evaldata, tray_infl_param; 
         K = config[:nsim], 
-        measure)
+        measure))
 
 
     if infl_constructor <: Union{InflationPercentileEq, InflationPercentileWeighted}
@@ -84,6 +84,7 @@ function optimize_config(config, data;
         )
 
     elseif infl_constructor <: Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, InflationDynamicExclusion}
+        # Optim
         options = Optim.Options(
             iterations=maxiterations, 
             x_tol=x_tol, 
@@ -92,8 +93,10 @@ function optimize_config(config, data;
             show_trace=true
         )
         optres = optimize(f, bounds[1], bounds[2], x0, NelderMead(), options)
+        argmin_fn = Optim.minimizer
+        min_fn = minimum
 
-        # BlackBoxOptim      
+        # # BlackBoxOptim      
         # lowerbounds = first(bounds)
         # upperbounds = last(bounds)
         # optres = bboptimize(f, 
@@ -101,19 +104,20 @@ function optimize_config(config, data;
         #     MaxSteps = maxiterations, 
         #     TraceMode = :verbose
         # )
+        # argmin_fn = BlackBoxOptim.best_candidate
+        # min_fn = BlackBoxOptim.best_fitness
 
     end
 
     s = measure == :corr ? -1 : 1
 
     # Guardar resultados de optimización
-    # @info "Resultados de optimización:" min_mse=(s*minimum(optres)) minimizer=Optim.minimizer(optres)  iterations=Optim.iterations(optres)
-    @info "Resultados de optimización:" optres minimizer=s*Optim.minimizer(optres)
+    @info "Resultados de optimización:" optres
     results = Dict(
         # Resultados de optimización 
         "measure" => measure, 
-        "minimizer" => Optim.minimizer(optres), 
-        "optimal" => s * minimum(optres),
+        "minimizer" => argmin_fn(optres),
+        "optimal" => s * min_fn(optres),
         "optres" => optres
     )
     
