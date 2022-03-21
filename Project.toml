@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+BlackBoxOptim = "a134a8b2-14d6-55f6-9291-3336d3ab0209"
 CPIDataBase = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Chain = "8be319e6-bccf-4806-a6f7-6fae938471bc"
