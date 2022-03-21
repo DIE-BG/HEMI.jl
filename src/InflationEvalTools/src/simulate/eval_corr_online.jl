@@ -1,35 +1,53 @@
 # eval_corr_online.jl - Generación de CORR de optimización online  
 
 """
-    function eval_corr_online(config::SimConfig, tray_infl_param; 
-        K = 1000, rnsdeed = DEFAULT_SEED) -> corr
+    eval_corr_online(config::SimConfig, csdata::CountryStructure;
+        K = 1000, 
+        rndseed = DEFAULT_SEED) -> corr
 
-Función para obtener evaluación de correlación media utilizando
-configuración de evaluación [`SimConfig`](@ref). Se debe proveer la trayectoria
-paramétrica de comparación en `tray_infl_param`, esto para evitar su cómputo
-repetido en esta función. Devuelve el MSE como un escalar.
+Función para obtener evaluación de correlación media (corr) utilizando
+configuración de evaluación [`SimConfig`](@ref). Se deben proveer los datos de
+evaluación en `csdata`, con los cuales se desee computar la trayectoria
+paramétrica de comparación. Devuelve la correlación media (corr) como un
+escalar.
 
 Esta función se puede utilizar para optimizar los parámetros de diferentes
 medidas de inflación y es más eficiente en memoria que [`pargentrayinfl`](@ref). 
 """
-function eval_corr_online(config::SimConfig, csdata::CountryStructure, tray_infl_param; 
-    K = 1000, rnsdeed = DEFAULT_SEED)
+function eval_corr_online(config::SimConfig, csdata::CountryStructure; 
+    K = 1000, 
+    rndseed = DEFAULT_SEED)
+    
+    # Crear el parámetro y obtener la trayectoria paramétrica
+    param = InflationParameter(config.paramfn, config.resamplefn, config.trendfn)
+    tray_infl_param = param(csdata)
+
     # Desempaquetar la configuración 
-    eval_corr_online(config.inflfn, config.resamplefn, config.trendfn, csdata, tray_infl_param; K)
+    eval_corr_online(config.inflfn, config.resamplefn, config.trendfn, csdata, tray_infl_param; K, rndseed)
 end
 
 
 """
-    function eval_corr_online(inflfn::InflationFunction,
-        resamplefn::ResampleFunction, trendfn::TrendFunction,
-        csdata::CountryStructure, tray_infl_param; K = 100, rndseed = DEFAULT_SEED) -> corr
+    eval_corr_online(
+        inflfn::InflationFunction,
+        resamplefn::ResampleFunction, 
+        trendfn::TrendFunction,
+        csdata::CountryStructure, 
+        tray_infl_param::Vector{<:AbstractFloat};
+        K = 1000, rndseed = DEFAULT_SEED) -> corr
 
-Función para obtener evaluación de correlación media (CORR) utilizando las
-funciones especificadas. Devuelve CORR como un escalar.
+Función para obtener evaluación de correlación media (corr) utilizando la
+configuración especificada. Se requiere la trayectoria paramétrica
+`tray_infl_param` para evitar su cómputo repetidamente en esta función. Devuelve
+la correlación media (corr) como un escalar.
 """
-function eval_corr_online(inflfn::InflationFunction,
-    resamplefn::ResampleFunction, trendfn::TrendFunction,
-    csdata::CountryStructure, tray_infl_param; K = 100, rndseed = DEFAULT_SEED)
+function eval_corr_online(
+    inflfn::InflationFunction,
+    resamplefn::ResampleFunction, 
+    trendfn::TrendFunction,
+    csdata::CountryStructure, 
+    tray_infl_param::Vector{<:AbstractFloat}; 
+    K = 1000, rndseed = DEFAULT_SEED)
 
     # Tarea de cómputo de trayectorias
     mean_corr = @showprogress @distributed (OnlineStats.merge) for k in 1:K 
