@@ -7,31 +7,36 @@ using PrettyTables
 using Optim
 using BlackBoxOptim
 
-
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
-nprocs() < 5 && addprocs(4, exeflags="--project")
+nprocs() < 5 && addprocs(4; exeflags="--project")
 @everywhere using HEMI
-
 
 ## Optimización de medidas
 
 # Fronteras para constructores
-BOUNDS(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = ([0, 0], [100, 100])
-BOUNDS(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = (0f0, 1f0)
-BOUNDS(::Type{InflationDynamicExclusion}) = ([0,0],[5,5])
+function BOUNDS(::Union{Type{InflationTrimmedMeanEq},Type{InflationTrimmedMeanWeighted}})
+    return ([0, 0], [100, 100])
+end
+function BOUNDS(::Union{Type{InflationPercentileEq},Type{InflationPercentileWeighted}})
+    return (0.0f0, 1.0f0)
+end
+BOUNDS(::Type{InflationDynamicExclusion}) = ([0, 0], [5, 5])
 
 # Iniciales para constructores
-INITIAL(::Union{Type{InflationTrimmedMeanEq}, Type{InflationTrimmedMeanWeighted}}) = [25.0, 75.0]
-INITIAL(::Union{Type{InflationPercentileEq}, Type{InflationPercentileWeighted}}) = 0.5f0
-INITIAL(::Type{InflationDynamicExclusion}) = [2.0,2.0]
-
+function INITIAL(::Union{Type{InflationTrimmedMeanEq},Type{InflationTrimmedMeanWeighted}})
+    return [25.0, 75.0]
+end
+function INITIAL(::Union{Type{InflationPercentileEq},Type{InflationPercentileWeighted}})
+    return 0.5f0
+end
+INITIAL(::Type{InflationDynamicExclusion}) = [2.0, 2.0]
 
 function inside(x, bounds)
     return all(bounds[1] .<= x .<= bounds[2])
 end
 
-function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :mse)
+function eval_config(k, config, data, tray_infl_param; K=10_000, measure=:mse)
 
     # Configurar la función de inflación a evaluar
     infl_constructor = config[:infltypefn]
@@ -48,9 +53,7 @@ function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :ms
     eval_fn_online = eval(Symbol("eval_", measure, "_online"))
 
     if inside(k, bounds)
-        metric = eval_fn_online(inflfn, 
-            resamplefn, trendfn, data, tray_infl_param; 
-            K)
+        metric = eval_fn_online(inflfn, resamplefn, trendfn, data, tray_infl_param; K)
         # cuando measure==:corr, se retorna el negativo porque buscamos
         # maximizar la correlacion
         return s * metric
@@ -59,16 +62,17 @@ function eval_config(k, config, data, tray_infl_param; K = 10_000, measure = :ms
     end
 end
 
-
-function optimize_config(config, data;
-    savepath = nothing,
-    measure = :mse,
-    x_tol=1e-1, 
+function optimize_config(
+    config,
+    data;
+    savepath=nothing,
+    measure=:mse,
+    x_tol=1e-1,
     f_tol=1e-2,
-    g_tol = 1e-4,
-    maxiterations = 100, 
-    maxtime = 5*60,
-    )
+    g_tol=1e-4,
+    maxiterations=100,
+    maxtime=5 * 60,
+)
 
     # Configuración de remuestreo, tendencia y parámetro
     resamplefn = config[:resamplefn]
@@ -79,37 +83,39 @@ function optimize_config(config, data;
     evaldata = data[config[:traindate]]
 
     # Trayectoria paramétrica 
-    param = InflationParameter(paramfn, resamplefn, trendfn) 
+    param = InflationParameter(paramfn, resamplefn, trendfn)
     tray_infl_param = param(evaldata)
 
     # Configurar la función de inflación a evaluar
     infl_constructor = config[:infltypefn]
 
     bounds = BOUNDS(infl_constructor)
-    x0     = INITIAL(infl_constructor)
+    x0 = INITIAL(infl_constructor)
 
     # Función cerradura 
-    f = k -> eval_config(k, config, evaldata, tray_infl_param; 
-        K = config[:nsim], 
-        measure)
+    f = k -> eval_config(k, config, evaldata, tray_infl_param; K=config[:nsim], measure)
 
-
-    if infl_constructor <: Union{InflationPercentileEq, InflationPercentileWeighted}
+    if infl_constructor <: Union{InflationPercentileEq,InflationPercentileWeighted}
         @info "Optimizando percentil"
-        optres =  optimize(f, first(bounds), last(bounds),
-            show_trace = true, 
-            iterations = maxiterations,
-            abs_tol = f_tol
+        optres = optimize(
+            f,
+            first(bounds),
+            last(bounds);
+            show_trace=true,
+            iterations=maxiterations,
+            abs_tol=f_tol,
         )
 
-    elseif infl_constructor <: Union{InflationTrimmedMeanEq, InflationTrimmedMeanWeighted, InflationDynamicExclusion}
-        options = Optim.Options(
-            iterations=maxiterations, 
-            x_tol=x_tol, 
-            f_tol=f_tol, 
-            g_tol = g_tol,
+    elseif infl_constructor <: Union{
+        InflationTrimmedMeanEq,InflationTrimmedMeanWeighted,InflationDynamicExclusion
+    }
+        options = Optim.Options(;
+            iterations=maxiterations,
+            x_tol=x_tol,
+            f_tol=f_tol,
+            g_tol=g_tol,
             show_trace=true,
-            time_limit = maxtime,
+            time_limit=maxtime,
         )
         optres = optimize(f, bounds[1], bounds[2], x0, NelderMead(), options)
         argmin_fn = Optim.minimizer
@@ -136,40 +142,41 @@ function optimize_config(config, data;
     s = measure == :corr ? -1 : 1
 
     # Guardar resultados de optimización
-    @info "Resultados de optimización:" optres minimizer=argmin_fn(optres)
+    @info "Resultados de optimización:" optres minimizer = argmin_fn(optres)
     results = Dict(
         # Resultados de optimización 
-        "measure" => measure, 
-        "minimizer" => argmin_fn(optres), 
+        "measure" => measure,
+        "minimizer" => argmin_fn(optres),
         "optimal" => s * min_fn(optres),
-        "optres" => optres
+        "optres" => optres,
     )
-    
+
     merge!(results, tostringdict(config))
 
     # Guardar los resultados de evaluación para collect_results 
-    filename = savename(results, "jld2", allowedtypes=(Real, String, Date), digits=4)
+    filename = savename(results, "jld2"; allowedtypes=(Real, String, Date), digits=4)
     isnothing(savepath) || wsave(joinpath(savepath, filename), tostringdict(results))
 
-    return results 
+    return results
 end
 
-
 ## Optimización de medidas
-        
-D = dict_list(Dict(
-    :infltypefn => [
-        # InflationPercentileEq, 
-        # InflationPercentileWeighted, 
-        # InflationTrimmedMeanEq,
-        InflationTrimmedMeanWeighted, 
-        # InflationDynamicExclusion
-    ],
-    :resamplefn => ResampleScrambleTrended(0.46031723899305166),
-    :trendfn => TrendIdentity(),
-    :paramfn => InflationTotalRebaseCPI(36,2),
-    :nsim => 1_000,
-    :traindate => Date(2018, 12))
+
+D = dict_list(
+    Dict(
+        :infltypefn => [
+            # InflationPercentileEq, 
+            # InflationPercentileWeighted, 
+            # InflationTrimmedMeanEq,
+            InflationTrimmedMeanWeighted,
+            # InflationDynamicExclusion
+        ],
+        :resamplefn => ResampleScrambleTrended(0.46031723899305166),
+        :trendfn => TrendIdentity(),
+        :paramfn => InflationTotalRebaseCPI(36, 2),
+        :nsim => 1_000,
+        :traindate => Date(2018, 12),
+    ),
 )
 
 M = [:mse]
@@ -177,8 +184,16 @@ L = []
 
 for measure in M
     for config in D
-        optres = optimize_config(config, gtdata; measure, maxtime=10*60)
-        append!(L,[[optres["infltypefn"], optres["measure"], optres["minimizer"], optres["optimal"]]])
+        optres = optimize_config(config, gtdata; measure, maxtime=10 * 60)
+        append!(
+            L,
+            [[
+                optres["infltypefn"],
+                optres["measure"],
+                optres["minimizer"],
+                optres["optimal"],
+            ]],
+        )
     end
 end
 
@@ -199,8 +214,6 @@ L
 # Any[InflationTrimmedMeanEq, :corr, [55.90512060523032, 92.17767125368118], -0.9857175350189209]
 # Any[InflationTrimmedMeanWeighted, :corr, [46.44323324480888, 98.54608364886394], -0.9776228070259094]
 # Any[InflationDynamicExclusion, :corr, [0.46832260901857126, 4.974514492691691], -0.9767531156539917]
-
-
 
 # Resultados con ResampleScrambleTrended(0.5050245)
 # 5-element Vector{Any}:
@@ -227,8 +240,6 @@ L
 # 2-element Vector{Any}:
 #  Any[InflationTrimmedMeanWeighted, :mse, [3.688400731807736, 99.08868544455818], 0.31238046288490295]
 #  Any[InflationDynamicExclusion, :mse, [1.5210907535757554, 3.698630036432531], 0.4094146490097046]
-    
-
 
 # 2-element Vector{Any}:
 #  Any[InflationPercentileEq, :mse, 0.71637434f0, 0.51337427f0]
@@ -237,7 +248,6 @@ L
 # 2-element Vector{Any}:
 #  Any[InflationPercentileEq, :mse, 0.71974313f0, 0.378483f0]
 #  Any[InflationPercentileWeighted, :mse, 0.6950942f0, 0.5165965f0]
-
 
 # ResampleScrambleTrended(0.46031723899305166)
 # 2-element Vector{Any}:
@@ -252,7 +262,6 @@ L
 # 2-element Vector{Any}:
 #  Any[InflationPercentileEq, :absme, 0.7190822f0, 0.06812336f0]
 #  Any[InflationPercentileWeighted, :absme, 0.6943178f0, 0.07237616f0]
-
 
 # ResampleTrended([0.5695731554158409, 0.42360815127381435])
 # 2-element Vector{Any}:
