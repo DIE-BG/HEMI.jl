@@ -13,7 +13,7 @@ using Plots, CSV
 
 ## Definición de instancias principales
 trendfn    = TrendIdentity()
-resamplefn = ResampleScrambleTrended(0.7036687156959144)
+resamplefn = ResampleScrambleTrended(0.46031723899305166)
 paramfn    = InflationTotalRebaseCPI(36, 2)
 
 INFL_FAMILY = InflationFixedExclusionCPI
@@ -145,6 +145,9 @@ FGT10.names[exc_opt_10]
 # ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
 # [29, 116, 31, 46, 39, 40, 186, 30, 35, 185])
 
+# ResampleScrambleTrended(0.46031723899305166), 10k simulaciones
+# ([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
+# [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184])
 
 inflfn = INFL_FAMILY(exc_opt_00, exc_opt_10)
 inflfn(GTDATA)
