@@ -129,6 +129,15 @@ pretty_table(main_results, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(mse_decomp, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(sens_metrics, tf=tf_markdown, formatters=ft_round(4))
 pretty_table(weights_results, tf=tf_markdown, formatters=ft_round(4))
+pretty_table(
+    leftjoin(
+        select(main_results, :measure, :mse), 
+        components(maioptfn);
+        on=:measure
+    ),
+    tf=tf_markdown, 
+    formatters=ft_round(4)
+)
 
 
 ## Revisión de métodos 
