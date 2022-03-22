@@ -7,9 +7,6 @@ using DataFrames, Chain, PrettyTables
 using Optim
 using Plots
 
-# Funciones de ayuda 
-includet(scriptsdir("mai", "mai-optimization.jl"))
-
 # Configuración de escenario
 EVALDATE = Date(2018,12)
 PARAMSCENARIO = 36
@@ -75,7 +72,8 @@ wsave(weightsfile, "mai_mse_weights", a_optim)
 maioptfn = InflationCombination(
     dfweights.inflfn...,
     dfweights.analytic_weight, 
-    "MAI óptima MSE 2018"
+    "MAI óptima MSE 2018 (experimental)", 
+    "MAIOptMSEexp"
 )
 
 wsave(datadir(savepath, "mse-weights", "maioptfn.jld2"), "maioptfn", maioptfn)

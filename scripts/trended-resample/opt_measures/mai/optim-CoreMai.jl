@@ -4,6 +4,7 @@ using DrWatson
 
 using HEMI 
 using Optim 
+using BlackBoxOptim
 using CSV, DataFrames, Chain 
 
 # Directorios de resultados 
@@ -16,14 +17,14 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 ## Funciones de apoyo para optimización iterativa de cuantiles 
-includet(scriptsdir("mai", "mai-optimization.jl"))
+includet(scriptsdir("OPTIM", "mai-optim-functions.jl"))
 
 ## Configuración para simulaciones
 
 # Parámetros de configuración general del escenario de evaluación 
 genconfig = Dict(
     :paramfn => InflationTotalRebaseCPI(36, 2),
-    :resamplefn => ResampleScrambleTrended(0.7036687156959144),
+    :resamplefn => ResampleScrambleTrended(0.46031723899305166),
     :trendfn => TrendIdentity(),
     :traindate => Date(2018, 12),
     :nsim => 125_000
@@ -31,17 +32,23 @@ genconfig = Dict(
 
 optconfig = merge(genconfig, Dict(
     # Parámetros para búsqueda iterativa de cuantiles 
-    :mai_nseg => [3,4,5,10],
-    :mai_method => [MaiF, MaiG, MaiFP], 
+    :mainseg => [3,4,5,10],
+    :maimethod => [MaiF, MaiG, MaiFP], 
 )) |> dict_list
 
 ## Optimización de métodos MAI - búsqueda inicial de percentiles 
 
 K = 100
 MAXITER = 1000
+MAXTIME = 5*60
 
 for config in optconfig
-    optimizemai(config, gtdata; K, savepath, maxiterations = MAXITER)
+    optimizemai(config, GTDATA; K, savepath, 
+        maxiterations = MAXITER,
+        maxtime = MAXTIME, 
+        init = :random,
+        backend = :BlackBoxOptim
+    )
 end 
 
 ## Cargar resultados de búsqueda de cuantiles 
@@ -70,19 +77,23 @@ end
 # Optimizar con mayor número de simulaciones 
 K = 10_000
 MAXITER = 30
+MAXTIME = 20*60
 
 for r in eachrow(prelim_methods)
     # Crear configuración para optimizar 
     config = merge(genconfig, Dict(
-        :mai_nseg => r.n, 
-        :mai_method => eval(Symbol(r.method))
+        :mainseg => r.n, 
+        :maimethod => eval(Symbol(r.method))
     ))
 
     # Optimizar las metodologías candidatas con vectores iniciales 
-    optimizemai(config, gtdata; 
+    optimizemai(config, GTDATA; 
         K, savepath,
         qstart = r.q, # Vector inicial de búsqueda 
-        maxiterations = MAXITER)
+        maxiterations = MAXITER, 
+        maxtime = MAXTIME, 
+        backend = :Optim, 
+    )
 end
 
 

@@ -64,13 +64,13 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
     savepath = nothing, # Ruta de guardado de resultados de optimización 
     K = 10_000, # Número de simulaciones por defecto 
     qstart = nothing, # Puntos iniciales, por defecto distribución uniforme 
-    init = :random,
+    init = :random, # ignorado si qstart !== nothing
     backend = :Optim,
     x_abstol = 1e-4, 
     f_abstol = 1e-4, 
     g_tol = 1e-4,
     maxiterations = 100, 
-    maxtime = 60*5,
+    maxtime = 60*5, # ignorado con backend == :Optim 
     metric = :mse, 
     lambda = 0.1
     )
@@ -127,7 +127,7 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
             NumDimensions = n-1, 
             TraceMode = :verbose, 
             MaxSteps = maxiterations,
-            # MaxTime = maxtime
+            MaxTime = maxtime
         )
 
         argmin_fn = BlackBoxOptim.best_candidate
