@@ -21,7 +21,7 @@ date_ticks = first(dates):Month(24):last(dates)
 date_str = Dates.format.(date_ticks, dateformat"Y-m")
 
 bp = plot(InflationTotalCPI(), data,
-    label = "Actual CPI inflation",
+    label = "Headline CPI inflation",
     ylabel = "% change, year-on-year",
     linewidth = 2, 
     guidefontsize = 8,
