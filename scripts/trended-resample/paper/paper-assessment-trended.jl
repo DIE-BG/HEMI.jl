@@ -17,12 +17,15 @@ savepath = datadir("results", "paper-assessment-trended")
 
 # Resampling technique, parametric inflation formula and trend function 
 paramfn = InflationTotalRebaseCPI(60)
-resamplefn = ResampleScrambleTrended(0.505024) 
+resamplefn = ResampleScrambleTrended(0.46031723899305166) 
 trendfn = TrendIdentity()
 
 # Inflation excluding food & energy: indexes to exclude for every CPI dataset
 # Specification in the form of ([CPI 2000 specification], [CPI 2010 specification])
-core_specs = (vcat(collect(23:41), 104, 159), vcat(collect(22:48), 116, collect(184:186)))
+core_specs = (
+    vcat(collect(23:41), 104, 159), 
+    vcat(collect(22:48), 116, collect(184:186)),
+)
 
 # Inflation estimators to assess 
 inflfns = [
@@ -47,7 +50,7 @@ assessment_config = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
-    :traindate => Date(2021, 12),
+    :traindate => Date(2020, 12),
     :nsim => 125_000) |> dict_list
 
 println("Configuration has $(length(assessment_config)) entries")
