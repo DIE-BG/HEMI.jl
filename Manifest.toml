@@ -341,6 +341,12 @@ git-tree-sha1 = "21efd19106a55620a188615da6d3d06cd7f6ee03"
 uuid = "a3f928ae-7b40-5064-980b-68af3947d34b"
 version = "2.13.93+0"
 
+[[ForecastPlots]]
+deps = ["Dates", "Distributions", "LinearAlgebra", "Plots", "RecipesBase", "Statistics"]
+git-tree-sha1 = "23b3304f4969d8b74c59c5e439c2a83f32d2349a"
+uuid = "95c0ec29-a3eb-434e-bd76-d289ebf6f18a"
+version = "0.1.0"
+
 [[Formatting]]
 deps = ["Printf"]
 git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
