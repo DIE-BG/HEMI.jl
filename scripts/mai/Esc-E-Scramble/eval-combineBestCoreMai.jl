@@ -82,9 +82,16 @@ wsave(datadir(savepath, "mse-weights", "maioptfn.jld2"), "maioptfn", maioptfn)
 
 
 ## Evaluación de combinación lineal óptima 
+a_optim = wload(weightsfile, "mai_mse_weights")
+dfweights = wload(datadir(savepath, "mse-weights", "dfweights.jld2"), "dfweights")
+maioptfn = wload(datadir(savepath, "mse-weights", "maioptfn.jld2"), "maioptfn")
 
 tray_infl_maiopt = sum(tray_infl_mai .* a_optim', dims=2)
-metrics = eval_metrics(tray_infl_maiopt, tray_infl_pob)
+# mask_periods = eval_periods(gtdata_eval, GT_EVAL_B00)
+# mask_periods = eval_periods(gtdata_eval, GT_EVAL_B10)
+# mask_periods = eval_periods(gtdata_eval, GT_EVAL_T0010)
+mask_periods = eval_periods(gtdata_eval, CompletePeriod())
+metrics = eval_metrics(tray_infl_maiopt[mask_periods, :, :], tray_infl_pob[mask_periods])
 @info "Métricas de evaluación:" metrics...
 
 ## Generación de gráfica de trayectoria histórica 

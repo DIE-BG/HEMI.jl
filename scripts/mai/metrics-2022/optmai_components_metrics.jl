@@ -40,9 +40,11 @@ optmai_mse = wload(opt_mse_mai_path, "maioptfn")
 optmai_absme = wload(opt_absme_mai_path, "maioptfn")
 optmai_corr = wload(opt_corr_mai_path, "maioptfn")
 
-# for metric in [:mse, :absme, :corr]
-for metric in [:absme, :corr]
-    
+# for metric in [:absme, :corr]
+# for metric in [:absme]
+# metric = :absme    
+for metric in [:mse, :absme, :corr]
+
     if metric == :mse
         maioptfn = optmai_mse
     elseif metric == :absme
@@ -165,9 +167,9 @@ for metric in [:absme, :corr]
     ## Guardar los resultados
     metrics_savepath = mkpath(datadir("updates", "metrics"))
     params_config = (measure=measure_tag(maioptfn), metric=metric)
-    save_csv(
+    HEMI.save_csv(
         joinpath(metrics_savepath, savename("metrics", params_config, "csv")),
         full_metrics_df
     )
 
-end
+# end
