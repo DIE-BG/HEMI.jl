@@ -71,6 +71,7 @@ module HEMI
     end
 
     # Función para guardar los resultados en un archivo CSV
+    export save_csv
     function save_csv(file::AbstractString, df::DataFrame)
         encoding = enc"ISO-8859-1"
         @info "Saving file with $encoding" file
