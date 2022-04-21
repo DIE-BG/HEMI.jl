@@ -7,6 +7,9 @@ module HEMI
 
     using Reexport
     using DrWatson
+    using StringEncodings
+    @reexport using CSV
+    @reexport using DataFrames
 
     ## Reexportar paquetes más utilizados 
     @reexport using Dates, CPIDataBase
@@ -65,6 +68,15 @@ module HEMI
 
         # Exportar datos del módulo 
         @info "Archivo de datos cargado" data=maindatafile GTDATA
+    end
+
+    # Función para guardar los resultados en un archivo CSV
+    function save_csv(file::AbstractString, df::DataFrame)
+        encoding = enc"ISO-8859-1"
+        @info "Saving file with $encoding" file
+        open(file, encoding, "w") do io 
+            CSV.write(io, df)
+        end
     end
 
 end
