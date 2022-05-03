@@ -2,8 +2,10 @@ using DrWatson
 @quickactivate :HEMI 
 
 using HEMI 
+using StatsBase
 using Distributions
 using Plots
+using PrettyTables
 
 ## Path 
 plots_savepath = mkpath(plotsdir("paper"))
@@ -28,8 +30,10 @@ histogram(v,
     tickfontsize = 6,
     legendfontsize = 7,
     xticks = -10:1:10,
+    yticks = (0:0.1:0.4, string.(0:10:40) .* "%"),
     legend = :topleft,
-    size = (800, 400)
+    size = (800, 400),
+    left_margin=3*Plots.mm
 )
 
 # Generate data from normal with same mean and variance
@@ -61,6 +65,42 @@ vline!([quantile(v, 0.7)],
 
 savefig(joinpath(plots_savepath, "price_change_dist.pdf"))
 
+## Descriptive stats used in the plot 
+stats_df = DataFrame(
+    stat = [
+        "Mean",
+        "Median", 
+        "Mode", 
+        "Std. Deviation",
+        "Skewness", 
+        "Kurtosis",
+        "No. Observations",
+    ], 
+    vstats = [
+        mean(v),
+        median(v), 
+        mode(v), 
+        std(v), 
+        skewness(v), 
+        kurtosis(v) + 3,
+        length(v),
+    ],
+    normal = [
+        mean(dist),
+        median(dist), 
+        mode(dist), 
+        std(dist), 
+        skewness(dist), 
+        kurtosis(dist) + 3,
+        length(dist),
+    ]
+)
+
+pretty_table(
+    stats_df, 
+    tf=tf_latex_booktabs, 
+    formatters=ft_round(2),
+)
 
 ## Normalized plot, like the one presented in Roger (1997)
 
@@ -197,10 +237,11 @@ savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
 
 
 # Evaluate the parametric inflation for the next inflation formulas
-# formulas = [paramfn, InflationTotalCPI(), InflationWeightedMean()]
-# label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"]
 formulas = [paramfn, InflationTotalCPI()]
 label_formulas = ["CPI inflation with synthetic rebasing" "CPI inflation"]
+# formulas = [paramfn, InflationTotalCPI(), InflationWeightedMean()]
+# label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"]
+
 # For this comparison, use this trend function 
 trendfn_comp = TrendIdentity() 
 
@@ -274,7 +315,12 @@ vline!(p2, synthetic_rebase,
 
 
 # Make comparison plot
+l = @layout [
+    a{0.5w, 0.975h} b{0.5w}
+]
+
 plot(p1, p2, 
+    left_margin=2*Plots.mm,
     size = (800, 400),
     layout = (1, 2),
     legend = [:topleft false], 
