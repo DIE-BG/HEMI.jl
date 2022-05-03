@@ -98,9 +98,9 @@ version = "0.5.1"
 
 [[CategoricalArrays]]
 deps = ["DataAPI", "Future", "Missings", "Printf", "Requires", "Statistics", "Unicode"]
-git-tree-sha1 = "5196120341b6dfe3ee5f33cf97392a05d6fe80d0"
+git-tree-sha1 = "109664d3a6f2202b1225478335ea8fea3cd8706b"
 uuid = "324d7699-5711-5eae-9e2f-1d82baa6b597"
-version = "0.10.4"
+version = "0.10.5"
 
 [[Chain]]
 git-tree-sha1 = "339237319ef4712e6e5df7758d0bccddf5c237d9"
@@ -324,9 +324,9 @@ version = "1.13.0"
 
 [[FilePathsBase]]
 deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "04d13bfa8ef11720c24e4d840c0033d145537df7"
+git-tree-sha1 = "129b104185df66e408edd6625d480b7f9e9823a0"
 uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.17"
+version = "0.9.18"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
@@ -351,6 +351,12 @@ deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "FreeType2_jll", "JLLWrappers", "
 git-tree-sha1 = "21efd19106a55620a188615da6d3d06cd7f6ee03"
 uuid = "a3f928ae-7b40-5064-980b-68af3947d34b"
 version = "2.13.93+0"
+
+[[ForecastPlots]]
+deps = ["Dates", "Distributions", "LinearAlgebra", "Plots", "RecipesBase", "Statistics"]
+git-tree-sha1 = "23b3304f4969d8b74c59c5e439c2a83f32d2349a"
+uuid = "95c0ec29-a3eb-434e-bd76-d289ebf6f18a"
+version = "0.1.0"
 
 [[Formatting]]
 deps = ["Printf"]
@@ -434,7 +440,7 @@ uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
 version = "1.0.2"
 
 [[HEMI]]
-deps = ["BenchmarkTools", "BlackBoxOptim", "CPIDataBase", "CSV", "Chain", "Compose", "DataFrames", "Dates", "Distributions", "DrWatson", "Gadfly", "InflationEvalTools", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LaTeXStrings", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "RecipesBase", "Reexport", "StaticArrays", "Statistics", "StatsBase", "StringEncodings", "TerminalPager"]
+deps = ["BenchmarkTools", "BlackBoxOptim", "CPIDataBase", "CSV", "Chain", "Compose", "DataFrames", "Dates", "Distributions", "DrWatson", "ForecastPlots", "Gadfly", "InflationEvalTools", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LaTeXStrings", "OnlineStats", "Optim", "Plots", "PrettyTables", "ProgressMeter", "RecipesBase", "Reexport", "StaticArrays", "Statistics", "StatsBase", "StringEncodings", "TerminalPager"]
 path = ".."
 uuid = "e7656710-d5c8-11eb-389b-4b79a3cea986"
 version = "0.1.0"

@@ -179,9 +179,9 @@ date_ticks = first(dates):Month(24):last(dates)
 date_str = Dates.format.(date_ticks, dateformat"Y-m")
 
 p1 = plot(dates, untrended_traj, 
-    label = "Untrended parametric inflation", 
+    label = "Untrended population\ninflation", 
     ylabel = "% change, year-on-year",
-    ylims = (1, 12),
+    ylims = (0, 12),
     linewidth = 2, 
     guidefontsize = 8,
     xticks = (date_ticks, date_str),
@@ -194,8 +194,8 @@ trended_param = InflationParameter(paramfn, resamplefn, trendfn)
 
 trended_traj = trended_param(gtdata20)
 p2 = plot(dates, trended_traj, 
-    label = "Trended parametric inflation", 
-    ylims = (1, 12),
+    label = "Artificially trended population\ninflation", 
+    ylims = (0, 12),
     linewidth = 2, 
     guidefontsize = 8,
     xticks = (date_ticks, date_str),
@@ -206,7 +206,7 @@ p2 = plot(dates, trended_traj,
 factor_period = Date(2001, 1):Month(1):Date(2020, 12)
 factor = log.(trendfn.trend[1:length(factor_period)])
 p3 = plot(factor_period, factor,
-    label = "Random walk process", 
+    label = "Random walk process $(L"\rho_{t}")", 
     # ylabel = "",
     ylims = (-1, 1),
     linewidth = 2, 
@@ -227,6 +227,7 @@ hline!([0],
 plot(p3, p1, p2, 
     size = (800, 400),
     layout = (1, 3),
+    bottommargin = 4*Plots.mm, 
 )
 
 savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
@@ -237,7 +238,10 @@ savefig(joinpath(plots_savepath, "stochastic_trend.pdf"))
 
 # Evaluate the parametric inflation for the next inflation formulas
 formulas = [paramfn, InflationTotalCPI()]
-label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation"]
+label_formulas = ["CPI inflation with synthetic rebasing" "CPI inflation"]
+# formulas = [paramfn, InflationTotalCPI(), InflationWeightedMean()]
+# label_formulas = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"]
+
 # For this comparison, use this trend function 
 trendfn_comp = TrendIdentity() 
 
@@ -265,7 +269,7 @@ p1 = plot(dates, param_traj_formulas,
     guidefontsize = 8,
     xticks = (date_ticks, date_str),
     xrotation = 45, 
-    legend = :topleft
+    legend = :topright,
 )
 
 vline!(p1, actual_rebase, 
@@ -285,7 +289,7 @@ vline!(p1, synthetic_rebase,
 
 # Trended formulas
 p2 = plot(dates, param_traj_trended_formulas,
-    label = ["CPI inflation w/ synthetic rebase" "CPI inflation" "Weighted average"], 
+    label = label_formulas, 
     ylims = (1, 15),
     linewidth = 2, 
     guidefontsize = 8,
@@ -318,12 +322,31 @@ l = @layout [
 plot(p1, p2, 
     left_margin=2*Plots.mm,
     size = (800, 400),
-    layout = l
+    layout = (1, 2),
+    legend = [:topleft false], 
+    leftmargin = 3*Plots.mm, 
+    bottommargin = 5*Plots.mm, 
 )
 
 savefig(joinpath(plots_savepath, "inflation_formulas.pdf"))
 
+plot(p1, 
+    size = (800, 350),
+    bottommargin = 5*Plots.mm, 
+    leftmargin = 3*Plots.mm, 
+)
 
+savefig(joinpath(plots_savepath, "inflation_formulas_1.pdf"))
+
+plot(p2, 
+    ylabel = "% change, year-on-year",
+    size = (800, 350),
+    bottommargin = 5*Plots.mm, 
+    leftmargin = 3*Plots.mm, 
+    legend = true,
+)
+
+savefig(joinpath(plots_savepath, "inflation_formulas_2.pdf"))
 ## Plot historic trajectories 
 
 # Load assessment results from paper-assessment.jl

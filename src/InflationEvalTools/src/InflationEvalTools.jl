@@ -36,6 +36,7 @@ module InflationEvalTools
     ## Funciones de remuestreo de bases del IPC
     export ResampleSBB, ResampleGSBB, ResampleScrambleVarMonths, ResampleGSBBMod
     export ResampleScrambleTrended
+    export ResampleTrended
     export get_param_function, method_name, method_tag
     
     # Métodos generales para funciones de remuestreo 
@@ -55,6 +56,8 @@ module InflationEvalTools
     # ocurrencia con distribuciones ponderadas para mantener la correlación en
     # el remuestreo
     include("resample/ResampleScrambleTrended.jl")
+    # Similar al anterior, pero con parámetros individuales por base 
+    include("resample/ResampleTrended.jl")
     
     ## Funciones para aplicación de tendencia
     export RWTREND
