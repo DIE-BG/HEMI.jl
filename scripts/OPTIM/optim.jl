@@ -144,31 +144,31 @@ end
 
 
 
-D = dict_list(Dict(
-    :infltypefn => [
-        InflationPercentileEq, 
-        # InflationPercentileWeighted, 
-        # InflationTrimmedMeanEq, 
-        # InflationTrimmedMeanWeighted, 
-        # InflationDynamicExclusion,
-    ],
-    :resamplefn => ResampleScrambleVarMonths(),
-    :trendfn => TrendRandomWalk(),
-    :paramfn => InflationTotalRebaseCPI(36,2),
-    :nsim => 1_000,
-    :traindate => Date(2018, 12))
-)
+# D = dict_list(Dict(
+#     :infltypefn => [
+#         InflationPercentileEq, 
+#         # InflationPercentileWeighted, 
+#         # InflationTrimmedMeanEq, 
+#         # InflationTrimmedMeanWeighted, 
+#         # InflationDynamicExclusion,
+#     ],
+#     :resamplefn => ResampleScrambleVarMonths(),
+#     :trendfn => TrendRandomWalk(),
+#     :paramfn => InflationTotalRebaseCPI(36,2),
+#     :nsim => 1_000,
+#     :traindate => Date(2018, 12))
+# )
 
 # M = [:mse, :absme, :corr]
-M = [:corr]
-L = []
+# M = [:corr]
+# L = []
 
-for measure in M
-    for config in D
-        optres = optimize_config(config, gtdata; measure)
-        append!(L,[[optres["infltypefn"], optres["measure"], optres["minimizer"], optres["optimal"]]])
-    end
-end
+# for measure in M
+#     for config in D
+#         optres = optimize_config(config, gtdata; measure)
+#         append!(L,[[optres["infltypefn"], optres["measure"], optres["minimizer"], optres["optimal"]]])
+#     end
+# end
 
 # Any[InflationPercentileEq, :mse, [0.7210045547824011], 0.24700935184955597]
 # Any[InflationPercentileWeighted, :mse, [0.6998386187981225], 0.4105831980705261]
