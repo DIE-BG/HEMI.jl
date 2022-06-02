@@ -490,7 +490,7 @@ uuid = "9b13fd28-a010-5f03-acff-a1bbcff69959"
 version = "1.0.0"
 
 [[deps.InflationEvalTools]]
-deps = ["CPIDataBase", "CSV", "Chain", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LinearAlgebra", "OnlineStats", "Optim", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics", "StatsBase"]
+deps = ["CPIDataBase", "CSV", "Chain", "DataFrames", "Dates", "Distributed", "Distributions", "DrWatson", "InflationFunctions", "Ipopt", "JLD2", "JuMP", "LinearAlgebra", "OnlineStats", "Optim", "ProgressMeter", "Random", "Reexport", "SharedArrays", "StableRNGs", "Statistics", "StatsBase", "UnicodePlots"]
 path = "src/InflationEvalTools"
 uuid = "c8159cd7-64f9-4384-8ead-7bb45476a60a"
 version = "0.2.0"
