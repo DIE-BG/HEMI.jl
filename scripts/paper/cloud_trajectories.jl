@@ -196,6 +196,11 @@ savecloudplot(wt70_00, "WT70", periods[1], plots_savepath)
 savecloudplot(wt70_10, "WT70", periods[2], plots_savepath)
 savecloudplot(wt70_0010, "WT70", periods[3], plots_savepath)
 
+## Anonymous plot for presentation
+est1_0010 = cloudplot("Total", "inflation Estimator 1", periods[3])
+est2_0010 = cloudplot("PerW-70.0", "inflation Estimator 2", periods[3])
+savecloudplot(est1_0010, "InflEst1", periods[3], plots_savepath)
+savecloudplot(est2_0010, "InflEst2", periods[3], plots_savepath)
 
 ## Export data
 
