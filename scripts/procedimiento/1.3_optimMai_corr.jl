@@ -14,8 +14,8 @@ using Optim
 using CSV, DataFrames, Chain 
 
 # Directorios de resultados 
-savepath = datadir("results", "optim", "CoreMai", "Corr")
-savepath_best = datadir("results", "optim", "CoreMai", "Corr","BestOptim")
+savepath = datadir("results", "optim", "corr", "CoreMai_TEMP")
+savepath_best = datadir("results", "optim", "corr")
 
 ## Cargar el módulo de Distributed para computación paralela
 using Distributed
@@ -32,7 +32,7 @@ genconfig = Dict(
     :paramfn => InflationTotalRebaseCPI(36, 2),
     :resamplefn => ResampleScrambleVarMonths(),
     :trendfn => TrendRandomWalk(),
-    :traindate => Date(2018, 12),
+    :traindate => Date(2019, 12),
     :nsim => 125_000
 )
 
