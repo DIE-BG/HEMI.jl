@@ -96,7 +96,7 @@ stats_df = DataFrame(
 pretty_table(
     stats_df, 
     tf=tf_markdown, 
-    formatters=ft_round(2),
+    formatters=ft_round(4),
 )
 
 
@@ -180,5 +180,5 @@ stats_df = DataFrame(
 pretty_table(
     stats_df, 
     tf=tf_markdown, 
-    formatters=ft_round(2),
+    formatters=ft_round(4),
 )
