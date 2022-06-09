@@ -3,6 +3,7 @@ using DrWatson
 
 using HEMI 
 using StatsBase
+using StatsPlots
 using Distributions
 using Plots
 using PrettyTables
@@ -265,4 +266,34 @@ pretty_table(
     stats_df, 
     tf=tf_markdown, 
     formatters=ft_round(4),
+)
+
+
+## QQ plots for distribution of monthly price changes in the period 2001-2020
+
+v = vcat(gtdata20[1].v..., gtdata20[2].v...)
+dist = Normal(mean(v), std(v))
+
+qqplot(
+    dist, 
+    v, 
+    linecolor=:red,
+    linestyle=:dot,
+    linewidth=3,
+    markercolor=:blue,
+    markersize=5, 
+    markeralpha=0.05, 
+    markerstrokewidth=0,
+)
+
+qqnorm(
+    v, 
+    # qqline=:R,
+    linecolor=:red,
+    linestyle=:dot,
+    linewidth=3,
+    markercolor=:blue,
+    markersize=5, 
+    markeralpha=0.05, 
+    markerstrokewidth=0,
 )
