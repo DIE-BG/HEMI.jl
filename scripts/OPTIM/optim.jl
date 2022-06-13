@@ -1,6 +1,6 @@
 using DrWatson
 @quickactivate "HEMI"
-using Plots
+#using Plots
 using DataFrames
 using Chain
 using PrettyTables
@@ -156,7 +156,7 @@ end
 #     :trendfn => TrendRandomWalk(),
 #     :paramfn => InflationTotalRebaseCPI(36,2),
 #     :nsim => 1_000,
-#     :traindate => Date(2018, 12))
+#     :traindate => Date(2019, 12))
 # )
 
 # M = [:mse, :absme, :corr]

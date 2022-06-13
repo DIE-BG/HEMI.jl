@@ -24,7 +24,7 @@ paramfn    = InflationTotalRebaseCPI(36,2)
 # Para optimización Base 2000
 ff00 = Date(2010,12)
 # Para optimización Base 2010
-ff10 = Date(2018,12)
+ff10 = Date(2019,12)
 
 #################  Optimización Base 2000  ###################################
  
@@ -32,11 +32,11 @@ ff10 = Date(2018,12)
 
 estd = std(gt00.v |> capitalize |> varinteran, dims=1)
 
-df = DataFrame(num = collect(1:218), Desv = vec(estd))
+df = DataFrame(num = collect(1:length(vec(estd))), Desv = vec(estd))
 
-sorted_std = sort(df, "Desv", rev=true)
+sort!(df, :Desv, rev=true)
 
-vec_v = sorted_std[!,:num]
+vec_v = df[!,:num]
 
 # Creación de vectores de exclusión
 # Se crean 218 vectores para la exploración inicial y se almacenan en v_exc
@@ -52,10 +52,11 @@ FxEx_00 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000
-    :traindate => ff00) |> dict_list
+    :nsim => 100,
+    :traindate => ff00,
+) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-A18","Base00-10K")  
+savepath = datadir("results","optim","mse","Fx-Exc")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
