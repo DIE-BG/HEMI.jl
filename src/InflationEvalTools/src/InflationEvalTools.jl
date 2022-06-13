@@ -21,6 +21,8 @@ module InflationEvalTools
     import StatsBase
     using LinearAlgebra: I, det, mul!, dot
     using JuMP, Ipopt
+    using Chain
+    using JLD2
     import Optim 
 
     ## Configuración por defecto de la semilla para el proceso de simulación

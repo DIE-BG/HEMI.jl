@@ -12,18 +12,19 @@ proyecto reproducible.
 
 Para trabajar con este proyecto de manera local, realiza lo siguiente:
 
-1. Agrega el registro de la organización a tu instalación de Julia. En cualquier terminal interactiva (REPL) de Julia ejecuta el comando: 
+1. Instalar Julia 1.7 y Visual Studio Code.
+2. Agrega el registro de la organización a tu instalación de Julia. En cualquier terminal interactiva (REPL) de Julia ejecuta el comando: 
 ```julia-repl
 julia> ]
-(@v1.6) pkg> registry add https://github.com/DIE-BG/RegistryDIE
+(@v1.7) pkg> registry add https://github.com/DIE-BG/RegistryDIE
     Cloning registry from "https://github.com/DIE-BG/RegistryDIE"
     (...)
 ``` 
 Esto es necesario para obtener los paquetes [`CPIDataBase`](https://github.com/DIE-BG/CPIDataBase.jl), e [`InflationFunctions`](https://github.com/DIE-BG/InflationFunctions.jl), ya que estos no se encuentran en el registro [`General`](https://github.com/JuliaRegistries/General) de Julia.
  
-2. Descarga o clona este repositorio. Ten en cuenta que los datos brutos de simulaciones normalmente no están incluidos en la historia de Git y se deben obtener de manera independiente o generar nuevamente con los programas de simulación.
+3. Descarga o clona este repositorio. Ten en cuenta que los datos brutos de simulaciones normalmente no están incluidos en la historia de Git y se deben obtener de manera independiente o generar nuevamente con los programas de simulación.
 
-3. Abre una terminal interactiva de Julia y haga: 
+4. Abre una terminal interactiva de Julia y haga: 
 ```julia-repl
 julia> using Pkg
 julia> Pkg.add("DrWatson") # instalar globalmente, para utilizar `quickactivate`

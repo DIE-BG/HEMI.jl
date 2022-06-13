@@ -62,6 +62,11 @@ df_results = collect_results(savepath)
 # prefix = "gt_b10_"
 prefix = "" # Empty means metrics over the full historical data
 
+# Relevant ordering for presentation of results
+relevorder = [14,2,3,7,5,4,8,6,9,11,10,12,1,13]
+df_results[!, :relevorder] .= relevorder
+sort!(df_results, :relevorder)
+
 main_results = @chain df_results begin 
     select(:measure, Symbol(prefix, :mse), Symbol(prefix, :mse_std_error))
 end
