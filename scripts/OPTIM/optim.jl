@@ -127,8 +127,9 @@ function optimize_config(config, data;
     @info "Resultados de optimización:" optres minimizer=s*Optim.minimizer(optres)
     results = Dict(
         # Resultados de optimización 
-        "measure" => measure, 
-        "minimizer" => Optim.minimizer(optres), 
+        "measure" => string(infl_constructor),
+        "metric" => measure, 
+        "minimizer" => string(Optim.minimizer(optres)), 
         "optimal" => s * minimum(optres),
         "optres" => optres
     )
@@ -136,7 +137,7 @@ function optimize_config(config, data;
     merge!(results, tostringdict(config))
 
     # Guardar los resultados de evaluación para collect_results 
-    filename = savename(results, "jld2", allowedtypes=(Real, String, Date), digits=4)
+    filename = savename(results, "jld2", allowedtypes=(Symbol,Real, String, Date), digits=4)
     isnothing(savepath) || wsave(joinpath(savepath, filename), tostringdict(results))
 
     return results 

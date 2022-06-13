@@ -1,4 +1,4 @@
-# Script con optimización y evaluación, con datos y configuración de simulación hasta 2018
+# Script con optimización y evaluación, con datos y configuración de simulación hasta 2019
 
 ## carga de paquetes
 using DrWatson
@@ -80,34 +80,6 @@ sort_0019 = sort(Exc_0019, :mse)
 a = collect(sort_0019[1,:params])
 sort_0019[1,:mse]
 
-"""
-Resultados de Exploración inicial 
-
-MATLAB
-Vector de Exclusión -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.777
-
-JULIA, con 10K simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.7750067f0
-
-
-"Cebolla"
-"Tomate"
-"Otras cuotas fijas y extraordinarias en la educaión preprimaria y primaria"
-"Papa o patata"
-"Zanahoria"
-"Culantro o cilantro"
-"Güisquil"
-"Gastos derivados del gas manufacturado y natural y gases licuados del petróleo"
-"Transporte aéreo"
-"Otras verduras y hortalizas"
-"Frijol"
-"Gasolina"
-"Otras cuotas fijas y extraordinarios en la educación secundaria"
-"Transporte urbano"
-
-"""
 
 ## Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
 
@@ -142,29 +114,14 @@ sort_0019 = sort(Exc_0019, :mse)
 a = collect(sort_0019[1,:params])
 sort_0019[1,:mse]
 
-"""
-Resultados de Evaluación de los vectores de exclusión 10 a 20 
 
-MATLAB
-Vector de Exclusión -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.777
-
-JULIA, con 10_000 simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.7750067f0
-
-JULIA, con 125_000 simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.0.7729705f0
-
-"""
 
 #################  Optimización Base 2010  ###################################
 
 # Vector óptimo base 2000 encontrado en la primera sección
 exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] 
 
-## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2018
+## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 
 est_10 = std(gtdata[Date(2019,12)][2].v |> capitalize |> varinteran, dims=1)
 
@@ -264,21 +221,4 @@ fres = @chain Exc_1018 begin
     ) 
 end
 
-## 14 Gastos básicos a excluir en base 2010, a diciembre de 2018
 
-# "Tomate"
-# "Gas propano"
-# "Chile pimiento"
-# "Culantro"
-# "Cebolla"
-# "Papa"
-# "Diesel"
-# "Güisquil"
-# "Lechuga"
-# "Gasolina regular"
-# "Servicio de transporte aéreo"
-# "Repollo"
-# "Otras legumbres y hortalizas"
-# "Gasolina superior"
-# 
-# [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]

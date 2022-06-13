@@ -56,7 +56,7 @@ FxEx_00 = Dict(
     :traindate => ff00,
 ) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B00","1k")  
+savepath = datadir("results","optim","me","Fx-Exc","B00","1k")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -73,41 +73,13 @@ Exc_0019[!,:exclusiones] = exclusiones
 # Ordenamiento por cantidad de exclusiones
 Exc_0019 = sort(Exc_0019, :exclusiones)
 
-# DF ordenado por MSE
-sort_0019 = sort(Exc_0019, :mse)
+# DF ordenado por ME
+sort_0019 = sort(Exc_0019, :me)
 
-## Exctracción de vector de exclusión  y MSE
+## Exctracción de vector de exclusión  y ME
 a = collect(sort_0019[1,:params])
-sort_0019[1,:mse]
+sort_0019[1,:me]
 
-"""
-Resultados de Exploración inicial 
-
-MATLAB
-Vector de Exclusión -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.777
-
-JULIA, con 10K simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.7750067f0
-
-
-"Cebolla"
-"Tomate"
-"Otras cuotas fijas y extraordinarias en la educaión preprimaria y primaria"
-"Papa o patata"
-"Zanahoria"
-"Culantro o cilantro"
-"Güisquil"
-"Gastos derivados del gas manufacturado y natural y gases licuados del petróleo"
-"Transporte aéreo"
-"Otras verduras y hortalizas"
-"Frijol"
-"Gasolina"
-"Otras cuotas fijas y extraordinarios en la educación secundaria"
-"Transporte urbano"
-
-"""
 
 ## Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
 
@@ -119,7 +91,7 @@ FxEx_00 = Dict(
     :nsim => 125_000
     :traindate => ff00) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B00","125k")  
+savepath = datadir("results","optim","me","Fx-Exc","B00","125k")  
 
 ## Lote de simulación con 10 vectores de exclusión 
 run_batch(gtdata, FxEx_00, savepath)
@@ -135,36 +107,21 @@ Exc_0019[!,:exclusiones] = exclusiones
 # Ordenamiento por cantidad de exclusiones
 Exc_0019 = sort(Exc_0019, :exclusiones)
 
-# DF ordenado por MSE
-sort_0019 = sort(Exc_0019, :mse)
+# DF ordenado por ME
+sort_0019 = sort(Exc_0019, :me)
 
-## Exctracción de vector de exclusión  y MSE
+## Exctracción de vector de exclusión  y ME
 a = collect(sort_0019[1,:params])
-sort_0019[1,:mse]
+sort_0019[1,:me]
 
-"""
-Resultados de Evaluación de los vectores de exclusión 10 a 20 
 
-MATLAB
-Vector de Exclusión -> [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.777
-
-JULIA, con 10_000 simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.7750067f0
-
-JULIA, con 125_000 simulaciones
-Vector de Exclusión ->  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] (14 Exclusiones)
-MSE = 0.0.7729705f0
-
-"""
 
 #################  Optimización Base 2010  ###################################
 
 # Vector óptimo base 2000 encontrado en la primera sección
 exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] 
 
-## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2018
+## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 
 est_10 = std(gtdata[Date(2019,12)][2].v |> capitalize |> varinteran, dims=1)
 
@@ -196,7 +153,7 @@ FxEx_10 = Dict(
     :nsim => 1000,
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B10","1k")   
+savepath = datadir("results","optim","me","Fx-Exc","B10","1k")   
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -213,12 +170,12 @@ Exc_1018[!,:exclusiones] = exclusiones
 # Ordenamiento por cantidad de exclusiones
 Exc_1018 = sort(Exc_1018, :exclusiones)
 
-# DF ordenado por MSE
-sort_1019 = sort(Exc_1018, :mse)
+# DF ordenado por ME
+sort_1019 = sort(Exc_1018, :me)
 
-## Exctracción de vector de exclusión  y MSE
+## Exctracción de vector de exclusión  y ME
 a = collect(sort_1019[1,:params])
-sort_1019[1,:mse]
+sort_1019[1,:me]
 
 
 # Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
@@ -230,7 +187,7 @@ FxEx_10 = Dict(
     :nsim => 125_000
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B10","125k") 
+savepath = datadir("results","optim","me","Fx-Exc","B10","125k") 
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -247,38 +204,19 @@ Exc_1018[!,:exclusiones] = exclusiones
 # Ordenamiento por cantidad de exclusiones
 Exc_1018 = sort(Exc_1018, :exclusiones)
 
-# DF ordenado por MSE
-sort_1018 = sort(Exc_1018, :mse)
+# DF ordenado por ME
+sort_1018 = sort(Exc_1018, :me)
 
-## Exctracción de vector de exclusión  y MSE
+## Exctracción de vector de exclusión  y ME
 a = collect(sort_1018[1,:params])
-sort_1018[1,:mse]
+sort_1018[1,:me]
 
 ##
 
 fres = @chain Exc_1018 begin 
-    sort(:mse)
-    select(:mse, 
+    sort(:me)
+    select(:me, 
         :inflfn => ByRow(fn -> fn.v_exc[2]) => :excb10,
         :inflfn => ByRow(fn -> length(fn.v_exc[2])) => :excb10_length
     ) 
 end
-
-## 14 Gastos básicos a excluir en base 2010, a diciembre de 2018
-
-# "Tomate"
-# "Gas propano"
-# "Chile pimiento"
-# "Culantro"
-# "Cebolla"
-# "Papa"
-# "Diesel"
-# "Güisquil"
-# "Lechuga"
-# "Gasolina regular"
-# "Servicio de transporte aéreo"
-# "Repollo"
-# "Otras legumbres y hortalizas"
-# "Gasolina superior"
-# 
-# [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]

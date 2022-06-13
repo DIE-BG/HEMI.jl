@@ -38,7 +38,7 @@ genconfig = Dict(
 
 optconfig = merge(genconfig, Dict(
     # Parámetros para búsqueda iterativa de cuantiles 
-    :mainseg => [3,4,5,10],
+    :mainseg => [4,5,10],
     :maimethod => [MaiF, MaiG, MaiFP], 
 )) |> dict_list
 
@@ -48,7 +48,12 @@ K = 100
 MAXITER = 1000
 
 for config in optconfig
-    optimizemai(config, gtdata; K, savepath, maxiterations = MAXITER)
+    optimizemai(config, gtdata; 
+        K, 
+        savepath, 
+        maxiterations = MAXITER, 
+        backend = :BlackBoxOptim
+    )
 end 
 
 ## Cargar resultados de búsqueda de cuantiles 
@@ -89,33 +94,35 @@ for r in eachrow(prelim_methods)
     optimizemai(config, gtdata; 
         K, savepath,
         qstart = r.q, # Vector inicial de búsqueda 
-        maxiterations = MAXITER)
+        maxiterations = MAXITER,
+        backend = :BlackBoxOptim
+    )
 end
 
 
 # Evaluar los mejores métodos utilizando criterios básicos 
 
-df = collect_results(savepath)
-best_methods = @chain df begin
-    filter(:K => k -> k == K, _) 
-    combine(gdf -> gdf[argmin(gdf.mse), :], groupby(_, :method))
-    select(:method, :n, :mse, :q)
-end
+# df = collect_results(savepath)
+# best_methods = @chain df begin
+#     filter(:K => k -> k == K, _) 
+#     combine(gdf -> gdf[argmin(gdf.mse), :], groupby(_, :method))
+#     select(:method, :n, :mse, :q)
+# end
 
-# Obtener funciones de inflación de mejores métodos MAI
-bestmaifns = map(eachrow(best_methods)) do r 
-    # Obtener método de strings guardados por función optimizemai
-    method = :($(Symbol(r.method))([0, $(r.q)..., 1.0]))
-    InflationCoreMai(eval(method))
-end
+# # Obtener funciones de inflación de mejores métodos MAI
+# bestmaifns = map(eachrow(best_methods)) do r 
+#     # Obtener método de strings guardados por función optimizemai
+#     method = :($(Symbol(r.method))([0, $(r.q)..., 1.0]))
+#     InflationCoreMai(eval(method))
+# end
 
-# Diccionarios de configuración para evaluación 
-config_mai = merge(genconfig, Dict(:inflfn => bestmaifns)) |> dict_list
+# # Diccionarios de configuración para evaluación 
+# config_mai = merge(genconfig, Dict(:inflfn => bestmaifns)) |> dict_list
 
-# Ejecutar evaluaciones finales
-run_batch(gtdata, config_mai, savepath_best, savetrajectories=true)
+# # Ejecutar evaluaciones finales
+# run_batch(gtdata, config_mai, savepath_best; savetrajectories=false)
 
-df = collect_results(savepath_best)
+# df = collect_results(savepath_best)
 
 ## Revisión de resultados
 # @chain df begin 
