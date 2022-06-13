@@ -38,17 +38,23 @@ genconfig = Dict(
 
 optconfig = merge(genconfig, Dict(
     # Parámetros para búsqueda iterativa de cuantiles 
-    :mainseg => [3,4,5,10],
+    :mainseg => [4,5,10],
     :maimethod => [MaiF, MaiG, MaiFP], 
 )) |> dict_list
 
 ## Optimización de métodos MAI - búsqueda inicial de percentiles 
 
 K = 100
-MAXITER = 1000
+MAXITER = 500
 
 for config in optconfig
-    optimizemai(config, gtdata; K, savepath, maxiterations = MAXITER, metric = :corr)
+    optimizemai(config, gtdata; 
+        K, 
+        savepath, 
+        maxiterations = MAXITER, 
+        metric = :corr,
+        backend = :BlackBoxOptim
+    )
 end 
 
 ## Cargar resultados de búsqueda de cuantiles 
@@ -89,7 +95,9 @@ for r in eachrow(prelim_methods)
     optimizemai(config, gtdata; 
         K, savepath,
         qstart = r.q, # Vector inicial de búsqueda 
-        maxiterations = MAXITER)
+        maxiterations = MAXITER,
+        backend = :BlackBoxOptim
+    )
 end
 
 
@@ -113,9 +121,9 @@ end
 config_mai = merge(genconfig, Dict(:inflfn => bestmaifns)) |> dict_list
 
 # Ejecutar evaluaciones finales
-run_batch(gtdata, config_mai, savepath_best, savetrajectories=true)
+run_batch(gtdata, config_mai, savepath_best; savetrajectories=false)
 
-df = collect_results(savepath_best)
+#df = collect_results(savepath_best)
 
 ## Revisión de resultados
 # @chain df begin 
