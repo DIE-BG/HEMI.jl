@@ -36,7 +36,7 @@ map(periods) do period
         dist, 
         v, 
         # Figure properties
-        size = (800, 400),
+        size = (1200, 800),
         guidefontsize = 10, 
         tickfontsize = 10,
         # Line properties
@@ -52,11 +52,11 @@ map(periods) do period
         xlabel="Normal distribution quantiles",
         ylabel="Actual distribution ($label) quantiles",
         # aspectratio=:equal,
-        # xlims=(-20, 20),
-        # ylims=(-20, 20),
+        xlims=(-12, 12),
+        ylims=(-60, 60),
         # Adjustments
-        left_margin=3*Plots.mm,
-        bottom_margin=3*Plots.mm,
+        left_margin=5*Plots.mm,
+        bottom_margin=5*Plots.mm,
     )
     
     pdf_filename = savename("qqplot_", (period=period,), "pdf")

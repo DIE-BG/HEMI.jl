@@ -27,7 +27,7 @@ trendfn = TrendRandomWalk()
 
 # CPI data
 data = GTDATA[Date(2020, 12)]
-alldates = infl_dates(data)
+dates = infl_dates(data)
 
 # Population trend inflation series
 param = InflationParameter(paramfn, resamplefn, trendfn)
