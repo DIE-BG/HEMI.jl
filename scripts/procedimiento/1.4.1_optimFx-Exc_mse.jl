@@ -12,7 +12,7 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 # Cargar los paquetes utilizados en todos los procesos
 @everywhere using HEMI
 using CSV, DataFrames, Chain
-using Plots 
+#using Plots 
 
 ##
 
@@ -48,19 +48,20 @@ end
 
 # Diccionarios para exploración inicial (primero 100 vectores de exclusión)
 FxEx_00 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(v_exc[1:100]), 
+    :inflfn => InflationFixedExclusionCPI.(v_exc[1:30]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 1000,
+    :nsim => 10_000,
     :traindate => ff00,
+    :evalperiods => GT_EVAL_B00,
 ) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B00","1k")  
+savepath = datadir("results","optim","mse","Fx-Exc","B00")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata, FxEx_00, savepath)
+run_batch(GTDATA, FxEx_00, savepath; savetrajectories=false)
 
 ## Recolección de resultados
 Exc_0019 = collect_results(savepath)
@@ -74,46 +75,12 @@ Exc_0019[!,:exclusiones] = exclusiones
 Exc_0019 = sort(Exc_0019, :exclusiones)
 
 # DF ordenado por MSE
-sort_0019 = sort(Exc_0019, :mse)
+sort_0019 = sort(Exc_0019, :gt_b00_mse)
 
 ## Exctracción de vector de exclusión  y MSE
-a = collect(sort_0019[1,:params])
-sort_0019[1,:mse]
+exc00 = collect(sort_0019[1,:params])[1]
 
-
-## Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
-
-FxEx_00 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(v_exc[10:20]), 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :paramfn => paramfn,
-    :nsim => 125_000
-    :traindate => ff00) |> dict_list
-
-savepath = datadir("results","optim","mse","Fx-Exc","B00","125k")  
-
-## Lote de simulación con 10 vectores de exclusión 
-run_batch(gtdata, FxEx_00, savepath)
-
-## Recolección de resultados
-Exc_0019 = collect_results(savepath)
-
-## Análisis de exploración preliminar
-# obtener longitud del vector de exclusión de cada simulación
-exclusiones =  getindex.(map(x -> length.(x), Exc_0019[!,:params]),1)
-Exc_0019[!,:exclusiones] = exclusiones 
-
-# Ordenamiento por cantidad de exclusiones
-Exc_0019 = sort(Exc_0019, :exclusiones)
-
-# DF ordenado por MSE
-sort_0019 = sort(Exc_0019, :mse)
-
-## Exctracción de vector de exclusión  y MSE
-a = collect(sort_0019[1,:params])
-sort_0019[1,:mse]
-
+# [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161] 
 
 
 #################  Optimización Base 2010  ###################################
@@ -123,7 +90,7 @@ exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 
-est_10 = std(gtdata[Date(2019,12)][2].v |> capitalize |> varinteran, dims=1)
+est_10 = std(GTDATA[Date(2019,12)][2].v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(est_10))
 
@@ -146,18 +113,19 @@ total
 
 # Diccionarios para exploración inicial (primero 100 vectores de exclusión)
 FxEx_10 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(total[1:100]), 
+    :inflfn => InflationFixedExclusionCPI.(total[1:60]), 
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 1000,
-    :traindate => ff10) |> dict_list
+    :nsim => 10_000,
+    :traindate => ff10
+) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc","B10","1k")   
+savepath = datadir("results","optim","mse","Fx-Exc","B10")   
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
-run_batch(gtdata, FxEx_10, savepath)
+run_batch(GTDATA, FxEx_10, savepath; savetrajectories = false)
 
 ## Recolección de resultados
 Exc_1018 = collect_results(savepath)
@@ -174,51 +142,10 @@ Exc_1018 = sort(Exc_1018, :exclusiones)
 sort_1019 = sort(Exc_1018, :mse)
 
 ## Exctracción de vector de exclusión  y MSE
-a = collect(sort_1019[1,:params])
-sort_1019[1,:mse]
+Exc = collect(sort_1019[1,:params])
 
+#[35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
+#[29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]
 
-# Evaluación con 125_000 simulaciones al rededor del vector encontrado en la exploración inicial  (del 10 al 20)
-FxEx_10 = Dict(
-    :inflfn => InflationFixedExclusionCPI.(total[10:20]), 
-    :resamplefn => resamplefn, 
-    :trendfn => trendfn,
-    :paramfn => paramfn,
-    :nsim => 125_000
-    :traindate => ff10) |> dict_list
-
-savepath = datadir("results","optim","mse","Fx-Exc","B10","125k") 
-
-## Lote de simulación con los primeros 100 vectores de exclusión
-
-run_batch(gtdata, FxEx_10, savepath)
-
-## Recolección de resultados
-Exc_1018 = collect_results(savepath)
-
-## Análisis de exploración preliminar
-# obtener longitud del vector de exclusión de cada simulación
-exclusiones =  getindex.(map(x -> length.(x), Exc_1018[!,:params]),1)
-Exc_1018[!,:exclusiones] = exclusiones 
-
-# Ordenamiento por cantidad de exclusiones
-Exc_1018 = sort(Exc_1018, :exclusiones)
-
-# DF ordenado por MSE
-sort_1018 = sort(Exc_1018, :mse)
-
-## Exctracción de vector de exclusión  y MSE
-a = collect(sort_1018[1,:params])
-sort_1018[1,:mse]
-
-##
-
-fres = @chain Exc_1018 begin 
-    sort(:mse)
-    select(:mse, 
-        :inflfn => ByRow(fn -> fn.v_exc[2]) => :excb10,
-        :inflfn => ByRow(fn -> length(fn.v_exc[2])) => :excb10_length
-    ) 
-end
 
 

@@ -14,7 +14,7 @@ using Optim
 using CSV, DataFrames, Chain 
 
 # Directorios de resultados 
-savepath = datadir("results", "optim", "absme", "CoreMai_TEMP")
+savepath = datadir("results", "optim", "absme", "CoreMAI")
 savepath_best = datadir("results", "optim", "absme")
 
 ## Cargar el módulo de Distributed para computación paralela
@@ -97,18 +97,19 @@ for r in eachrow(prelim_methods)
         qstart = r.q, # Vector inicial de búsqueda 
         maxiterations = MAXITER,
         backend = :BlackBoxOptim,
-        metric = :me)
+        metric = :me
+    )
 end
 
 
 # Evaluar los mejores métodos utilizando criterios básicos 
 
-# df = collect_results(savepath)
-# best_methods = @chain df begin
-#     filter(:K => k -> k == K, _) 
-#     combine(gdf -> gdf[argmin(gdf.me), :], groupby(_, :method))
-#     select(:method, :n, :me, :q)
-# end
+df = collect_results(savepath)
+best_methods = @chain df begin
+    filter(:K => k -> k == K, _) 
+    combine(gdf -> gdf[argmin(gdf.me), :], groupby(_, :method))
+    select(:method, :n, :me, :q)
+end
 
 # # Obtener funciones de inflación de mejores métodos MAI
 # bestmaifns = map(eachrow(best_methods)) do r 
@@ -133,3 +134,18 @@ end
 #         :q => ByRow(last)
 #     )
 # end
+
+# |───────────── best_methods ─────────────|
+
+# ┌─────────┬────────┬───────────┬─────────────────────────────────────────────────────────────────────────────────────────────┐
+# │  method │      n │        me │                                                                                           q │
+# │ String? │ Int64? │  Float64? │                                                                            Vector{Float64}? │
+# ├─────────┼────────┼───────────┼─────────────────────────────────────────────────────────────────────────────────────────────┤
+# │   MaiFP │     10 │ -0.759592 │  [0.0584298, 0.0954737, 0.245661, 0.291486, 0.33868, 0.478096, 0.846356, 0.97829, 0.999177] │
+# │    MaiF │     10 │ -0.199985 │  [0.0958119, 0.155845, 0.485898, 0.719933, 0.795759, 0.869557, 0.898225, 0.99026, 0.990358] │
+# │    MaiG │     10 │ -0.858168 │ [0.00474738, 0.23966, 0.253779, 0.339322, 0.443259, 0.476159, 0.499084, 0.736747, 0.999839] │
+# └─────────┴────────┴───────────┴─────────────────────────────────────────────────────────────────────────────────────────────┘
+
+# InflationCoreMaiFP([0.0584298, 0.0954737, 0.245661, 0.291486, 0.33868, 0.478096, 0.846356, 0.97829, 0.999177])
+# InflationCoreMaiF([0.0958119, 0.155845, 0.485898, 0.719933, 0.795759, 0.869557, 0.898225, 0.99026, 0.990358])
+# InflationCoreMaiG([0.00474738, 0.23966, 0.253779, 0.339322, 0.443259, 0.476159, 0.499084, 0.736747, 0.999839])
