@@ -20,8 +20,11 @@ include(scriptsdir("mse-combination", "optmse2022.jl"))
 
 ## TIMA settings 
 
+# Here we use synthetic base changes every 36 months, because this is the population trend 
+# inflation time series used in the optimization of the Optimal Linear MSE Combination 2022
+
 # Resampling technique, parametric inflation formula and trend function 
-paramfn = InflationTotalRebaseCPI(60)
+paramfn = InflationTotalRebaseCPI(36, 2)
 resamplefn = ResampleScrambleVarMonths()
 trendfn = TrendRandomWalk()
 
