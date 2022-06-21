@@ -11,7 +11,7 @@ genconfig = Dict(
     :paramfn => InflationTotalRebaseCPI(36, 2),
     :resamplefn => ResampleScrambleVarMonths(),
     :trendfn => TrendRandomWalk(),
-    :traindate => Date(2019, 12),
+    :traindate => Date(2021, 12),
     :nsim => 125_000
 )
 
