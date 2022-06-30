@@ -7,6 +7,11 @@ using PrettyTables
 using CSV
 using Plots
 
+# Load Distributed package to use parallel computing capabilities 
+using Distributed
+nprocs() < 5 && addprocs(4, exeflags="--project")
+@everywhere using HEMI 
+
 ## Path 
 comp_results_savepath = datadir("results", "mse-combination", "optmse2022-components")
 mai_results_savepath = datadir("results", "mse-combination", "optmse2022-mai-components")

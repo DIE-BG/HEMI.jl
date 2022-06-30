@@ -1,7 +1,7 @@
 using DrWatson
 @quickactivate :HEMI
 
-# Cargar el módulo de Distributed para computación paralela
+# Load Distributed package to use parallel computing capabilities 
 using Distributed
 nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI 
