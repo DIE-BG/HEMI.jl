@@ -38,7 +38,7 @@ assessment_config = dict_list(Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
-    :traindate => Date(2020, 12),
+    :traindate => Date(2018, 12),
     :nsim => 10_000,
 )) 
 
@@ -51,7 +51,7 @@ assessment_config = dict_list(Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
-    :traindate => Date(2020, 12),
+    :traindate => Date(2018, 12),
     :nsim => 10_000,
 )) 
 
