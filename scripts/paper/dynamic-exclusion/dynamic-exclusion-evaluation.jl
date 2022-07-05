@@ -27,7 +27,7 @@ data = GTDATA[Date(2020, 12)]
 ## Evaluate a range of factors for the dynamic-exclusion method
 
 # Configuration for the factors of dynamic-exclusion core measure
-lower_trims = 0:0.1:1
+lower_trims = 0:0.1:2
 upper_trims = 0:0.1:2
 inflfns = [InflationDynamicExclusion(x, y) for x in lower_trims for y in upper_trims]
 
@@ -58,18 +58,18 @@ factors_mse_map = @chain df_results begin
     select(
         :params => ByRow(t -> t[1]) => :p1,
         :params => ByRow(t -> t[2]) => :p2,
-        :mse
+        :mse => ByRow(m -> isnan(m) ? missing : m) => :mse,
     )
     sort([:p1, :p2])
 end
 
 # Invert and reshape values for the heatmap
-mse_vals = 1 ./ reshape(factors_mse_map.mse, length(lower_trims), length(upper_trims))
+mse_vals = 1 ./ reshape(factors_mse_map.mse, length(upper_trims), length(lower_trims))
 
 heatmap(lower_trims, upper_trims, mse_vals,
     colorbar_title="Inverse mean squared error metric", 
-    xlabel="Left-trim percentile " * L"\lambda_{1}",
-    ylabel="Right-trim percentile " * L"\lambda_{2}",
+    xlabel="Left-trim factor " * L"\lambda_{1}",
+    ylabel="Right-trim factor " * L"\lambda_{2}",
     # color = reverse(cgrad(:viridis)),
     color = :viridis,
     # aspectratio=:equal,
@@ -80,12 +80,12 @@ heatmap(lower_trims, upper_trims, mse_vals,
     bottommargin=3*Plots.mm,
 )
 
-i_min = argmin(factors_mse_map.mse)
+i_min = argmin(skipmissing(factors_mse_map.mse))
 scatter!([factors_mse_map.p1[i_min]], [factors_mse_map.p2[i_min]],
     label="MSE minimizer factors",
     color=:red, 
 )
 
-savefig(joinpath(plots_savepath, "unweighted_trimmed_means_mse_map.pdf"))
+savefig(joinpath(plots_savepath, "dynamic_exclusion_mse_map.pdf"))
 
 

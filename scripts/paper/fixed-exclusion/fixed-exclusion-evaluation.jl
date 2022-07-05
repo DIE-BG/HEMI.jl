@@ -203,6 +203,8 @@ plot(
     p_mse_b10;
     layout=(2, 2),
     size=(800, 500),
+    title=["CPI 2000 dataset" "CPI 2010 dataset" "" ""],
+    titlefontsize=9,
     legendfontsize=8,
     labelfontsize=9,
     leftmargin=4 * Plots.mm,

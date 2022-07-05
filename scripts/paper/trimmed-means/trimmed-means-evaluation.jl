@@ -4,6 +4,7 @@ using DrWatson
 using DataFrames
 using Chain
 using Plots
+using LaTeXStrings
 
 ## Load Distributed package to use parallel computing capabilities 
 using Distributed
@@ -56,7 +57,7 @@ assessment_config = dict_list(Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn, 
-    :traindate => Date(2020, 12),
+    :traindate => Date(2018, 12),
     :nsim => 10_000,
 )) 
 
@@ -84,9 +85,9 @@ unweighted_mse_map = @chain df_results begin
 end
 
 # Invert and reshape values for the heatmap
-mse_vals = 1 ./ reshape(unweighted_mse_map.mse, length(ulower_trims), length(uupper_trims))
+mse_vals = 1 ./ reshape(unweighted_mse_map.mse, length(uupper_trims), length(ulower_trims))
 
-heatmap(ulower_trims, uupper_trims, mse_vals,
+unweighted_p = heatmap(ulower_trims, uupper_trims, mse_vals,
     colorbar_title="Inverse mean squared error metric", 
     xlabel="Left-trim percentile " * L"p_1",
     ylabel="Right-trim percentile " * L"p_2",
@@ -101,7 +102,7 @@ heatmap(ulower_trims, uupper_trims, mse_vals,
 )
 
 i_min = argmin(unweighted_mse_map.mse)
-scatter!([unweighted_mse_map.p1[i_min]], [unweighted_mse_map.p2[i_min]],
+scatter!(unweighted_p, [unweighted_mse_map.p1[i_min]], [unweighted_mse_map.p2[i_min]],
     label="MSE minimizer trims",
     color=:red, 
 )
@@ -130,12 +131,12 @@ weighted_mse_map = @chain df_results begin
 end
 
 # Invert and reshape values for the heatmap
-mse_vals = 1 ./ reshape(weighted_mse_map.mse, length(wlower_trims), length(wupper_trims))
+mse_vals = 1 ./ reshape(weighted_mse_map.mse, length(wupper_trims), length(wlower_trims))
 
-heatmap(wlower_trims, wupper_trims, mse_vals,
+weighted_p = heatmap(wlower_trims, wupper_trims, mse_vals,
     colorbar_title="Inverse mean squared error metric", 
-    xlabel="Left-trim percentile " * L"p_1",
-    ylabel="Right-trim percentile " * L"p_2",
+    xlabel="Left-trim weighted percentile " * L"p_1",
+    ylabel="Right-trim weighted percentile " * L"p_2",
     # color = reverse(cgrad(:viridis)),
     color = :viridis,
     # aspectratio=:equal,
@@ -147,9 +148,26 @@ heatmap(wlower_trims, wupper_trims, mse_vals,
 )
 
 i_min = argmin(weighted_mse_map.mse)
-scatter!([weighted_mse_map.p1[i_min]], [weighted_mse_map.p2[i_min]],
+scatter!(weighted_p, [weighted_mse_map.p1[i_min]], [weighted_mse_map.p2[i_min]],
     label="MSE minimizer trims",
     color=:red, 
 )
 
 savefig(joinpath(plots_savepath, "weighted_trimmed_means_mse_map.pdf"))
+
+
+## Create a plot of both MSE heatmaps
+
+plot(
+    unweighted_p, 
+    weighted_p, 
+    size=(800, 600),
+    layout=(2,1),
+    title=["Unweighted trimmed-means" "Weighted trimmed-means"], 
+    legendposition=:bottomleft,
+    titlefontsize=11,
+    xlabelfontsize=10,
+    ylabelfontsize=10,
+)
+
+savefig(joinpath(plots_savepath, "trimmed_means_mse_map.pdf"))
