@@ -67,7 +67,7 @@ end
 mse_vals = 1 ./ reshape(factors_mse_map.mse, length(upper_trims), length(lower_trims))
 
 heatmap(lower_trims, upper_trims, mse_vals,
-    colorbar_title="Inverse mean squared error metric", 
+    colorbar_title="Reciprocal MSE metric", 
     xlabel="Left-trim factor " * L"\lambda_{1}",
     ylabel="Right-trim factor " * L"\lambda_{2}",
     # color = reverse(cgrad(:viridis)),

@@ -88,7 +88,7 @@ end
 mse_vals = 1 ./ reshape(unweighted_mse_map.mse, length(uupper_trims), length(ulower_trims))
 
 unweighted_p = heatmap(ulower_trims, uupper_trims, mse_vals,
-    colorbar_title="Inverse mean squared error metric", 
+    colorbar_title="Reciprocal MSE metric", 
     xlabel="Left-trim percentile " * L"p_1",
     ylabel="Right-trim percentile " * L"p_2",
     # color = reverse(cgrad(:viridis)),
@@ -134,7 +134,7 @@ end
 mse_vals = 1 ./ reshape(weighted_mse_map.mse, length(wupper_trims), length(wlower_trims))
 
 weighted_p = heatmap(wlower_trims, wupper_trims, mse_vals,
-    colorbar_title="Inverse mean squared error metric", 
+    colorbar_title="Reciprocal MSE metric", 
     xlabel="Left-trim weighted percentile " * L"p_1",
     ylabel="Right-trim weighted percentile " * L"p_2",
     # color = reverse(cgrad(:viridis)),

@@ -6,6 +6,7 @@ using Chain
 using PrettyTables
 using CSV
 using Plots
+using StatsPlots
 
 # Load Distributed package to use parallel computing capabilities 
 using Distributed
@@ -14,7 +15,6 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 
 ## Path 
 comp_results_savepath = datadir("results", "mse-combination", "optmse2022-components")
-mai_results_savepath = datadir("results", "mse-combination", "optmse2022-mai-components")
 plots_savepath = mkpath(plotsdir("paper", "mse-combination"))
 
 # Load optimal linear combination of inflation measures
@@ -42,7 +42,7 @@ param = InflationParameter(paramfn, resamplefn, trendfn)
 trend_infl = param(data)
 
 ## Collect results os assessment
-df_results = collect_results(joinpath(results_savepath))
+df_results = collect_results(joinpath(comp_results_savepath))
 sort!(df_results, :mse)
 
 @chain df_results begin
@@ -136,3 +136,111 @@ plot!(unrestricted_combination, data,
 )
 
 savefig(joinpath(plots_savepath, "rest_unrest_mse_combination.pdf"))
+
+
+## Boxplots and other plots 
+
+# Add inflation trajectories from optimal combinations 
+all_tray_infl = cat(tray_infl, rest_tray_infl, unrest_tray_infl; dims=2)
+
+measures = [
+    "Trimmed Mean (58.7%, 83.1%)",
+    "72th Percentile",                    
+    "Historically Expanded Sample Core",
+    "Std. Deviations exclusion (0.3, 1.7)",
+    "Weighted Trimmed Mean (21%, 96%)",
+    "70th Weighted Percentile",
+    "Fixed exclusion (14, 14)",
+    "Restricted optimal MSE combination",
+    "Unrestricted optimal MSE combination",
+]
+
+## Mean error boxplot
+
+err_dist = (all_tray_infl .- trend_infl) |> x -> vcat(eachslice(x, dims=3)...)
+
+err_p = boxplot(permutedims(string.('A':'I')), err_dist, 
+    label=permutedims(string.('A':'I') .* " - " .* measures),
+    ylabel="Simulation error distribution",
+    legend=true,
+    legendposition=:topleft,
+    size=(800,500),
+    dpi=400,
+    linewidth=1,
+    marker=(stroke(0)),
+    markeralpha=0.4,
+    leftmargin=3*Plots.mm,
+    guidefontsize=10,
+    titlefontsize=11,
+    xlabelfontsize=10,
+    ylabelfontsize=10,
+    legendfontsize=8,
+)
+
+# savefig(joinpath(plots_savepath, "error_boxplot.pdf"))
+savefig(joinpath(plots_savepath, "error_boxplot.png"))
+
+## Squared errors boxplot
+
+sq_err_dist = (tray_infl .- trend_infl) .^ 2 |> x -> vcat(eachslice(x, dims=3)...)
+# sq_err_dist = sq_err_dist[1:10_000, :]
+
+sqerr_p = boxplot(permutedims(string.('A':'I')), sq_err_dist, 
+    label=permutedims(string.('A':'I') .* " - " .* measures),
+    legend=false,
+    size=(800,400),
+    dpi=100,
+    linewidth=1,
+    marker=(stroke(0)),
+    markeralpha=0.3,
+    leftmargin=3*Plots.mm,
+    guidefontsize=10,
+    titlefontsize=11,
+    xlabelfontsize=10,
+    ylabelfontsize=10,
+    legendfontsize=8,
+)
+
+zoom_sqerr_p = plot(
+    sqerr_p, 
+    ylabel="Simulation quadratic error distribution",
+    ylims=(0,16),
+    legend=true,
+    legendposition=:topleft,
+)
+
+plot(sqerr_p, zoom_sqerr_p, 
+    layout=grid(2,1, heights=[0.25, 0.75]),
+    size=(800, 600),
+    dpi=400,
+    titlefontsize=11,
+    xlabelfontsize=10,
+    ylabelfontsize=10,
+)
+
+# savefig(joinpath(plots_savepath, "sqerror_boxplot.pdf"))
+savefig(joinpath(plots_savepath, "sqerror_boxplot.png"))
+
+## Plot of average squared error over time periods
+
+mse_dist = mean(x -> x^2, tray_infl .- trend_infl, dims=1) |> x -> vcat(eachslice(x, dims=3)...)
+
+boxplot(permutedims(string.('A':'I')), mse_dist, 
+    label=permutedims(string.('A':'I') .* " - " .* measures),
+    ylabel="Mean squared error",
+    legendposition=:topleft,
+    size=(800,400),
+    linewidth=1,
+    marker=(stroke(0)),
+    markeralpha=0.4,
+    leftmargin=3*Plots.mm,
+    guidefontsize=10,
+    titlefontsize=11,
+    xlabelfontsize=10,
+    ylabelfontsize=10,
+    legendfontsize=8,
+)
+
+savefig(joinpath(plots_savepath, "mse_overtime_boxplot.pdf"))
+
+
