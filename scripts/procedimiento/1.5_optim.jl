@@ -25,31 +25,62 @@ D = dict_list(
 M = [:mse, :absme, :corr]
 DF = DataFrame()
 
-for measure in M
-    for config in D
-        save_path = joinpath(savepath,string(measure))
-        optres = optimize_config(config, gtdata; measure, savepath = save_path)
-        merge!(optres, tostringdict(config))
+# OPTIMOS DE 2022 COMO VALOR INICIAL
+X0 = [
+    [
+       0.72,
+       0.69,
+        [58.0, 83.0],
+       [21.0, 95.0],
+       [0.31, 1.68]
+    ]
+,
+   [
+       0.71,
+        0.69,
+        [35.0, 93.0],
+        [34.0, 93.0],
+        [1.00, 3.42]
+
+    ]
+,
+    [
+        0.77,
+        0.80,
+        [55.0, 92.0],
+        [46.0, 98.0],
+        [0.46, 4.97]
+
+    ]
+]
+
+for i in 1:length(M)
+    for j in 1:length(D)
+        save_path = joinpath(savepath,string(M[i]))
+        optres = optimize_config(D[j], gtdata; measure=M[i], savepath = save_path, x0 = X0[i][j])
+        merge!(optres, tostringdict(D[j]))
         optres["minimizer"]= Ref(optres["minimizer"])
         global DF = vcat(DF,DataFrame(optres))
     end
 end
 
-# Row │ infltypefn                    measure  minimizer            nsim   optimal     optres                             paramfn                         resamplefn                   traindate   trendfn
-#      │ DataType                      Symbol   Any                  Int64  Float64     Optimiza…                          Inflatio…                       ResampleS…                   Date        TrendRan…
-# ─────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-#    1 │ InflationPercentileEq         mse      0.719566             10000  0.244727    Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    2 │ InflationPercentileWeighted   mse      0.698558             10000  0.410158    Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    3 │ InflationTrimmedMeanEq        mse      [28.4994, 95.155]    10000  0.346451     * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    4 │ InflationTrimmedMeanWeighted  mse      [20.6086, 95.9818]   10000  0.294047     * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    5 │ InflationDynamicExclusion     mse      [0.403394, 2.10774]  10000  0.29371      * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    6 │ InflationPercentileEq         absme    0.719238             10000  0.0577582   Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    7 │ InflationPercentileWeighted   absme    0.702267             10000  0.0351598   Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    8 │ InflationTrimmedMeanEq        absme    [22.1844, 96.0049]   10000  0.00145469   * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#    9 │ InflationTrimmedMeanWeighted  absme    [25.1724, 95.0275]   10000  3.70805e-5   * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32… 
-#   10 │ InflationDynamicExclusion     absme    [0.995821, 3.39991]  10000  1.36803e-5   * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
-#   11 │ InflationPercentileEq         corr     0.80865              10000  0.985772    Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
-#   12 │ InflationPercentileWeighted   corr     0.809951             10000  0.975832    Results of Optimization Algorith…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
-#   13 │ InflationTrimmedMeanEq        corr     [33.6361, 95.5215]   10000  0.986206     * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
-#   14 │ InflationTrimmedMeanWeighted  corr     [27.6984, 98.4531]   10000  0.978821     * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
-#   15 │ InflationDynamicExclusion     corr     [0.4625, 4.81875]    10000  0.977993     * Status: success\n\n * Candida…  InflationTotalRebaseCPI(36, 2)  ResampleScrambleVarMonths()  2019-12-01  TrendRandomWalk{Float32}(Float32…   
+# ┌──────────────────────────────┬────────┬──────────────────────────────────────────┐
+# │                      measure │ metric │                                minimizer │
+# │                       String │ Symbol │                                   String │
+# ├──────────────────────────────┼────────┼──────────────────────────────────────────┤
+# │        InflationPercentileEq │    mse │                                0.7195656 │
+# │  InflationPercentileWeighted │    mse │                               0.69855756 │
+# │       InflationTrimmedMeanEq │    mse │   [63.41218886971474, 79.85745657682418] │
+# │ InflationTrimmedMeanWeighted │    mse │    [20.51299431324005, 95.9781690120697] │
+# │    InflationDynamicExclusion │    mse │ [0.33728042602539066, 1.810945816040039] │
+# │        InflationPercentileEq │  absme │                                0.7192383 │
+# │  InflationPercentileWeighted │  absme │                                0.7022669 │
+# │       InflationTrimmedMeanEq │  absme │    [33.4117166519165, 93.73476219177246] │
+# │ InflationTrimmedMeanWeighted │  absme │   [32.16439493456855, 93.25685444604606] │
+# │    InflationDynamicExclusion │  absme │    [1.04827364012599, 3.488850908577442] │
+# │        InflationPercentileEq │   corr │                               0.80864954 │
+# │  InflationPercentileWeighted │   corr │                               0.80995136 │
+# │       InflationTrimmedMeanEq │   corr │                             [55.0, 92.0] │
+# │ InflationTrimmedMeanWeighted │   corr │              [53.555078125, 96.46796875] │
+# │    InflationDynamicExclusion │   corr │                             [0.46, 4.97] │
+# └──────────────────────────────┴────────┴──────────────────────────────────────────┘

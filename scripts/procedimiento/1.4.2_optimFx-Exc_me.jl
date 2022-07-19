@@ -57,7 +57,7 @@ FxEx_00 = Dict(
     :evalperiods => GT_EVAL_B00,
 ) |> dict_list
 
-savepath = datadir("results","optim","me","Fx-Exc","B00")  
+savepath = datadir("results","optim","absme","Fx-Exc","B00")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -120,7 +120,7 @@ FxEx_10 = Dict(
     :traindate => ff10
 ) |> dict_list
 
-savepath = datadir("results","optim","me","Fx-Exc","B10")   
+savepath = datadir("results","optim","absme","Fx-Exc","B10")   
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 

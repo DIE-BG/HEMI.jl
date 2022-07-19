@@ -44,8 +44,8 @@ optconfig = merge(genconfig, Dict(
 
 ## Optimización de métodos MAI - búsqueda inicial de percentiles 
 
-K = 100
-MAXITER = 500
+K = 200
+MAXITER = 1000
 
 for config in optconfig
     optimizemai(config, gtdata; 
@@ -53,7 +53,9 @@ for config in optconfig
         savepath, 
         maxiterations = MAXITER, 
         metric = :corr,
-        backend = :BlackBoxOptim
+        backend = :BlackBoxOptim,
+        maxtime = 3*3_600,
+        init = :uniform
     )
 end 
 

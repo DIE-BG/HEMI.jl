@@ -27,24 +27,15 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 
 ## Configuración para simulaciones
 
-# Parámetros de configuración general del escenario de evaluación 
-genconfig = Dict(
-    :paramfn => InflationTotalRebaseCPI(36, 2),
-    :resamplefn => ResampleScrambleVarMonths(),
-    :trendfn => TrendRandomWalk(),
-    :traindate => Date(2019, 12),
-    :nsim => 125_000
-)
-
 optconfig = merge(genconfig, Dict(
     # Parámetros para búsqueda iterativa de cuantiles 
-    :mainseg => [4,5,10],
+    :mainseg => [4,5,6],
     :maimethod => [MaiF, MaiG, MaiFP], 
 )) |> dict_list
 
 ## Optimización de métodos MAI - búsqueda inicial de percentiles 
 
-K = 100
+K = 200
 MAXITER = 1000
 
 for config in optconfig
@@ -53,7 +44,9 @@ for config in optconfig
         savepath, 
         maxiterations = MAXITER, 
         metric = :me,
-        backend = :BlackBoxOptim
+        backend = :BlackBoxOptim,
+        maxtime = 3*3_600,
+        init = :uniform
     )
 end 
 
@@ -64,52 +57,52 @@ df = collect_results(savepath)
 
 ## Optimizar con mayor número de simulaciones y puntos iniciales previos
 
-prelim_methods = @chain df begin 
-    groupby(_, :method)
-    combine(_) do gdf 
-        # Obtener las dos menores métricas de cada tipo de medida 
-        @chain gdf begin 
-            sort(:me)
-            first(2)
-        end
-    end
-    select(:method, :n, :me, :q, 
-        :q => ByRow(first), 
-        :q => ByRow(last), 
-    )
-end
+# prelim_methods = @chain df begin 
+#     groupby(_, :method)
+#     combine(_) do gdf 
+#         # Obtener las dos menores métricas de cada tipo de medida 
+#         @chain gdf begin 
+#             sort(:me)
+#             first(2)
+#         end
+#     end
+#     select(:method, :n, :me, :q, 
+#         :q => ByRow(first), 
+#         :q => ByRow(last), 
+#     )
+# end
 
 
-# Optimizar con mayor número de simulaciones 
-K = 10_000
-MAXITER = 30
+# # Optimizar con mayor número de simulaciones 
+# K = 10_000
+# MAXITER = 30
 
-for r in eachrow(prelim_methods)
-    # Crear configuración para optimizar 
-    config = merge(genconfig, Dict(
-        :mainseg => r.n, 
-        :maimethod => eval(Symbol(r.method))
-    ))
+# for r in eachrow(prelim_methods)
+#     # Crear configuración para optimizar 
+#     config = merge(genconfig, Dict(
+#         :mainseg => r.n, 
+#         :maimethod => eval(Symbol(r.method))
+#     ))
 
-    # Optimizar las metodologías candidatas con vectores iniciales 
-    optimizemai(config, gtdata; 
-        K, savepath,
-        qstart = r.q, # Vector inicial de búsqueda 
-        maxiterations = MAXITER,
-        backend = :BlackBoxOptim,
-        metric = :me
-    )
-end
+#     # Optimizar las metodologías candidatas con vectores iniciales 
+#     optimizemai(config, gtdata; 
+#         K, savepath,
+#         qstart = r.q, # Vector inicial de búsqueda 
+#         maxiterations = MAXITER,
+#         backend = :BlackBoxOptim,
+#         metric = :me
+#     )
+# end
 
 
-# Evaluar los mejores métodos utilizando criterios básicos 
+# # Evaluar los mejores métodos utilizando criterios básicos 
 
-df = collect_results(savepath)
-best_methods = @chain df begin
-    filter(:K => k -> k == K, _) 
-    combine(gdf -> gdf[argmin(gdf.me), :], groupby(_, :method))
-    select(:method, :n, :me, :q)
-end
+# df = collect_results(savepath)
+# best_methods = @chain df begin
+#     filter(:K => k -> k == K, _) 
+#     combine(gdf -> gdf[argmin(gdf.me), :], groupby(_, :method))
+#     select(:method, :n, :me, :q)
+# end
 
 # # Obtener funciones de inflación de mejores métodos MAI
 # bestmaifns = map(eachrow(best_methods)) do r 

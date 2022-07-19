@@ -61,6 +61,7 @@ end
 function optimize_config(config, data;
     savepath = nothing,
     measure = :mse,
+    x0 = INITIAL(infl_constructor),
     x_tol=1e-1, 
     f_tol=1e-2,
     g_tol = 1e-4,
@@ -83,7 +84,7 @@ function optimize_config(config, data;
     infl_constructor = config[:infltypefn]
 
     bounds = BOUNDS(infl_constructor)
-    x0     = INITIAL(infl_constructor)
+    #x0     = INITIAL(infl_constructor)
 
     # Función cerradura 
     f = k -> eval_config(k, config, evaldata, tray_infl_param; 
