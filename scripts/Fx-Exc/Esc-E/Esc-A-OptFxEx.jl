@@ -52,11 +52,11 @@ FxEx_00 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 100,
+    :nsim => 1000,
     :traindate => ff00,
 ) |> dict_list
 
-savepath = datadir("results","optim","mse","Fx-Exc")  
+savepath = datadir("results","optim","mse","Fx-Exc","B00","1k")  
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -119,7 +119,7 @@ FxEx_00 = Dict(
     :nsim => 125_000
     :traindate => ff00) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-A18","Base00-125K")  
+savepath = datadir("results","optim","mse","Fx-Exc","B00","125k")  
 
 ## Lote de simulación con 10 vectores de exclusión 
 run_batch(gtdata, FxEx_00, savepath)
@@ -166,7 +166,7 @@ exc00 =  [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161]
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2018
 
-est_10 = std(gtdata[Date(2018,12)][2].v |> capitalize |> varinteran, dims=1)
+est_10 = std(gtdata[Date(2019,12)][2].v |> capitalize |> varinteran, dims=1)
 
 df = DataFrame(num = collect(1:279), Desv = vec(est_10))
 
@@ -193,10 +193,10 @@ FxEx_10 = Dict(
     :resamplefn => resamplefn, 
     :trendfn => trendfn,
     :paramfn => paramfn,
-    :nsim => 10_000,
+    :nsim => 1000,
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-A18","Base10-10K")  
+savepath = datadir("results","optim","mse","Fx-Exc","B10","1k")   
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 
@@ -230,7 +230,7 @@ FxEx_10 = Dict(
     :nsim => 125_000
     :traindate => ff10) |> dict_list
 
-savepath = datadir("results","Fx-Exc","Esc-A18","Base10-125K")  
+savepath = datadir("results","optim","mse","Fx-Exc","B10","125k") 
 
 ## Lote de simulación con los primeros 100 vectores de exclusión
 

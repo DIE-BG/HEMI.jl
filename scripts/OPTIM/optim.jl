@@ -61,6 +61,7 @@ end
 function optimize_config(config, data;
     savepath = nothing,
     measure = :mse,
+    x0 = INITIAL(infl_constructor),
     x_tol=1e-1, 
     f_tol=1e-2,
     g_tol = 1e-4,
@@ -83,7 +84,7 @@ function optimize_config(config, data;
     infl_constructor = config[:infltypefn]
 
     bounds = BOUNDS(infl_constructor)
-    x0     = INITIAL(infl_constructor)
+    #x0     = INITIAL(infl_constructor)
 
     # Función cerradura 
     f = k -> eval_config(k, config, evaldata, tray_infl_param; 
@@ -127,8 +128,9 @@ function optimize_config(config, data;
     @info "Resultados de optimización:" optres minimizer=s*Optim.minimizer(optres)
     results = Dict(
         # Resultados de optimización 
-        "measure" => measure, 
-        "minimizer" => Optim.minimizer(optres), 
+        "measure" => string(infl_constructor),
+        "metric" => measure, 
+        "minimizer" => string(Optim.minimizer(optres)), 
         "optimal" => s * minimum(optres),
         "optres" => optres
     )
@@ -136,7 +138,7 @@ function optimize_config(config, data;
     merge!(results, tostringdict(config))
 
     # Guardar los resultados de evaluación para collect_results 
-    filename = savename(results, "jld2", allowedtypes=(Real, String, Date), digits=4)
+    filename = savename(results, "jld2", allowedtypes=(Symbol,Real, String, Date), digits=4)
     isnothing(savepath) || wsave(joinpath(savepath, filename), tostringdict(results))
 
     return results 
