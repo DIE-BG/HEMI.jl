@@ -11,7 +11,7 @@ using PrettyTables
 plots_savepath = mkpath(plotsdir("paper"))
 
 ## Historical data used
-gtdata20 = gtdata[Date(2020, 12)]
+gtdata20 = GTDATA[Date(2020, 12)]
 
 ## Price change distribution in the period 2001 to 2020
 
