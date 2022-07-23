@@ -218,7 +218,7 @@ Base del IPC: $(@bind basestr Select(["gt00" => "Base 2000", "gt10" => "Base 201
 
 # ╔═╡ ddbbc8dc-9f45-4561-bbe4-026afffdfa19
 md"""
- $t=$ $(@bind t Slider(1:120, show_value=true))
+ $t=$ $(@bind t Slider(basestr == "gt00" ? (1:120) : (1:132), show_value=true))
 """
 
 # ╔═╡ a6ad31b4-5d49-4a78-8508-4628fd52b95d
@@ -228,6 +228,9 @@ begin
 	Vt = base.v[t, :]
 	Wb = base.w
 end;
+
+# ╔═╡ 2cc3a548-0bd4-44b0-b963-cbd8782cbbd5
+gt10.dates[t]
 
 # ╔═╡ b2708891-0e2e-47ca-bd7f-6458346b6d8b
 md"""
@@ -517,8 +520,8 @@ Implementación:
 
 # ╔═╡ f71f0d24-8236-4a12-80d1-738e53ea0e12
 begin
-	V_star = vcat(gt00.v[:], gt10.v[1:120, :][:])
-	W_star = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 120)[:])
+	V_star = vcat(gt00.v[:], gt10.v[1:132, :][:])
+	W_star = vcat(repeat(gt00.w', 120)[:], repeat(gt10.w', 132)[:])
 	glp = WeightsDistr(V_star, W_star, V)
 end
 
@@ -1259,8 +1262,9 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═6f57de61-45b4-49e4-b189-d825a887604a
 # ╟─a6ad31b4-5d49-4a78-8508-4628fd52b95d
 # ╟─2bef3af2-964f-4731-ba6f-9b397f3a1c88
-# ╟─f7326714-1ac5-4a04-aa76-1e01679226bc
-# ╟─ddbbc8dc-9f45-4561-bbe4-026afffdfa19
+# ╠═f7326714-1ac5-4a04-aa76-1e01679226bc
+# ╠═2cc3a548-0bd4-44b0-b963-cbd8782cbbd5
+# ╠═ddbbc8dc-9f45-4561-bbe4-026afffdfa19
 # ╟─b2708891-0e2e-47ca-bd7f-6458346b6d8b
 # ╠═30dfac77-2379-4cdf-b2f2-ff295fca0bfa
 # ╟─b1d815b1-36f9-4bdb-96f5-0ddfbb0e0549
@@ -1372,7 +1376,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─1c432a8a-e83c-430e-a1ea-cda63206df44
 # ╟─80482a7e-eaa1-499f-b14d-266be0b8867a
 # ╟─7424f3cd-94fc-46ba-a3b1-8fe74c5f5935
-# ╟─585c4ec5-b880-4e9f-be45-b9c86d891d78
+# ╠═585c4ec5-b880-4e9f-be45-b9c86d891d78
 # ╠═081602ca-82cc-4072-a34a-0fd326d2d37a
 # ╠═9456a534-d6b4-4a8d-8d52-d5fa64c41c15
 # ╠═6c5c71da-c68b-4bad-8146-2aa17ba13432
