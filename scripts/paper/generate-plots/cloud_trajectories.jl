@@ -12,9 +12,9 @@ using Plots
 # all inflation measures' trajectory clouds using this population trend time series.
 
 ## Path 
-savepath = datadir("results", "paper-assessment-36", "tray_infl")
+savepath = datadir("results", "paper-assessment", "tray_infl")
 plots_savepath = mkpath(plotsdir("paper", "clouds"))
-csv_output = datadir("results", "paper-assessment-36", "clouds")
+csv_output = datadir("results", "paper-assessment", "clouds")
 
 ## TIMA settings 
 
@@ -35,7 +35,7 @@ trend_infl = param(data)
 df_results = collect_results(savepath)
 
 ## Load helper functions
-include("plot-helpers.jl")
+include("../plot-helpers.jl")
 
 ## Plot trajectory cloud
 

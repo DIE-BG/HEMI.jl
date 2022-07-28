@@ -52,7 +52,7 @@ config = Dict(
 df_results = collect_results(joinpath(results_savepath, "tray_infl"))
 
 ## Load helper functions
-include("plot-helpers.jl")
+include("../plot-helpers.jl")
 
 # Optimal MSE combination of core inflation cloudplots
 periods = [
