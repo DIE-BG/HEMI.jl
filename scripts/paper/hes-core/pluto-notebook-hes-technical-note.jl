@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.9
+# v0.19.10
 
 using Markdown
 using InteractiveUtils
@@ -22,6 +22,7 @@ begin
 	using PlutoUI
 	using Revise
 	using DrWatson, HEMI, Plots
+	using LaTeXStrings
 	
 	using InflationFunctions: ObservationsDistr, WeightsDistr, AccumulatedDistr
 	using InflationFunctions: vposition, get_segments_list, renormalize!, renorm_g_glp, renorm_f_flp
@@ -230,6 +231,9 @@ begin
 end;
 
 # ╔═╡ 2cc3a548-0bd4-44b0-b963-cbd8782cbbd5
+gt10.dates[t]
+
+# ╔═╡ 8db73f78-82de-4b60-bdda-a526e8df1bef
 gt10.dates[t]
 
 # ╔═╡ b2708891-0e2e-47ca-bd7f-6458346b6d8b
@@ -938,8 +942,14 @@ q_glp = quantile(GLP, p)
 # ╔═╡ fc22f2da-59c6-440f-aa2a-059f27f9e470
 q_g = quantile(Gt, p) 
 
+# ╔═╡ cd48716e-4892-436c-a38e-ac487597c652
+print(q_g)
+
 # ╔═╡ 8226ffbb-802e-4577-9ecd-57875dd395bd
 segments = get_segments_list(q_g, q_glp, n) 
+
+# ╔═╡ 9dc6d27b-5571-4023-b05b-50e43f90e585
+segments
 
 # ╔═╡ cc17dfa5-8302-49b2-ae4f-26f84e05ded3
 # Renormalizar el primer segmento 
@@ -959,11 +969,23 @@ end
 # ╔═╡ 96586a48-e779-4ba0-91d7-35f3aeb67666
 begin
 	GLPt_1 = cumsum(glpt_1)
-	plot(Gt, label="Gt")
-	plot!(GLP, label="GLP")
-	plot!(GLPt_1, label="GLPt", xlims=(-5, 5))
+	plot(Gt, label=L"G_t")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt_1, label=L"G_{Lt}", xlims=(-5, 5))
+	scatter!([q_g[segments[2]]], [Gt(q_g[segments[2]])], label="First normalization step")
 	hline!([p[segments[2]]], linealpha=0.5, color=:black, label=false)
 	# xlims!(-0.1, 0.7)
+end
+
+# ╔═╡ 4f37b238-3aa2-4e00-9faf-b26d61917d3e
+let
+	GLPt_1 = cumsum(glpt_1)
+	plot(Gt, label=L"G_t")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt_1, label=L"G_{Lt}", xlims=(-5, 5))
+	hline!([p[segments[2]]], linealpha=0.5, color=:black, label=false)
+	scatter!([q_g[segments[2]]], [Gt(q_g[segments[2]])], label="First normalization step")
+	savefig("first_normalization_step.pdf")
 end
 
 # ╔═╡ 2efdd051-3847-4fae-a24b-7a8d87cbbd97
@@ -980,17 +1002,28 @@ begin
 	# Constante de normalización
 	local c_norm = (Gt(q_g[k]) - Gt(q_g[k₋₁])) / (GLP(q_g[k]) - GLP(q_g[k₋₁]))
 	renormalize!(glpt_2, q_g[k₋₁], q_g[k], c_norm)
-	GLPt_2 = cumsum(glpt_2)
 	c_norm
 end
 
 # ╔═╡ 1c432a8a-e83c-430e-a1ea-cda63206df44
 begin
-	plot(Gt, label="Gt")
-	plot!(GLP, label="GLP")
-	plot!(GLPt_2, label="GLPt", xlims=(-5, 5))
+	GLPt_2 = cumsum(glpt_2)
+	plot(Gt, label=L"G_t")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt_2, label=L"G_{Lt}", xlims=(-5, 5))
 	hline!([p[segments[3]]], linealpha=0.5, color=:black, label=false)
-	# xlims!(0.5, 2)
+	scatter!([q_g[segments[3]]], [Gt(q_g[segments[3]])], label="Second normalization step")
+end
+
+# ╔═╡ 19a4b029-6abe-45c8-99bb-48dad7893934
+let
+	GLPt_2 = cumsum(glpt_2)
+	plot(Gt, label=L"G_t")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt_2, label=L"G_{Lt}", xlims=(-5, 5))
+	hline!([p[segments[3]]], linealpha=0.5, color=:black, label=false)
+	scatter!([q_g[segments[3]]], [Gt(q_g[segments[3]])], label="Second normalization step")
+	savefig("second_normalization_step.pdf")
 end
 
 # ╔═╡ 585c4ec5-b880-4e9f-be45-b9c86d891d78
@@ -998,9 +1031,20 @@ begin
 	glpₜ = renorm_g_glp(Gt, GLP, glp, n)
 	
 	GLPt = cumsum(glpₜ) 
-	plot(Gt, label="Gt")
-	plot!(GLP, label="GLP")
-	plot!(GLPt, label="GLPt", xlims=(-5, 5))
+	plot(Gt, label=L"Gt")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt, label=L"G_{Lt}", lw=2, xlims=(-5,5))
+end
+
+# ╔═╡ 5c766faa-65bb-486c-969b-2ef909e14686
+let
+	glpₜ = renorm_g_glp(Gt, GLP, glp, n)
+	
+	GLPt = cumsum(glpₜ) 
+	plot(Gt, label=L"Gt")
+	plot!(GLP, label=L"G_L")
+	plot!(GLPt, label=L"G_{Lt}", lw=2, xlims=(-5, 5))
+	savefig("last_normalization_step.pdf")
 end
 
 # ╔═╡ 081602ca-82cc-4072-a34a-0fd326d2d37a
@@ -1134,6 +1178,9 @@ Construimos una función de inflación para computar con metodología de renorma
 # ╔═╡ 23f0267f-9d06-4cc8-a993-850f4c6392b7
 inflfn = InflationCoreMai(MaiF(4))
 
+# ╔═╡ 78db08b1-09c8-46c0-8c15-20121b944a25
+InflationCoreMaiF(4)
+
 # ╔═╡ f2522946-2628-4ea3-82e2-8b32ed9caab9
 md"""
 Para computar la trayectoria de inflación, aplicamos directamente sobre `CountryStructure`
@@ -1169,6 +1216,20 @@ begin
 	end
 	plt1
 end
+
+# ╔═╡ 2b7406a1-92ba-4c80-8764-5a0be165149a
+cpidata = GTDATA[Date(2020,12)]
+
+# ╔═╡ 0d33c681-4ef6-43be-8e70-64e6300235a1
+begin
+	plot(InflationTotalCPI(), cpidata, label="Headline CPI inflation")
+	plot!(inflfn, cpidata, label="HES-F core inflation")
+	savefig("hesf_example.pdf")
+end
+
+
+# ╔═╡ 2f27877d-8ff8-4d7e-b50f-d33ddbaba7dc
+pwd()
 
 # ╔═╡ b860dc45-8921-4183-85c6-44599892cbe0
 md"""
@@ -1265,6 +1326,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═f7326714-1ac5-4a04-aa76-1e01679226bc
 # ╠═2cc3a548-0bd4-44b0-b963-cbd8782cbbd5
 # ╠═ddbbc8dc-9f45-4561-bbe4-026afffdfa19
+# ╠═8db73f78-82de-4b60-bdda-a526e8df1bef
 # ╟─b2708891-0e2e-47ca-bd7f-6458346b6d8b
 # ╠═30dfac77-2379-4cdf-b2f2-ff295fca0bfa
 # ╟─b1d815b1-36f9-4bdb-96f5-0ddfbb0e0549
@@ -1360,6 +1422,7 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═289ec238-0633-4f1d-bc98-3494265a9570
 # ╟─2b78811f-d59e-4ac3-9dee-a0c07cb44731
 # ╠═e615d881-4a52-4943-8138-17b399ef35f1
+# ╠═cd48716e-4892-436c-a38e-ac487597c652
 # ╟─afdbff35-7d0d-4d48-bcb5-66e422352d2c
 # ╠═fc22f2da-59c6-440f-aa2a-059f27f9e470
 # ╟─2d7fc594-f3ca-4fc4-8b20-efd5d5925ff9
@@ -1368,15 +1431,19 @@ Se configuran opciones para mostrar este cuaderno.
 # ╟─0fdf271c-b7ad-482f-affc-0845049c4f8f
 # ╟─b95b2374-9cd1-4583-bbfb-b02ec7e251e9
 # ╟─e870fbb6-a0e4-4374-bfd3-0da630cbc596
+# ╠═9dc6d27b-5571-4023-b05b-50e43f90e585
 # ╠═cc17dfa5-8302-49b2-ae4f-26f84e05ded3
-# ╟─96586a48-e779-4ba0-91d7-35f3aeb67666
+# ╠═96586a48-e779-4ba0-91d7-35f3aeb67666
+# ╠═4f37b238-3aa2-4e00-9faf-b26d61917d3e
 # ╟─f47dd797-8d70-436f-8075-8b133f5137c8
 # ╠═2efdd051-3847-4fae-a24b-7a8d87cbbd97
 # ╠═3e9ef9dd-7b52-4429-a8f0-12f77b91d341
-# ╟─1c432a8a-e83c-430e-a1ea-cda63206df44
+# ╠═1c432a8a-e83c-430e-a1ea-cda63206df44
+# ╠═19a4b029-6abe-45c8-99bb-48dad7893934
 # ╟─80482a7e-eaa1-499f-b14d-266be0b8867a
 # ╟─7424f3cd-94fc-46ba-a3b1-8fe74c5f5935
 # ╠═585c4ec5-b880-4e9f-be45-b9c86d891d78
+# ╠═5c766faa-65bb-486c-969b-2ef909e14686
 # ╠═081602ca-82cc-4072-a34a-0fd326d2d37a
 # ╠═9456a534-d6b4-4a8d-8d52-d5fa64c41c15
 # ╠═6c5c71da-c68b-4bad-8146-2aa17ba13432
@@ -1395,12 +1462,16 @@ Se configuran opciones para mostrar este cuaderno.
 # ╠═550e5092-dc74-457b-9b24-8d514d1aa59f
 # ╟─f6ab278a-a298-46fd-9593-74021119ef18
 # ╠═23f0267f-9d06-4cc8-a993-850f4c6392b7
+# ╠═78db08b1-09c8-46c0-8c15-20121b944a25
 # ╟─f2522946-2628-4ea3-82e2-8b32ed9caab9
 # ╠═d3362097-7398-4f93-aa3e-36a20a7e96ef
 # ╟─f1a142c8-55f1-4ed9-af01-bd79be1d9482
 # ╠═17a9a9a6-1afd-4eaa-a4a7-dbc73045ff89
 # ╟─206ab3a9-d9d9-4815-9eaf-91e3fa32843a
 # ╟─1adce1ea-8ef0-4509-ad05-d93b1ece4d47
+# ╠═2b7406a1-92ba-4c80-8764-5a0be165149a
+# ╠═0d33c681-4ef6-43be-8e70-64e6300235a1
+# ╠═2f27877d-8ff8-4d7e-b50f-d33ddbaba7dc
 # ╟─b860dc45-8921-4183-85c6-44599892cbe0
 # ╟─c51b6e67-06ec-4e54-930c-5abc956bf237
 # ╟─dcee00f6-c94a-4e9f-ba27-b61e09097bea
