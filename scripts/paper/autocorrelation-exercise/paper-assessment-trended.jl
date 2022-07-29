@@ -17,6 +17,7 @@ savepath = datadir("results", "paper-assessment-trended")
 
 # Resampling technique, parametric inflation formula and trend function 
 paramfn = InflationTotalRebaseCPI(60)
+# Optimal p value from calibration.jl
 resamplefn = ResampleScrambleTrended(0.46031723899305166) 
 trendfn = TrendIdentity()
 

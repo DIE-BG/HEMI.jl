@@ -146,7 +146,7 @@ res = optimize(p -> abs(mse_simu_stats(p)[2] - mse_obs(p)), 0.01, 0.99)
 # # InflationTotalCPI con evaluación de 5 años 
 # Período completo 
 # ┌ Info: Valor óptimo con este criterio
-# └   Optim.minimizer(res) = 0.46031723899305166
+# └   Optim.minimizer(res) = 0.46031723899305166 <---- SELECTED
 # Base 2000
 # ┌ Info: Valor óptimo con este criterio
 # └   Optim.minimizer(res) = 0.5695731554158409

@@ -1,6 +1,7 @@
 using DrWatson
 @quickactivate :HEMI
 using Plots
+using ForecastPlots
 
 ## Path 
 plots_savepath = mkpath(plotsdir("paper"))
