@@ -12,25 +12,25 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 using DataFrames, Chain
 
 
-savepath = datadir("results", "tray_infl", "mse")
+savepath = datadir("results", "tray_infl", "corr")
 tray_dir = joinpath(savepath, "tray_infl")
 
-combination_savepath  = datadir("results","optim_combination","mse")
+combination_savepath  = datadir("results","optim_combination","corr")
 
 gtdata_eval = GTDATA[Date(2021, 12)]
 
 df_results = collect_results(savepath)
 
 @chain df_results begin 
-    select(:measure, :mse)
+    select(:measure, :corr)
 end
 
 # DataFrame de combinación 
 combine_df = @chain df_results begin 
-    select(:measure, :mse, :inflfn, 
+    select(:measure, :corr, :inflfn, 
         :path => ByRow(p -> joinpath(tray_dir, basename(p))) => :tray_path
     )
-    sort(:mse)
+    sort(:corr)
 end
 
 tray_infl = mapreduce(hcat, combine_df.tray_path) do path
@@ -39,7 +39,7 @@ end
 
 resamplefn = df_results[1, :resamplefn]
 trendfn = df_results[1, :trendfn]
-paramfn = InflationTotalRebaseCPI(36, 3) #df_results[1, :paramfn]
+paramfn = df_results[1, :paramfn]
 param = InflationParameter(paramfn, resamplefn, trendfn)
 tray_infl_pob = param(gtdata_eval)
 
@@ -49,10 +49,10 @@ components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in functions]
 combine_period = EvalPeriod(Date(2011, 12), Date(2021, 12), "combperiod") 
 periods_filter = eval_periods(gtdata_eval, combine_period)
 
-a_optim = share_combination_weights(
+a_optim = metric_combination_weights(
     tray_infl[periods_filter, components_mask, :],
     tray_infl_pob[periods_filter],
-    show_status=true
+    metric = :corr
 )
 
 #Insertamos el 0 en el vector de pesos en el lugar correspondiente a exclusion fija
@@ -63,44 +63,47 @@ mai_components = [fn isa InflationCoreMai for fn in functions]
 mai_weights = a_optim[mai_components]/sum(a_optim[mai_components])
 mai_fns = functions[mai_components]
 
-optmai_mse2023 = CombinationFunction(
+optmai_corr2023 = CombinationFunction(
     mai_fns..., 
     mai_weights, 
-    "MAI óptima MSE 2023"
+    "MAI óptima CORR 2023"
 )
 
 non_mai_weights = a_optim[.!mai_components]
 non_mai_fns = functions[.!mai_components]
 
 final_weights = vcat(non_mai_weights, sum(a_optim[mai_components])) 
-final_fns     = vcat(non_mai_fns, optmai_mse2023)
+final_fns     = vcat(non_mai_fns, optmai)
 
-optmse2023 = CombinationFunction(
+optcorr2023 = CombinationFunction(
     final_fns...,
     final_weights, 
-    "Subyacente óptima MSE 2023"
+    "Subyacente óptima CORR 2023"
 )
 
-wsave(joinpath(combination_savepath,"optmse2023.jld2"), "optmse2023", optmse2023 , "optmai_mse2023", optmai_mse2023)
+wsave(joinpath(combination_savepath,"optcorr2023.jld2"), "optcorr2023", optcorr2023 , "optmai_corr2023", optmai_corr2023)
 
+
+# pretty_table(components(optcorr2023))
 # ┌───────────────────────────────────────────────┬────────────┐
 # │                                       measure │    weights │
 # │                                        String │    Float32 │
 # ├───────────────────────────────────────────────┼────────────┤
-# │     Media Truncada Equiponderada (57.0, 84.0) │   0.341524 │
-# │                 Percentil equiponderado 71.96 │   0.187792 │
-# │  Inflación de exclusión dinámica (0.34, 1.81) │  0.0127982 │
-# │       Media Truncada Ponderada (20.51, 95.98) │ 7.97753e-7 │
-# │                     Percentil ponderado 69.86 │   0.160404 │
-# │ Exclusión fija de gastos básicos IPC (14, 17) │        0.0 │
-# │                           MAI óptima MSE 2023 │   0.297481 │
+# │                      Percentil ponderado 81.0 │ 1.30411e-6 │
+# │  Inflación de exclusión dinámica (0.46, 4.97) │  0.0530187 │
+# │ Exclusión fija de gastos básicos IPC (14, 51) │        0.0 │
+# │       Media Truncada Ponderada (53.56, 96.47) │  0.0865183 │
+# │                 Percentil equiponderado 80.86 │   0.291214 │
+# │     Media Truncada Equiponderada (55.0, 92.0) │   0.248435 │
+# │                          MAI óptima CORR 2023 │   0.320901 │
 # └───────────────────────────────────────────────┴────────────┘
 
-# ┌────────────────────────────────────┬────────────┐
-# │                            measure │    weights │
-# │                             String │    Float32 │
-# ├────────────────────────────────────┼────────────┤
-# │      MAI (FP,4,[0.28, 0.72, 0.76]) │   0.696192 │
-# │       MAI (F,4,[0.38, 0.67, 0.83]) │   0.303807 │
-# │ MAI (G,5,[0.06, 0.27, 0.74, 0.77]) │ 2.80714e-7 │
-# └────────────────────────────────────┴────────────┘
+# pretty_table(components(optmai_corr2023))
+# ┌───────────────────────────────┬────────────┐
+# │                       measure │    weights │
+# │                        String │    Float32 │
+# ├───────────────────────────────┼────────────┤
+# │   MAI (G,4,[0.26, 0.5, 0.75]) │ 0.00132962 │
+# │   MAI (F,4,[0.25, 0.5, 0.74]) │   0.516653 │
+# │ MAI (FP,4,[0.26, 0.51, 0.75]) │   0.482018 │
+# └───────────────────────────────┴────────────┘

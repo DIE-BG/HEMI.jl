@@ -110,7 +110,7 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
             Optim.Options(
                 x_abstol = x_abstol, f_abstol = f_abstol, g_tol = g_tol, 
                 show_trace = true, extended_trace=true, 
-                iterations = maxiterations))
+                iterations = maxiterations, time_limit=maxtime))
 
         argmin_fn = Optim.minimizer
         min_fn = minimum

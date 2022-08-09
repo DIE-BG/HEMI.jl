@@ -1,7 +1,7 @@
 # Función de combinación lineal óptima MSE 2022
 
 # Definir la subyacente MAI óptima, calibrada con datos hasta 2018
-optmai2018 = let 
+optmai2022 = let 
     # Componentes metodologías MAI 
     maifns = [
         InflationCoreMai(MaiFP([0.0, 0.3157660216971966, 0.7047420268794217, 0.7854195537102466, 1.0])),
@@ -16,7 +16,8 @@ optmai2018 = let
     optmai = CombinationFunction(
         maifns..., 
         mai_weights, 
-        "MAI óptima MSE 2018"
+        "MAI óptima MSE 2022", 
+        "MAIOPTMSE22",
     )
 
     optmai
@@ -57,7 +58,8 @@ optmse2022 = let
     optmse2022 = CombinationFunction(
         components...,
         mse_weights, 
-        "Subyacente óptima MSE 2022"
+        "Subyacente óptima MSE 2022",
+        "OPTMSE22"
     )
 
     optmse2022
