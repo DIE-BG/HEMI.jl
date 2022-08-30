@@ -40,7 +40,7 @@ optmse2022 = let
         InflationTrimmedMeanWeighted(21.0019, 95.8886), 
         InflationDynamicExclusion(0.3158, 1.6832), 
         optfx2018,
-        optmai2018 
+        optmai2022 
     ]
 
     # Ponderaciones de las demás componentes 
@@ -73,4 +73,4 @@ optmse2022_ci = DataFrame(
     sup_limit = Float32[1.1448965072631836, 1.7413304984569544, 0.6401736915111531]
 )
 
-@info "Definición de funciones óptimas MSE" optmai2018 optfx2018 optmse2022 optmse2022_ci
+@info "Definición de funciones óptimas MSE" optmai2022 optfx2018 optmse2022 optmse2022_ci

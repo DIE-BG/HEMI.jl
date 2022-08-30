@@ -68,7 +68,7 @@ end
 # Límites de confianza al 97.5%
 optabsme2023_ci = DataFrame(
     period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 
-    evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, EvalPeriod(Date(2011, 12), Date(2022,12), "upd20")], 
+    evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, EvalPeriod(Date(2011, 12), Date(2023,12), "upd23")], 
     inf_limit = Float32[-0.849971, -0.325756, -0.544146], 
     sup_limit = Float32[1.29841, 1.81034, 0.982098]
 )

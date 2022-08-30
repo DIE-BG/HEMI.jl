@@ -69,4 +69,4 @@ optabsme2022 = let
     optabsme2022
 end
 
-@info "Definición de funciones óptimas ABSME" optmai2018_absme optfx2018 optabsme2022
+@info "Definición de funciones óptimas ABSME" optmai2018_absme optfx2018_absme optabsme2022

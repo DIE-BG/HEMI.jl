@@ -162,6 +162,43 @@ df_renorm[!,:measure_name] = measure_name.(df_renorm.inflfn)
 # Le devolvemos su peso a la OPTIMA y a la MAI OPTIMA
 df_renorm[(x -> isa(x,CombinationFunction)).(df_renorm.inflfn),:weight] = [1, mai_w]
 
+# Defininimos una funcion para ordenar los resultados en el orden de filas deseado.
+function inflfn_rank(x)
+    if x isa InflationPercentileEq
+        out = 1
+    elseif x isa InflationPercentileWeighted
+        out = 2
+    elseif x isa InflationTrimmedMeanEq
+        out = 3
+    elseif x isa InflationTrimmedMeanWeighted
+        out = 4
+    elseif x isa InflationDynamicExclusion
+        out = 5
+    elseif x isa InflationFixedExclusionCPI
+        out = 6
+    elseif x isa CombinationFunction
+        if length(x.weights) == 3
+            out = 7
+        elseif length(x.weights) == 7
+            out = 8
+        end
+    elseif x isa InflationCoreMai
+        if string(x.method)[2:3]=="FP"
+            out = 9
+        elseif string(x.method)[2:3]=="F,"
+            out = 10
+        elseif string(x.method)[2:3]=="G,"
+            out = 11
+        end
+    end 
+    out
+end
+
+df_renorm[!,:rank_order] = inflfn_rank.(df_renorm.inflfn)
+
+#ordenamos
+sort!(df_renorm,:rank_order)
+
 # Cremos un dataframe final
 df_final = df_renorm[:, [:measure_name,:weight,:b00_corr,:trn_corr,:b10_corr,:b19_corr,:complete_corr]]
 
@@ -170,17 +207,17 @@ df_final = df_renorm[:, [:measure_name,:weight,:b00_corr,:trn_corr,:b10_corr,:b1
 # │                                  measure_name │      weight │ b00_corr │ trn_corr │ b10_corr │ b19_corr │ complete_corr │
 # │                                        String │    Float32? │  Float32 │  Float32 │  Float32 │  Float32 │       Float32 │
 # ├───────────────────────────────────────────────┼─────────────┼──────────┼──────────┼──────────┼──────────┼───────────────┤
+# │                 Percentil equiponderado 80.86 │    0.291214 │ 0.975114 │ 0.983872 │ 0.911682 │ 0.985763 │      0.992383 │
 # │                      Percentil ponderado 81.0 │  1.30411e-6 │ 0.938299 │ 0.980331 │ 0.791392 │ 0.975788 │      0.982126 │
+# │     Media Truncada Equiponderada (55.0, 92.0) │    0.248435 │ 0.978721 │ 0.985344 │ 0.915579 │ 0.986772 │      0.993255 │
+# │       Media Truncada Ponderada (53.56, 96.47) │   0.0865183 │  0.94964 │ 0.982119 │ 0.781927 │ 0.979123 │       0.98387 │
 # │  Inflación de exclusión dinámica (0.46, 4.97) │   0.0530187 │ 0.946347 │ 0.978487 │ 0.762266 │ 0.978094 │      0.982066 │
 # │ Exclusión fija de gastos básicos IPC (14, 51) │         0.0 │  0.94211 │ 0.973802 │ 0.643733 │ 0.979527 │       0.97927 │
-# │       Media Truncada Ponderada (53.56, 96.47) │   0.0865183 │  0.94964 │ 0.982119 │ 0.781927 │ 0.979123 │       0.98387 │
-# │                 Percentil equiponderado 80.86 │    0.291214 │ 0.975114 │ 0.983872 │ 0.911682 │ 0.985763 │      0.992383 │
-# │     Media Truncada Equiponderada (55.0, 92.0) │    0.248435 │ 0.978721 │ 0.985344 │ 0.915579 │ 0.986772 │      0.993255 │
-# │                   MAI (G,4,[0.26, 0.5, 0.75]) │ 0.000426675 │ 0.940058 │ 0.984834 │ 0.767826 │ 0.970803 │      0.977716 │
-# │                   MAI (F,4,[0.25, 0.5, 0.74]) │    0.165794 │  0.97512 │ 0.987969 │ 0.899583 │ 0.982588 │      0.988616 │
-# │                 MAI (FP,4,[0.26, 0.51, 0.75]) │     0.15468 │ 0.975304 │ 0.988008 │ 0.900723 │  0.98262 │      0.988608 │
-# │                   Subyacente óptima CORR 2023 │         1.0 │ 0.977935 │ 0.987992 │  0.91267 │ 0.986509 │      0.992648 │
 # │                          MAI óptima CORR 2023 │    0.320901 │ 0.975416 │ 0.988029 │ 0.900563 │ 0.982641 │      0.988648 │
+# │                   Subyacente óptima CORR 2023 │         1.0 │ 0.977935 │ 0.987992 │  0.91267 │ 0.986509 │      0.992648 │
+# │                 MAI (FP,4,[0.26, 0.51, 0.75]) │     0.15468 │ 0.975304 │ 0.988008 │ 0.900723 │  0.98262 │      0.988608 │
+# │                   MAI (F,4,[0.25, 0.5, 0.74]) │    0.165794 │  0.97512 │ 0.987969 │ 0.899583 │ 0.982588 │      0.988616 │
+# │                   MAI (G,4,[0.26, 0.5, 0.75]) │ 0.000426675 │ 0.940058 │ 0.984834 │ 0.767826 │ 0.970803 │      0.977716 │
 # └───────────────────────────────────────────────┴─────────────┴──────────┴──────────┴──────────┴──────────┴───────────────┘
 
 # guardamos el resultado

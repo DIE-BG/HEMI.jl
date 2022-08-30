@@ -162,26 +162,63 @@ df_renorm[!,:measure_name] = measure_name.(df_renorm.inflfn)
 # Le devolvemos su peso a la OPTIMA y a la MAI OPTIMA
 df_renorm[(x -> isa(x,CombinationFunction)).(df_renorm.inflfn),:weight] = [1, mai_w]
 
+# Defininimos una funcion para ordenar los resultados en el orden de filas deseado.
+function inflfn_rank(x)
+    if x isa InflationPercentileEq
+        out = 1
+    elseif x isa InflationPercentileWeighted
+        out = 2
+    elseif x isa InflationTrimmedMeanEq
+        out = 3
+    elseif x isa InflationTrimmedMeanWeighted
+        out = 4
+    elseif x isa InflationDynamicExclusion
+        out = 5
+    elseif x isa InflationFixedExclusionCPI
+        out = 6
+    elseif x isa CombinationFunction
+        if length(x.weights) == 3
+            out = 7
+        elseif length(x.weights) == 7
+            out = 8
+        end
+    elseif x isa InflationCoreMai
+        if string(x.method)[2:3]=="FP"
+            out = 9
+        elseif string(x.method)[2:3]=="F,"
+            out = 10
+        elseif string(x.method)[2:3]=="G,"
+            out = 11
+        end
+    end 
+    out
+end
+
+df_renorm[!,:rank_order] = inflfn_rank.(df_renorm.inflfn)
+
+#ordenamos
+sort!(df_renorm,:rank_order)
+
 # Cremos un dataframe final
 df_final = df_renorm[:, [:measure_name,:weight,:b00_absme,:trn_absme,:b10_absme,:b19_absme,:complete_absme]]
 
 # pretty_table(df_final)
-# ┌────────────┬────────────────┬───────────┬───────────┬───────────┬─────────────┬──────────────────────────────────────────────┐
-# │     weight │ complete_absme │ b00_absme │ trn_absme │ b10_absme │   b19_absme │                                 measure_name │
-# │   Float32? │        Float32 │   Float32 │   Float32 │   Float32 │     Float32 │                                       String │
-# ├────────────┼────────────────┼───────────┼───────────┼───────────┼─────────────┼──────────────────────────────────────────────┤
-# │   0.369981 │      0.0777672 │  0.169975 │  0.113316 │  0.318311 │ 0.000780069 │  Media Truncada Equiponderada (33.41, 93.73) │
-# │        0.0 │       0.172264 │  0.109512 │  0.680816 │  0.182561 │  0.00136531 │  Exclusión fija de gastos básicos IPC (9, 6) │
-# │    0.08131 │      0.0648113 │ 0.0934483 │  0.169014 │ 0.0295413 │ 0.000153863 │ Inflación de exclusión dinámica (1.05, 3.49) │
-# │   0.105946 │      0.0641798 │  0.287649 │ 0.0196027 │  0.133075 │  0.00111028 │      Media Truncada Ponderada (32.16, 93.26) │
-# │  0.0937252 │      0.0175834 │  0.348092 │  0.105118 │  0.268993 │   0.0336459 │                    Percentil ponderado 70.23 │
-# │     0.1289 │      0.0160726 │ 0.0722941 │  0.225484 │  0.117635 │   0.0570941 │                Percentil equiponderado 71.92 │
-# │  0.0602548 │      0.0418813 │   0.34876 │ 0.0326877 │  0.233728 │  0.00382644 │          MAI (FP,5,[0.38, 0.43, 0.57, 0.85]) │
-# │ 0.00660558 │       0.115835 │  0.723735 │  0.197893 │  0.439237 │    0.010727 │     MAI (G,6,[0.15, 0.32, 0.53, 0.62, 0.78]) │
-# │    0.15332 │       0.135722 │ 0.0781019 │  0.081888 │  0.192522 │   0.0091444 │                  MAI (F,4,[0.17, 0.4, 0.85]) │
-# │        1.0 │      0.0688865 │ 0.0365855 │ 0.0489444 │  0.108696 │  0.00817548 │                 Subyacente óptima ABSME 2023 │
-# │    0.22018 │       0.109445 │   0.17154 │ 0.0719038 │ 0.0569207 │  0.00773641 │                        MAI óptima ABSME 2023 │
-# └────────────┴────────────────┴───────────┴───────────┴───────────┴─────────────┴──────────────────────────────────────────────┘
+# ┌──────────────────────────────────────────────┬────────────┬───────────┬───────────┬───────────┬─────────────┬────────────────┐
+# │                                 measure_name │     weight │ b00_absme │ trn_absme │ b10_absme │   b19_absme │ complete_absme │
+# │                                       String │   Float32? │   Float32 │   Float32 │   Float32 │     Float32 │        Float32 │
+# ├──────────────────────────────────────────────┼────────────┼───────────┼───────────┼───────────┼─────────────┼────────────────┤
+# │                Percentil equiponderado 71.92 │     0.1289 │ 0.0722941 │  0.225484 │  0.117635 │   0.0570941 │      0.0160726 │
+# │                    Percentil ponderado 70.23 │  0.0937252 │  0.348092 │  0.105118 │  0.268993 │   0.0336459 │      0.0175834 │
+# │  Media Truncada Equiponderada (33.41, 93.73) │   0.369981 │  0.169975 │  0.113316 │  0.318311 │ 0.000780069 │      0.0777672 │
+# │      Media Truncada Ponderada (32.16, 93.26) │   0.105946 │  0.287649 │ 0.0196027 │  0.133075 │  0.00111028 │      0.0641798 │
+# │ Inflación de exclusión dinámica (1.05, 3.49) │    0.08131 │ 0.0934483 │  0.169014 │ 0.0295413 │ 0.000153863 │      0.0648113 │
+# │  Exclusión fija de gastos básicos IPC (9, 6) │        0.0 │  0.109512 │  0.680816 │  0.182561 │  0.00136531 │       0.172264 │
+# │                        MAI óptima ABSME 2023 │    0.22018 │   0.17154 │ 0.0719038 │ 0.0569207 │  0.00773641 │       0.109445 │
+# │                 Subyacente óptima ABSME 2023 │        1.0 │ 0.0365855 │ 0.0489444 │  0.108696 │  0.00817548 │      0.0688865 │
+# │          MAI (FP,5,[0.38, 0.43, 0.57, 0.85]) │  0.0602548 │   0.34876 │ 0.0326877 │  0.233728 │  0.00382644 │      0.0418813 │
+# │                  MAI (F,4,[0.17, 0.4, 0.85]) │    0.15332 │ 0.0781019 │  0.081888 │  0.192522 │   0.0091444 │       0.135722 │
+# │     MAI (G,6,[0.15, 0.32, 0.53, 0.62, 0.78]) │ 0.00660558 │  0.723735 │  0.197893 │  0.439237 │    0.010727 │       0.115835 │
+# └──────────────────────────────────────────────┴────────────┴───────────┴───────────┴───────────┴─────────────┴────────────────┘
 
 # guardamos el resultado
 using  CSV
