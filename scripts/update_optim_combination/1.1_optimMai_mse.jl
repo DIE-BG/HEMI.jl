@@ -26,6 +26,13 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 
 
 ## Configuración para simulaciones
+genconfig = Dict(
+    :paramfn => InflationTotalRebaseCPI(36, 2),
+    :resamplefn => ResampleScrambleVarMonths(),
+    :trendfn => TrendRandomWalk(),
+    :traindate => Date(2019, 12),
+    :nsim => 125_000
+)
 
 optconfig = merge(genconfig, Dict(
     # Parámetros para búsqueda iterativa de cuantiles 
