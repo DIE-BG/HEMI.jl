@@ -73,7 +73,7 @@ non_mai_weights = a_optim[.!mai_components]
 non_mai_fns = functions[.!mai_components]
 
 final_weights = vcat(non_mai_weights, sum(a_optim[mai_components])) 
-final_fns     = vcat(non_mai_fns, optmai)
+final_fns     = vcat(non_mai_fns, optmai_absme2023)
 
 optabsme2023 = CombinationFunction(
     final_fns...,
@@ -94,7 +94,7 @@ wsave(joinpath(combination_savepath,"optabsme2023.jld2"), "optabsme2023", optabs
 # │      Media Truncada Ponderada (32.16, 93.26) │  0.105946 │
 # │                    Percentil ponderado 70.23 │ 0.0937252 │
 # │                Percentil equiponderado 71.92 │    0.1289 │
-# │                          MAI óptima MSE 2023 │   0.22018 │
+# │                        MAI óptima ABSME 2023 │   0.22018 │
 # └──────────────────────────────────────────────┴───────────┘
 
 # pretty_table(components(optmai_absme2023))

@@ -73,7 +73,7 @@ non_mai_weights = a_optim[.!mai_components]
 non_mai_fns = functions[.!mai_components]
 
 final_weights = vcat(non_mai_weights, sum(a_optim[mai_components])) 
-final_fns     = vcat(non_mai_fns, optmai)
+final_fns     = vcat(non_mai_fns, optmai_corr2023)
 
 optcorr2023 = CombinationFunction(
     final_fns...,
