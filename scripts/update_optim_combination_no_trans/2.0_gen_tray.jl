@@ -15,84 +15,78 @@ genconfig = Dict(
     :nsim => 125_000
 )
 
+data_loadpath = datadir("results", "no_trans", "data", "NOT_data.jld2")
+NOT_GTDATA = load(data_loadpath, "NOT_GTDATA")
+
 ################################################################################
 ########################### TRAYECTORIAS MSE ###################################
 ################################################################################
 
-# savepath = datadir("results", "tray_infl", "mse")
+savepath = datadir("results", "no_trans", "tray_infl", "mse")
 
-# inflfn_mse = [
-#     InflationCoreMaiFP([0.276032, 0.718878, 0.757874]),
-#     InflationCoreMaiF([0.382601, 0.667259, 0.82893]),
-#     InflationCoreMaiG([0.0588968, 0.271835, 0.742957, 0.771684]),
-#     InflationFixedExclusionCPI((
-#        [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161],
-#        [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184]
-#     )),
-#     InflationPercentileEq(0.7195656),
-#     InflationPercentileWeighted( 0.69855756), 
-#     InflationTrimmedMeanEq([57.0, 84.0]),  # POR RECOMENDACION DE RCCP
-#     InflationTrimmedMeanWeighted([20.5129, 95.9781]),
-#     InflationDynamicExclusion([0.3372, 1.8109])
-# ]
+inflfn_mse = [
+    InflationFixedExclusionCPI((
+       [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7],
+       [28, 42, 47, 64, 65, 6, 46, 63, 58, 41, 32, 37, 68, 20, 9, 30, 66, 59] 
+    )),
+    InflationPercentileEq(0.71844846),
+    InflationPercentileWeighted( 0.6933576), 
+    InflationTrimmedMeanEq([24.7089, 96.2772]),  # POR RECOMENDACION DE RCCP
+    InflationTrimmedMeanWeighted([11.2034, 99.5524]),
+    InflationDynamicExclusion([0.8061, 3.7844])
+]
 
-# config =  merge(genconfig, Dict(:inflfn => inflfn_mse)) |> dict_list
+config =  merge(genconfig, Dict(:inflfn => inflfn_mse)) |> dict_list
 
-# run_batch(GTDATA, config, savepath; savetrajectories = true)
+run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
 
 ################################################################################
 ########################## TRAYECTORIAS ABSME ##################################
 ################################################################################
 
-savepath = datadir("results", "tray_infl", "absme")
+savepath = datadir("results", "no_trans","tray_infl", "absme")
 
 inflfn_me = [
-    # InflationCoreMaiFP([0.3845888666524634, 0.4295691350270274, 0.5743281227047974, 0.8543536613832147]),
-    # InflationCoreMaiF([0.17038605093873466, 0.4017265098735232, 0.8452449697043789]),
-    # InflationCoreMaiG([0.14835730457573407, 0.3150866710451448, 0.5267416375693601, 0.6158789355387055, 0.7764662307149562]),
     InflationFixedExclusionCPI((
-       [35, 30, 190, 36, 37, 40, 31, 104, 162],
-       [29, 31, 116, 39, 46, 40]
+        [32, 8, 35, 17],
+        [28, 42]
     )),
-    InflationPercentileEq(0.7192383),
-    InflationPercentileWeighted(0.7022669), 
-    InflationTrimmedMeanEq([33.4117, 93.7347]),
-    InflationTrimmedMeanWeighted([32.1643, 93.2568]),
-    InflationDynamicExclusion([1.0482, 3.4888])
+    InflationPercentileEq(0.72949016),
+    InflationPercentileWeighted(0.6988363), 
+    InflationTrimmedMeanEq([26.1060, 95.6085]),
+    InflationTrimmedMeanWeighted([20.1080, 98.1556]),
+    InflationDynamicExclusion([0.7181, 4.1261])
 ]
 
 config =  merge(genconfig, Dict(:inflfn => inflfn_me)) |> dict_list
 
-run_batch(GTDATA, config, savepath; savetrajectories = true)
+run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
 
 
 ################################################################################
 ########################## TRAYECTORIAS CORR ###################################
 ################################################################################
 
-savepath = datadir("results", "tray_infl", "corr")
+savepath = datadir("results", "no_trans","tray_infl", "corr")
 
 inflfn_corr = [
-    InflationCoreMaiFP([0.25752, 0.506395, 0.749041]),
-    InflationCoreMaiF([0.252018, 0.502175, 0.742866]),
-    InflationCoreMaiG([0.260524, 0.503361, 0.746734]),
-    # InflationFixedExclusionCPI((
-    #    [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161],
-    #    [
-    #        29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185,
-    #        34, 184, 25, 38, 37, 229, 32, 45, 3, 33, 44, 237, 274, 19, 10,
-    #        42, 24, 15, 59, 43, 27, 275, 61, 115, 23, 71, 26, 113, 49, 268,
-    #        236, 213, 117, 20, 36, 9
-    #    ]
-    # )),
-    # InflationPercentileEq(0.80864954),
-    # InflationPercentileWeighted(0.80995136), 
-    # InflationTrimmedMeanEq([55.0, 92.0]),
-    # InflationTrimmedMeanWeighted([53.5550, 96.4679]),
-    # InflationDynamicExclusion([0.46, 4.97])
+    InflationFixedExclusionCPI((
+       [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7],
+       [
+           28, 42, 47, 64, 65, 6, 46, 63, 58, 41, 32, 37, 68, 20, 9,
+           30, 66, 59, 40, 24, 27, 12, 11, 34, 69, 60, 18, 21, 5, 56,
+           4, 2, 54, 57, 29, 38, 1, 67, 17, 52, 7, 15, 36, 31, 53,
+           16, 45, 26, 55, 35, 10, 19, 22, 13, 62, 44, 43
+       ]
+    )),
+    InflationPercentileEq(0.7983739),
+    InflationPercentileWeighted(0.82199615), 
+    InflationTrimmedMeanEq([16.4109, 98.4531]),
+    InflationTrimmedMeanWeighted([31.6960, 96.1078]),
+    InflationDynamicExclusion([0.8468, 2.3203])
 ]
 
 config =  merge(genconfig, Dict(:inflfn => inflfn_corr)) |> dict_list
 
-run_batch(GTDATA, config, savepath; savetrajectories = true)
+run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
 

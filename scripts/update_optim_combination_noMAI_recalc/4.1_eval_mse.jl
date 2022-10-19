@@ -20,13 +20,13 @@ gtdata_eval = GTDATA[Date(2021, 12)]
 ########### CARGAMOS TRAYECTORIAS ###############
 
 # DEFINIMOS LOS PATHS 
-loadpath = datadir("results", "tray_infl", "absme")
+loadpath = datadir("results", "tray_infl", "mse")
 tray_dir = joinpath(loadpath, "tray_infl")
-loadpath_2019 = datadir("results", "tray_infl_2019", "absme")
+loadpath_2019 = datadir("results", "tray_infl_2019", "mse")
 tray_dir_2019 = joinpath(loadpath_2019, "tray_infl")
-combination_loadpath  = datadir("results","optim_combination","absme")
+combination_loadpath  = datadir("results","optim_combination","mse_noMAI_recalc")
 
-save_results = datadir("results","eval","absme")
+save_results = datadir("results","eval","mse_noMAI_recalc")
 
 # RECOLECTAMOS LOS DATAFRAMES
 df      = collect_results(loadpath)
@@ -49,16 +49,16 @@ df_19[!, :inflfn_type] = typeof.(df.inflfn)
 ######## CARGAMOS LOS PESOS #####################################
 
 df_weights = collect_results(combination_loadpath)
-optabsme = df_weights[1,:optabsme2023]
-optmai = df_weights[1,:optmai_absme2023]
+optmse = df_weights[1,:optmse2023]
+optmai = df_weights[1,:optmai_mse2023]
 
 
 ######## HACEMOS COINCIDIR LAS TRAYECTORIAS CON SUS PESOS Y RENORMALIZAMOS LA MAI ####################
 
 opt_w = DataFrame(
-    :inflfn => [x for x in optabsme.ensemble.functions],
-    :inflfn_type => [typeof(x) for x in optabsme.ensemble.functions], 
-    :weight => optabsme.weights
+    :inflfn => [x for x in optmse.ensemble.functions],
+    :inflfn_type => [typeof(x) for x in optmse.ensemble.functions], 
+    :weight => optmse.weights
 ) 
 
 opt_w_mai = DataFrame(
@@ -91,14 +91,14 @@ df_renorm_19_mai = df_renorm_19[(x -> isa(x,InflationCoreMai)).(df_renorm_19.inf
 w_tray     = sum(df_renorm.w_tray, dims=1)[1]
 w_tray_19  = sum(df_renorm_19.w_tray, dims=1)[1]
 
-w_tray_mai     = sum(df_renorm_mai.w_tray, dims=1)[1] ./ mai_w 
-w_tray_19_mai  = sum(df_renorm_19_mai.w_tray, dims=1)[1] ./ mai_w
+w_tray_mai     = sum(df_renorm_mai.w_tray, dims=1)[1] # ./ mai_w  # comentamos esta parte para prevenir NaNs
+w_tray_19_mai  = sum(df_renorm_19_mai.w_tray, dims=1)[1] # ./ mai_w  # comentamos esta parte para prevenir NaNs
 
 
 ##### AGREGAMOS COMBINACIONES OPTIMAS AL DATAFRAME RENORMALIZADO #############################
 
-df_renorm    = vcat(df_renorm, DataFrame(:inflfn => [optabsme, optmai], :tray_infl => [w_tray, w_tray_mai]), cols=:union)
-df_renorm_19 = vcat(df_renorm_19, DataFrame(:inflfn => [optabsme, optmai], :tray_infl => [w_tray_19, w_tray_19_mai]), cols=:union)
+df_renorm    = vcat(df_renorm, DataFrame(:inflfn => [optmse, optmai], :tray_infl => [w_tray, w_tray_mai]), cols=:union)
+df_renorm_19 = vcat(df_renorm_19, DataFrame(:inflfn => [optmse, optmai], :tray_infl => [w_tray_19, w_tray_19_mai]), cols=:union)
 
 
 ############# DEFINIMOS PARAMETROS ######################################################
@@ -136,19 +136,19 @@ b10_mask = eval_periods(gtdata_eval, period_b10)
 ##### EVALUAMOS ############################
 
 # PERIDO COMPLETO (2001-2021)
-df_renorm[!,:complete_absme] = (x -> eval_metrics(x,tray_infl_pob)[:absme]).(df_renorm.tray_infl)
+df_renorm[!,:complete_mse] = (x -> eval_metrics(x,tray_infl_pob)[:mse]).(df_renorm.tray_infl)
 
 # PERIDO BASE 2000
-df_renorm[!,:b00_absme] = (x -> eval_metrics(x[b00_mask,:,:],tray_infl_pob[b00_mask])[:absme]).(df_renorm.tray_infl)
+df_renorm[!,:b00_mse] = (x -> eval_metrics(x[b00_mask,:,:],tray_infl_pob[b00_mask])[:mse]).(df_renorm.tray_infl)
 
 # PERIDO DE TRANSICION
-df_renorm[!,:trn_absme] = (x -> eval_metrics(x[trn_mask,:,:],tray_infl_pob[trn_mask])[:absme]).(df_renorm.tray_infl)
+df_renorm[!,:trn_mse] = (x -> eval_metrics(x[trn_mask,:,:],tray_infl_pob[trn_mask])[:mse]).(df_renorm.tray_infl)
 
 # PERIDO BASE 2010
-df_renorm[!,:b10_absme] = (x -> eval_metrics(x[b10_mask,:,:],tray_infl_pob[b10_mask])[:absme]).(df_renorm.tray_infl)
+df_renorm[!,:b10_mse] = (x -> eval_metrics(x[b10_mask,:,:],tray_infl_pob[b10_mask])[:mse]).(df_renorm.tray_infl)
 
 # PERIODO 2001-2019
-df_renorm[!,:b19_absme] = (x -> eval_metrics(x,tray_infl_pob_19)[:absme]).(df_renorm_19.tray_infl)
+df_renorm[!,:b19_mse] = (x -> eval_metrics(x,tray_infl_pob_19)[:mse]).(df_renorm_19.tray_infl)
 
 
 
@@ -161,6 +161,7 @@ df_renorm[!,:measure_name] = measure_name.(df_renorm.inflfn)
 
 # Le devolvemos su peso a la OPTIMA y a la MAI OPTIMA
 df_renorm[(x -> isa(x,CombinationFunction)).(df_renorm.inflfn),:weight] = [1, mai_w]
+
 
 # Defininimos una funcion para ordenar los resultados en el orden de filas deseado.
 function inflfn_rank(x)
@@ -200,26 +201,27 @@ df_renorm[!,:rank_order] = inflfn_rank.(df_renorm.inflfn)
 sort!(df_renorm,:rank_order)
 
 # Cremos un dataframe final
-df_final = df_renorm[:, [:measure_name,:weight,:b00_absme,:trn_absme,:b10_absme,:b19_absme,:complete_absme]]
+df_final = df_renorm[:, [:measure_name,:weight,:b00_mse,:trn_mse,:b10_mse,:b19_mse,:complete_mse]]
 
 # using PrettyTables
 # pretty_table(df_final)
-# ┌──────────────────────────────────────────────┬───────────┬───────────┬───────────┬────────────┬─────────────┬────────────────┐
-# │                                 measure_name │    weight │ b00_absme │ trn_absme │  b10_absme │   b19_absme │ complete_absme │
-# │                                       String │  Float32? │   Float32 │   Float32 │    Float32 │     Float32 │        Float32 │
-# ├──────────────────────────────────────────────┼───────────┼───────────┼───────────┼────────────┼─────────────┼────────────────┤
-# │                Percentil equiponderado 71.92 │  0.112569 │ 0.0722941 │  0.225484 │   0.117635 │   0.0570941 │      0.0160726 │
-# │                    Percentil ponderado 70.23 │  0.111832 │  0.348092 │  0.105118 │   0.268993 │   0.0336459 │      0.0175834 │
-# │  Media Truncada Equiponderada (33.41, 93.73) │  0.217031 │  0.169975 │  0.113316 │   0.318311 │ 0.000780069 │      0.0777672 │
-# │      Media Truncada Ponderada (32.16, 93.26) │  0.137326 │  0.287649 │ 0.0196027 │   0.133075 │  0.00111028 │      0.0641798 │
-# │ Inflación de exclusión dinámica (1.05, 3.49) │  0.130302 │ 0.0934483 │  0.169014 │  0.0295413 │ 0.000153863 │      0.0648113 │
-# │  Exclusión fija de gastos básicos IPC (9, 6) │       0.0 │  0.109512 │  0.680816 │   0.182561 │  0.00136531 │       0.172264 │
-# │                        MAI óptima ABSME 2023 │  0.290957 │  0.324587 │ 0.0767736 │   0.130172 │  0.00672796 │      0.0849529 │
-# │                 Subyacente óptima ABSME 2023 │       1.0 │  0.140149 │ 0.0145791 │ 4.91913e-9 │  0.00783346 │      0.0627216 │
-# │          MAI (FP,5,[0.38, 0.43, 0.57, 0.85]) │  0.146924 │   0.34876 │ 0.0326877 │   0.233728 │  0.00382644 │      0.0418813 │
-# │                  MAI (F,4,[0.17, 0.4, 0.85]) │ 0.0945461 │ 0.0781019 │  0.081888 │   0.192522 │   0.0091444 │       0.135722 │
-# │     MAI (G,6,[0.15, 0.32, 0.53, 0.62, 0.78]) │ 0.0494868 │  0.723735 │  0.197893 │   0.439237 │    0.010727 │       0.115835 │
-# └──────────────────────────────────────────────┴───────────┴───────────┴───────────┴────────────┴─────────────┴────────────────┘
+# ┌───────────────────────────────────────────────┬────────────┬──────────┬───────────┬───────────┬──────────┬──────────────┐
+# │                                  measure_name │     weight │  b00_mse │   trn_mse │   b10_mse │  b19_mse │ complete_mse │
+# │                                        String │   Float32? │  Float32 │   Float32 │   Float32 │  Float32 │      Float32 │
+# ├───────────────────────────────────────────────┼────────────┼──────────┼───────────┼───────────┼──────────┼──────────────┤
+# │                 Percentil equiponderado 71.96 │    0.40714 │ 0.201842 │  0.119261 │ 0.0563398 │ 0.244139 │      0.12502 │
+# │                     Percentil ponderado 69.86 │   0.239716 │ 0.424832 │  0.253189 │  0.205343 │ 0.409463 │     0.306798 │
+# │     Media Truncada Equiponderada (57.0, 84.0) │   0.335592 │ 0.173026 │ 0.0756666 │ 0.0691272 │ 0.218107 │     0.116417 │
+# │       Media Truncada Ponderada (20.51, 95.98) │ 6.34198e-7 │ 0.344158 │  0.206836 │  0.104031 │ 0.293714 │     0.217329 │
+# │  Inflación de exclusión dinámica (0.34, 1.81) │  0.0175506 │ 0.327145 │  0.162758 │ 0.0867412 │ 0.291087 │     0.198941 │
+# │ Exclusión fija de gastos básicos IPC (14, 17) │        0.0 │ 0.831064 │  0.895471 │  0.448037 │ 0.642199 │     0.641695 │
+# │                           MAI óptima MSE 2023 │        0.0 │  60.0686 │   34.0759 │   10.7836 │  37.8868 │      34.1375 │
+# │                    Subyacente óptima MSE 2023 │        1.0 │ 0.191451 │ 0.0988913 │ 0.0434324 │ 0.218606 │      0.11291 │
+# │                 MAI (FP,4,[0.28, 0.72, 0.76]) │        0.0 │ 0.216984 │ 0.0836499 │ 0.0596975 │ 0.209307 │     0.131929 │
+# │                  MAI (F,4,[0.38, 0.67, 0.83]) │        0.0 │ 0.256505 │  0.126606 │ 0.0953241 │ 0.327162 │     0.169651 │
+# │            MAI (G,5,[0.06, 0.27, 0.74, 0.77]) │        0.0 │ 0.627207 │  0.366966 │  0.230421 │ 0.525295 │     0.416113 │
+# └───────────────────────────────────────────────┴────────────┴──────────┴───────────┴───────────┴──────────┴──────────────┘
+
 
 # guardamos el resultado
 using  CSV

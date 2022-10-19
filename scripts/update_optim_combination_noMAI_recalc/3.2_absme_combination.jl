@@ -15,7 +15,7 @@ using DataFrames, Chain
 savepath = datadir("results", "tray_infl", "absme")
 tray_dir = joinpath(savepath, "tray_infl")
 
-combination_savepath  = datadir("results","optim_combination","absme")
+combination_savepath  = datadir("results","optim_combination","absme_noMAI_recalc")
 
 gtdata_eval = GTDATA[Date(2021, 12)]
 
@@ -39,12 +39,12 @@ end
 
 resamplefn = df_results[1, :resamplefn]
 trendfn = df_results[1, :trendfn]
-paramfn = InflationTotalRebaseCPI(36, 3) # df_results[1, :paramfn]
+paramfn = InflationTotalRebaseCPI(36, 3) #df_results[1, :paramfn]
 param = InflationParameter(paramfn, resamplefn, trendfn)
 tray_infl_pob = param(gtdata_eval)
 
 functions = combine_df.inflfn
-components_mask = [!(fn isa InflationFixedExclusionCPI) for fn in functions]
+components_mask = [!(fn isa InflationFixedExclusionCPI || fn isa InflationCoreMai ) for fn in functions]
 
 combine_period = EvalPeriod(Date(2011, 12), Date(2021, 12), "combperiod") 
 periods_filter = eval_periods(gtdata_eval, combine_period)
@@ -56,11 +56,13 @@ a_optim = metric_combination_weights(
 )
 
 #Insertamos el 0 en el vector de pesos en el lugar correspondiente a exclusion fija
-insert!(a_optim, findall(.!components_mask)[1],0)
+for x in findall(.!components_mask)
+    insert!(a_optim,x,0)
+end
 
 #Construccion de la MAI optima
 mai_components = [fn isa InflationCoreMai for fn in functions]
-mai_weights = a_optim[mai_components]/sum(a_optim[mai_components])
+mai_weights = [0, 0, 0] #reemplazamos por ceros
 mai_fns = functions[mai_components]
 
 optmai_absme2023 = CombinationFunction(
@@ -83,29 +85,30 @@ optabsme2023 = CombinationFunction(
 
 wsave(joinpath(combination_savepath,"optabsme2023.jld2"), "optabsme2023", optabsme2023 , "optmai_absme2023", optmai_absme2023)
 
+# using PrettyTables
 # pretty_table(components(optabsme2023))
 # ┌──────────────────────────────────────────────┬──────────┐
 # │                                      measure │  weights │
 # │                                       String │  Float32 │
 # ├──────────────────────────────────────────────┼──────────┤
-# │  Media Truncada Equiponderada (33.41, 93.73) │ 0.217031 │
+# │  Media Truncada Equiponderada (33.41, 93.73) │ 0.162018 │
 # │  Exclusión fija de gastos básicos IPC (9, 6) │      0.0 │
-# │ Inflación de exclusión dinámica (1.05, 3.49) │ 0.130302 │
-# │      Media Truncada Ponderada (32.16, 93.26) │ 0.137326 │
-# │                    Percentil ponderado 70.23 │ 0.111832 │
-# │                Percentil equiponderado 71.92 │ 0.112569 │
-# │                        MAI óptima ABSME 2023 │ 0.290957 │
+# │ Inflación de exclusión dinámica (1.05, 3.49) │ 0.191829 │
+# │      Media Truncada Ponderada (32.16, 93.26) │ 0.200148 │
+# │                    Percentil ponderado 70.23 │ 0.215302 │
+# │                Percentil equiponderado 71.92 │ 0.230753 │
+# │                        MAI óptima ABSME 2023 │      0.0 │
 # └──────────────────────────────────────────────┴──────────┘
 
 # pretty_table(components(optmai_absme2023))
-# ┌──────────────────────────────────────────┬──────────┐
-# │                                  measure │  weights │
-# │                                   String │  Float32 │
-# ├──────────────────────────────────────────┼──────────┤
-# │      MAI (FP,5,[0.38, 0.43, 0.57, 0.85]) │ 0.504968 │
-# │ MAI (G,6,[0.15, 0.32, 0.53, 0.62, 0.78]) │ 0.170083 │
-# │              MAI (F,4,[0.17, 0.4, 0.85]) │ 0.324949 │
-# └──────────────────────────────────────────┴──────────┘
+# ┌──────────────────────────────────────────┬─────────┐
+# │                                  measure │ weights │
+# │                                   String │   Int64 │
+# ├──────────────────────────────────────────┼─────────┤
+# │      MAI (FP,5,[0.38, 0.43, 0.57, 0.85]) │       0 │
+# │ MAI (G,6,[0.15, 0.32, 0.53, 0.62, 0.78]) │       0 │
+# │              MAI (F,4,[0.17, 0.4, 0.85]) │       0 │
+# └──────────────────────────────────────────┴─────────┘
 
 ######################################################################################
 ################## INTERVALO DE CONFIANZA ############################################
@@ -134,9 +137,9 @@ quant_9875 = quantile.(vec.([tray_b00,tray_trn,tray_b10]),0.9875)
 bounds =transpose(hcat(-quant_0125,-quant_9875))
 
 # pretty_table(hcat(["upper","lower"],bounds),["","b00","T","b10"])
-# ┌───────┬───────────┬───────────┬───────────┐
-# │       │       b00 │         T │       b10 │
-# ├───────┼───────────┼───────────┼───────────┤
-# │ upper │   1.02055 │  0.643076 │  0.491714 │
-# │ lower │ -0.995903 │ -0.669305 │ -0.478735 │
-# └───────┴───────────┴───────────┴───────────┘
+# ┌───────┬──────────┬───────────┬───────────┐
+# │       │      b00 │         T │       b10 │
+# ├───────┼──────────┼───────────┼───────────┤
+# │ upper │  1.09648 │  0.723012 │  0.501536 │
+# │ lower │ -1.01401 │ -0.679432 │ -0.517613 │
+# └───────┴──────────┴───────────┴───────────┘

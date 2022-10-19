@@ -3,8 +3,8 @@ using DrWatson
 
 include(scriptsdir("OPTIM","optim.jl"))
 
-savepath = datadir("results","no-trans","optim")  
-data_loadpath = datadir("results", "no-trans", "data", "NOT_data.jld2")
+savepath = datadir("results","no_trans","optim")  
+data_loadpath = datadir("results", "no_trans", "data", "NOT_data.jld2")
 
 # CARGANDO DATOS
 NOT_GTDATA = load(data_loadpath, "NOT_GTDATA")

@@ -10,7 +10,7 @@ optmai2023_absme = let
     ]
 
     # Ponderaciones MAI 
-    mai_weights = Float32[0.504968, 0.324949, 0.170083]
+    mai_weights = Float32[0.273661, 0.696338, 0.0300008]
 
     # Subyacente óptima MAI por método ABSME 
     optmai = CombinationFunction(
@@ -45,14 +45,18 @@ optabsme2023 = let
 
     # Ponderaciones de las demás componentes 
     absme_weights = Float32[
-        0.112569, 
-        0.111832, 
-        0.217031, 
-        0.137326, 
-        0.130302, 
+        0.1288998, 
+        0.09372515, 
+        0.3699814, 
+        0.10594619, 
+        0.08131002, 
         0,
-        0.290957
+        0.22018012
     ]
+
+    # ELIMINAMOS LA MAI y RE-NORMALIZAMOS
+    absme_weights[end] = 0
+    absme_weights = absme_weights/sum(absme_weights)    
 
     # Subyacente óptima ABSME v2023
     optabsme2023 = CombinationFunction(
@@ -69,8 +73,8 @@ end
 optabsme2023_ci = DataFrame(
     period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 
     evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, EvalPeriod(Date(2011, 12), Date(2023,12), "upd23")], 
-    inf_limit = Float32[-0.995903, -0.669305, -0.478735], 
-    sup_limit = Float32[1.02055, 0.643076, 0.491714]
+    inf_limit = Float32[-0.805544, -0.296012, -0.570317], 
+    sup_limit = Float32[1.33587, 1.85578, 0.988615]
 )
 
 @info "Definición de funciones óptimas ABSME" optmai2023_absme optfx2023_absme optabsme2023 optabsme2023_ci

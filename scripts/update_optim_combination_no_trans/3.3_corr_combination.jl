@@ -12,14 +12,17 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 using DataFrames, Chain
 
 
-savepath = datadir("results", "tray_infl", "corr")
-tray_dir = joinpath(savepath, "tray_infl")
+loadpath = datadir("results", "no_trans","tray_infl","corr")
+tray_dir = joinpath(loadpath, "tray_infl")
 
-combination_savepath  = datadir("results","optim_combination","corr")
+combination_savepath  = datadir("results","no_trans","optim_combination","corr")
 
-gtdata_eval = GTDATA[Date(2021, 12)]
+data_loadpath = datadir("results", "no_trans", "data", "NOT_data.jld2")
+NOT_GTDATA = load(data_loadpath, "NOT_GTDATA")
 
-df_results = collect_results(savepath)
+gtdata_eval = NOT_GTDATA[Date(2021, 12)]
+
+df_results = collect_results(loadpath)
 
 @chain df_results begin 
     select(:measure, :corr)
@@ -39,7 +42,7 @@ end
 
 resamplefn = df_results[1, :resamplefn]
 trendfn = df_results[1, :trendfn]
-paramfn = df_results[1, :paramfn]
+paramfn = InflationTotalRebaseCPI(36, 3) #df_results[1, :paramfn]
 param = InflationParameter(paramfn, resamplefn, trendfn)
 tray_infl_pob = param(gtdata_eval)
 
@@ -58,52 +61,24 @@ a_optim = metric_combination_weights(
 #Insertamos el 0 en el vector de pesos en el lugar correspondiente a exclusion fija
 insert!(a_optim, findall(.!components_mask)[1],0)
 
-#Construccion de la MAI optima
-mai_components = [fn isa InflationCoreMai for fn in functions]
-mai_weights = a_optim[mai_components]/sum(a_optim[mai_components])
-mai_fns = functions[mai_components]
-
-optmai_corr2023 = CombinationFunction(
-    mai_fns..., 
-    mai_weights, 
-    "MAI óptima CORR 2023"
-)
-
-non_mai_weights = a_optim[.!mai_components]
-non_mai_fns = functions[.!mai_components]
-
-final_weights = vcat(non_mai_weights, sum(a_optim[mai_components])) 
-final_fns     = vcat(non_mai_fns, optmai)
-
 optcorr2023 = CombinationFunction(
-    final_fns...,
-    final_weights, 
+    functions...,
+    a_optim, 
     "Subyacente óptima CORR 2023"
 )
 
-wsave(joinpath(combination_savepath,"optcorr2023.jld2"), "optcorr2023", optcorr2023 , "optmai_corr2023", optmai_corr2023)
+wsave(joinpath(combination_savepath,"optcorr2023.jld2"), "optcorr2023", optcorr2023)
 
-
+# using PrettyTables
 # pretty_table(components(optcorr2023))
 # ┌───────────────────────────────────────────────┬────────────┐
 # │                                       measure │    weights │
 # │                                        String │    Float32 │
 # ├───────────────────────────────────────────────┼────────────┤
-# │                      Percentil ponderado 81.0 │ 1.30411e-6 │
-# │  Inflación de exclusión dinámica (0.46, 4.97) │  0.0530187 │
-# │ Exclusión fija de gastos básicos IPC (14, 51) │        0.0 │
-# │       Media Truncada Ponderada (53.56, 96.47) │  0.0865183 │
-# │                 Percentil equiponderado 80.86 │   0.291214 │
-# │     Media Truncada Equiponderada (55.0, 92.0) │   0.248435 │
-# │                          MAI óptima CORR 2023 │   0.320901 │
+# │                      Percentil ponderado 82.2 │  0.0366308 │
+# │                 Percentil equiponderado 79.84 │   0.254759 │
+# │        Media Truncada Ponderada (31.7, 96.11) │ 3.94964e-6 │
+# │  Inflación de exclusión dinámica (0.85, 2.32) │   0.291732 │
+# │   Media Truncada Equiponderada (16.41, 98.45) │   0.416954 │
+# │ Exclusión fija de gastos básicos IPC (13, 57) │        0.0 │
 # └───────────────────────────────────────────────┴────────────┘
-
-# pretty_table(components(optmai_corr2023))
-# ┌───────────────────────────────┬────────────┐
-# │                       measure │    weights │
-# │                        String │    Float32 │
-# ├───────────────────────────────┼────────────┤
-# │   MAI (G,4,[0.26, 0.5, 0.75]) │ 0.00132962 │
-# │   MAI (F,4,[0.25, 0.5, 0.74]) │   0.516653 │
-# │ MAI (FP,4,[0.26, 0.51, 0.75]) │   0.482018 │
-# └───────────────────────────────┴────────────┘

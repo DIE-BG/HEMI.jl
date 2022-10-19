@@ -10,7 +10,7 @@ optmai2023_corr = let
     ]
 
     # Ponderaciones MAI 
-    mai_weights = Float32[0.31277, 0.333722, 0.353508]
+    mai_weights = Float32[0.482018, 0.516653, 0.00132962]
 
     # Subyacente óptima MAI por método CORR 
     optmai = CombinationFunction(
@@ -50,14 +50,22 @@ optcorr2023 = let
 
     # Ponderaciones de las demás componentes 
     corr_weights = Float32[
-        0.0156025,
-        0.0115825,
-        0.916461,
-        0.00657209,
-        1.30666e-7,
+        0.29121402,
+        1.3041149f-6,
+        0.24843463,
+        0.08651825,
+        0.053018685,
         0.0,
-        0.0498786
+        0.320901
     ]
+
+    # ELIMINAMOS LA MAI y RE-NORMALIZAMOS
+    corr_weights[end] = 0
+    corr_weights = corr_weights/sum(corr_weights)        
+
+    # ELIMINAMOS LA MAI y RE-NORMALIZAMOS
+    corr_weights[end] = 0
+    corr_weights = corr_weights/sum(corr_weights)    
 
     # Subyacente óptima CORR v2023
     optcorr2023 = CombinationFunction(

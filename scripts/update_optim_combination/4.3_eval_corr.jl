@@ -202,6 +202,7 @@ sort!(df_renorm,:rank_order)
 # Cremos un dataframe final
 df_final = df_renorm[:, [:measure_name,:weight,:b00_corr,:trn_corr,:b10_corr,:b19_corr,:complete_corr]]
 
+# using PrettyTables
 # pretty_table(df_final)
 # ┌───────────────────────────────────────────────┬─────────────┬──────────┬──────────┬──────────┬──────────┬───────────────┐
 # │                                  measure_name │      weight │ b00_corr │ trn_corr │ b10_corr │ b19_corr │ complete_corr │

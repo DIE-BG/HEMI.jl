@@ -4,7 +4,7 @@ using DrWatson
 include(scriptsdir("load_data.jl"))
 using HEMI
 
-data_savepath = mkpath(datadir("results", "no-trans", "data"))
+data_savepath = mkpath(datadir("results", "no_trans", "data"))
 
 # LISTA DE GASTOS BASICOS NO TRANSABLES
 no_trans_2000 = [

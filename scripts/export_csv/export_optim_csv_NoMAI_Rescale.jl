@@ -2,19 +2,15 @@ using DrWatson
 @quickactivate "HEMI"
 using HEMI
 
-savedir = datadir("results","CSV")
-
-include(scriptsdir("generate_optim_combination","2021","optmse2021.jl"))
-include(scriptsdir("generate_optim_combination","2021","optabsme2021.jl"))
-include(scriptsdir("generate_optim_combination","2021","optcorr2021.jl"))
+savedir = datadir("results","CSV","NoMAI_Rescale")
 
 include(scriptsdir("generate_optim_combination","2022","optmse2022.jl"))
 include(scriptsdir("generate_optim_combination","2022","optabsme2022.jl"))
 include(scriptsdir("generate_optim_combination","2022","optcorr2022.jl"))
 
-include(scriptsdir("generate_optim_combination","2023","optmse2023.jl"))
-include(scriptsdir("generate_optim_combination","2023","optabsme2023.jl"))
-include(scriptsdir("generate_optim_combination","2023","optcorr2023.jl"))
+include(scriptsdir("generate_optim_combination","2023","NoMAI_Rescale","optmse2023.jl"))
+include(scriptsdir("generate_optim_combination","2023","NoMAI_Rescale","optabsme2023.jl"))
+include(scriptsdir("generate_optim_combination","2023","NoMAI_Rescale","optcorr2023.jl"))
 
 D = DataFrame()
 
@@ -101,10 +97,6 @@ D[!,"ABSME superior"] = let
     out    = optabsme2023(GTDATA)+up
     out
 end
-
-D[!,"Subyacente Óptima MSE 2021"] = optmse2021(GTDATA)
-D[!,"Subyacente Óptima ABSME 2021"] = optabsme2021(GTDATA)
-D[!,"Subyacente Óptima CORR 2021"] = optcorr2021(GTDATA)
 
 
 mkpath(savedir)
