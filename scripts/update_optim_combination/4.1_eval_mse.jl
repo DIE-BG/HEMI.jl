@@ -226,3 +226,86 @@ df_final = df_renorm[:, [:measure_name,:weight,:b00_mse,:trn_mse,:b10_mse,:b19_m
 using  CSV
 mkpath(save_results)
 CSV.write(joinpath(save_results,"eval.csv"), df_final)
+
+#################################
+######### PLOTS #################
+#################################
+# NO DESCOMENTAR
+#=
+using Plots
+using StatsBase
+
+for i in 1:8
+
+    TITLE = df_renorm[i,:measure_name]
+    PARAM = tray_infl_pob
+    X = infl_dates(gtdata_eval)
+    TRAYS = df_renorm[i,:tray_infl]
+    TRAY_INFL = [ TRAYS[:,:,i] for i in 1:size(TRAYS)[3]]
+    TRAY_VEC = sample(TRAY_INFL,500)
+    TRAY_PROM = mean(TRAYS,dims=3)[:,:,1]
+    TRAY_MED = median(TRAYS,dims=3)[:,:,1]
+    TRAY_25 = [percentile(x[:],25) for x in eachslice(TRAYS,dims=1)][:,:] 
+    TRAY_75 = [percentile(x[:],75) for x in eachslice(TRAYS,dims=1)][:,:]
+    # cambiamos el rango de fechas
+    #X = X[b10_mask]
+    #TRAY_VEC = map(x -> x[b10_mask],TRAY_VEC)
+    #PARAM = PARAM[b10_mask]
+
+    p=plot(
+        X,
+        TRAY_VEC;
+        legend = true,
+        label = false,
+        c="grey12",
+        linewidth = 0.25/2,
+        title = TITLE,
+        size = (900,600),
+        ylims = (0,14)
+    )
+
+    p=plot!(
+        X,PARAM;
+        legend = true,
+        label="Parámetro",
+        c="blue3",
+        linewidth = 3.5
+    )
+
+    p=plot!(
+        X,TRAY_PROM;
+        legend = true,
+        label="Promedio",
+        c="red",
+        linewidth = 3.5
+    )
+
+    p=plot!(
+        X,TRAY_MED;
+        legend = true,
+        label="Mediana",
+        c="green",
+        linewidth = 2.0
+    )
+
+    p=plot!(
+        X,TRAY_25;
+        legend = true,
+        label = "Percentil 25",
+        c="green",
+        linewidth = 2.0,
+        linestyle=:dash
+    )
+
+    p=plot!(
+        X,TRAY_75;
+        legend = true,
+        label = "Percentil 75",
+        c="green",
+        linewidth = 2.0,
+        linestyle=:dash
+    )
+    display(p)
+    savefig("C:\\Users\\DJGM\\Desktop\\PLOTS\\2023\\plot_"*string(i)*".png")
+end
+=#

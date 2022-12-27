@@ -16,7 +16,7 @@ NOT_GTDATA = load(data_loadpath, "NOT_GTDATA")
 
 ############ DATOS A UTILIZAR #########################
 
-gtdata_eval = GTDATA[Date(2021, 12)]
+gtdata_eval = NOT_GTDATA[Date(2021, 12)]
 
 ########### CARGAMOS TRAYECTORIAS ###############
 
@@ -169,16 +169,99 @@ df_final = df_renorm[:, [:measure_name,:weight,:b00_corr,:trn_corr,:b10_corr,:b1
 # │                                  measure_name │     weight │ b00_corr │ trn_corr │ b10_corr │ b19_corr │ complete_corr │
 # │                                        String │   Float32? │  Float32 │  Float32 │  Float32 │  Float32 │       Float32 │
 # ├───────────────────────────────────────────────┼────────────┼──────────┼──────────┼──────────┼──────────┼───────────────┤
-# │                 Percentil equiponderado 79.84 │   0.254759 │ 0.856123 │ 0.965268 │ 0.718633 │ 0.945231 │      0.961104 │
-# │                      Percentil ponderado 82.2 │  0.0366308 │ 0.838034 │ 0.961798 │ 0.574704 │ 0.948123 │      0.959311 │
-# │   Media Truncada Equiponderada (16.41, 98.45) │   0.416954 │ 0.876141 │ 0.966282 │  0.73922 │ 0.950334 │      0.964977 │
-# │        Media Truncada Ponderada (31.7, 96.11) │ 3.94964e-6 │ 0.862184 │ 0.965758 │ 0.625316 │ 0.949857 │      0.962533 │
-# │  Inflación de exclusión dinámica (0.85, 2.32) │   0.291732 │ 0.865349 │ 0.963341 │  0.64317 │ 0.950124 │      0.963247 │
-# │ Exclusión fija de gastos básicos IPC (13, 57) │        0.0 │ 0.880626 │ 0.969444 │ 0.438889 │ 0.949422 │      0.962069 │
-# │                   Subyacente óptima CORR 2023 │        1.0 │ 0.893801 │ 0.970262 │ 0.764919 │ 0.953708 │      0.967985 │
+# │                 Percentil equiponderado 79.84 │   0.254759 │ 0.863131 │ 0.980241 │ 0.746329 │ 0.975106 │      0.977753 │
+# │                      Percentil ponderado 82.2 │  0.0366308 │ 0.843677 │ 0.976447 │ 0.596974 │ 0.972414 │       0.97317 │
+# │   Media Truncada Equiponderada (16.41, 98.45) │   0.416954 │ 0.882948 │ 0.980475 │ 0.768324 │ 0.979878 │      0.981702 │
+# │        Media Truncada Ponderada (31.7, 96.11) │ 3.94964e-6 │ 0.868388 │ 0.984021 │ 0.650562 │ 0.979127 │      0.979933 │
+# │  Inflación de exclusión dinámica (0.85, 2.32) │   0.291732 │ 0.871634 │  0.98224 │ 0.669022 │ 0.978923 │      0.979955 │
+# │ Exclusión fija de gastos básicos IPC (13, 57) │        0.0 │ 0.886242 │ 0.989597 │  0.45894 │ 0.981926 │      0.982428 │
+# │                   Subyacente óptima CORR 2023 │        1.0 │ 0.900711 │ 0.985907 │ 0.795016 │ 0.983066 │      0.984583 │
 # └───────────────────────────────────────────────┴────────────┴──────────┴──────────┴──────────┴──────────┴───────────────┘
 
 # guardamos el resultado
 using  CSV
 mkpath(save_results)
 CSV.write(joinpath(save_results,"eval.csv"), df_final)
+
+#################################
+######### PLOTS #################
+#################################
+# NO DESCOMENTAR
+#=
+using Plots
+using StatsBase
+
+for i in 1:7
+
+    TITLE = df_renorm[i,:measure_name]
+    PARAM = tray_infl_pob
+    X = infl_dates(gtdata_eval)
+    TRAYS = df_renorm[i,:tray_infl]
+    TRAY_INFL = [ TRAYS[:,:,i] for i in 1:size(TRAYS)[3]]
+    TRAY_VEC = sample(TRAY_INFL,500)
+    TRAY_PROM = mean(TRAYS,dims=3)[:,:,1]
+    TRAY_MED = median(TRAYS,dims=3)[:,:,1]
+    TRAY_25 = [percentile(x[:],25) for x in eachslice(TRAYS,dims=1)][:,:] 
+    TRAY_75 = [percentile(x[:],75) for x in eachslice(TRAYS,dims=1)][:,:]
+    # cambiamos el rango de fechas
+    #X = X[b10_mask]
+    #TRAY_VEC = map(x -> x[b10_mask],TRAY_VEC)
+    #PARAM = PARAM[b10_mask]
+
+    p=plot(
+        X,
+        TRAY_VEC;
+        legend = true,
+        label = false,
+        c="grey12",
+        linewidth = 0.25/2,
+        title = TITLE,
+        size = (900,600),
+        ylims = (0,14)
+    )
+
+    p=plot!(
+        X,PARAM;
+        legend = true,
+        label="Parámetro",
+        c="blue3",
+        linewidth = 3.5
+    )
+
+    p=plot!(
+        X,TRAY_PROM;
+        legend = true,
+        label="Promedio",
+        c="red",
+        linewidth = 3.5
+    )
+
+    p=plot!(
+        X,TRAY_MED;
+        legend = true,
+        label="Mediana",
+        c="green",
+        linewidth = 2.0
+    )
+
+    p=plot!(
+        X,TRAY_25;
+        legend = true,
+        label = "Percentil 25",
+        c="green",
+        linewidth = 2.0,
+        linestyle=:dash
+    )
+
+    p=plot!(
+        X,TRAY_75;
+        legend = true,
+        label = "Percentil 75",
+        c="green",
+        linewidth = 2.0,
+        linestyle=:dash
+    )
+    display(p)
+    savefig("C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\plot_"*string(i+14)*".png")
+end
+=#
