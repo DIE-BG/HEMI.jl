@@ -225,7 +225,7 @@ for j in L
         x = [x[1] for x in df.params], 
         y = [x[2] for x in df.params],
         color = 1 ./ df[:,j][1:end] |> replace_nan,
-        Gadfly.Geom.rectbin,
+        Gadfly.Geom.rectbin(),
         Gadfly.Guide.xlabel("ℓ₁"),
         Gadfly.Guide.ylabel("ℓ₂"),
         Gadfly.Guide.title("DE, ABSME⁻¹, "*string(j)),

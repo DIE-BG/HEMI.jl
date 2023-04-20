@@ -54,9 +54,9 @@ version = "0.4.2"
 
 [[deps.CPIDataBase]]
 deps = ["AbstractTrees", "DataFrames", "Dates", "PrettyTables"]
-git-tree-sha1 = "28cd2aed9d15882d93c880fe55ffc5e37cc64f96"
+git-tree-sha1 = "935a6b39697a290475d24e397e862c330e4c4d8f"
 uuid = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
-version = "0.6.5"
+version = "0.6.13"
 
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings"]
@@ -316,10 +316,10 @@ uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
 version = "0.3.10"
 
 [[deps.InflationFunctions]]
-deps = ["CPIDataBase", "RecipesBase", "SparseArrays", "Statistics", "StatsBase"]
-git-tree-sha1 = "45300b18e9a2a8d509437a6e78dfe24bec56f658"
+deps = ["CPIDataBase", "Dates", "RecipesBase", "SparseArrays", "Statistics", "StatsBase"]
+git-tree-sha1 = "909405b49998331ba4ac8e0b05bfcc90e1d55111"
 uuid = "3d0454e0-948f-4743-b998-4d73da99f8a8"
-version = "0.3.0"
+version = "0.3.1"
 
 [[deps.InlineStrings]]
 deps = ["Parsers"]

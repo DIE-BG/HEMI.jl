@@ -8,85 +8,215 @@ nprocs() < 5 && addprocs(4, exeflags="--project")
 @everywhere using HEMI
 
 genconfig = Dict(
-    :paramfn => InflationTotalRebaseCPI(36, 2),
+    :paramfn => InflationTotalRebaseCPI(36, 3),
     :resamplefn => ResampleScrambleVarMonths(),
     :trendfn => TrendRandomWalk(),
     :traindate => Date(2021, 12),
-    :nsim => 125_000
+    :nsim => 125_000,
+    :evalperiods => (CompletePeriod(), GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010)
 )
 
 data_loadpath = datadir("results", "no_trans", "data", "NOT_data.jld2")
 NOT_GTDATA = load(data_loadpath, "NOT_GTDATA")
 
+gtdata_eval = NOT_GTDATA[Date(2021, 12)]
+
 ################################################################################
 ########################### TRAYECTORIAS MSE ###################################
 ################################################################################
 
-savepath = datadir("results", "no_trans", "tray_infl", "mse")
 
-inflfn_mse = [
-    InflationFixedExclusionCPI((
-       [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7],
-       [28, 42, 47, 64, 65, 6, 46, 63, 58, 41, 32, 37, 68, 20, 9, 30, 66, 59] 
-    )),
-    InflationPercentileEq(0.71844846),
-    InflationPercentileWeighted( 0.6933576), 
-    InflationTrimmedMeanEq([24.7089, 96.2772]),  # POR RECOMENDACION DE RCCP
-    InflationTrimmedMeanWeighted([11.2034, 99.5524]),
-    InflationDynamicExclusion([0.8061, 3.7844])
-]
+############################# BASE 2000 ########################################
 
-config =  merge(genconfig, Dict(:inflfn => inflfn_mse)) |> dict_list
+savepath = datadir("results", "no_trans", "tray_infl", "mse", "B00")
 
-run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
+optim_loadpath = datadir("results","no_trans","optim", "mse", "B00")
+
+optim_results = collect_results(optim_loadpath)
+
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
+
+############################# BASE 2010 ########################################
+
+savepath = datadir("results", "no_trans", "tray_infl", "mse", "B10")
+
+optim_loadpath = datadir("results","no_trans","optim", "mse", "B10")
+
+optim_results = collect_results(optim_loadpath)
+
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
 
 ################################################################################
 ########################## TRAYECTORIAS ABSME ##################################
 ################################################################################
 
-savepath = datadir("results", "no_trans","tray_infl", "absme")
+############################# BASE 2000 ########################################
 
-inflfn_me = [
-    InflationFixedExclusionCPI((
-        [32, 8, 35, 17],
-        [28, 42]
-    )),
-    InflationPercentileEq(0.72949016),
-    InflationPercentileWeighted(0.6988363), 
-    InflationTrimmedMeanEq([26.1060, 95.6085]),
-    InflationTrimmedMeanWeighted([20.1080, 98.1556]),
-    InflationDynamicExclusion([0.7181, 4.1261])
-]
+savepath = datadir("results", "no_trans", "tray_infl", "absme", "B00")
 
-config =  merge(genconfig, Dict(:inflfn => inflfn_me)) |> dict_list
+optim_loadpath = datadir("results","no_trans","optim", "absme", "B00")
 
-run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
+optim_results = collect_results(optim_loadpath)
+
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
+
+############################# BASE 2010 ########################################
+
+savepath = datadir("results", "no_trans", "tray_infl", "absme", "B10")
+
+optim_loadpath = datadir("results","no_trans","optim", "absme", "B10")
+
+optim_results = collect_results(optim_loadpath)
+
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
 
 
 ################################################################################
 ########################## TRAYECTORIAS CORR ###################################
 ################################################################################
 
-savepath = datadir("results", "no_trans","tray_infl", "corr")
+savepath = datadir("results", "no_trans", "tray_infl", "corr", "B00")
 
-inflfn_corr = [
-    InflationFixedExclusionCPI((
-       [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7],
-       [
-           28, 42, 47, 64, 65, 6, 46, 63, 58, 41, 32, 37, 68, 20, 9,
-           30, 66, 59, 40, 24, 27, 12, 11, 34, 69, 60, 18, 21, 5, 56,
-           4, 2, 54, 57, 29, 38, 1, 67, 17, 52, 7, 15, 36, 31, 53,
-           16, 45, 26, 55, 35, 10, 19, 22, 13, 62, 44, 43
-       ]
-    )),
-    InflationPercentileEq(0.7983739),
-    InflationPercentileWeighted(0.82199615), 
-    InflationTrimmedMeanEq([16.4109, 98.4531]),
-    InflationTrimmedMeanWeighted([31.6960, 96.1078]),
-    InflationDynamicExclusion([0.8468, 2.3203])
-]
+optim_loadpath = datadir("results","no_trans","optim", "corr", "B00")
 
-config =  merge(genconfig, Dict(:inflfn => inflfn_corr)) |> dict_list
+optim_results = collect_results(optim_loadpath)
 
-run_batch(NOT_GTDATA, config, savepath; savetrajectories = true)
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
 
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
+
+############################# BASE 2010 ########################################
+
+savepath = datadir("results", "no_trans", "tray_infl", "corr", "B10")
+
+optim_loadpath = datadir("results","no_trans","optim", "corr", "B10")
+
+optim_results = collect_results(optim_loadpath)
+
+config =  merge(genconfig, Dict(:inflfn => optim_results.inflfn)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
+
+
+
+#=
+####################################################################
+####################################################################
+####################################################################
+####################################################################
+####################################################################
+####################################################################
+### test ###########################################################
+testconfig = Dict(
+    :paramfn => InflationTotalRebaseCPI(36, 3),
+    :resamplefn => ResampleScrambleVarMonths(),
+    :trendfn => TrendRandomWalk(),
+    :traindate => Date(2021, 12),
+    :nsim => 10_000,
+    :evalperiods => (CompletePeriod(), GT_EVAL_B00, GT_EVAL_B10, GT_EVAL_T0010)
+)
+
+savepath = datadir("results", "no_trans", "tray_infl", "mse", "splice")
+
+optim_loadpath_B00 = datadir("results","no_trans","optim", "mse", "B00")
+optim_results_B00 = collect_results(optim_loadpath_B00)
+
+optim_loadpath_B10 = datadir("results","no_trans","optim", "mse", "B10")
+optim_results_B10 = collect_results(optim_loadpath_B10)
+
+splice_fns = [Splice([optim_results_B00.inflfn[i],optim_results_B10.inflfn[i]],[(Date(2011,01), Date(2011,11))], "Splice"*string(i), "S"*string(i)) for i in 1:6]
+
+config =  merge(testconfig, Dict(:inflfn => splice_fns)) |> dict_list
+
+run_batch(gtdata_eval, config, savepath; savetrajectories = true)
+
+df = collect_results(savepath)
+
+function rank(inflfn::InflationFunction)
+    if inflfn isa InflationPercentileEq
+        return 1
+    elseif inflfn isa InflationPercentileWeighted
+        return 2
+    elseif inflfn isa InflationTrimmedMeanEq
+        return 3
+    elseif inflfn isa InflationTrimmedMeanWeighted
+        return 4
+    elseif inflfn isa InflationDynamicExclusion
+        return 5
+    elseif inflfn isa InflationFixedExclusionCPI
+        return 6
+    elseif inflfn isa Splice
+        rank(inflfn.f[1])
+    end
+end
+
+df.rank = rank.(df.inflfn)
+sort!(df,:rank)
+df.tray_path = map(x->joinpath(dirname(x),"tray_infl",basename(x)),df.path)
+
+tray_infl = mapreduce(hcat, df.tray_path) do path
+    load(path, "tray_infl")
+end
+
+functions = df.inflfn
+components_mask = [!(fn.f[1] isa InflationFixedExclusionCPI) for fn in functions]
+
+combine_period_00 =  GT_EVAL_B00 #EvalPeriod(Date(2001, 12), Date(2010, 12), "combperiod_B00") 
+combine_period_10 =  GT_EVAL_B10 #EvalPeriod(Date(2011, 12), Date(2021, 12), "combperiod_B10") 
+
+periods_filter_00 = eval_periods(gtdata_eval, combine_period_00)
+periods_filter_10 = eval_periods(gtdata_eval, combine_period_10)
+
+# CALCULAMOS LOS PESOS OPTIMOS
+a_optim_00 = share_combination_weights(
+    tray_infl[periods_filter_00, components_mask, :],
+    tray_infl_pob[periods_filter_00],
+    show_status=true
+)
+
+a_optim_10 = share_combination_weights(
+    tray_infl[periods_filter_10, components_mask, :],
+    tray_infl_pob[periods_filter_10],
+    show_status=true
+)
+
+insert!(a_optim_00, findall(.!components_mask)[1],0)
+insert!(a_optim_10, findall(.!components_mask)[1],0)
+
+optmseb00 = CombinationFunction(
+    optim_results_B00.inflfn...,
+    a_optim_00, 
+    "Subyacente óptima MSE no transable base 2000"
+)
+
+optmseb10 = CombinationFunction(
+    optim_results_B10.inflfn...,
+    a_optim_10, 
+    "Subyacente óptima MSE no transable base 2000"
+)
+
+optmse2023_nt = Splice([optmseb00, optmseb10], [(Date(2011,01), Date(2011,11))], "Subyacente Óptima MSE 2023 No Transable", "SubOptMse2023NT")
+
+config =  dict_config(merge(testconfig, Dict(:inflfn => optmse2023_nt)))
+
+results , tray = makesim(gtdata_eval, config)
+
+tray_infl = hcat(tray_infl, tray)
+
+
+
+eval_results = [eval_metrics(tray_infl[:,i:i,:], tray_infl_pob)[:mse] for i in 1:size(tray_infl)[2]]
+eval_results_00 = [eval_metrics(tray_infl[periods_filter_00,i:i,:], tray_infl_pob[periods_filter_00])[:mse] for i in 1:size(tray_infl)[2]]
+eval_results_10 = [eval_metrics(tray_infl[periods_filter_10,i:i,:], tray_infl_pob[periods_filter_10])[:mse] for i in 1:size(tray_infl)[2]]
+
+########################################
+########################################
+=#

@@ -45,95 +45,47 @@ tray_infl_pob_19   = param_2019(gtdata_eval[Date(2019,12)])
 a = Date(2011,01)
 b = Date(2011,11)
 
-c = Date(2021,01)
-d = Date(2021,11)
+c = Date(2015,01)
+d = Date(2015,11)
+
+c2 = Date(2018,01)
+d2 = Date(2018,11)
 
 perc1 = InflationPercentileEq(72)
-perc2 = InflationPercentileEq(76)
+perc2 = InflationTrimmedMeanEq(20,95)
 perc3 = InflationPercentileEq(78)
+perc4 = InflationPercentileEq(70)
 
-W = Splice(perc1,perc2, a, b)
+f=[perc1,perc2,perc3,perc4]
+dates = [[a,b],[c,d], [c2,d2]]
+X = CPIDataBase.cpi_dates(gtdata)
+
+
+F = CPIDataBase.ramp_down(X,dates[1]...)
+G = CPIDataBase.ramp_up(X,dates[1]...)
+OUT = f[1](gtdata,CPIVarInterm()) .* F + f[2](gtdata,CPIVarInterm()) .* G
+
+for i in 2:length(dates)
+F = CPIDataBase.ramp_down(X,dates[i]...)
+G = CPIDataBase.ramp_up(X,dates[i]...)
+OUT = OUT .* F 
+OUT = OUT + f[i+1](gtdata,CPIVarInterm()) .* G
+end
+
+
+W = Splice([perc1, perc2], [(a, b)])
 
 
 ############################################
 
-function ramp_up(X::AbstractRange{T}, a::T, b::T) where T 
-    A = min(a,b) 
-    B = max(a,b)
-    [x<A ? 1 : A<=x<=B ? (findfirst( X .== x)-findfirst( X .== A))/(findfirst( X .== B)-findfirst( X .== A)) : 0 for x in X]
-end
-
-function ramp_down(X::AbstractRange{T}, a::T, b::T) where T 
-    1 .- ramp_up(X::AbstractRange{T}, a::T, b::T)
-end
-
-function cpi_dates(cst::CountryStructure) 
-    first(cst.base).dates[1]:Month(1):last(cst.base).dates[end]
-end
-
-Base.@kwdef struct Splice <: InflationFunction
-    f::InflationFunction
-    g::InflationFunction
-    a::Date
-    b::Date
-end
-
-function (inflfn::Splice)(cs::CountryStructure, ::CPIVarInterm)
-    f = inflfn.f
-    g = inflfn.g
-    a = inflfn.a
-    b = inflfn.b
-
-    X = cpi_dates(cs)
-    F = ramp_up(X,a,b)
-    G = ramp_down(X,a,b)
-    OUT = (f(cs, CPIIndex()) |> varinterm).*F .+ (g(cs, CPIIndex())|> varinterm) .* G 
-    OUT 
-end
-
-function (inflfn::Splice)(cs::CountryStructure)
-    cpi_index = inflfn(cs, CPIIndex())
-    varinteran(cpi_index)
-end
-
-function (inflfn::Splice)(cs::CountryStructure, ::CPIIndex)
-    v_interm = inflfn(cs, CPIVarInterm())
-    capitalize!(v_interm, 100) 
-    v_interm  
-end
-
-function measure_name(inflfn::Splice)
-    return measure_name(inflfn.f)*" -> "*measure_name(inflfn.g)
-end
-
-function measure_tag(inflfn::Splice)
-    return measure_tag(inflfn.f)*" -> "*measure_tag(inflfn.g)
-end
-
-
-# function measure_tag(combfn::CombinationFunction)
-#     isnothing(combfn.tag) || return combfn.tag
-#     "COMBFN"
-# end
-
-# function components(inflfn::EnsembleFunction)
-#     DataFrame(measure = measure_name(inflfn))
-# end
-
-
-
-
-
-
-
 
 config = SimConfig(
-    inflfn = W,
+    inflfn = perc2,
     resamplefn = ResampleScrambleVarMonths(),
     trendfn = TrendRandomWalk(),
     paramfn = InflationTotalRebaseCPI(36, 2),
     nsim = 100,
-    traindate = Date(2021, 12),
+    traindate = Date(2021,12),
 )
 
 results, tray_infl = makesim(gtdata_eval, config)

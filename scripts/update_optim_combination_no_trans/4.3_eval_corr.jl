@@ -21,71 +21,90 @@ gtdata_eval = NOT_GTDATA[Date(2021, 12)]
 ########### CARGAMOS TRAYECTORIAS ###############
 
 # DEFINIMOS LOS PATHS 
-loadpath = datadir("results","no_trans", "tray_infl", "corr")
+loadpath = datadir("results", "no_trans","tray_infl","corr")
 tray_dir = joinpath(loadpath, "tray_infl")
-loadpath_2019 = datadir("results","no_trans", "tray_infl_2019", "corr")
-tray_dir_2019 = joinpath(loadpath_2019, "tray_infl")
 combination_loadpath  = datadir("results","no_trans","optim_combination","corr")
 
 save_results = datadir("results","no_trans","eval","corr")
 
-# RECOLECTAMOS LOS DATAFRAMES
-df      = collect_results(loadpath)
-df_19   = collect_results(loadpath_2019)
+
+#CREAMOS UNA FUNCION PARA ORDENAR LAS FUNCIONES
+function rank(inflfn::InflationFunction)
+    if inflfn isa InflationPercentileEq
+        return 1
+    elseif inflfn isa InflationPercentileWeighted
+        return 2
+    elseif inflfn isa InflationTrimmedMeanEq
+        return 3
+    elseif inflfn isa InflationTrimmedMeanWeighted
+        return 4
+    elseif inflfn isa InflationDynamicExclusion
+        return 5
+    elseif inflfn isa InflationFixedExclusionCPI
+        return 6
+    elseif inflfn isa Splice
+        rank(inflfn.f[1]) # retorna la primera funcion 
+    end
+end
+
+# CARGAMOS Y ORDENAMOS DATAFRAMES SEGUN LA MEDIDA DE INFLACION
 optim   = collect_results(combination_loadpath)
 
-# CARGAMOS LAS TRAYECTORIAS CORRESPONDIENTES
-df[!,:tray_path] = joinpath.(tray_dir,basename.(df.path))
-df[!,:tray_infl] = [x["tray_infl"] for x in load.(df.tray_path)]
-df[!, :inflfn_type] = typeof.(df.inflfn)
 
-df_19[!,:tray_path] = joinpath.(tray_dir_2019,basename.(df_19.path))
-df_19[!,:tray_infl] = [x["tray_infl"] for x in load.(df_19.tray_path)]
-df_19[!, :inflfn_type] = typeof.(df.inflfn)
+df_results_B00 = collect_results(joinpath(loadpath,"B00"))
+df_results_B10 = collect_results(joinpath(loadpath,"B10"))
+
+df_results_B00.rank = rank.(df_results_B00.inflfn)
+df_results_B10.rank = rank.(df_results_B00.inflfn)
+
+sort!(df_results_B00, :rank)
+sort!(df_results_B10, :rank)
+
+
+# PATHS DE TRAYECTORIAS
+df_results_B00.tray_path = map(x->joinpath(loadpath,"B00","tray_infl",basename(x)),df_results_B00.path)
+df_results_B10.tray_path = map(x->joinpath(loadpath,"B10","tray_infl",basename(x)),df_results_B10.path)
+
 
 ######## CARGAMOS LOS PESOS #####################################
 
-df_weights = collect_results(combination_loadpath)
-optcorr = df_weights[1,:optcorr2023]
+w_B00 = round.(optim[1,:].optcorr2023_nt.f[1].weights,digits=4)
+w_B10 = round.(optim[1,:].optcorr2023_nt.f[2].weights, digits=4)
 
+######## EMPALMAMOS y CREAMOS TRAYECTORIAS OPTIMAS
 
-######## HACEMOS COINCIDIR LAS TRAYECTORIAS CON SUS PESOS Y RENORMALIZAMOS LA MAI ####################
+inf_dates = infl_dates(gtdata_eval)
 
-opt_w = DataFrame(
-    :inflfn => [x for x in optcorr.ensemble.functions],
-    :inflfn_type => [typeof(x) for x in optcorr.ensemble.functions], 
-    :weight => optcorr.weights
-) 
+tray_infl = let
 
-# DATAFRAMES RENORMALIZXADOS CON TRAYECTORIAS PONDERADAS
-df_renorm = innerjoin(df,opt_w[:,[:inflfn_type,:weight]], on = :inflfn_type)[:,[:inflfn,:inflfn_type,:weight, :tray_infl]]
-df_renorm[!,:w_tray] = df_renorm.weight .* df_renorm.tray_infl
+    ramp_down = Float32.(CPIDataBase.ramp_down(inf_dates, optim[1,:].optcorr2023_nt.dates[1]...))
+    ramp_up   = Float32.(CPIDataBase.ramp_up(inf_dates, optim[1,:].optcorr2023_nt.dates[1]...))
+    
+    tray_infl_B00 = mapreduce(hcat, df_results_B00.tray_path) do path
+        load(path, "tray_infl")
+    end
 
-df_renorm_19 = innerjoin(df_19,opt_w[:,[:inflfn_type,:weight]], on = :inflfn_type)[:,[:inflfn,:inflfn_type,:weight, :tray_infl]]
-df_renorm_19[!,:w_tray] = df_renorm_19.weight .* df_renorm_19.tray_infl
+    tray_infl_B10 = mapreduce(hcat, df_results_B10.tray_path) do path
+        load(path, "tray_infl")
+    end
 
-################# OBTENEMOS LAS TRAYECTORIAS #################################################
+    tray_infl_B00 = round.(tray_infl_B00[:,:,1:125_000], digits=4)
+    tray_infl_B10 = round.(tray_infl_B10[:,:,1:125_000], digits=4)
 
-w_tray     = sum(df_renorm.w_tray, dims=1)[1]
-w_tray_19  = sum(df_renorm_19.w_tray, dims=1)[1]
+    w_tray_B00  = round.(tray_infl_B00 .* w_B00',digits=4) # Se redondea para ahorrar memoria
+    w_tray_B10  = round.(tray_infl_B10 .* w_B10', digits=4) # Se redondea para ahorrar memoria
+    tray_opt  = round.(sum(ramp_down .* w_tray_B00 .+ ramp_up .* w_tray_B10, dims=2), digits=4) # trayectorias de la optima 
+    tray_infl = hcat(ramp_down .* tray_infl_B00 .+ ramp_up .* tray_infl_B10, tray_opt) # concatenamos con el resto de trayectorias
+    tray_infl
+end
 
-##### AGREGAMOS COMBINACIONES OPTIMAS AL DATAFRAME RENORMALIZADO #############################
-
-df_renorm    = vcat(df_renorm, DataFrame(:inflfn => [optcorr], :tray_infl => [w_tray]), cols=:union)
-df_renorm_19 = vcat(df_renorm_19, DataFrame(:inflfn => [optcorr], :tray_infl => [w_tray_19]), cols=:union)
+#wsave(joinpath(save_results,"tray_infl","tray_infl.jld2"), "tray_infl",tray_infl)
 
 
 ############# DEFINIMOS PARAMETROS ######################################################
 
 # PARAMETRO HASTA 2021
 param = InflationParameter(
-    InflationTotalRebaseCPI(36, 3), 
-    ResampleScrambleVarMonths(), 
-    TrendRandomWalk()
-)
-
-# PARAMETRO HASTA 2019 (para evaluacion en periodo de optimizacion de medidas individuales)
-param_2019 = InflationParameter(
     InflationTotalRebaseCPI(36, 2), 
     ResampleScrambleVarMonths(), 
     TrendRandomWalk()
@@ -93,7 +112,6 @@ param_2019 = InflationParameter(
 
 # TRAYECOTRIAS DE LOS PARAMETROS 
 tray_infl_pob      = param(gtdata_eval)
-tray_infl_pob_19   = param_2019(gtdata_eval[Date(2019,12)])
 
 
 ############ DEFINIMOS PERIODOS DE EVALUACION ############################################
@@ -109,159 +127,78 @@ b10_mask = eval_periods(gtdata_eval, period_b10)
 
 ##### EVALUAMOS ############################
 
-# PERIDO COMPLETO (2001-2021)
-df_renorm[!,:complete_corr] = (x -> eval_metrics(x,tray_infl_pob)[:corr]).(df_renorm.tray_infl)
-
-# PERIDO BASE 2000
-df_renorm[!,:b00_corr] = (x -> eval_metrics(x[b00_mask,:,:],tray_infl_pob[b00_mask])[:corr]).(df_renorm.tray_infl)
-
-# PERIDO DE TRANSICION
-df_renorm[!,:trn_corr] = (x -> eval_metrics(x[trn_mask,:,:],tray_infl_pob[trn_mask])[:corr]).(df_renorm.tray_infl)
-
-# PERIDO BASE 2010
-df_renorm[!,:b10_corr] = (x -> eval_metrics(x[b10_mask,:,:],tray_infl_pob[b10_mask])[:corr]).(df_renorm.tray_infl)
-
-# PERIODO 2001-2019
-df_renorm[!,:b19_corr] = (x -> eval_metrics(x,tray_infl_pob_19)[:corr]).(df_renorm_19.tray_infl)
-
+eval_results = [eval_metrics(tray_infl[:,i:i,:], tray_infl_pob)[:corr] for i in 1:size(tray_infl)[2]]
+eval_results_00 = [eval_metrics(tray_infl[b00_mask,i:i,:], tray_infl_pob[b00_mask])[:corr] for i in 1:size(tray_infl)[2]]
+eval_results_10 = [eval_metrics(tray_infl[b10_mask,i:i,:], tray_infl_pob[b10_mask])[:corr] for i in 1:size(tray_infl)[2]]
+eval_results_tr = [eval_metrics(tray_infl[trn_mask,i:i,:], tray_infl_pob[trn_mask])[:corr] for i in 1:size(tray_infl)[2]]
 
 
 
 ######## PULIMOS LOS RESULTADOS ##########################
 
-# Le agregamos nombres a las funciones
-df_renorm[!,:measure_name] = measure_name.(df_renorm.inflfn)
+df_eval  = DataFrame(
+    measure = [
+        "Percentil Equiponderado", "Percentil Ponderado",
+        "Media Truncada Equiponderada", "Media Truncada Ponderada",
+        "Exclusión Dinámica", "Exclusión Fija",
+        "Subyacente Óptima CORR 2023 No Transable"
+    ],
+    weights_b00 = vcat(w_B00,1),
+    weights_b10 = vcat(w_B10,1),
+    b00_corr = eval_results_00,
+    trn_corr = eval_results_tr,
+    b10_corr = eval_results_10,
+    complete_corr = eval_results
+) 
 
-# Le devolvemos su peso a la OPTIMA y a la MAI OPTIMA
-df_renorm[(x -> isa(x,CombinationFunction)).(df_renorm.inflfn),:weight] = [1]
-
-# Defininimos una funcion para ordenar los resultados en el orden de filas deseado.
-function inflfn_rank(x)
-    if x isa InflationPercentileEq
-        out = 1
-    elseif x isa InflationPercentileWeighted
-        out = 2
-    elseif x isa InflationTrimmedMeanEq
-        out = 3
-    elseif x isa InflationTrimmedMeanWeighted
-        out = 4
-    elseif x isa InflationDynamicExclusion
-        out = 5
-    elseif x isa InflationFixedExclusionCPI
-        out = 6
-    elseif x isa CombinationFunction
-        out = 7
-        end
-    out
-end
-
-df_renorm[!,:rank_order] = inflfn_rank.(df_renorm.inflfn)
-
-#ordenamos
-sort!(df_renorm,:rank_order)
-
-# Cremos un dataframe final
-df_final = df_renorm[:, [:measure_name,:weight,:b00_corr,:trn_corr,:b10_corr,:b19_corr,:complete_corr]]
 
 # using PrettyTables
-# pretty_table(df_final)
-# ┌───────────────────────────────────────────────┬────────────┬──────────┬──────────┬──────────┬──────────┬───────────────┐
-# │                                  measure_name │     weight │ b00_corr │ trn_corr │ b10_corr │ b19_corr │ complete_corr │
-# │                                        String │   Float32? │  Float32 │  Float32 │  Float32 │  Float32 │       Float32 │
-# ├───────────────────────────────────────────────┼────────────┼──────────┼──────────┼──────────┼──────────┼───────────────┤
-# │                 Percentil equiponderado 79.84 │   0.254759 │ 0.863131 │ 0.980241 │ 0.746329 │ 0.975106 │      0.977753 │
-# │                      Percentil ponderado 82.2 │  0.0366308 │ 0.843677 │ 0.976447 │ 0.596974 │ 0.972414 │       0.97317 │
-# │   Media Truncada Equiponderada (16.41, 98.45) │   0.416954 │ 0.882948 │ 0.980475 │ 0.768324 │ 0.979878 │      0.981702 │
-# │        Media Truncada Ponderada (31.7, 96.11) │ 3.94964e-6 │ 0.868388 │ 0.984021 │ 0.650562 │ 0.979127 │      0.979933 │
-# │  Inflación de exclusión dinámica (0.85, 2.32) │   0.291732 │ 0.871634 │  0.98224 │ 0.669022 │ 0.978923 │      0.979955 │
-# │ Exclusión fija de gastos básicos IPC (13, 57) │        0.0 │ 0.886242 │ 0.989597 │  0.45894 │ 0.981926 │      0.982428 │
-# │                   Subyacente óptima CORR 2023 │        1.0 │ 0.900711 │ 0.985907 │ 0.795016 │ 0.983066 │      0.984583 │
-# └───────────────────────────────────────────────┴────────────┴──────────┴──────────┴──────────┴──────────┴───────────────┘
+# pretty_table(df_eval)
+# ┌──────────────────────────────────────────┬─────────────┬─────────────┬──────────┬──────────┬──────────┬───────────────┐
+# │                                  measure │ weights_b00 │ weights_b10 │ b00_corr │ trn_corr │ b10_corr │ complete_corr │
+# │                                   String │     Float32 │     Float32 │  Float32 │  Float32 │  Float32 │       Float32 │
+# ├──────────────────────────────────────────┼─────────────┼─────────────┼──────────┼──────────┼──────────┼───────────────┤
+# │                  Percentil Equiponderado │      0.0316 │      0.5164 │ 0.864516 │ 0.986022 │  0.77353 │       0.97824 │
+# │                      Percentil Ponderado │      0.1952 │      0.0898 │  0.84338 │  0.85477 │ 0.641084 │      0.960773 │
+# │             Media Truncada Equiponderada │      0.3781 │      0.2056 │ 0.889008 │ 0.963725 │ 0.787606 │      0.978197 │
+# │                 Media Truncada Ponderada │      0.2304 │      0.1881 │ 0.876626 │ 0.711363 │ 0.664638 │      0.960467 │
+# │                       Exclusión Dinámica │      0.1648 │         0.0 │  0.87107 │ 0.981292 │ 0.667654 │      0.979484 │
+# │                           Exclusión Fija │         0.0 │         0.0 │ 0.847123 │ 0.889943 │ 0.390416 │      0.943556 │
+# │ Subyacente Óptima CORR 2023 No Transable │         1.0 │         1.0 │   0.9052 │ 0.917728 │ 0.792513 │      0.977531 │
+# └──────────────────────────────────────────┴─────────────┴─────────────┴──────────┴──────────┴──────────┴───────────────┘
+
 
 # guardamos el resultado
 using  CSV
 mkpath(save_results)
-CSV.write(joinpath(save_results,"eval.csv"), df_final)
+CSV.write(joinpath(save_results,"eval.csv"), df_eval)
+
 
 #################################
 ######### PLOTS #################
 #################################
 # NO DESCOMENTAR
-#=
+
 using Plots
 using StatsBase
 
-for i in 1:7
+include(scriptsdir("TOOLS","PLOT","cloud_plot.jl"))
 
-    TITLE = df_renorm[i,:measure_name]
-    PARAM = tray_infl_pob
-    X = infl_dates(gtdata_eval)
-    TRAYS = df_renorm[i,:tray_infl]
-    TRAY_INFL = [ TRAYS[:,:,i] for i in 1:size(TRAYS)[3]]
-    TRAY_VEC = sample(TRAY_INFL,500)
-    TRAY_PROM = mean(TRAYS,dims=3)[:,:,1]
-    TRAY_MED = median(TRAYS,dims=3)[:,:,1]
-    TRAY_25 = [percentile(x[:],25) for x in eachslice(TRAYS,dims=1)][:,:] 
-    TRAY_75 = [percentile(x[:],75) for x in eachslice(TRAYS,dims=1)][:,:]
-    # cambiamos el rango de fechas
-    #X = X[b10_mask]
-    #TRAY_VEC = map(x -> x[b10_mask],TRAY_VEC)
-    #PARAM = PARAM[b10_mask]
+measure = [
+    "Percentil Equiponderado", "Percentil Ponderado",
+    "Media Truncada Equiponderada", "Media Truncada Ponderada",
+    "Exclusión Dinámica", "Exclusión Fija",
+    "Subyacente Óptima CORR 2023 No Transable"
+]
 
-    p=plot(
-        X,
-        TRAY_VEC;
-        legend = true,
-        label = false,
-        c="grey12",
-        linewidth = 0.25/2,
-        title = TITLE,
-        size = (900,600),
-        ylims = (0,14)
-    )
+savename = [
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\PercEq.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\PercW.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\TMEQ.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\TMW.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\DE.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\FE.png",
+    "C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\CORR\\OPT.png",
+]
 
-    p=plot!(
-        X,PARAM;
-        legend = true,
-        label="Parámetro",
-        c="blue3",
-        linewidth = 3.5
-    )
-
-    p=plot!(
-        X,TRAY_PROM;
-        legend = true,
-        label="Promedio",
-        c="red",
-        linewidth = 3.5
-    )
-
-    p=plot!(
-        X,TRAY_MED;
-        legend = true,
-        label="Mediana",
-        c="green",
-        linewidth = 2.0
-    )
-
-    p=plot!(
-        X,TRAY_25;
-        legend = true,
-        label = "Percentil 25",
-        c="green",
-        linewidth = 2.0,
-        linestyle=:dash
-    )
-
-    p=plot!(
-        X,TRAY_75;
-        legend = true,
-        label = "Percentil 75",
-        c="green",
-        linewidth = 2.0,
-        linestyle=:dash
-    )
-    display(p)
-    savefig("C:\\Users\\DJGM\\Desktop\\PLOTS\\2023_no_trans\\plot_"*string(i+14)*".png")
-end
-=#
+cloud_plot(tray_infl, tray_infl_pob, gtdata_eval; title=measure, savename=savename)

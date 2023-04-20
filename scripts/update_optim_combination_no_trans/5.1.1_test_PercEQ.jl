@@ -23,7 +23,7 @@ gtdata_eval = NOT_GTDATA[Date(2021, 12)]
 
 # PARAMETRO HASTA 2021
 param = InflationParameter(
-    InflationTotalRebaseCPI(36, 2), 
+    InflationTotalRebaseCPI(36, 3), 
     ResampleScrambleVarMonths(), 
     TrendRandomWalk()
 )

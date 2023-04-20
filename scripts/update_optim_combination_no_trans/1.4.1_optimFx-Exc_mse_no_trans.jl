@@ -26,12 +26,12 @@ not_gt10 = NOT_GTDATA[2]
 ## Definición de instancias principales
 trendfn    = TrendRandomWalk()
 resamplefn = ResampleScrambleVarMonths()
-paramfn    = InflationTotalRebaseCPI(36,2)
+paramfn    = InflationTotalRebaseCPI(36,3)
 
 # Para optimización Base 2000
 ff00 = Date(2010,12)
 # Para optimización Base 2010
-ff10 = Date(2019,12)
+ff10 = Date(2021,12)
 
 #################  Optimización Base 2000  ###################################
  
@@ -93,7 +93,7 @@ exc00 = collect(sort_0019[1,:params])[1]
 #################  Optimización Base 2010  ###################################
 
 # Vector óptimo base 2000 encontrado en la primera sección
-exc00 =  [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7] 
+# exc00 =  [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7] 
 
 ## Creación de vector de de gastos básicos ordenados por volatilidad, con información a Diciembre de 2019
 
@@ -151,8 +151,24 @@ sort_1019 = sort(Exc_1018, :mse)
 ## Exctracción de vector de exclusión  y MSE
 Exc = collect(sort_1019[1,:params])
 
-# [32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7]
-# [28, 42, 47, 64, 65, 6, 46, 63, 58, 41, 32, 37, 68, 20, 9, 30, 66, 59]
+#[28  42  47  64  65  6  46  63  58  41  32  37  68  20  9  30  66  59  40  24  27]
 
 
+## Guardando resultado optimo con las demas medidas
+Exc_tuple  = Tuple(x for x in Exc)
+inflfn = InflationFixedExclusionCPI(Exc_tuple)
 
+savepath00 = datadir("results","no_trans","optim","mse","B00") 
+savepath10 = datadir("results","no_trans","optim","mse","B10")
+
+D = Dict(
+    "inflfn"=>inflfn,
+    "infltypefn"=>InflationFixedExclusionCPI,
+    "metric"=>:mse,
+    "minimizer" => Exc_tuple,
+    "optimal" => sort_1019[1,:mse],
+)
+
+
+wsave(joinpath(savepath00,"fx-exc.jld2"), tostringdict(D))
+wsave(joinpath(savepath10,"fx-exc.jld2"), tostringdict(D))
