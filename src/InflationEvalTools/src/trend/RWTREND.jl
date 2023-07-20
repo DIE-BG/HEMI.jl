@@ -1,5 +1,3 @@
-# Trayectoria de caminata aleatoria calibrada en MATLAB para 240 períodos
-
 # Directorio donde se encuentran almacenadas las trayectorias de caminata aleatoria.
 RWTREND_DIR = joinpath(@__DIR__, "..", "..", "data", "RWTREND")
 
@@ -17,6 +15,6 @@ delog_rwtrend = load(joinpath(RWTREND_DIR, "RWTREND $(last_avaible_rwtrend).jld2
 
 """
     RWTREND
-Trayectoria de caminata aleatoria precalibrada para 240 períodos.
+Trayectoria de caminata aleatoria precalibrada para 292 períodos.
 """
 const RWTREND = @. convert(Float32, exp(delog_rwtrend))
