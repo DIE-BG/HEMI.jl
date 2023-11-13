@@ -144,7 +144,7 @@ function optimizemai(n, method, resamplefn, trendfn, dataeval, tray_infl_param;
         "q" => argmin_fn(optres), 
         string(metric) => min_fn(optres),
         "K" => K,
-        "optres" => optres
+        #"optres" => optres
     )
 
     # Guardar los resultados 

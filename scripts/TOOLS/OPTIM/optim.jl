@@ -138,7 +138,7 @@ function optimize_config(config, data;
     merge!(results, tostringdict(config))
 
     # Guardar los resultados de evaluación para collect_results 
-    filename = savename(results, "jld2", allowedtypes=(Symbol,Real, String, Date), digits=4)
+    filename = DrWatson.savename(results, "jld2", allowedtypes=(Symbol,Real, String, Date), digits=4)
     isnothing(savepath) || wsave(joinpath(savepath, filename), tostringdict(results))
 
     return results 
