@@ -86,9 +86,9 @@ version = "0.4.2"
 
 [[deps.CPIDataBase]]
 deps = ["AbstractTrees", "DataFrames", "Dates", "PrettyTables"]
-path = "C:\\Users\\DRCM\\Documents\\GitHub\\CPIDataBase.jl"
+git-tree-sha1 = "935a6b39697a290475d24e397e862c330e4c4d8f"
 uuid = "bc2aee9a-d1f8-4cce-8750-9c1afc923989"
-version = "0.6.14"
+version = "0.6.13"
 
 [[deps.CPUTime]]
 git-tree-sha1 = "2dcc50ea6a0a1ef6440d6eecd0fe3813e5671f45"
