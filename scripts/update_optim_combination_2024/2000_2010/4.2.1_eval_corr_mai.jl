@@ -13,8 +13,8 @@ gtdata_eval = GTDATA[Date(2022,12)]
 
 
 # cargamos dataframes de resultados individuales y combinacion
-loadpath = datadir("optim_comb_2024", "2000_2010","tray_infl","corr")
-combination_loadpath = datadir("optim_comb_2024","2000_2010","optim_combination","corr","mai","fx")
+loadpath = datadir("results","optim_comb_2024", "2000_2010","tray_infl","corr")
+combination_loadpath = datadir("results","optim_comb_2024","2000_2010","optim_combination","corr","mai","fx")
 
 results_df = collect_results(loadpath)
 results_df.rank = rank.(results_df.inflfn) # para ordenar por medida
@@ -98,16 +98,16 @@ measure = [
 ]
 
 save_name = [
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","PercEq.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","PercW.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","TMEQ.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","TMW.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","DE.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","FE.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIFP.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIF.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIG.png"),
-    datadir("optim_comb_2024","2000_2010","graph","corr","mai","fx","OPT.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","PercEq.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","PercW.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","TMEQ.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","TMW.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","DE.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","FE.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIFP.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIF.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","MAIG.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","corr","mai","fx","OPT.png"),
 ]
 
 cloud_plot(tray_infl, tray_infl_pob, gtdata_eval; title=measure, savename=save_name, cmu_font=true)

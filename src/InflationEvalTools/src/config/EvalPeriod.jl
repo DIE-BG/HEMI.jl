@@ -125,3 +125,20 @@ Base.length(::EvalPeriod) = 1
 Base.size(e::EvalPeriod) = (1,)
 Base.iterate(e::EvalPeriod) = e, nothing
 Base.iterate(::EvalPeriod, ::Nothing) = nothing
+
+
+##########################################################################################
+### CAMBIOS 15/11/2023 por DJGM
+
+struct PeriodVector <: AbstractEvalPeriod
+    V::Vector{Tuple{Date,Date}}  
+    tag::String 
+end
+
+
+function eval_periods(cs::CountryStructure, v::PeriodVector)
+    dates = infl_dates(cs)
+    .|([period[1] .<= dates .<= period[2] for period in v.V]...)
+end
+
+period_tag(period::PeriodVector) = period.tag
