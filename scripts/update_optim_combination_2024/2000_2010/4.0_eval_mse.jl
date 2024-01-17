@@ -13,8 +13,8 @@ gtdata_eval = GTDATA[Date(2022,12)]
 
 
 # cargamos dataframes de resultados individuales y combinacion
-loadpath = datadir("optim_comb_2024", "2000_2010","tray_infl","mse")
-combination_loadpath = datadir("optim_comb_2024","2000_2010","optim_combination","mse","fx")
+loadpath = datadir("results","optim_comb_2024", "2000_2010","tray_infl","mse")
+combination_loadpath = datadir("results","optim_comb_2024","2000_2010","optim_combination","mse","fx")
 
 results_df = collect_results(loadpath)
 results_df.rank = rank.(results_df.inflfn) # para ordenar por medida
@@ -103,13 +103,13 @@ measure = [
 ]
 
 savename = [
-    datadir("optim_comb_2024","2000_2010","graph","mse","PercEq.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","PercW.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","TMEQ.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","TMW.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","DE.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","FE.png"),
-    datadir("optim_comb_2024","2000_2010","graph","mse","OPT.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","PercEq.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","PercW.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","TMEQ.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","TMW.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","DE.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","FE.png"),
+    datadir("results","optim_comb_2024","2000_2010","graph","mse","OPT.png"),
 ]
 
 cloud_plot(tray_infl, tray_infl_pob, gtdata_eval; title=measure, savename=savename, cmu_font=true)

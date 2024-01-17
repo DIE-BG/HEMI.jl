@@ -26,10 +26,10 @@ GTDATA_00   = UniformCountryStructure(GTDATA_EVAL[1])
 GTDATA_10   = UniformCountryStructure(GTDATA_EVAL[2])
 
 # Directorios de resultados 
-savepath_b00 = datadir("optim_comb_2024","2000_2010","MAI", "B00","mse")  
-savepath_b10 = datadir("optim_comb_2024","2000_2010","MAI", "B10","mse") 
-savepath_best_b00 = datadir("optim_comb_2024","2000_2010","B00", "mse") 
-savepath_best_b10 = datadir("optim_comb_2024","2000_2010","B10", "mse") 
+savepath_b00 = datadir("results","optim_comb_2024","2000_2010","MAI", "B00","mse")  
+savepath_b10 = datadir("results","optim_comb_2024","2000_2010","MAI", "B10","mse") 
+savepath_best_b00 = datadir("results","optim_comb_2024","2000_2010","B00", "mse") 
+savepath_best_b10 = datadir("results","optim_comb_2024","2000_2010","B10", "mse") 
 
 
 
