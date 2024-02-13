@@ -1,0 +1,337 @@
+Code,GoodOrService,Weight
+_0111101,Arroz,0.48910985
+_0111201,Harina,0.132393136
+_0111202,Maíz,1.033770836
+_0111203,Cereales,0.725119041
+_0111301,Pan,2.01890446
+_0111302,Galletas,0.066424712
+_0111303,Productos de repostería,0.091180272
+_0111401,Pastas,0.370637366
+_0111501,Productos de tortillería,2.329891831
+_0112101,Carne de res,1.787968573
+_0112201,Carne de cerdo,0.242087876
+_0112301,Carne de pollo,1.815508264
+_0112401,Embutidos,0.532604155
+_0113101,Pescados,0.226326604
+_0113201,Mariscos,0.021337266
+_0114101,Leche,0.520493187
+_0114102,Yogur,0.037539359
+_0114301,Quesos,0.609082671
+_0114401,Huevos,1.287350984
+_0115101,Margarina,0.050825848
+_0115201,Aceites,0.369833061
+_0116101,Aguacate,0.129206854
+_0116102,Banano,0.078435142
+_0116103,Manzana,0.056332239
+_0116104,Naranja,0.048049451
+_0116105,Plátano,0.134488968
+_0116106,Frutas de estación,0.24680543
+_0116201,Frutas en conserva,0.012428049
+_0117101,Tomate,0.71448521
+_0117102,Güisquil,0.132168859
+_0117103,Chile pimiento,0.040578701
+_0117104,Pepino,0.033742114
+_0117105,Güicoy,0.025026239
+_0117106,Repollo,0.048142256
+_0117107,Lechuga,0.027114337
+_0117108,Frijol,1.107016668
+_0117109,Ejotes,0.048513473
+_0117110,Elote,0.036271033
+_0117111,Cebolla,0.260378066
+_0117112,Papa,0.391147127
+_0117113,Zanahoria,0.089099908
+_0117114,Rábano,0.020393756
+_0117115,Remolacha,0.009705788
+_0117116,Yuca,0.016534641
+_0117117,Brócoli,0.020664435
+_0117118,Culantro,0.030184614
+_0117119,Hierbabuena,0.00598588
+_0117120,Otras legumbres y hortalizas,0.087065946
+_0118101,Azúcar,0.981846803
+_0118201,Jaleas,0.001562207
+_0118202,Compotas,0.007718228
+_0118301,Dulces,0.041723288
+_0118401,Helados,0.015529261
+_0119101,Salsa de tomate,0.112231392
+_0119102,Pasta de tomate,0.006944859
+_0119103,Mayonesa y mostaza,0.050647973
+_0119104,Sazonadores,0.022133837
+_0119105,Sal,0.045520533
+_0119201,Canela,0.008715875
+_0119202,Pepitoria y manía,0.013410228
+_0119203,Chiles picantes,0.030122745
+_0119301,Consomé de pollo,0.13723443
+_0119302,Sopas concentradas en sobre,0.107451968
+_0119303,Sopas instantaneas,0.177186702
+_0119304,Polvos para gelatina,0.007122734
+_0119305,Alimentos enlatados,0.173188381
+_0121101,Café instantaneo,0.153397854
+_0121102,Otras bebidas,0.20290124
+_0121201,Agua envasada,0.262094947
+_0121301,Aguas gaseosas,0.726681248
+_0121401,Polvo para refresco,0.109470462
+_0121402,Jugos de frutas,0.164735452
+_0121501,Refrescos naturales,0.042241446
+_0121502,Refrescos artificiales,0.023502701
+_0211101,Licores varios,0.033115685
+_0212101,Vino blanco,0.001028582
+_0212102,Vino tinto,0.002033962
+_0213101,Cerveza,0.120947267
+_0221101,Cigarrillos de tabaco,0.056092495
+_0311101,Telas para confección de vestuario,0.060840984
+_0312101,Pantalón para hombre,0.612036943
+_0312102,Camisa para hombre,0.31979605
+_0312103,Traje para hombre,0.050678908
+_0312104,Ropa deportiva para hombre,0.131944582
+_0312105,Ropa interior y de dormir para hombre,0.109594202
+_0312201,Pantalón y falda para mujer,0.393451768
+_0312202,Blusa para mujer,0.528915182
+_0312203,Otro vestuario de mujer,0.177743528
+_0312204,Ropa interior y de dormir para mujer,0.238793322
+_0312301,Pantalón y pantaloneta para niño,0.211903262
+_0312302,"Pantalón, falda y short  para niña",0.056347707
+_0312303,Camisa y playera para niño,0.051699756
+_0312304,Blusa para niña,0.056448245
+_0312305,Vestido para niña,0.041761957
+_0312306,Camiseta para niño,0.007919304
+_0312401,Pijama para bebé,0.016766652
+_0312501,Uniforme escolar,0.162987637
+_0313101,Artículos varios de vestuario,0.21570824
+_0313102,Otras prendas de vestir,0.338898279
+_0314101,Servicio de limpieza de prendas de vestir,0.031112658
+_0321101,Zapatos para hombre,0.827288895
+_0321201,Zapatos varios para mujer,0.081613691
+_0321202,Zapatos para mujer,0.368317257
+_0321203,Zapatos varios para mujer,0.237463126
+_0321301,Calzado para niño,0.231871664
+_0321302,Calzado para niña,0.156754278
+_0322101,Servicio de reparación de calzado,0.008723609
+_0411101,Alquiler de vivienda,2.365258022
+_0421101,Materiales diversos para reparación  de vivienda,0.73497177
+_0421102,Trabajos para vivienda,0.100692718
+_0421103,Artículos para electricidad y grifería,0.042798272
+_0422101,Servicio de mantenimiento de vivienda,0.602918916
+_0431101,Agua potable,0.586020791
+_0432101,Servicio de retiro de basura,0.180883408
+_0441101,Servicio de electricidad,2.548012984
+_0442101,Gas propano,0.927757336
+_0443101,Carbón,0.020749506
+_0443102,Leña,1.645591236
+_0511101,Cama,0.178888115
+_0511102,Cuna,0.011020516
+_0511103,Juego de comedor,0.0220565
+_0511104,Muebles para cocina,0.036680919
+_0511105,Juego de sala,0.055257256
+_0511106,Muebles modulares,0.102749881
+_0511201,Alfombra,0.00263719
+_0511202,"Puertas, lamparas y varios",0.058667815
+_0521101,Cubrecama,0.093322506
+_0521102,Sábana,0.074831239
+_0521103,Poncho y frazadas,0.069827538
+_0521104,Mantel,0.054422017
+_0521105,Cortinas,0.030586766
+_0522101,Estufa,0.128588158
+_0522102,Refrigerador,0.209064996
+_0522103,Lavadora,0.094057207
+_0523101,Horno de microondas,0.03252019
+_0523102,Licuadora,0.005583728
+_0523103,Ventilador,0.010757571
+_0523104,Plancha eléctrica,0.022651995
+_0531101,Vajillas,0.047693701
+_0531102,Baterias de cocina,0.129663142
+_0531103,Juegos de vasos,0.038304995
+_0531104,Utencilios de cocina,0.074931778
+_0541101,Barreno eléctrico,0.001531272
+_0541201,Martillo,0.002884668
+_0541202,Machete,0.012791533
+_0541203,Serrucho,0.003047076
+_0541204,Desarmadores,0.000224277
+_0551101,Aromatizador y desinfectante,0.024438478
+_0551102,Detergente para ropa,1.522548137
+_0551103,Jabón varias clases,0.235808115
+_0551201,Artículos para limpieza del hogar,0.484407763
+_0551202,Fosforos,0.100522577
+_0551203,Servilletas de papel,0.051413609
+_0551204,Veladoras y candelas,0.139090517
+_0552101,Servicio doméstico por mes,0.012435783
+_0552102,Lavado de ropa diversa,0.019852397
+_0611101,Analgésico y antiinflamatorio,0.146770077
+_0611102,Antiacido y antiulceroso,0.085728017
+_0611103,Antialérgico,0.028978158
+_0611104,Antibiótico,0.224029697
+_0611105,Antigripal,0.245544838
+_0611106,Antihipertensor,0.212730767
+_0611107,Vacunas de prevención,0.047484892
+_0611108,Dermatológico,0.039983207
+_0611109,Mucolítico y broncodilatador,0.156475865
+_0611110,Vitaminas y minerales,0.535573894
+_0612101,"Vendas, parches, apósitos",0.04532719
+_0612102,Preservativos,0.036039022
+_0613101,Lentes de corrección,0.121341685
+_0621101,Consulta médica,0.402476991
+_0621102,Consulta con ginecólogo,0.051916299
+_0622101,Consulta odontológica,0.091164805
+_0622102,Tratamiento odontológico,0.123777799
+_0623101,Exámen de radiología y otros,0.160652061
+_0623102,Exámen de laboratorio clínico,0.162105995
+_0631101,Servicio de hospitalización,0.215398892
+_0631102,Intervención hospitalaria,0.132246196
+_0711101,Automóvil y pickup,1.966477737
+_0712101,Motocicletas,0.376886192
+_0713101,Bicicletas,0.052194712
+_0721101,Repuestos para vehículos en general (amortiguador),0.102007446
+_0721102,Llantas para automóvil,0.180891142
+_0721103,Baterías y lubricantes,0.090244495
+_0722101,Gasolina superior,1.598098611
+_0722102,Gasolina regular,0.537646524
+_0722103,Diesel,0.107784517
+_0723101,Servicio de mantenimiento de automóvil,0.338983349
+_0723102,Reparación de automóvil,0.236813496
+_0723103,Lavado de automóvil,0.043935125
+_0724101,Parqueo,0.083980201
+_0724201,Servicio de pinchazo,0.03762443
+_0724202,Licencia de conducir,0.03572194
+_0731101,Servicio de taxi,0.088821495
+_0731102,Servicio de transporte escolar,0.249960778
+_0731103,Servicio de bus urbano,0.528853312
+_0731104,Servicio de bus extraurbano,1.312918582
+_0732101,Servicio de transporte aéreo,0.09653199
+_0811101,Servicio postal,0.013278755
+_0821101,Equipo de telefonía móvil,0.479102448
+_0831101,Servicio de internet residencial,0.213117452
+_0831102,"Servicio de paquete de telecomunicaciones (internet, tv, etc)",0.650867829
+_0831103,Servicio de telefonía móvil,2.050976096
+_0831104,Servicio de telefonía residencial,0.459072176
+_0831201,Servicio público de comunicaciones,0.03955012
+_0831202,Servicio público de internet,0.074289881
+_0911101,Televisor,0.645036623
+_0911102,Reproductor portátil de audio y video,0.047709169
+_0912101,Cámara de video,0.012505386
+_0912102,Cámara fotográfica,0.048304663
+_0913101,Computadora,0.34775336
+_0913102,Tintas y toner para impresora,0.038312728
+_0914101,Música y película digital,0.070221957
+_0914102,Unidad de respaldo magnético,0.038830886
+_0921101,Auto de juguete,0.045613337
+_0921102,Juegos de salón,0.001871554
+_0921103,Muñecas y muñecos,0.030756908
+_0921104,Consola de videojuego,0.050137549
+_0922101,Implementos deportivos,0.307174659
+_0922102,Instrumentos musicales,0.00717687
+_0922103,Máquinas para ejercicios,0.009087092
+_0923101,Flores,0.000804304
+_0924101,Alimento para mascotas,0.15445737
+_0925101,Servicio vetererinario,0.022497321
+_0931101,Entrada al estadio,0.019380641
+_0931102,Servicio de fiestas,0.514460905
+_0931201,Clases deportivas,0.045118381
+_0931202,Clases recreativas,0.018444864
+_0932101,Entrada al cine,0.068605614
+_0932102,Presentaciones artísticas,0.052975815
+_0933101,Juegos de azar,0.010742103
+_0941101,Textos escolares,0.784018868
+_0942101,Diarios,0.008886016
+_0942102,"Revistas, periódicos y otros",0.06394993
+_0943101,Cuadernos  y utiles,0.281243577
+_0943102,Lápices  y reglas,0.077754576
+_0951101,Servicios de viajes todo incluido dentro del país,0.311660203
+_0951102,Servicios de viajes todo incluido fuera del país,0.211091224
+_1011101,Servicio de educación preprimaria,0.149469137
+_1011102,Servicio de educación de primaria,0.49011523
+_1021101,Servicio de educación de la enseñanza media,0.794072672
+_1031102,Servicios de enseñanza universitaria,0.935645705
+_1041101,Cursos de capacitación,0.506502932
+_1111101,Desayuno consumido fuera del hogar,1.207075223
+_1111102,Almuerzo consumido fuera del hogar,3.651704163
+_1111103,Otras comidas consumidas  fuera del hogar,1.820960519
+_1111201,Platos preparados para llevar,0.098774761
+_1111202,Pollo frito para llevar,0.111751903
+_1111203,Papas fritas y frituras para llevar,0.031197728
+_1121101,Servicio de alojamiento estudiantil,0.15644493
+_1121102,Servicio de alojamiento turístico y otros,0.064584093
+_1211101,Servicio de peluquería,0.380111143
+_1211102,Servicio de salón de belleza,0.389523051
+_1212101,Artículos eléctricos para el cabello,0.022157038
+_1212102,Máquina de afeitar desechable,0.180512191
+_1212103,Artículos diversos para el cuidado personal,0.198160485
+_1212201,Pastas dentales,0.379546583
+_1212202,Papel higiénico,0.505219138
+_1212203,Jabón,0.279194148
+_1212204,Pañales,0.187789599
+_1212205,Protección higiénica femenina,0.189421408
+_1212206,Champú,0.528288752
+_1212301,Productos de belleza varios,0.212173941
+_1212302,Cremas y maquillaje,0.030617701
+_1212303,Colonias y perfumes,0.666141878
+_1212304,Cremas para la piel,0.19714737
+_1212305,Desodorantes y antitranspirantes,0.3030758
+_1212306,Artículos de maquillaje,0.120390441
+_1221101,Joyas,0.062697071
+_1221102,Reloj de pulsera,0.008414261
+_1222101,Carteras y bolsos,0.034445881
+_1222102,Artículos para el transporte del bebé,0.00391325
+_1222103,"Artículos personales diversos (lentes de sol, encendedores etc.)",0.005173842
+_1231101,Seguro,0.205855512
+_1241101,Creditos de consumo (tarjeta de crédito),0.06098019
+_1251101,Servicio de emisión de certificado de todo tipo,0.089324185
+_1251102,Servicio de fotocopiado,0.013897451
+_1251103,Servicio notarial,0.051065593
+_1251104,Servicio funerario,0.111775104
+_1251105,Mantenimiento de condominio,0.116995348
+_1300001,GB1,0.270967315
+_1300002,GB2,0.0655902
+_1300003,GB3,0.708737996
+_1300004,GB4,0.291385034
+_1300005,GB5,0.523808029
+_1300006,GB6,0.497454924
+_1300007,GB7,0.076775214
+_1300008,GB8,0.418618797
+_1300009,GB9,0.369780241
+_1300010,GB10,0.529213502
+_1300011,GB11,0.552570504
+_1300012,GB12,0.219469207
+_1300013,GB13,0.190378808
+_1300014,GB14,0.673064663
+_1300015,GB15,0.621464988
+_1300016,GB16,0.119092158
+_1300017,GB17,0.210034714
+_1300018,GB18,0.53622748
+_1300019,GB19,0.235830621
+_1300020,GB20,0.660111701
+_1300021,GB21,0.693870229
+_1300022,GB22,0.176050795
+_1300023,GB23,0.167389125
+_1300024,GB24,0.005959349
+_1300025,GB25,0.110849387
+_1300026,GB26,0.318228223
+_1300027,GB27,0.423459459
+_1300028,GB28,0.026213119
+_1300029,GB29,0.629723238
+_1300030,GB30,0.728534068
+_1300031,GB31,0.112705611
+_1300032,GB32,0.602086892
+_1300033,GB33,0.324949501
+_1300034,GB34,0.599197079
+_1300035,GB35,0.107516767
+_1300036,GB36,0.708124848
+_1300037,GB37,0.687929195
+_1300038,GB38,0.557450793
+_1300039,GB39,0.361048824
+_1300040,GB40,0.039013839
+_1300041,GB41,0.576308722
+_1300042,GB42,0.425788571
+_1300043,GB43,0.613288427
+_1300044,GB44,0.207356044
+_1300045,GB45,0.395965294
+_1300046,GB46,0.377722956
+_1300047,GB47,0.599978325
+_1300048,GB48,0.213111149
+_1300049,GB49,0.563106779
+_1300050,GB50,0.280179951
+_1300051,GB51,0.477928798
+_1300052,GB52,0.315574757
+_1300053,GB53,0.716297623
+_1300054,GB54,0.369339248
+_1300055,GB55,0.552748387
+_1300056,GB56,0.251179369
+_1300057,GB57,0.576292288

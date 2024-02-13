@@ -29,12 +29,15 @@ module HEMI
     
     ## Estructuras de datos de Guatemala
     export FGT00, FGT10, GT00, GT10, GTDATA
+    # Estructuras de datos experimentales 
+    export FGT23, GT23, GTDATA23
+    # Hierarchical CPI tree structures 
+    export CPI_00_TREE, CPI_10_TREE
     # Deprecated: use the uppercase variables
     export gt00, gt10, gtdata 
        
     function __init__()
         # Cargar los datos 
-        @info "Exportando datos del IPC en variables `FGT00`, `FGT10`, `GT00`, `GT10`, `GTDATA`"
         load_data()
     end
     
@@ -58,8 +61,14 @@ module HEMI
             @warn "Archivo principal de datos no encontrado. Ejecutar el script de actualización de datos `load_data.jl` y ejecutar `HEMI.load_data(). Cargando datos de prueba...`"
         end 
 
-        @info "Cargando datos de Guatemala..."
+        @info "Cargando datos del IPC en variables `FGT00`, `FGT10`, `GT00`, `GT10`, `GTDATA`"
         global FGT00, FGT10, GT00, GT10, GTDATA = load(maindatafile, "fgt00", "fgt10", "gt00", "gt10", "gtdata")
+
+        @info "Cargando estructuras jerárquicas del IPC en `CPI_00_TREE`, `CPI_10_TREE`"
+        global CPI_00_TREE, CPI_10_TREE = load(maindatafile, "cpi_00_tree", "cpi_10_tree")
+
+        @info "Cargando datos experimentales IPC base 2023 en `FGT23`, `GT23`, `GTDATA23`"
+        global FGT23, GT23, GTDATA23 = load(maindatafile, "fgt23", "gt23", "exp_gtdata")
 
         # Deprecated
         global gt00 = GT00
