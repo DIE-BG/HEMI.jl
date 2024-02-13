@@ -147,6 +147,9 @@ jldsave(datadir("guatemala", "gtdata32_test.jld2");
     # VarCPIBase
     gt00 = test_gt00, 
     gt10 = test_gt10, 
+    # Hierarchical trees
+    cpi_00_tree = cpi_00_tree_32, 
+    cpi_10_tree = cpi_10_tree_32,
     # UniformCountryStructure
     gtdata = test_gtdata, 
 )
