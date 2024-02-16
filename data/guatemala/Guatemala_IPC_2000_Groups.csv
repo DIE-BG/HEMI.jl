@@ -1,0 +1,229 @@
+Code,GroupName,Level
+_011111,Arroz,Gasto básico
+_011121,Pan,Gasto básico
+_011131,Pastas frescas y secas,Gasto básico
+_011141,Productos de tortillería,Gasto básico
+_011142,Productos de pastelería y repostería,Gasto básico
+_011151,Maíz,Gasto básico
+_011152,Otros cereales,Gasto básico
+_011153,Harina de maíz,Gasto básico
+_011154,Molienda de Maiz,Gasto básico
+_011211,"Carne bovina fresca, refrigerada o congelada",Gasto básico
+_011221,"Carne de cerdo fresca, refrigerada o congelada",Gasto básico
+_011231,"Carne de aves fresca, refrigerada o congelada",Gasto básico
+_011241,"Embutidos frescos o refrigerados, menudencias",Gasto básico
+_011311,"Pescado fresco o seco, refrigerado o congelado, ahumano o salado",Gasto básico
+_011321,Mariscos frescos y/o refrigerados,Gasto básico
+_011331,"Pescados y mariscos elaborados, preservados y/o en conserva",Gasto básico
+_011411,"Leche líquida fresca, descremada, pasteurizada o esterilizada y leche preservada, condensada, evaporada o en polvo",Gasto básico
+_011421,Queso,Gasto básico
+_011431,Otros productos lácteos,Gasto básico
+_011441,Huevos,Gasto básico
+_011511,Aceites y vegetales,Gasto básico
+_011521,Margarinas y otras grasas,Gasto básico
+_011611,Aguacates,Gasto básico
+_011612,Bananos o guineos,Gasto básico
+_011613,Manzanas de cualquier variedad,Gasto básico
+_011614,Naranjas,Gasto básico
+_011615,Plátanos,Gasto básico
+_011616,Otras frutas frescas,Gasto básico
+_011621,Frutas secas o en conserva,Gasto básico
+_011711,Tomate,Gasto básico
+_011712,Güisquil,Gasto básico
+_011713,Otras verduras y hortalizas,Gasto básico
+_011721,Frijol,Gasto básico
+_011722,Otras legumbres o leguminosas,Gasto básico
+_011731,Cebolla,Gasto básico
+_011732,Papa o patata,Gasto básico
+_011733,Zanahoria,Gasto básico
+_011734,Otras tuberosas frescas,Gasto básico
+_011741,Cominos,Gasto básico
+_011742,Culantro o cilantro,Gasto básico
+_011743,Otras hierbas culinarias,Gasto básico
+_011811,Azúcar,Gasto básico
+_011821,"Mermeladas, compotas, gelatinas y jaleas",Gasto básico
+_011831,Productos de confitería,Gasto básico
+_011841,"Granizadas, helados de hielo y de leche",Gasto básico
+_011911,Café,Gasto básico
+_011921,Mayonesa,Gasto básico
+_011922,Salsa de tomate,Gasto básico
+_011923,Otras salsas y condimentos,Gasto básico
+_011931,Sal,Gasto básico
+_011932,"Especias, aderezos y productos aromáticos",Gasto básico
+_011941,Levadura preparación de postres y sopas,Gasto básico
+_011951,Otros productos alimenticios no clasificados en otro subgrupo unitario,Gasto básico
+_012111,Agua,Gasto básico
+_012121,Bebidas gaseosas,Gasto básico
+_012131,Jugos,Gasto básico
+_012132,Refrescos,Gasto básico
+_012211,Comidas preparadas para llevar a domicilio,Gasto básico
+_012221,Almuerzo,Gasto básico
+_012222,Desayuno (o cena),Gasto básico
+_012223,Refacciones,Gasto básico
+_012231,"Golosinas, productos sintéticos y otras comidas preparadas fuera del hogar",Gasto básico
+_021111,Pantalones y overoles para niños menores de 3 años.,Gasto básico
+_021121,"Camisas, blusas, playeras, camisetas y similares para niños menores de 3 años",Gasto básico
+_021131,Vestidos y faldas para niñas menores de 3 años,Gasto básico
+_021141,"Calzoncillos, calzones, pantaletas y similares para niños menores de 3 años",Gasto básico
+_021142,"Calcetines, medias y similares para niños menores de 3 años",Gasto básico
+_021151,Otras prendas de vestir paa niños menores de 3 años,Gasto básico
+_021161,Prendas de vestir y accesorios diversos para bebés,Gasto básico
+_021211,"Pantalones, overoles para niños de 3 a 10 años",Gasto básico
+_021221,"Camisas, blusas, playeras, camisetas y similares para niños de 3 a 10 años",Gasto básico
+_021231,Vestidos y faldas para niñas de 3 a 10 años,Gasto básico
+_021241,"Calzoncillos, calzones, pantaletas y similares para niños de 3 a 10 años",Gasto básico
+_021242,"Calcetines, media y similares para niños de 3 a 10 años",Gasto básico
+_021251,Otras prendas de vestir para niños de 3 a 10 años,Gasto básico
+_021311,Pantalones y overoles para hombres mayores de 10 años,Gasto básico
+_021321,Camisas para hombres mayores de 10 años,Gasto básico
+_021331,Playeras y camisetas para hombres mayores de 10 años,Gasto básico
+_021341,Calzoncillos para hombres mayores de 10 años,Gasto básico
+_021342,"Calcetines, medias y similares para hombres mayores de 10 años",Gasto básico
+_021351,Otras prendas de vestir n.e.o.g para hombres mayores de 10 años,Gasto básico
+_021411,Vestidos para mujeres mayores de 10 años de edad,Gasto básico
+_021421,"Blusas, camisas y camisetas para maujeres mayores de 10 años",Gasto básico
+_021431,Pantalones y faldas para mujeres mayores de 10 años,Gasto básico
+_021441,"Brasieres, calzones, pantaletas, trajes de baño para mujeres de 10 años de edad",Gasto básico
+_021442,"Calcetas, medias, pantys y similares par amuejres mayores de 10 años de edad",Gasto básico
+_021451,Otras prendas de vestir n.e.o.g. para mujeres mayores de 10 años,Gasto básico
+_021461,Confeción y arreglo de ropa para mujeres mayores de 10 años de edad,Gasto básico
+_021511,Telas de toda clase,Gasto básico
+_021521,"Hilos, lanas y accesorios para costura y tejido",Gasto básico
+_022111,Zapatos y otros tipos de calzado para niños menores de 3 años,Gasto básico
+_022121,Zapatos y otros tipos de calzado para niños menores de 3 años,Gasto básico
+_022131,Zapatos y otros tipos de calzado para hombres mayores de 10 años,Gasto básico
+_022141,Zapatos y otros tipos de calzado para mujeres mayores de 10 años,Gasto básico
+_031111,Alquileres reales de vivienda,Gasto básico
+_032111,"Materiales de tierra piedra, cemento, barro y similares",Gasto básico
+_032112,"Materiales de hierro, zinc, metal y similares",Gasto básico
+_032113,"Materiales, productos y accesorios para instalaciones eléctricas",Gasto básico
+_032114,"Pinturas, brochas, barnices, diluyentes y todo lo relacionado con la pintura y decorado",Gasto básico
+_032115,"Otros materiales, productos y accesorios no clasificados en otro subgrupo unitario",Gasto básico
+_032211,Servicios de mantenimiento y reparaciones regulares de la vivienda,Gasto básico
+_033111,Gastos derivados del servicio de agua domiciliaria,Gasto básico
+_033121,Gastos derivados del servicio de electricidad,Gasto básico
+_033131,Gastos derivados del gas manufacturado y natural y gases licuados del petróleo,Gasto básico
+_033141,"Gastos por consumo de aceites domésticos para calentar y aceites para lámparas, combustibles de uso doméstico y accesorios de alumbrado",Gasto básico
+_033151,"Gastos por recolección de desechos domésticos, barrido y descarga de afluentes",Gasto básico
+_041111,Juegos de sala,Gasto básico
+_041121,Juego de comedor,Gasto básico
+_041122,Otros muebles de comedor,Gasto básico
+_041131,Camas,Gasto básico
+_041132,"Clóset, roperos y similares",Gasto básico
+_041133,Otros muebles de dormitorio,Gasto básico
+_041141,Muebles de cocina,Gasto básico
+_041151,Otros muebles del hogar,Gasto básico
+_041211,Alfombras y otras cubiertas para pisos,Gasto básico
+_041221,Equipos de iluminación (lámparas),Gasto básico
+_041231,Objetos decorativos,Gasto básico
+_042111,Tejidos y textiles para el hogar,Gasto básico
+_042121,"Colchones, sábanas y otros artículos similares para el hogar",Gasto básico
+_043111,Refrigeradores y congeladores eléctricos,Gasto básico
+_043112,Otros aparatos eléctricos para preservar alimentos,Gasto básico
+_043121,Estufas a gas,Gasto básico
+_043131,Aparatos elécticos para acondicionamiento del hogar,Gasto básico
+_043141,Lavadora de ropa,Gasto básico
+_043142,Otros aparatos eléctricos para aseo del hogar,Gasto básico
+_043151,Licuadora,Gasto básico
+_043152,Otros aparatos para uso del hogar,Gasto básico
+_044111,Vajillas,Gasto básico
+_044112,"Otros artículos de cristalería, vidriería y vajillas",Gasto básico
+_044121,"Cuchillería, cubiertos y utensilios de mesa",Gasto básico
+_044131,Ollas,Gasto básico
+_044132,Utensilios y artículos par ala cocina y uso doméstico,Gasto básico
+_045111,Herramientas y equipos para la casa y el jardín,Gasto básico
+_046111,Cloro o blanqueador,Gasto básico
+_046112,Desinfectante,Gasto básico
+_046113,Detergente en polvo para ropa,Gasto básico
+_046114,Jabón en bola,Gasto básico
+_046121,"Artículos, accesorios y utensilios de diferentes tipos de material para uso del hogar",Gasto básico
+_046131,Artículos para limpieza,Gasto básico
+_046211,Servicios para el mantenimiento rutinario del hogar,Gasto básico
+_051111,Productos naturales y medicamentos farmaceúticos para la nutrición y estimulantes del apetito,Gasto básico
+_051112,"Antibióticos, penicilinas, rifaminas, sulfas y tetracicilinas",Gasto básico
+_051113,"Productos naturales y medicamentos farmacéuticos para los parásitos, antibacterianos o anticolestorolemiantes",Gasto básico
+_051121,Productos naturlaes y mediamentos farmacéuticos para el sistema digestivo,Gasto básico
+_051131,Productos naturales y medicamentos dermatológicos e inmunológicos,Gasto básico
+_051141,Productos naturales y medicamentos farmacéuticos para el sistema nervioso,Gasto básico
+_051151,Productos para el sistema cardiovascular,Gasto básico
+_051152,"Productos antitusígenos, broncodilatadores y descongestivos para el sistema respiratorio",Gasto básico
+_051161,Otros productos naturales y medicamentos farmacéutico no especificados en otro subgrupo,Gasto básico
+_051211,Anteojos correctores y lentes de contacto,Gasto básico
+_052111,Servicios básicos de hospitales,Gasto básico
+_052121,Servicios médicos,Gasto básico
+_052131,Otros servicios médicos y paramédicos,Gasto básico
+_061111,Automóviles,Gasto básico
+_061112,Otros vehículos,Gasto básico
+_061121,Adquisición de otros vehíclos de transporte personal (bicicletas y motos),Gasto básico
+_061211,Repuestos y accesorios para vehículos personales,Gasto básico
+_061221,Reparación y mantenimento de vehículos personales,Gasto básico
+_061231,Gasolina,Gasto básico
+_061311,Transporte extraurbano,Gasto básico
+_061321,Transporte urbano,Gasto básico
+_061331,Transporte aéreo,Gasto básico
+_062111,Servicio de correo internacional,Gasto básico
+_062112,Servicio de correo nacional,Gasto básico
+_062211,Compra de quipo telefónico y de telefax,Gasto básico
+_062311,Telefonía residencial,Gasto básico
+_062312,Otros servicios de telefonía,Gasto básico
+_071111,Equipos de sonido,Gasto básico
+_071121,Televisores,Gasto básico
+_071131,Equipos para procesamiento de datos,Gasto básico
+_071141,"Medios para la grabación de audio, video y fotografía",Gasto básico
+_071151,"Reparación y/o mantenimiento de equipos para la recepción grabación y reproducción de imagen, equipos fotográficos y ópticos",Gasto básico
+_072111,Instrumentos musicales,Gasto básico
+_073111,"Juegos y juguetes de plástico, hule o materiales similares",Gasto básico
+_073121,Juegos y juguetes de metal o materiales similares,Gasto básico
+_073131,Juegos y juguetes de otro tipo de material no clasificado en otro subgrupo,Gasto básico
+_074111,"Equipos, artículos y accesorios para deportes",Gasto básico
+_074121,Ropa y calzado para deportes,Gasto básico
+_075111,"Gastos por ingreso a diferentes lugares, culturales, sociales y de esparcimiento",Gasto básico
+_075121,Televisón por cable,Gasto básico
+_075131,"Gastos por servicios sociales, fiestas y/o convivios familiares y no familiares",Gasto básico
+_075141,"Otros tipos de gastos por servicios sociales, culturales y recreativos",Gasto básico
+_076111,Gastos por suscripción y/o compra de revistas periódicos y similares,Gasto básico
+_076121,"Libros de texto y folletos no escolares, y demás material impreso diverso",Gasto básico
+_077111,Viajes de paseo y/o recreación dentro del país,Gasto básico
+_077121,Viajes de paseo y/o recreación fuera del país,Gasto básico
+_078111,"Adquisición de animales, plantas y productos de jardinería y otros productos para el cuidado de los animales",Gasto básico
+_081111,Inscripción en preprimaria y primaria,Gasto básico
+_081112,Cuota mensual en educación primaria y preprimaria,Gasto básico
+_081113,Otras cuotas fijas y extraordinarias en la educaión preprimaria y primaria,Gasto básico
+_081121,Inscripción de secundaria,Gasto básico
+_081122,Cuota mensual en educación secundaria,Gasto básico
+_081123,Otras cuotas fijas y extraordinarios en la educación secundaria,Gasto básico
+_081131,Incripción en educación superior,Gasto básico
+_081132,Cuota mensual en educación superior,Gasto básico
+_081141,"Educación no formal en establecimientos públicos y privados (clases de apoyo, lecciones o cursos)",Gasto básico
+_081211,"Libros de texto, enciclopedias, atlas y diccionarios",Gasto básico
+_081221,Material y útiles de estudio de papel,Gasto básico
+_081231,Otros materiales y útiles de estudio,Gasto básico
+_082111,Transporte escolar,Gasto básico
+_082211,Uniforme escolar,Gasto básico
+_091111,Corte de cabello,Gasto básico
+_091121,Aparatos y accesorios para el cuidado personal,Gasto básico
+_091131,Champú para el cabello,Gasto básico
+_091132,Pasta dental,Gasto básico
+_091133,Jabón de tocador en pastilla,Gasto básico
+_091141,Lociones y perfumes,Gasto básico
+_091142,Desodorantes,Gasto básico
+_091143,Productos de belleza,Gasto básico
+_091151,Papel higiénico,Gasto básico
+_091152,Otros productos para el cuidado personal,Gasto básico
+_091161,Artículos de joyería y otros personales,Gasto básico
+_092111,Cerveza,Gasto básico
+_092112,Otras bebidas alcohólicas,Gasto básico
+_092211,Cigarrillos con filtro,Gasto básico
+_093111,Gastos por seguros,Gasto básico
+_093121,Gastos por servicios funerarios,Gasto básico
+_094111,Gastos por servicios diversos para el hogar,Gasto básico
+_01,"Alimentos, bebidas no alcoholicas y comidas fuera del hogar",División
+_02,"Vestuario y calzado",División
+_03,"Vivienda, agua, electricidad, gas y otros combustibles",División
+_04,"Mobiliario, equipo de la vivienda y mantenimiento de rutina de la casa",División
+_05,"Salud",División
+_06,"Transporte y comunicaciones",División
+_07,"Recreacion y cultura",División
+_08,"Educacion",División
+_09,"Bienes y servicios diversos",División
+_0,Índice general,General

@@ -1,0 +1,537 @@
+Code,GroupName,Level
+_0111101,Arroz,Gasto básico
+_0111201,Harina,Gasto básico
+_0111202,Maíz,Gasto básico
+_0111203,Cereales,Gasto básico
+_0111301,Pan,Gasto básico
+_0111302,Galletas,Gasto básico
+_0111303,Productos de repostería,Gasto básico
+_0111401,Pastas,Gasto básico
+_0111501,Productos de tortillería,Gasto básico
+_0112101,Carne de res,Gasto básico
+_0112201,Carne de cerdo,Gasto básico
+_0112301,Carne de pollo,Gasto básico
+_0112401,Embutidos,Gasto básico
+_0113101,Pescados,Gasto básico
+_0113201,Mariscos,Gasto básico
+_0114101,Leche,Gasto básico
+_0114102,Yogur,Gasto básico
+_0114301,Quesos,Gasto básico
+_0114401,Huevos,Gasto básico
+_0115101,Margarina,Gasto básico
+_0115201,Aceites,Gasto básico
+_0116101,Aguacate,Gasto básico
+_0116102,Banano,Gasto básico
+_0116103,Manzana,Gasto básico
+_0116104,Naranja,Gasto básico
+_0116105,Plátano,Gasto básico
+_0116106,Frutas de estación,Gasto básico
+_0116201,Frutas en conserva,Gasto básico
+_0117101,Tomate,Gasto básico
+_0117102,Güisquil,Gasto básico
+_0117103,Chile pimiento,Gasto básico
+_0117104,Pepino,Gasto básico
+_0117105,Güicoy,Gasto básico
+_0117106,Repollo,Gasto básico
+_0117107,Lechuga,Gasto básico
+_0117108,Frijol,Gasto básico
+_0117109,Ejotes,Gasto básico
+_0117110,Elote,Gasto básico
+_0117111,Cebolla,Gasto básico
+_0117112,Papa,Gasto básico
+_0117113,Zanahoria,Gasto básico
+_0117114,Rábano,Gasto básico
+_0117115,Remolacha,Gasto básico
+_0117116,Yuca,Gasto básico
+_0117117,Brócoli,Gasto básico
+_0117118,Culantro,Gasto básico
+_0117119,Hierbabuena,Gasto básico
+_0117120,Otras legumbres y hortalizas,Gasto básico
+_0118101,Azúcar,Gasto básico
+_0118201,Jaleas,Gasto básico
+_0118202,Compotas,Gasto básico
+_0118301,Dulces,Gasto básico
+_0118401,Helados,Gasto básico
+_0119101,Salsa de tomate,Gasto básico
+_0119102,Pasta de tomate,Gasto básico
+_0119103,Mayonesa y mostaza,Gasto básico
+_0119104,Sazonadores,Gasto básico
+_0119105,Sal,Gasto básico
+_0119201,Canela,Gasto básico
+_0119202,Pepitoria y manía,Gasto básico
+_0119203,Chiles picantes,Gasto básico
+_0119301,Consomé de pollo,Gasto básico
+_0119302,Sopas concentradas en sobre,Gasto básico
+_0119303,Sopas instantaneas,Gasto básico
+_0119304,Polvos para gelatina,Gasto básico
+_0119305,Alimentos enlatados,Gasto básico
+_0121101,Café instantaneo,Gasto básico
+_0121102,Otras bebidas,Gasto básico
+_0121201,Agua envasada,Gasto básico
+_0121301,Aguas gaseosas,Gasto básico
+_0121401,Polvo para refresco,Gasto básico
+_0121402,Jugos de frutas,Gasto básico
+_0121501,Refrescos naturales,Gasto básico
+_0121502,Refrescos artificiales,Gasto básico
+_0211101,Licores varios,Gasto básico
+_0212101,Vino blanco,Gasto básico
+_0212102,Vino tinto,Gasto básico
+_0213101,Cerveza,Gasto básico
+_0221101,Cigarrillos de tabaco,Gasto básico
+_0311101,Telas para confección de vestuario,Gasto básico
+_0312101,Pantalón para hombre,Gasto básico
+_0312102,Camisa para hombre,Gasto básico
+_0312103,Traje para hombre,Gasto básico
+_0312104,Ropa deportiva para hombre,Gasto básico
+_0312105,Ropa interior y de dormir para hombre,Gasto básico
+_0312201,Pantalón y falda para mujer,Gasto básico
+_0312202,Blusa para mujer,Gasto básico
+_0312203,Otro vestuario de mujer,Gasto básico
+_0312204,Ropa interior y de dormir para mujer,Gasto básico
+_0312301,Pantalón y pantaloneta para niño,Gasto básico
+_0312302,"Pantalón, falda y short  para niña",Gasto básico
+_0312303,Camisa y playera para niño,Gasto básico
+_0312304,Blusa para niña,Gasto básico
+_0312305,Vestido para niña,Gasto básico
+_0312306,Camiseta para niño,Gasto básico
+_0312401,Pijama para bebé,Gasto básico
+_0312501,Uniforme escolar,Gasto básico
+_0313101,Artículos varios de vestuario,Gasto básico
+_0313102,Otras prendas de vestir,Gasto básico
+_0314101,Servicio de limpieza de prendas de vestir,Gasto básico
+_0321101,Zapatos para hombre,Gasto básico
+_0321201,Zapatos varios para mujer,Gasto básico
+_0321202,Zapatos para mujer,Gasto básico
+_0321203,Zapatos varios para mujer,Gasto básico
+_0321301,Calzado para niño,Gasto básico
+_0321302,Calzado para niña,Gasto básico
+_0322101,Servicio de reparación de calzado,Gasto básico
+_0411101,Alquiler de vivienda,Gasto básico
+_0421101,Materiales diversos para reparación  de vivienda,Gasto básico
+_0421102,Trabajos para vivienda,Gasto básico
+_0421103,Artículos para electricidad y grifería,Gasto básico
+_0422101,Servicio de mantenimiento de vivienda,Gasto básico
+_0431101,Agua potable,Gasto básico
+_0432101,Servicio de retiro de basura,Gasto básico
+_0441101,Servicio de electricidad,Gasto básico
+_0442101,Gas propano,Gasto básico
+_0443101,Carbón,Gasto básico
+_0443102,Leña,Gasto básico
+_0511101,Cama,Gasto básico
+_0511102,Cuna,Gasto básico
+_0511103,Juego de comedor,Gasto básico
+_0511104,Muebles para cocina,Gasto básico
+_0511105,Juego de sala,Gasto básico
+_0511106,Muebles modulares,Gasto básico
+_0511201,Alfombra,Gasto básico
+_0511202,"Puertas, lamparas y varios",Gasto básico
+_0521101,Cubrecama,Gasto básico
+_0521102,Sábana,Gasto básico
+_0521103,Poncho y frazadas,Gasto básico
+_0521104,Mantel,Gasto básico
+_0521105,Cortinas,Gasto básico
+_0522101,Estufa,Gasto básico
+_0522102,Refrigerador,Gasto básico
+_0522103,Lavadora,Gasto básico
+_0523101,Horno de microondas,Gasto básico
+_0523102,Licuadora,Gasto básico
+_0523103,Ventilador,Gasto básico
+_0523104,Plancha eléctrica,Gasto básico
+_0531101,Vajillas,Gasto básico
+_0531102,Baterias de cocina,Gasto básico
+_0531103,Juegos de vasos,Gasto básico
+_0531104,Utencilios de cocina,Gasto básico
+_0541101,Barreno eléctrico,Gasto básico
+_0541201,Martillo,Gasto básico
+_0541202,Machete,Gasto básico
+_0541203,Serrucho,Gasto básico
+_0541204,Desarmadores,Gasto básico
+_0551101,Aromatizador y desinfectante,Gasto básico
+_0551102,Detergente para ropa,Gasto básico
+_0551103,Jabón varias clases,Gasto básico
+_0551201,Artículos para limpieza del hogar,Gasto básico
+_0551202,Fosforos,Gasto básico
+_0551203,Servilletas de papel,Gasto básico
+_0551204,Veladoras y candelas,Gasto básico
+_0552101,Servicio doméstico por mes,Gasto básico
+_0552102,Lavado de ropa diversa,Gasto básico
+_0611101,Analgésico y antiinflamatorio,Gasto básico
+_0611102,Antiacido y antiulceroso,Gasto básico
+_0611103,Antialérgico,Gasto básico
+_0611104,Antibiótico,Gasto básico
+_0611105,Antigripal,Gasto básico
+_0611106,Antihipertensor,Gasto básico
+_0611107,Vacunas de prevención,Gasto básico
+_0611108,Dermatológico,Gasto básico
+_0611109,Mucolítico y broncodilatador,Gasto básico
+_0611110,Vitaminas y minerales,Gasto básico
+_0612101,"Vendas, parches, apósitos",Gasto básico
+_0612102,Preservativos,Gasto básico
+_0613101,Lentes de corrección,Gasto básico
+_0621101,Consulta médica,Gasto básico
+_0621102,Consulta con ginecólogo,Gasto básico
+_0622101,Consulta odontológica,Gasto básico
+_0622102,Tratamiento odontológico,Gasto básico
+_0623101,Exámen de radiología y otros,Gasto básico
+_0623102,Exámen de laboratorio clínico,Gasto básico
+_0631101,Servicio de hospitalización,Gasto básico
+_0631102,Intervención hospitalaria,Gasto básico
+_0711101,Automóvil y pickup,Gasto básico
+_0712101,Motocicletas,Gasto básico
+_0713101,Bicicletas,Gasto básico
+_0721101,Repuestos para vehículos en general (amortiguador),Gasto básico
+_0721102,Llantas para automóvil,Gasto básico
+_0721103,Baterías y lubricantes,Gasto básico
+_0722101,Gasolina superior,Gasto básico
+_0722102,Gasolina regular,Gasto básico
+_0722103,Diesel,Gasto básico
+_0723101,Servicio de mantenimiento de automóvil,Gasto básico
+_0723102,Reparación de automóvil,Gasto básico
+_0723103,Lavado de automóvil,Gasto básico
+_0724101,Parqueo,Gasto básico
+_0724201,Servicio de pinchazo,Gasto básico
+_0724202,Licencia de conducir,Gasto básico
+_0731101,Servicio de taxi,Gasto básico
+_0731102,Servicio de transporte escolar,Gasto básico
+_0731103,Servicio de bus urbano,Gasto básico
+_0731104,Servicio de bus extraurbano,Gasto básico
+_0732101,Servicio de transporte aéreo,Gasto básico
+_0811101,Servicio postal,Gasto básico
+_0821101,Equipo de telefonía móvil,Gasto básico
+_0831101,Servicio de internet residencial,Gasto básico
+_0831102,"Servicio de paquete de telecomunicaciones (internet, tv, etc)",Gasto básico
+_0831103,Servicio de telefonía móvil,Gasto básico
+_0831104,Servicio de telefonía residencial,Gasto básico
+_0831201,Servicio público de comunicaciones,Gasto básico
+_0831202,Servicio público de internet,Gasto básico
+_0911101,Televisor,Gasto básico
+_0911102,Reproductor portátil de audio y video,Gasto básico
+_0912101,Cámara de video,Gasto básico
+_0912102,Cámara fotográfica,Gasto básico
+_0913101,Computadora,Gasto básico
+_0913102,Tintas y toner para impresora,Gasto básico
+_0914101,Música y película digital,Gasto básico
+_0914102,Unidad de respaldo magnético,Gasto básico
+_0921101,Auto de juguete,Gasto básico
+_0921102,Juegos de salón,Gasto básico
+_0921103,Muñecas y muñecos,Gasto básico
+_0921104,Consola de videojuego,Gasto básico
+_0922101,Implementos deportivos,Gasto básico
+_0922102,Instrumentos musicales,Gasto básico
+_0922103,Máquinas para ejercicios,Gasto básico
+_0923101,Flores,Gasto básico
+_0924101,Alimento para mascotas,Gasto básico
+_0925101,Servicio vetererinario,Gasto básico
+_0931101,Entrada al estadio,Gasto básico
+_0931102,Servicio de fiestas,Gasto básico
+_0931201,Clases deportivas,Gasto básico
+_0931202,Clases recreativas,Gasto básico
+_0932101,Entrada al cine,Gasto básico
+_0932102,Presentaciones artísticas,Gasto básico
+_0933101,Juegos de azar,Gasto básico
+_0941101,Textos escolares,Gasto básico
+_0942101,Diarios,Gasto básico
+_0942102,"Revistas, periódicos y otros",Gasto básico
+_0943101,Cuadernos  y utiles,Gasto básico
+_0943102,Lápices  y reglas,Gasto básico
+_0951101,Servicios de viajes todo incluido dentro del país,Gasto básico
+_0951102,Servicios de viajes todo incluido fuera del país,Gasto básico
+_1011101,Servicio de educación preprimaria,Gasto básico
+_1011102,Servicio de educación de primaria,Gasto básico
+_1021101,Servicio de educación de la enseñanza media,Gasto básico
+_1031102,Servicios de enseñanza universitaria,Gasto básico
+_1041101,Cursos de capacitación,Gasto básico
+_1111101,Desayuno consumido fuera del hogar,Gasto básico
+_1111102,Almuerzo consumido fuera del hogar,Gasto básico
+_1111103,Otras comidas consumidas  fuera del hogar,Gasto básico
+_1111201,Platos preparados para llevar,Gasto básico
+_1111202,Pollo frito para llevar,Gasto básico
+_1111203,Papas fritas y frituras para llevar,Gasto básico
+_1121101,Servicio de alojamiento estudiantil,Gasto básico
+_1121102,Servicio de alojamiento turístico y otros,Gasto básico
+_1211101,Servicio de peluquería,Gasto básico
+_1211102,Servicio de salón de belleza,Gasto básico
+_1212101,Artículos eléctricos para el cabello,Gasto básico
+_1212102,Máquina de afeitar desechable,Gasto básico
+_1212103,Artículos diversos para el cuidado personal,Gasto básico
+_1212201,Pastas dentales,Gasto básico
+_1212202,Papel higiénico,Gasto básico
+_1212203,Jabón,Gasto básico
+_1212204,Pañales,Gasto básico
+_1212205,Protección higiénica femenina,Gasto básico
+_1212206,Champú,Gasto básico
+_1212301,Productos de belleza varios,Gasto básico
+_1212302,Cremas y maquillaje,Gasto básico
+_1212303,Colonias y perfumes,Gasto básico
+_1212304,Cremas para la piel,Gasto básico
+_1212305,Desodorantes y antitranspirantes,Gasto básico
+_1212306,Artículos de maquillaje,Gasto básico
+_1221101,Joyas,Gasto básico
+_1221102,Reloj de pulsera,Gasto básico
+_1222101,Carteras y bolsos,Gasto básico
+_1222102,Artículos para el transporte del bebé,Gasto básico
+_1222103,"Artículos personales diversos (lentes de sol, encendedores etc.)",Gasto básico
+_1231101,Seguro,Gasto básico
+_1241101,Creditos de consumo (tarjeta de crédito),Gasto básico
+_1251101,Servicio de emisión de certificado de todo tipo,Gasto básico
+_1251102,Servicio de fotocopiado,Gasto básico
+_1251103,Servicio notarial,Gasto básico
+_1251104,Servicio funerario,Gasto básico
+_1251105,Mantenimiento de condominio,Gasto básico
+_01111,Arroz de todos los tipos,Subgrupo
+_01112,Harinas y cereales,Subgrupo
+_01113,Pan y otros productos de panadería,Subgrupo
+_01114,Pastas de todos los tipos,Subgrupo
+_01115,Productos de tortillería,Subgrupo
+_01121,"Carne de res fresca, refrigerada o congelada",Subgrupo
+_01122,"Carne de cerdo fresca, refrigerada o congelada",Subgrupo
+_01123,"Carne de ave fresca, refrigerada o congelada",Subgrupo
+_01124,Embutidos y carne procesada,Subgrupo
+_01131,"Pescado fresco, refrigerado o congelado",Subgrupo
+_01132,"Mariscos frescos, refrigerados o congelados",Subgrupo
+_01141,Leches de todo tipo,Subgrupo
+_01143,Productos lácteos,Subgrupo
+_01144,Huevos,Subgrupo
+_01151,Margarina,Subgrupo
+_01152,Aceites comestibles,Subgrupo
+_01161,Frutas frescas refrigeradas o congeladas,Subgrupo
+_01162,Frutas secas y frutas en conserva,Subgrupo
+_01171,"Hortalizas frescas, refrigeradas o congeladas",Subgrupo
+_01181,Azúcar y edulcorantes,Subgrupo
+_01182,"Jaleas, compotas, gelatinas",Subgrupo
+_01183,"Dulces, chocolates y goma de mascar",Subgrupo
+_01184,Helados de todo tipo,Subgrupo
+_01191,"Salsas, aderezos y condimentos",Subgrupo
+_01192,"Especias, aderezos y productos aromáticos",Subgrupo
+_01193,Sopas y prepración de postres,Subgrupo
+_01211,Café todas las clases,Subgrupo
+_01212,Agua purificada,Subgrupo
+_01213,Bebidas gaseosas,Subgrupo
+_01214,Jugos líquidos y en polvo,Subgrupo
+_01215,Refrescos,Subgrupo
+_02111,Licores,Subgrupo
+_02121,Vinos de todo tipo,Subgrupo
+_02131,Cervezas de todo tipo con alcohol,Subgrupo
+_02211,Cigarrillos de tabaco,Subgrupo
+_03111,Telas para confección de vestuario,Subgrupo
+_03121,Vestuario para hombre,Subgrupo
+_03122,Vestuario para mujer,Subgrupo
+_03123,Vestuario para niño y niña (de 3 a 13 años),Subgrupo
+_03124,Vestuario para lactante (de 0 a 3 años),Subgrupo
+_03125,Vestuario escolar,Subgrupo
+_03131,Artículos varios de vestuario,Subgrupo
+_03141,Servicios de limpieza y reparación de prendas de vestir,Subgrupo
+_03211,Calzado para hombre,Subgrupo
+_03212,Calzado para mujer,Subgrupo
+_03213,Calzado para niño y niña (de 3 a 13 años),Subgrupo
+_03221,Servicios de reparación de calzado,Subgrupo
+_04111,Alquiler de vivienda,Subgrupo
+_04211,Materiales diversos para reparación de vivienda,Subgrupo
+_04221,Servicios de mantenimiento de vivienda,Subgrupo
+_04311,Agua potable,Subgrupo
+_04321,Servicio de retiro de basura,Subgrupo
+_04411,Servicio de electricidad,Subgrupo
+_04421,Gas licuado,Subgrupo
+_04431,Otros combustibles de uso doméstico,Subgrupo
+_05111,Muebles y artículos para amueblar,Subgrupo
+_05112,Artículos y adornos para el hogar,Subgrupo
+_05211,"Tejidos para cama, cocina, comedor",Subgrupo
+_05221,Aparatos línea blanca,Subgrupo
+_05231,Electrodomésticos y otros accesorios,Subgrupo
+_05311,Artículos y utensilios para el hogar,Subgrupo
+_05411,Herramientas eléctricas,Subgrupo
+_05412,Herramientas manuales,Subgrupo
+_05511,Productos de limpieza y conservación del hogar,Subgrupo
+_05512,Accesorios y utensilios para el hogar,Subgrupo
+_05521,Servicios domésticos,Subgrupo
+_06111,Medicamentos,Subgrupo
+_06121,Otros productos médicos,Subgrupo
+_06131,Artefactos y equipos terapéuticos,Subgrupo
+_06211,Servicios médicos,Subgrupo
+_06221,Servicios dentales,Subgrupo
+_06231,Servicios de laboratorio de diagnóstico y radiológicos,Subgrupo
+_06311,Servicios de hospitalización,Subgrupo
+_07111,Automóvil nuevo,Subgrupo
+_07121,Motocicletas,Subgrupo
+_07131,Bicicletas,Subgrupo
+_07211,Repuestos para automóviles,Subgrupo
+_07221,Combustibles para el automóvil,Subgrupo
+_07231,Servicio de mantenimiento y reparación del automóvil,Subgrupo
+_07241,Servicio de estacionamiento de vehículos,Subgrupo
+_07242,Servicios relacionados a la circulación del vehículo,Subgrupo
+_07311,Servicio de transporte de pasajeros por vías urbanas,Subgrupo
+_07321,Servicio de transporte aéreo,Subgrupo
+_08111,Servicio de correos,Subgrupo
+_08211,Equipos telefónicos,Subgrupo
+_08311,Servicios de telecomunicaciones residenciales y móvil,Subgrupo
+_08312,Otros servicios de telecomunicaciones,Subgrupo
+_09111,Televisores y reproductores de películas,Subgrupo
+_09121,Cámaras,Subgrupo
+_09131,"Computadoras, impresoras y sus accesorios",Subgrupo
+_09141,Registro de sonidos e imágenes,Subgrupo
+_09211,Juegos y juguetes,Subgrupo
+_09221,Equipo de deportes y recreación,Subgrupo
+_09231,Flores y plantas,Subgrupo
+_09241,Alimentos para mascotas,Subgrupo
+_09251,Servicios veterinarios,Subgrupo
+_09311,Servicios prestados en centros de recreación y deportivos,Subgrupo
+_09312,Clases deportivas y recreativas,Subgrupo
+_09321,Servicios prestados por establecimientos culturales,Subgrupo
+_09331,Juegos de azar,Subgrupo
+_09411,Textos escolares,Subgrupo
+_09421,Diarios y revistas,Subgrupo
+_09431,Artículos escolares,Subgrupo
+_09511,Paquetes turísticos,Subgrupo
+_10111,Servicio de educación preescolar y enseñanza básica,Subgrupo
+_10211,Servicio de educación de la enseñanza media,Subgrupo
+_10311,Servicios de educación superior,Subgrupo
+_10411,Clases de apoyo,Subgrupo
+_11111,Alimentos consumidos fuera del hogar,Subgrupo
+_11112,Alimentos preparados para llevar,Subgrupo
+_11211,Servicios de alojamiento,Subgrupo
+_12111,Servicios de peluquería y cuidado personal,Subgrupo
+_12121,Artículos para el cuidado personal,Subgrupo
+_12122,Artículos de higiene personal,Subgrupo
+_12123,Productos de belleza,Subgrupo
+_12211,Accesorios personales (joyería y relojes),Subgrupo
+_12221,Otros artículos personales,Subgrupo
+_12311,Seguros varios,Subgrupo
+_12411,Gastos financieros,Subgrupo
+_12511,Honorarios y gastos,Subgrupo
+_0111,Pan y cereales,Grupo
+_0112,Carnes,Grupo
+_0113,Pescados y mariscos,Grupo
+_0114,"Productos lácteos, quesos y huevos",Grupo
+_0115,Aceites y grasas,Grupo
+_0116,Frutas,Grupo
+_0117,Hortalizas,Grupo
+_0118,"Azúcar, mermelada, miel, chocolate y dulces de azúcar",Grupo
+_0119,Otros productos alimenticios,Grupo
+_0121,"Aguas minerales, refrescos, gaseosas y jugos de fruta",Grupo
+_0211,Bebidas destiladas,Grupo
+_0212,Vinos,Grupo
+_0213,Cervezas,Grupo
+_0221,Tabaco,Grupo
+_0311,Materiales para prendas de vestir,Grupo
+_0312,Prendas de vestir,Grupo
+_0313,Otros artículos y accesorios de vestir,Grupo
+_0314,Limpieza y reparación de prendas de vestir,Grupo
+_0321,Zapatos y otros calzados,Grupo
+_0322,Reparación de calzado,Grupo
+_0411,Alquiler de vivienda,Grupo
+_0421,Materiales para la conservación y reparación de la vivienda,Grupo
+_0422,Servicios para la conservación y reparación de la vivienda,Grupo
+_0431,Suministro de agua y alcantarillado,Grupo
+_0432,Retiro de basuras,Grupo
+_0441,Electricidad,Grupo
+_0442,Gas,Grupo
+_0443,Otros combustibles de uso doméstico,Grupo
+_0511,Muebles y artículos para el hogar,Grupo
+_0521,Productos textiles para el hogar,Grupo
+_0522,"Aparatos para el hogar, eléctricos o no",Grupo
+_0523,Pequeños artefactos para el hogar,Grupo
+_0531,"Artículos de vidrio y cristal, vajilla y utensilios para el hogar",Grupo
+_0541,Herramientas y accesorios diversos,Grupo
+_0551,Bienes no durables para el hogar,Grupo
+_0552,Servicios domésticos para el hogar,Grupo
+_0611,Productos farmacéuticos,Grupo
+_0612,Otros productos médicos,Grupo
+_0613,Artefactos y equipos terapéuticos,Grupo
+_0621,Servicios médicos,Grupo
+_0622,Servicios dentales,Grupo
+_0623,Servicios paramédicos,Grupo
+_0631,Servicios de hospital,Grupo
+_0711,Vehículos a motor,Grupo
+_0712,Motocicletas,Grupo
+_0713,Bicicletas,Grupo
+_0721,Repuestos y accesorios para equipo de transporte personal,Grupo
+_0722,Combustibles y lubricantes para equipo de transporte personal,Grupo
+_0723,Conservación y reparación de equipo de transporte personal,Grupo
+_0724,Otros servicios relativos al equipo de transporte personal,Grupo
+_0731,Transporte de pasajeros por vías urbanas y carreteras,Grupo
+_0732,Transporte de pasajeros por aire,Grupo
+_0811,Servicios postales,Grupo
+_0821,Equipos telefónicos,Grupo
+_0831,Servicios de telefonía,Grupo
+_0911,"Equipos para la recepción, grabación y reproducción de sonidos e imágenes",Grupo
+_0912,"Equipos fotográficos, cinematográfico e instrumentos ópticos",Grupo
+_0913,Equipos de procesamiento informático,Grupo
+_0914,Medios para grabación,Grupo
+_0921,"Juegos, juguetes y pasatiempos",Grupo
+_0922,"Equipos deportivos, campamentos y recreación",Grupo
+_0923,Jardinería y flores,Grupo
+_0924,Mascotas y productos relacionados,Grupo
+_0925,Servicios de veterinaria,Grupo
+_0931,Servicios de recreación y deportivos,Grupo
+_0932,Servicios culturales,Grupo
+_0933,Juegos de azar,Grupo
+_0941,"Libros, diccionarios, enciclopedias y otros similares",Grupo
+_0942,Diarios y revistas,Grupo
+_0943,"Papel, útiles de oficina y materiales de dibujo",Grupo
+_0951,Paquetes turísticos,Grupo
+_1011,Enseñanza pre-escolar y enseñanza básica (primaria),Grupo
+_1021,Enseñanza media (secundaria),Grupo
+_1031,Enseñanza superior,Grupo
+_1041,Enseñanza no atribuible a ningún nivel,Grupo
+_1111,"Restaurantes, cafés y establecimientos similares",Grupo
+_1121,Servicios de alojamiento,Grupo
+_1211,Salones de peluquería y establecimientos de cuidados personales,Grupo
+_1212,Artículos para el cuidado personal,Grupo
+_1221,Joyería y relojes,Grupo
+_1222,Otros artículos personales,Grupo
+_1231,Toda clase de seguros,Grupo
+_1241,Otros servicios financieros,Grupo
+_1251,Otros servicios,Grupo
+_011,Alimentos,Agrupación
+_012,"Aguas minerales, refrescos, gaseosas y jugos de fruta",Agrupación
+_021,Bebidas alcohólicas,Agrupación
+_022,Tabaco,Agrupación
+_031,Prendas de vestir,Agrupación
+_032,Calzado,Agrupación
+_041,Alquiler de vivienda,Agrupación
+_042,Conservación y reparación de la vivienda,Agrupación
+_043,Suministros de agua y servicios diversos de la vivienda,Agrupación
+_044,"Electricidad, gas y otros combustibles",Agrupación
+_051,"Muebles y accesorios, alfombras y otros materiales para pisos",Agrupación
+_052,Equipo para el hogar,Agrupación
+_053,"Artículos de vidrio y cristal, vajilla y utensilios para el hogar",Agrupación
+_054,Herramientas y equipos para el hogar,Agrupación
+_055,Bienes y servicios para la conservación del hogar,Agrupación
+_061,"Productos, artefactos y equipos médicos",Agrupación
+_062,Servicios para pacientes externos,Agrupación
+_063,Servicios de hospital,Agrupación
+_071,Adquisición de vehículos,Agrupación
+_072,Funcionamiento de equipo de transporte personal,Agrupación
+_073,Servicios de transporte,Agrupación
+_081,Servicios postales,Agrupación
+_082,Equipos telefónicos,Agrupación
+_083,Servicios telefónicos,Agrupación
+_091,"Equipo audiovisual, fotográfico y de procesamiento informático",Agrupación
+_092,"Otros equipos y artículos para la recreación, flores, jardinería y mascotas",Agrupación
+_093,Servicios de recreación y cultura,Agrupación
+_094,"Periódicos, libros y útiles de ofi cina",Agrupación
+_095,Paquetes turísticos,Agrupación
+_101,Enseñanza pre-escolar y enseñanza básica (primaria),Agrupación
+_102,Enseñanza media (secundaria),Agrupación
+_103,Enseñanza superior,Agrupación
+_104,Enseñanza no atribuible a ningún nivel u otras enseñanzas,Agrupación
+_111,Servicios de suministro de comidas por contrato,Agrupación
+_112,Servicios de alojamiento,Agrupación
+_121,Cuidado personal,Agrupación
+_122,Otros artículos personales,Agrupación
+_123,Seguros,Agrupación
+_124,Servicios financieros,Agrupación
+_125,Otros servicios,Agrupación
+_01,Alimentos y bebidas no alcohólicas,División
+_02,Bebidas alcohólicas y tabaco,División
+_03,Prendas de vestir y calzado,División
+_04,"Vivienda, agua, electricidad, gas y otros combustibles",División
+_05,"Muebles, artículos para el hogar y para la conservación del hogar",División
+_06,Salud,División
+_07,Transporte,División
+_08,Comunicaciones,División
+_09,Recreación y cultura,División
+_10,Educación,División
+_11,Restaurantes y hoteles,División
+_12,Bienes y servicios diversos,División
+_0,Índice general,General

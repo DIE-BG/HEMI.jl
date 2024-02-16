@@ -1,0 +1,438 @@
+Code,GoodOrService,Weight
+_0111101,Arroz,0.522366964
+_0111102,Maíz,0.711087209
+_0111201,Harina de trigo,0.055904629
+_0111202,Harina de maíz,0.170135799
+_0111203,Harina para atoles,0.143783212
+_0111301,Pan,1.077537933
+_0111302,Pan dulce,1.069826458
+_0111303,Galletas,0.146922489
+_0111304,Tortillas,3.941692351
+_0111305,Productos de panadería/pastelería,0.064805182
+_0111306,Otros productos de panadería,0.174884548
+_0111401,Cereales de bolsa o caja,0.198206505
+_0111402,Avena/mosh,0.087811323
+_0111501,Espagueti,0.186721512
+_0111502,Fideos en todas sus formas (Excepto macarrones y espagueti),0.25338584
+_0111503,Chao mein,0.071823246
+_0112101,"Pollos, gallinas y gallos vivos",0.036286131
+_0112201,Carne fresca de res,2.455807926
+_0112202,Carne fresca de cerdo,0.620050441
+_0112203,Carne fresca de pollo,3.044390701
+_0112401,Menudos de pollo,0.099730665
+_0112402,Menudos de res,0.119783518
+_0112501,Salchichas y productos similares de carne,0.307670364
+_0112502,"Jamón (pollo, res, cerdo, mixto, etc.)",0.144916207
+_0112503,Longanizas y chorizos (de todo tipo),0.2914781
+_0112504,Medallones y milanesas de pollo,0.089201708
+_0112505,"Tortas de carne (pollo, res y cerdo)",0.054496632
+_0112506,Carne de cerdo marinada,0.134718266
+_0113101,"Pescado entero, fresco, refrigerado o congelado",0.316853948
+_0113201,Pescado seco,0.025935798
+_0113301,Sardinas enlatadas,0.065723062
+_0113401,"Camarones frescos, refrigerados o congelados",0.104357402
+_0114101,Leche líquida entera,0.210339765
+_0114201,Leche líquida baja en grasas,0.026172417
+_0114301,Leche en polvo,0.230939736
+_0114302,Crema de leche,0.251114304
+_0114501,Queso fresco,0.602041836
+_0114502,Queso crema,0.030033955
+_0114503,Queso mozzarella,0.023041984
+_0114504,Queso seco,0.025616272
+_0114601,Yogur industrializado,0.063217918
+_0114701,Bebidas lácteas en base a leche liquida,0.062069377
+_0114801,Huevos de gallina,2.097248496
+_0115101,Aceite de origen vegetal,0.45970756
+_0115301,Margarina vegetal regular,0.047279105
+_0116101,Aguacates frescos,0.202591453
+_0116102,Bananos frescos,0.164186056
+_0116103,Plátanos frescos,0.207385545
+_0116104,Mangos,0.048618702
+_0116105,Papayas frescas,0.094229329
+_0116106,Piñas frescas,0.076741366
+_0116201,Limones frescos,0.11024074
+_0116202,Naranjas frescas,0.06547132
+_0116301,Manzanas frescas,0.15197359
+_0116302,Duraznos,0.032950822
+_0116401,Fresas frescas,0.027152484
+_0116501,Uvas frescas,0.030489824
+_0116502,Melones frescos,0.041278002
+_0116503,Sandías frescas,0.087713861
+_0117101,"Repollo, fresco o refrigerado",0.074410758
+_0117102,Coliflor,0.045900399
+_0117103,Brócoli,0.05403119
+_0117104,Lechuga,0.05610702
+_0117105,Apio,0.029391644
+_0117106,Hierbas aromáticas para cocinar,0.07412784
+_0117107,Pacaya,0.028307352
+_0117108,Hierbas naturales para caldo,0.151750336
+_0117109,Chipilín,0.029361083
+_0117201,Chile pimiento fresco,0.079797548
+_0117202,Pepinos frescos,0.079079773
+_0117203,Tomate fresco,0.948387032
+_0117204,Güisquil,0.213201504
+_0117205,Güicoy,0.03253763
+_0117301,"Ejotes, frescos o refrigerados",0.116699484
+_0117401,Zanahorias,0.162099541
+_0117402,Rábanos,0.039937504
+_0117403,Cebollas,0.479584206
+_0117404,Maíz verde (elote),0.063866984
+_0117405,Verduras frescas o refrigeradas limpias y cortadas,0.040308218
+_0117501,Papas,0.599418309
+_0117601,"Frijoles negros, secos",0.840408956
+_0117602,"Frijoles colorados, secos",0.040192684
+_0117603,"Otros frijoles, secos (piloy, pinto, blanco, etc.)",0.064556892
+_0117901,Frijoles procesados y envasados,0.239252746
+_0118101,Azúcar de caña,0.881035771
+_0118301,Miel,0.021043398
+_0118501,Pastilla de chocolate para hervir,0.050555485
+_0118601,"Helado industrializado (base a leche, hielo, fruta, etc.)",0.075532458
+_0118901,Otra confitería de azúcar y postres N.E.C. (No contiene cacao),0.040696279
+_0119101,Sopas instantáneas,0.262391642
+_0119201,Alimentos para bebé,0.086587915
+_0119301,Sal,0.043748879
+_0119302,Consomé,0.121060079
+_0119303,Sazonadores y ablandadores,0.026070707
+_0119304,Salsa de tomate,0.161134117
+_0119305,Salsa tipo Kétchup,0.040000495
+_0119306,Mayonesa,0.089268071
+_0119401,Chiles secos enteros y molidos,0.089266852
+_0119901,Bases para sopas,0.153411009
+_0119902,Suplementos nutricionales,0.04502747
+_0119903,"Snacks (excluye papalinas, plataninas, yucas, malangas, etc.)",0.222452377
+_0119904,Hojas para tamales,0.025721947
+_0121001,Jugos de frutas líquidos,0.347254663
+_0121002,Jugos de frutas en polvo,0.035891967
+_0122001,Café molido,0.169311991
+_0122002,Café instantáneo,0.24747433
+_0123001,Té de frutas y medicinales,0.045790226
+_0125001,Agua purificada,0.385427472
+_0126001,Gaseosas,1.359286259
+_0129001,Bebidas hidratantes y energizantes,0.082856665
+_0130001,Servicio de molienda de maíz,0.382231577
+_0211001,Aguardiente,0.16010849
+_0211002,Whisky,0.158412716
+_0213001,Cerveza (todo tipo),1.279360539
+_0230101,Cigarros,0.409248429
+_0311001,Tela para ropa uso diario,0.029936732
+_0312101,Chumpas para hombres (mayores de 12 años),0.080875477
+_0312102,Suéteres de algodón para hombres (mayores de 12 años),0.042765093
+_0312103,Camisas con botones para hombres (mayores de 12 años),0.159843055
+_0312104,Camisas tipo Polo para hombres (mayores de 12 años),0.053413369
+_0312105,Playeras para hombres (mayores de 12 años),0.081313725
+_0312106,Pantalones de vestir para hombres (mayores de 12 años),0.081219229
+_0312107,Pantalones de lona para hombres (mayores de 12 años),0.463370006
+_0312108,Pantalones largos deportivo para hombres (mayores a 12 años),0.02369077
+_0312109,Pantalonetas deportivas para hombres (mayores de 12 años),0.025821086
+_0312110,Trajes formales (incluye los trajes formales tradicionales) para hombres (mayores de 12 años),0.030984379
+_0312111,Calzoncillos para hombres (mayores de 12 años),0.140596129
+_0312112,Calcetines para hombres (mayores de 12 años),0.089303449
+_0312201,Chumpas y chaquetas para niños (mayores de 2 y menores de 12 años),0.050184541
+_0312202,Camisas de vestir para niños (mayores de 2 y menores de 12 años),0.059030307
+_0312203,Playeras para niños (mayores de 2 y menores de 12 años),0.036551904
+_0312204,Pantalones de vestir para niños (mayores de 2 y menores de 12 años),0.032107855
+_0312205,Pantalones de lona para niños (mayores de 2 y menores de 12 años),0.172338229
+_0312206,Trajes formales (incluye los trajes formales tradicionales) para niños (mayores de 2 y menores de 12 años),0.0232959
+_0312207,Calzoncillos para niños (mayores de 2 y menores de 12 años),0.050883623
+_0312208,Calcetines para niños (mayores de 2 y menores de 12 años),0.036620238
+_0312301,"Suéteres, mañaneras para mujeres (mayores de 12 años)",0.123572903
+_0312302,Blusas formales para mujeres (mayores de 12 años),0.025409397
+_0312303,Blusas casuales para mujeres (mayores de 12 años),0.205940262
+_0312304,Pantalones de vestir de tela para mujeres (mayores de 12 años),0.061909114
+_0312305,Pantalones de lona para mujeres (mayores de 12 años),0.247703321
+_0312306,Vestidos formales y casuales para mujeres (mayores de 12 años),0.093302706
+_0312307,Vestidos de fiesta para mujeres (mayores de 12 años),0.038473299
+_0312308,Faldas formales y casuales para mujeres (mayores de 12 años),0.058554075
+_0312309,Traje tradicional para mujeres (mayores de 12 años),0.59147742
+_0312310,Prenda tradicional para mujeres (mayores de 12 años),0.261719136
+_0312311,Calzones para mujeres (mayores de 12 años),0.184364895
+_0312312,Sostenes para mujeres (mayores de 12 años),0.163126674
+_0312401,"Suéteres, mañaneras para niñas (mayores de 2 y menores de 12 años)",0.033642995
+_0312402,Blusas formales y casuales para niñas (mayores de 2 y menores de 12 años),0.068134358
+_0312403,Pantalones de lona para niñas (mayores de 2 y menores de 12 años),0.098489937
+_0312404,Traje tradicional para niñas (mayores de 2 y menores de 12 años),0.085875479
+_0312405,Prenda tradicional para niñas (mayores de 2 y menores de 12 años),0.030828734
+_0312406,Vestidos formales y casuales para niñas (mayores de 2 y menores de 12 años),0.068830985
+_0312407,Calzones para niñas (mayores de 2 y menores de 12 años),0.04377868
+_0312501,Camisas/blusas para bebés (menores de 2 años),0.041895244
+_0312502,"Chaquetas, suéteres, abrigos para bebés (menores de 2 años)",0.010993918
+_0312503,Pantalones para bebés (menores de 2 años),0.032822814
+_0312504,Mamelucos y bodys para bebés (menores de 2 años),0.057177038
+_0312601,Uniformes escolares en general,0.049726354
+_0313101,Cinchos,0.051246914
+_0313102,Gorras,0.065009408
+_0313201,Hilos,0.023804373
+_0314101,Lavado,0.048040044
+_0321101,Zapato acordonado para hombre,0.192649417
+_0321102,Zapato tipo mocasín para hombre,0.059300191
+_0321103,Botas y botines para hombre,0.098596844
+_0321104,Tenis (Zapatillas) para hombre,0.324069402
+_0321105,"Sandalias (chanclas, caites, pantuflas) para hombre",0.044184083
+_0321201,Zapatos casuales para mujer,0.037277742
+_0321202,Zapatos de tacón alto y bajo para mujer,0.190792768
+_0321203,Sandalias con o sin tacón para mujer,0.072290037
+_0321204,Botas o botines con y sin tacón para mujer,0.030938935
+_0321205,"Chanclas, caites, pantuflas para mujer",0.066473997
+_0321206,Tenis (Zapatillas) para mujer,0.190948411
+_0321301,"Zapatos casuales (incluye sandalias, chanclas, caites y pantuflas) para niños (menores a 13 años)",0.018646773
+_0321302,Zapatos escolares para niños (menores a 13 años),0.029522517
+_0321303,Tenis (Zapatillas) para niños (menores a 13 años),0.07595598
+_0411101,Alquiler de vivienda,2.563204553
+_0431101,Pintura (de agua o aceite),0.027827208
+_0431102,Cemento,0.256606899
+_0431103,Cal,0.150994521
+_0431104,Block,0.165548144
+_0431105,Otros productos y materiales para reparación y mantenimiento,0.379194251
+_0431106,Artículos de plomería,0.037998503
+_0431107,Madera,0.035482602
+_0431108,Pisos,0.06203335
+_0431109,Puertas y ventanas,0.114310869
+_0432101,Servicios de mantenimiento y reparación de viviendas,0.6077799
+_0432102,Servicio de vigilancia residencial,0.091127999
+_0441101,Pago por consumo de agua,0.53324564
+_0441201,Compra de agua para el hogar por otros medios (no agua para beber),0.084567517
+_0442001,Pago por servicio de recolección de basura,0.222979132
+_0451001,Consumo de energía eléctrica,2.482532881
+_0452201,Gas en contenedores,1.144911646
+_0454101,Carbón,0.033619863
+_0454201,Leña,2.095011993
+_0454202,Ocote,0.070330003
+_0511101,Muebles de sala,0.076664123
+_0511102,Muebles de comedor,0.057787605
+_0511103,Muebles de cocina,0.047208065
+_0511104,Muebles de dormitorio,0.410173305
+_0511401,Espejos,0.03299393
+_0521101,Cortinas,0.037010363
+_0521201,Ropa de cama,0.206479476
+_0521202,Hamacas,0.036929204
+_0521301,Manteles,0.055752167
+_0521302,Toallas de tela,0.041925205
+_0531101,Refrigeradores y refrigeradores de temperatura dual,0.217135244
+_0531102,Estufas,0.176020591
+_0531103,Hornos pequeños,0.034504439
+_0531201,Lavadoras,0.137550231
+_0532101,Licuadoras,0.067713958
+_0532901,Ventiladores,0.024191177
+_0540101,Vajillas,0.122889844
+_0540301,Ollas y cacerolas,0.173192925
+_0540302,Sartenes,0.107465351
+_0540303,Ollas a presión,0.042278987
+_0540304,Vasos y tazas de plástico y melamina,0.0497263
+_0551001,Herramienta eléctrica,0.092935214
+_0552101,Herramientas no motorizadas,0.116457955
+_0552201,Bombillas,0.096382755
+_0561101,Detergente en polvo o líquido,0.783069234
+_0561102,Jabón para ropa,0.695875321
+_0561103,Desinfectante,0.240132167
+_0561104,Cloro,0.317825466
+_0561105,"Jabón para trastos en crema, líquido, trozo y polvo",0.294385039
+_0561106,Suavizantes de ropa,0.184133204
+_0561107,Escobas,0.095740583
+_0561108,Esponjas,0.039998811
+_0561901,Aromatizante ambiental,0.020883931
+_0561902,"Insecticidas, pesticidas, fungicidas",0.045640358
+_0561903,Papel de cocina,0.056870002
+_0561904,Papel aluminio,0.03594719
+_0561905,Veladoras,0.021881179
+_0561906,Velas y candelas,0.052945267
+_0561907,Fósforos y/o cerillos,0.096708793
+_0561908,Lazos y cordeles para tender ropa,0.032347926
+_0562101,Servicio para el hogar,0.638644212
+_0611101,Acetaminofén (Paracetamol),0.219347575
+_0611102,Diclofenaco,0.094406151
+_0611103,Ibuprofeno,0.104261574
+_0611104,Ambroxol y Bromhexina,0.059738501
+_0611105,Dextrometorfano y/o guaifenesina,0.049119216
+_0611106,Losartán,0.030031559
+_0611107,Irbesartán,0.041933216
+_0611108,Valsartán,0.050501086
+_0611109,Enalapril,0.031673334
+_0611110,Medicamentos para la diabetes,0.404922455
+_0611111,Medicamentos neurológicos o neurofármacos,0.103469286
+_0611112,Medicamentos oftalmológicos,0.086078512
+_0611113,Medicamentos dermatológicos,0.055372561
+_0611114,"Vitaminas, multivitamínicos y minerales",1.229240631
+_0611115,Medicamentos para huesos y articulaciones,0.05773908
+_0611116,Medicamentos relajantes musculares,0.045114046
+_0611117,Medicamentos gastrointestinales,0.178529268
+_0611118,Amoxicilina,0.121229514
+_0611119,Penicilina,0.020108818
+_0611120,Trimetoprim y/o sulfametoxazol,0.023297237
+_0611121,Alcohol medicinal,0.048708164
+_0611122,Mercurio cromo,0.091781349
+_0611123,Mertiolate o metafe,0.091781349
+_0611124,"Anticonceptivos (orales, inyectables, subdérmicos y subcutáneos)",0.028890742
+_0611125,Loratadina,0.018685753
+_0611201,Medicamentos naturales y homeopáticos,0.122302392
+_0612201,Dispositivos o productos terapéuticos,0.231310889
+_0612301,Otros dispositivos de tratamiento para uso personal,0.05350333
+_0612302,Productos para botiquín,0.036850516
+_0613101,Lentes correctivos completos y por separado (aros o lentes),0.231009035
+_0613301,Productos para incontinencia,0.054916384
+_0621901,Consulta con ginecólogo y obstetra,0.142502639
+_0621902,Consulta con pediatra,0.154340589
+_0621903,Consulta con cardiólogo,0.086069359
+_0621904,Consulta con gastroenterólogo,0.119299897
+_0621905,Consulta con oftalmólogo,0.07851672
+_0621906,Consulta con endocrinólogo,0.060517476
+_0621907,Consulta con traumatólogo,0.09645616
+_0621908,Consulta con neumólogo,0.067676233
+_0621909,Consulta con médico general internista,0.043522899
+_0622101,Limpieza dental,0.081589092
+_0622901,Servicio extracción dental,0.079032003
+_0622902,Servicio de relleno dental,0.11388159
+_0622903,Servicio de ortodoncia (Brackets y retenedores),0.108922463
+_0622904,Servicio de endodoncia,0.04626327
+_0622905,Servicio de implantes dentales,0.104912612
+_0631001,Parto normal,0.061595753
+_0631002,Parto con cesárea,0.067513754
+_0631003,Hospitalización sin cirugía,0.30751061
+_0631004,Hospitalización con cirugía,0.486057523
+_0631005,Hospitalización por cuadro respiratorio,0.106050787
+_0641101,Exámenes de sangre,0.316657893
+_0641102,Otros exámenes de laboratorio,0.03490431
+_0641201,Radiografía,0.074911192
+_0641202,Ultrasonido,0.119548345
+_0641203,Electrocardiograma,0.026697583
+_0641204,Tomografía,0.048564219
+_0641205,Resonancia,0.033717528
+_0711101,Vehículo nuevo,0.569496619
+_0711102,Pick up nuevo,0.559874937
+_0711103,Camioneta nueva,0.710739191
+_0712001,Motocicleta,0.820190236
+_0713001,Bicicleta,0.043872977
+_0721101,Llantas nuevas,0.31166258
+_0721201,Baterías,0.089248756
+_0721202,Amortiguadores,0.06162935
+_0721203,Otros repuestos para equipo de transporte personal,0.084957535
+_0722101,Diesel,0.228965625
+_0722201,Gasolina,3.45350926
+_0722401,Aceite de motor,0.030503196
+_0722402,Líquido de frenos,0.037523604
+_0723101,Lavado y lustrado de vehículos,0.108861757
+_0723102,Servicio de pinchazo,0.056874846
+_0723103,Servicio menor,0.294716405
+_0723104,Servicio de frenos,0.119592796
+_0723105,Montaje de piezas/accesorios,0.064091062
+_0723106,Otros servicios de mantenimiento y reparación de vehículos,0.12772243
+_0724101,Alquiler de estacionamiento,0.077627766
+_0724102,Pago de parqueo,0.030159725
+_0724301,Examen para obtención de licencia,0.034438705
+_0724302,Renovación o reposición de licencia,0.038457231
+_0732101,"Transporte urbano (bus urbano, transmetro, transurbano)",0.494766387
+_0732102,"Transporte interurbano nacional (departamentales, municipales)",0.893083966
+_0732103,Taxi compartido/colectivo,0.074026378
+_0732201,Taxi,0.180120395
+_0732202,Transporte particular/privado,0.106529698
+_0732301,Transporte escolar,0.021129115
+_0732901,Otros tipos de taxi,0.04415632
+_0733201,Transporte de pasajeros por aire en horarios internacionales y vuelos regulares,0.083244982
+_0741201,Servicio de paquetería nacional,0.043751832
+_0812001,Teléfonos inteligentes,0.511843286
+_0813101,Computadoras,0.235248548
+_0813102,Tablets o tabletas electrónicas,0.03299901
+_0813201,Impresoras de uso doméstico,0.049740886
+_0814001,Televisores,0.280337634
+_0814002,Equipos de sonido para el hogar,0.053197446
+_0819201,Cargadores para dispositivos móviles,0.040345039
+_0831001,Servicio de telefonía fijo,0.033988198
+_0832001,Servicio de telefonía móvil post pago,0.647704254
+_0832002,Servicio de telefonía móvil prepago,1.816867936
+_0833001,"Servicios de acceso a internet provistos por operadores de red con infraestructura cableada, inalámbrica o satelital",0.526629576
+_0834001,Paquetes con cualquier combinación de telecomunicación,0.708390143
+_0835001,Reparación de todo equipo de información y comunicación,0.02478183
+_0839201,Servicios de streaming (música y televisión/películas),0.088109568
+_0839202,"Suscripción a Televisión por cable, TV satelital, IPTV y Televisión por pago",0.629559419
+_0921101,Consolas de videojuegos,0.068418628
+_0921201,"Muñecas, juguetes de peluche",0.059058966
+_0921202,"Carros de juguete, trenes",0.073386494
+_0921203,Bicicletas para jugar y triciclos (para niños pequeños),0.040622098
+_0922101,"Calzado específico para el juego (botas de esquí, zapatos de football, golf y similares)",0.071404873
+_0931201,"Flores interiores (naturales o artificiales, en floreros o no)",0.035393961
+_0931202,Flores exteriores,0.029930918
+_0932101,Compra de mascotas,0.022113011
+_0932102,Alimento para mascotas,0.473505906
+_0945001,Servicios veterinarios,0.074361931
+_0946201,Gimnasio,0.106403386
+_0946202,Lecciones deportes,0.035938096
+_0961001,Cines,0.080154028
+_0971101,Libros de texto de educación formal,0.55517657
+_0971901,Libros religiosos,0.086786264
+_0971902,Libros complementarios,0.034965119
+_0972101,Diarios y periódicos nacionales,0.0256257
+_0974001,Lista de útiles escolares,0.461421766
+_0974002,Cuadernos,0.152664687
+_0974003,Papel para artes y para envolver,0.024676038
+_0974004,"Hojas de cuadrícula, líneas, bond",0.045374664
+_0974005,Tijeras,0.030196413
+_0974006,Crayones y marcadores,0.060534203
+_0974007,Mochilas escolares,0.118925713
+_0974008,Lápices y lapiceros,0.021903421
+_0980001,Paquete turístico para viajar al extranjero,0.058903152
+_1010101,Servicio de educación preprimaria,0.069246095
+_1010201,Servicios de educación primaria,0.45403649
+_1020001,Servicios de educación básica,0.319789231
+_1020002,Servicios de educación diversificado,0.401416756
+_1020003,Servicios de educación por cooperativa,0.029887884
+_1040001,Educación universitaria,0.781481242
+_1050101,Tutorías,0.031623944
+_1050901,Cursos de Capacitación técnica,0.078353809
+_1050902,Cursos de idiomas,0.111761422
+_1050903,Cursos de informática,0.033176044
+_1111101,Desayuno o cena simple (bebida y un acompañamiento),0.288563409
+_1111102,Desayuno o cena continental (bebida y dos acompañamientos),0.30530212
+_1111103,Desayuno o cena completo (bebida caliente y más de dos acompañamientos),0.385780185
+_1111104,Otro tipo de desayuno o cena,0.046690358
+_1111105,"Almuerzo simple (bebida, carne y acompañamiento) excluye gaseosa",1.656022071
+_1111106,Almuerzo simple (bebida y plato sin carne) excluye gaseosa,0.728439702
+_1111107,"Almuerzo (bebida, entrada y plato con carne)",0.152287371
+_1111108,Almuerzo buffet,0.080003846
+_1111201,Combos de comida rápida individual,0.786407056
+_1111202,Combos de comida rápida familiar,0.608111409
+_1111203,Platos preparados,0.246083453
+_1111204,Panes tipo sándwich,0.096567434
+_1111205,Alimentos a base de tortilla,0.31628511
+_1111206,Otros tipos de alimentos regionales,0.811298995
+_1111207,"Pastelería, repostería y postres",0.029084443
+_1111208,Bocadillos,0.533791131
+_1111209,Bebidas no alcohólicas frías servidas en el lugar,0.055420465
+_1111210,Bebidas no alcohólicas calientes servidas en el lugar,0.086527865
+_1111211,Gasto en alimentos para celebraciones,0.21842885
+_1120101,Alojamiento en hoteles,0.12708134
+_1211001,Seguro Funerario,0.031064116
+_1212001,Seguro Médico,0.103090433
+_1214101,Seguro de vehículos,0.191697333
+_1221001,Servicios financieros de tarjetas de crédito,0.0329237
+_1229901,Otros servicios financieros,0.032353992
+_1311101,Máquinas para afeitar eléctricas y depiladoras eléctricas,0.043324366
+_1312001,Cepillos de dientes,0.122465924
+_1312002,Papel higiénico,0.863646748
+_1312003,Jabón de baño en todas sus presentaciones,0.337988559
+_1312004,Pasta de dientes y enjuagues bucales,0.475239419
+_1312005,Shampoo y/o acondicionador,0.644164555
+_1312006,Productos para protección femenina,0.299858337
+_1312007,Pañales para bebes,0.396868936
+_1312008,Toallas húmedas para bebés,0.137798974
+_1312009,Hisopos,0.031930352
+_1312010,Crema para el cuerpo y rostro,0.02623583
+_1312011,Desodorante y/o antitranspirante,0.583564097
+_1312012,Maquillaje,0.122465414
+_1312013,Pestañas postizas,0.056858301
+_1313101,Cortes de cabello para hombre,0.493960211
+_1313102,Cortes de cabello para mujer,0.071485856
+_1313103,Peinados y aplicación de tintes para el cabello,0.070667931
+_1313104,Colocación de uñas acrílicas,0.047493919
+_1313105,Servicio de depilación,0.037972072
+_1313201,Servicio de manicura y pedicura,0.084133854
+_1321101,Anillos,0.042267493
+_1321102,Cadenas,0.05557166
+_1321103,Aretes,0.024143315
+_1321104,Relojes de pulsera,0.025669218
+_1329101,Sombrillas y paraguas,0.034251716
+_1329102,Ataúdes,0.03454027
+_1329103,"Compra, alquiler o préstamo de nicho",0.11806416
+_1390901,Servicios legales y financieros,0.066230766
+_1390902,Servicios funerarios,0.154298106
+_1390903,Servicios de registro civil,0.045972277
+_1390904,Pago de impuestos de circulación de vehículo,0.139208146
+_1390905,Fiestas y celebraciones,0.871513612

@@ -1,9 +1,9 @@
-# Cominación Lineal Óptim MSE 2024 B
+# Cominación Lineal Óptim MSE 2024 C
 # Función de combinación lineal óptima MSE 2024
 
 w_00 = [1.98704f-6  7.14895f-8  0.734157  5.54051f-8  1.17602f-7  0.177736  2.30696f-7  0.0881041  6.04563f-8][:]
 w_10 = [0.567942  7.08302f-7  0.0393877  1.0627f-6  0.0581664  0.0  0.0929947  0.241507  1.0365f-7][:]
-w_23 = [0.263375  0.116192  0.230044  0.155348  0.173277][:]
+w_23 = [0.86401  0.13599][:]
 
 ENSEMBLE1 = [
     InflationPercentileEq(0.72f0), 
@@ -30,11 +30,8 @@ ENSEMBLE2 = [
 ]
 
 ENSEMBLE3 = [
-    InflationPercentileEq(0.72f0),
-    InflationPercentileWeighted(0.7f0),
-    InflationTrimmedMeanEq(62.0f0, 80.0f0),
+    InflationTrimmedMeanEq(46.0f0, 89.0f0),
     InflationTrimmedMeanWeighted(23.0f0, 95.0f0),
-    InflationDynamicExclusion(0.3f0, 1.5f0),
 ]
 
 c1 = CombinationFunction(
@@ -53,7 +50,7 @@ c3 = CombinationFunction(
 )
 
 
-optmse2024_b = Splice([c1,c2,c3]; dates=nothing, name="Subyacente Óptima MSE 2024 B", tag="SubOptMSE_2024_B")
+optmse2024_c = Splice([c1,c2, c3]; dates=nothing, name="Subyacente Óptima MSE 2024 C", tag="SubOptMSE_2024_C")
 
 optmse2024_ci = DataFrame(
     period = ["Período Completo"], 
@@ -74,3 +71,7 @@ optmse2024_ci = DataFrame(
 # │ Exclusión fija de gastos básicos IPC (13, 18) │   0.840445 │     0.922123 │   0.460784 │     0.523076 │ 0.644412 │
 # │                  Subyacente óptima MSE 2024 B │   0.182145 │     0.129534 │  0.0722566 │    0.0874996 │  0.12209 │
 # └───────────────────────────────────────────────┴────────────┴──────────────┴────────────┴──────────────┴──────────┘
+
+
+#import CPIDataBase.components 
+#components(inflfn::Splice) = [components(f) for f in inflfn.f]

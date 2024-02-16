@@ -149,3 +149,37 @@ wsave(joinpath(savepath_corr, basename(TMEQ.path[1])), tostringdict(TMEQ[1,:]))
 wsave(joinpath(savepath_corr, basename(TMW.path[1])), tostringdict(TMW[1,:]))
 wsave(joinpath(savepath_corr, basename(DE.path[1])), tostringdict(DE[1,:]))
 
+
+
+###############################
+# PLOTS #######################
+###############################
+
+# plot1 = Gadfly.plot(
+#     x = [x[1] for x in TMW.k], 
+#     y = [x[2] for x in TMW.k],
+#     color = 1 ./ TMW.gt_b0820_mse,
+#     Gadfly.Geom.rectbin,
+#     Gadfly.Guide.xlabel("ℓ₁"),
+#     Gadfly.Guide.ylabel("ℓ₂"),
+#     Gadfly.Guide.title("TMW, MSE⁻¹"),#, "*string(j)),
+#     Gadfly.Guide.colorkey(title="MSE⁻¹"),
+#     Guide.xticks(ticks=unique([x[1] for x in TMW.k])),
+#     Guide.yticks(ticks=unique([x[2] for x in TMW.k])),
+#     Gadfly.Coord.cartesian(
+#         xmin=minimum([x[1] for x in TMW.k]), 
+#         xmax=maximum([x[1] for x in TMW.k]),
+#         ymin=minimum([x[2] for x in TMW.k]), 
+#         ymax=maximum([x[2] for x in TMW.k])
+#     ),
+#     Gadfly.Theme(
+#         background_color="white",
+#         major_label_font="CMU Serif", 
+#         minor_label_font="CMU Serif",
+#         #key_label_font="CMU Serif",
+#         key_title_font="CMU Serif"
+#     ),
+# )
+# img = SVG("C:\\Users\\DJGM\\Desktop\\PLOTS\\TEST\\TMEQ\\MSE.svg", 12inch, 8inch)
+# Gadfly.draw(img, plot1)
+# display(plot1)
