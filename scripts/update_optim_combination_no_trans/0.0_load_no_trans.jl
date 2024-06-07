@@ -19,6 +19,11 @@ no_trans_2010 = [
     236:252...,273:279...
 ]
 
+no_trans_2023 = [
+    111, 179, 189:194... , 239, 271:297..., 311:329..., 337:344..., 354:357..., 
+    370:405..., 420:425..., 433:437...
+
+]
 
 # CREAMOS LAS BASES DE DATOS
 NOT_FGT00 = FullCPIBase(
@@ -41,15 +46,33 @@ NOT_FGT10 = FullCPIBase(
     FGT10.names[no_trans_2010]
 )
 
+NOT_FGT23 = FullCPIBase(
+    FGT23.ipc[:, no_trans_2023],
+    FGT23.v[:, no_trans_2023],
+    100 * FGT23.w[no_trans_2023] / sum(FGT23.w[no_trans_2023]), 
+    FGT23.dates, 
+    FGT23.baseindex,
+    FGT23.codes[no_trans_2023],
+    FGT23.names[no_trans_2023]
+)
+
 NOT_GT00 = VarCPIBase(NOT_FGT00)
 NOT_GT10 = VarCPIBase(NOT_FGT10)
+NOT_GT23 = VarCPIBase(NOT_FGT23)
 
 # CREAMOS UN UniformCountryStructure CON AMBAS BASES DE DATOS
-NOT_GTDATA = UniformCountryStructure(NOT_GT00,NOT_GT10)
-
+NOT_GTDATA   = UniformCountryStructure(NOT_GT00,NOT_GT10)
+NOT_GTDATA23 = UniformCountryStructure(NOT_GT00,NOT_GT10,NOT_GT23)
 # GUARDAMOS
 jldsave(joinpath(data_savepath, "NOT_data.jld2");
     NOT_FGT00,
     NOT_FGT10, 
     NOT_GTDATA
+)
+
+jldsave(joinpath(data_savepath, "NOT_data23.jld2");
+    NOT_FGT00,
+    NOT_FGT10,
+    NOT_FGT23, 
+    NOT_GTDATA23
 )

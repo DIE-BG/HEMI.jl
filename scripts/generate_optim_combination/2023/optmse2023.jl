@@ -24,10 +24,11 @@ optmai2023 = let
 end
 
 # Definir la función de exclusión fija
-optfx2023 = InflationFixedExclusionCPI(
+optfx2023 = InflationFixedExclusionCPI{3}((
     [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
-    [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]
-)
+    [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184],
+    []
+))
 
 # Definir la combinación óptima MSE 2023, con componentes optimizadas hasta 2019
 # y ponderadores ajustados con datos hasta 2021.

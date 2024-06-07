@@ -23,14 +23,20 @@ idx_dates23 = (infl_dates(GTDATA23)[1] - Month(11): Month(1) : infl_dates(GTDATA
 ## DATAFRAMES 2024 -----------------------------------------------------------------------
 
 dates_ci = infl_dates(GTDATA23)
-inf_limit = Vector{Union{Missing, Float32}}(undef, length(dates_ci))
-sup_limit = Vector{Union{Missing, Float32}}(undef, length(dates_ci))
+inf_limit = fill(Float32(0),length(dates_ci))
+sup_limit = fill(Float32(0),length(dates_ci))
 opt_obs = optmse2024_b(GTDATA23)
 
-for t in 1:length(dates_ci)
-    inf_limit[t] = opt_obs[t] + optmse2024_ci.inf_limit[1]
-    sup_limit[t] = opt_obs[t] + optmse2024_ci.sup_limit[1]
+
+for r in eachrow(optmse2024_ci)
+    global inf_limit += eval_periods( GTDATA23, r.evalperiod) .* r.inf_limit
+    global sup_limit += eval_periods( GTDATA23, r.evalperiod) .* r.sup_limit
 end
+
+inf_limit += opt_obs
+sup_limit += opt_obs
+
+
 
 MSE_confidence_intervals = DataFrame(
     "Fecha" => dates_ci,
@@ -43,7 +49,7 @@ MSE_confidence_intervals = DataFrame(
 MSE_optimization = DataFrame(
     "Fecha"  => idx_dates23,
     "Índice" => optmse2024_b(GTDATA23, CPIIndex()),
-    "Variaciones Intermensuales" => optmse2024_b(GTDATA23, CPIVarInterm()),
+    "Variaciones Intermensuales MSE 2024" => optmse2024_b(GTDATA23, CPIVarInterm()),
     "Combinación Lineal Óptima MSE 2024 B" =>  vcat(fill("", 11), optmse2024_b(GTDATA23))
 )
 
@@ -68,7 +74,78 @@ save_csv(joinpath(savedir, "ABSME_optimization_2024_B.csv"), string.(ABSME_optim
 save_csv(joinpath(savedir, "CORR_optimization_2024_B.csv"), string.(CORR_optimization))
 save_csv(joinpath(savedir, "MSE_confidence_intervals_2024_B.csv"), string.(MSE_confidence_intervals))
 
+##################################################################################################################
+## MEDIA SIMPLE Y MEDIA POND
+##################################################################################################################
+using StatsBase
+using DataFrames
+using DataFramesMeta
 
+
+savedir = datadir("results","CSV","resultados_excel")
+
+
+gtdata = GTDATA23
+
+# Moments
+stats = mapreduce(vcat, gtdata.base) do base
+    w = aweights(base.w) 
+    mapreduce(vcat, eachrow(base.v)) do vdistr 
+        # Simple and weighted mean
+        sm = mean(vdistr)
+        wm = sum(vdistr .* base.w) / 100 
+
+        [sm wm]
+    end
+end 
+
+smfn = InflationSimpleMean() 
+wmfn = InflationWeightedMean() 
+
+transition_periods = [
+    collect(Date(2011,1):Month(1):Date(2011,11))...,
+    collect(Date(2024,1):Month(1):Date(2024,11))...,
+]
+
+dates = gtdata.base[1].dates[1]:Month(1):gtdata.base[end].dates[end]
+transition_mask = in.(dates, Ref(transition_periods))
+
+simple_mean_df = DataFrame(
+    date = dates,
+    sm_interm_v = stats[:, 1], 
+    sm_interm_idx = capitalize(stats[:, 1]), 
+    sm_interm_a = vec([fill("", 11); varinteran(capitalize(stats[:, 1]))]),
+    sm_interan = vec([fill("", 11); smfn(gtdata)]), 
+)
+
+@chain simple_mean_df begin 
+    @rtransform!(:sm_interan = ifelse(:date in transition_periods, :sm_interm_a, :sm_interan))
+    # @rsubset((:date in transition_periods))
+end
+
+weighted_mean_df = DataFrame(
+    date = dates,
+    wm_interm_v = stats[:, 2], 
+    wm_interm_idx = capitalize(stats[:, 2]), 
+    wm_interm_a = vec([fill("", 11); varinteran(capitalize(stats[:, 2]))]),
+    wm_interan = vec([fill("", 11); wmfn(gtdata)]), 
+)
+
+@chain weighted_mean_df begin 
+    @rtransform!(:wm_interan = ifelse(:date in transition_periods, :wm_interm_a, :wm_interan))
+    # @rsubset((:date in transition_periods))
+end
+
+
+rename!(simple_mean_df,["Mes","Media Simple Intermensual por definición", "Índice Media Simple Intermensual por definición", "Variación interanual del Índice de Media Simple Intermensual", "Media Simple Interanual"])
+rename!(weighted_mean_df,["Mes","Media Ponderada Intermensual por definición", "Índice Media Ponderada Intermensual por definición", "Variación interanual del Índice de Media Ponderada Intermensual", "Media Ponderada Interanual"])
+
+save_csv(joinpath(savedir,"Media_Simple.csv"), string.(simple_mean_df))
+save_csv(joinpath(savedir,"Media_Pond.csv"), string.(weighted_mean_df))
+
+
+
+#=
 
 ## DATAFRAMES 2023 ---------------------------------------------------------------------
 
@@ -184,3 +261,4 @@ save_csv(joinpath(savedir, "CORR_optimization_index_components.csv"), CORR_optim
 save_csv(joinpath(savedir, "MSE_optimization_interannual_components.csv"), MSE_optimization_interannual_components)
 save_csv(joinpath(savedir, "ABSME_optimization_interannual_components.csv"), ABSME_optimization_interannual_components)
 save_csv(joinpath(savedir, "CORR_optimization_interannual_components.csv"), CORR_optimization_interannual_components)
+=#

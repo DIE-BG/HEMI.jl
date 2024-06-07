@@ -55,11 +55,18 @@ c3 = CombinationFunction(
 
 optmse2024_b = Splice([c1,c2,c3]; dates=nothing, name="Subyacente Óptima MSE 2024 B", tag="SubOptMSE_2024_B")
 
+# optmse2024_ci = DataFrame(
+#     period = ["Período Completo"], 
+#     evalperiod = [CompletePeriod()], 
+#     inf_limit = Float32[ -0.685509], 
+#     sup_limit = Float32[ 0.982193]
+# )
+
 optmse2024_ci = DataFrame(
-    period = ["Período Completo"], 
-    evalperiod = [CompletePeriod()], 
-    inf_limit = Float32[ -0.685509], 
-    sup_limit = Float32[ 0.982193]
+    period = ["Base 2000", "Transición 2000-2010", "Base 2010", "Base 2023"], 
+    evalperiod = [GT_EVAL_B00, GT_EVAL_T0010, GT_EVAL_B10 ,EvalPeriod(Date(2024, 01), Date(2030,12), "B23") ], 
+    inf_limit = Float32[ -0.7402978062629693,  -0.35994996428489634,  -0.4897407382726664,  -1.0186314582824707], 
+    sup_limit = Float32[ 1.1579384922981262,  0.8217230200767517,  0.723473072052002, 1.1901130676269531]
 )
 
 # ┌───────────────────────────────────────────────┬────────────┬──────────────┬────────────┬──────────────┬──────────┐

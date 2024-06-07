@@ -24,15 +24,16 @@ optmai2023_corr = let
 end
 
 # Definir la función de exclusión fija
-optfx2023_corr = InflationFixedExclusionCPI(
+optfx2023_corr = InflationFixedExclusionCPI{3}((
     [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161],
     [
         29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185,
         34, 184, 25, 38, 37, 229, 32, 45, 3, 33, 44, 237, 274, 19, 10,
         42, 24, 15, 59, 43, 27, 275, 61, 115, 23, 71, 26, 113, 49, 268,
         236, 213, 117, 20, 36, 9
-    ]
-)
+    ],
+    []
+))
 
 # Definir la combinación óptima CORR 2023, con componentes optimizadas hasta 2019
 # y ponderadores ajustados con datos hasta 2021.

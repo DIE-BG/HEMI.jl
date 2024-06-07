@@ -1,7 +1,7 @@
 # Cominación Lineal Óptim ABSME 2024 B
 w_00 = [0.194062  0.162499  0.156363  0.140381  0.117709  0.100542  0.0528811  0.039761  0.0358176][:]
 w_10 = [0.248181  0.163641  0.172982  0.17823  0.1171  0.0  0.0854671  0.0224189  0.0119385][:]
-w_23 = [0.692375  0.298216  0.00262721  0.0024997  0.00236435  0.00181805][:]
+w_23 = [0.693705  0.298789  0.002632  0.002504  0.002368893][:]
 
 ENSEMBLE1 = [
     InflationPercentileEq(0.72f0),
@@ -32,8 +32,7 @@ ENSEMBLE3 = [
     InflationPercentileWeighted(0.7f0),
     InflationTrimmedMeanEq(25.0f0, 95.0f0),
     InflationTrimmedMeanWeighted(62.0f0, 78.0f0),
-    InflationDynamicExclusion(2.3f0, 5.0f0),
-    InflationFixedExclusionCPI{3}(([35, 30, 190, 36, 37, 40, 31], [29, 46, 39, 31, 116, 40],[]))
+    InflationDynamicExclusion(2.3f0, 5.0f0)
 ]
 
 c1 = CombinationFunction(
@@ -54,7 +53,7 @@ c3 = CombinationFunction(
 optabsme2024_b = Splice([c1,c2,c3]; dates=nothing, name="Subyacente Óptima ABSME 2024 B", tag="SubOptABSME_2024_B")
 
 
-optabsme2023_ci = DataFrame(
+optabsme2024_ci = DataFrame(
     period = ["Período Completo"], 
     evalperiod = [CompletePeriod()], 
     inf_limit = Float32[ -0.78318], 

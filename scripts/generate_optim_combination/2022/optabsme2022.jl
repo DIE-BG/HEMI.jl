@@ -26,10 +26,11 @@ optmai2018_absme = let
 end
 
 # Definir la función de exclusión fija
-optfx2018_absme = InflationFixedExclusionCPI(
+optfx2018_absme = InflationFixedExclusionCPI{3}((
     [35, 30, 190, 36, 37, 40, 31, 104, 162], 
-    [29, 116, 31, 46, 39, 40]
-)
+    [29, 116, 31, 46, 39, 40],
+    []
+))
 
 
 

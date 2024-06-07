@@ -31,10 +31,11 @@ optmai_corr2021 = let
 end
 
 # Definir la función de exclusión fija
-optfx_corr2021 = InflationFixedExclusionCPI(
+optfx_corr2021 = InflationFixedExclusionCPI{3}((
     [35,30,190,36,37,40,31,104,162,32,33,159,193,161], 
-    [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184]
-)
+    [29,31,116,39,46,40,30,35,186,47,197,41,22,48,185,34,184],
+    []
+))
 
 # Definir la combinación óptima CORR 2021.
 optcorr2021 = let 
