@@ -1,8 +1,10 @@
 using DrWatson
 @quickactivate "HEMI"
 using HEMI
+using StatsBase
+using DataFramesMeta
 
-GTDATA_EVAL = GTDATA
+GTDATA_EVAL = GTDATA23
 
 savedir = datadir("results","CSV")
 
@@ -17,6 +19,10 @@ include(scriptsdir("generate_optim_combination","2022","optcorr2022.jl"))
 include(scriptsdir("generate_optim_combination","2023","optmse2023.jl"))
 include(scriptsdir("generate_optim_combination","2023","optabsme2023.jl"))
 include(scriptsdir("generate_optim_combination","2023","optcorr2023.jl"))
+
+include(scriptsdir("generate_optim_combination","2024","2024_B","optmse2024_B.jl"))
+include(scriptsdir("generate_optim_combination","2024","2024_B","optabsme2024_B.jl"))
+include(scriptsdir("generate_optim_combination","2024","2024_B","optcorr2024_B.jl"))
 
 D = DataFrame()
 
@@ -108,40 +114,100 @@ D[!,"Subyacente Óptima MSE 2021"] = optmse2021(GTDATA_EVAL, Date(2021,11))
 D[!,"Subyacente Óptima ABSME 2021"] = optabsme2021(GTDATA_EVAL, Date(2021,11))
 D[!,"Subyacente Óptima CORR 2021"] = optcorr2021(GTDATA_EVAL, Date(2021,11))
 
+D[!,"Subyacente Óptima MSE 2024 B"] = optmse2024_b(GTDATA_EVAL)
+D[!,"Subyacente Óptima ABSME 2024 B"] = optabsme2024_b(GTDATA_EVAL)
+D[!,"Subyacente Óptima CORR 2024 B"] = optcorr2024_b(GTDATA_EVAL)
+
+D[!,"MSE 2024 B inferior"] = let
+    dates_ci = infl_dates(GTDATA_EVAL)
+    inf_limit = fill(Float32(0),length(dates_ci))
+    for r in eachrow(optmse2024_ci)
+        inf_limit += eval_periods( GTDATA_EVAL, r.evalperiod) .* r.inf_limit
+    end
+    out = inf_limit + D[:,"Subyacente Óptima MSE 2024 B"]
+    out
+end
+
+D[!,"MSE 2024 B superior"] = let
+    dates_ci = infl_dates(GTDATA_EVAL)
+    sup_limit = fill(Float32(0),length(dates_ci))
+    for r in eachrow(optmse2024_ci)
+        sup_limit += eval_periods( GTDATA_EVAL, r.evalperiod) .* r.sup_limit
+    end
+    out = sup_limit + D[:,"Subyacente Óptima MSE 2024 B"]
+    out
+end
+
+D[!,"ABSME 2024 B inferior"] = let
+    dates_ci = infl_dates(GTDATA_EVAL)
+    inf_limit = fill(optabsme2024_ci.inf_limit[1], length(dates_ci))
+    out = inf_limit + D[:,"Subyacente Óptima ABSME 2024 B"]
+    out
+end
+
+D[!,"ABSME 2024 B superior"] = let
+    dates_ci = infl_dates(GTDATA_EVAL)
+    inf_limit = fill(optabsme2024_ci.sup_limit[1], length(dates_ci))
+    out = inf_limit + D[:,"Subyacente Óptima ABSME 2024 B"]
+    out
+end
+
 
 mkpath(savedir)
 using CSV
-CSV.write(joinpath(savedir,"optims.csv"), D)
+save_csv(joinpath(savedir,"optims.csv"), string.(D))
 
-
+#=
 ## Fechas ------------------------------------------------------------------
 
 dates     = infl_dates(GTDATA_EVAL) |> x->Dates.format.(x,"01/mm/yyyy")
 idx_dates = (infl_dates(GTDATA_EVAL)[1] - Month(11): Month(1) : infl_dates(GTDATA_EVAL)[end]) |> x->Dates.format.(x,"01/mm/yyyy")
 
-## DATAFRAMES 2023 ---------------------------------------------------------------------
+## DATAFRAMES 2024 -----------------------------------------------------------------------
+
+dates_ci = infl_dates(GTDATA_EVAL)
+inf_limit = Vector{Union{Missing, Float32}}(undef, length(dates_ci))
+sup_limit = Vector{Union{Missing, Float32}}(undef, length(dates_ci))
+opt_obs = optmse2024_b(GTDATA_EVAL)
+
+for t in 1:length(dates_ci)
+    inf_limit[t] = opt_obs[t] + optmse2024_ci.inf_limit[1]
+    sup_limit[t] = opt_obs[t] + optmse2024_ci.sup_limit[1]
+end
+
+MSE_confidence_intervals = DataFrame(
+    "Fecha" => dates_ci,
+    "OPT_MSE" => opt_obs,
+    "LIM_INF" => inf_limit,
+    "LIM_SUP" => sup_limit
+)
 
 # MSE_optimization
 MSE_optimization = DataFrame(
-    "Fecha"  => idx_dates,
-    "Índice" => optmse2023(GTDATA_EVAL, CPIIndex()),
-    "Combinación lineal óptima MSE" =>  vcat(fill(NaN, 11), optmse2023(GTDATA_EVAL))
+    "Fecha"  => idx_dates23,
+    "Índice" => optmse2024_b(GTDATA_EVAL, CPIIndex()),
+    "Variaciones Intermensuales MSE 2024" => optmse2024_b(GTDATA_EVAL, CPIVarInterm()),
+    "Combinación Lineal Óptima MSE 2024 B" =>  vcat(fill("", 11), optmse2024_b(GTDATA_EVAL))
 )
 
 # ABSME_optimization
 ABSME_optimization = DataFrame(
-    "Fecha"  => idx_dates,
-    "Índice" => optabsme2023(GTDATA_EVAL, CPIIndex()),
-    "Combinación lineal óptima ABSME" =>  vcat(fill(NaN, 11), optabsme2023(GTDATA_EVAL))
+    "Fecha"  => idx_dates23,
+    "Índice" => optabsme2024_b(GTDATA_EVAL, CPIIndex()),
+    "Variaciones Intermensuales" => optabsme2024_b(GTDATA_EVAL, CPIVarInterm()),
+    "Combinación Lineal Óptima ABSME 2024 B" =>  vcat(fill("", 11), optabsme2024_b(GTDATA_EVAL))
 )
 
 # CORR_optimization
 CORR_optimization = DataFrame(
-    "Fecha"  => idx_dates,
-    "Índice" => optcorr2023(GTDATA_EVAL, CPIIndex()),
-    "Combinación lineal óptima CORR" =>  vcat(fill(NaN, 11), optcorr2023(GTDATA_EVAL))
+    "Fecha"  => idx_dates23,
+    "Índice" => optcorr2024_b(GTDATA_EVAL, CPIIndex()),
+    "Variaciones Intermensuales" => optcorr2024_b(GTDATA_EVAL, CPIVarInterm()),
+    "Combinación Lineal Óptima CORR 2024 B" =>  vcat(fill("", 11), optcorr2024_b(GTDATA_EVAL))
 )
 
-CSV.write(joinpath(savedir,"MSE_optimization.csv"), MSE_optimization)
-CSV.write(joinpath(savedir,"ABSME_optimization.csv"), ABSME_optimization)
-CSV.write(joinpath(savedir,"CORR_optimization.csv"), CORR_optimization)
+save_csv(joinpath(savedir, "MSE_optimization_2024_B.csv"), string.(MSE_optimization))
+save_csv(joinpath(savedir, "ABSME_optimization_2024_B.csv"), string.(ABSME_optimization))
+save_csv(joinpath(savedir, "CORR_optimization_2024_B.csv"), string.(CORR_optimization))
+save_csv(joinpath(savedir, "MSE_confidence_intervals_2024_B.csv"), string.(MSE_confidence_intervals))
+=#

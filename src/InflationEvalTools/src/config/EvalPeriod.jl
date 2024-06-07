@@ -107,7 +107,7 @@ const GT_EVAL_B00 = EvalPeriod(Date(2001, 12), Date(2010, 12), "gt_b00")
     const GT_EVAL_B10 = EvalPeriod(Date(2011, 12), Date(2021, 12), "gt_b10")
 Período por defecto para evaluación en la década de los años 2010, incluyendo el año 2021.
 """
-const GT_EVAL_B10 = EvalPeriod(Date(2011, 12), Date(2022, 12), "gt_b10")
+const GT_EVAL_B10 = EvalPeriod(Date(2011, 12), Date(2023, 12), "gt_b10")
 
 """
     const GT_EVAL_T0010 = EvalPeriod(Date(2011, 1), Date(2011, 11), "gt_t0010")

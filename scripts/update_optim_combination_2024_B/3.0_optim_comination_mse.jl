@@ -55,7 +55,7 @@ tray_infl_pob = param(gtdata_eval)
 
 # FILTRAMOS EXCLUSION FIJA y MAI
 functions = df_results.inflfn
-components_mask = [1 for fn in functions]#[!(fn.f[1] isa InflationFixedExclusionCPI || fn.f[1] isa  InflationCoreMai) for fn in functions] 
+components_mask = [!(fn isa InflationFixedExclusionCPI || fn isa  InflationCoreMai) for fn in functions] 
 
 #####################################
 ### COMBINACION OPTIMA
@@ -65,29 +65,29 @@ combine_period =  CompletePeriod()
 periods_filter = eval_periods(gtdata_eval, CompletePeriod())
 
 # CALCULAMOS LOS PESOS OPTIMOS
-# a_optim = share_combination_weights(
-#     tray_infl[periods_filter, components_mask, :],
-#     tray_infl_pob[periods_filter],
-#     show_status=true
-# )
-
-a_optim = metric_combination_weights(
+a_optim = share_combination_weights(
     tray_infl[periods_filter, components_mask, :],
     tray_infl_pob[periods_filter],
-    metric=:mse,
-    w_start = [ 0.263894  0.103842  0.264964  0.146457  0.167876  0.0529677][:]
+    show_status=true
 )
 
+# a_optim = metric_combination_weights(
+#     tray_infl[periods_filter, components_mask, :],
+#     tray_infl_pob[periods_filter],
+#     metric=:mse,
+#     w_start = [ 0.263894  0.103842  0.264964  0.146457  0.167876  0.0529677][:]
+# )
 
-a_optim = [0.263375  0.116192  0.230044  0.155348  0.173277  0.0618645][:]
+
+a_optim = [0.482095  0.0553004  0.289238  1.81019f-7  0.173366][:]
 # Insertamos el 0 en el vector de pesos en el lugar correspondiente a exclusion fija
-#insert!(a_optim_00, findall(.!components_mask)[1],0)
+insert!(a_optim, findall(.!components_mask)[1],0)
 #insert!(a_optim_10, findall(.!components_mask_b10)[1],0)
 
 ###############################################################
 # tray_w = sum(a_optim' .*  tray_infl[periods_filter,:, :],dims=2)
 # metrics = eval_metrics(tray_w, tray_infl_pob[periods_filter])
-# metrics[:mse]
+# metrics[:mse] # 0.11948711481980118
 ###############################################################
 
 # CREAMOS SUBYACENTE OPTIMAS 
@@ -128,17 +128,17 @@ run_batch(gtdata_eval, config, combination_savepath; savetrajectories = true)
 using PrettyTables
 pretty_table(components(optmse2024_b))
 
-# ┌───────────────────────────────────────────────┬───────────┐
-# │                                       measure │   weights │
-# │                                        String │   Float64 │
-# ├───────────────────────────────────────────────┼───────────┤
-# │                  Percentil equiponderado 72.0 │  0.263375 │
-# │                      Percentil ponderado 70.0 │  0.116192 │
-# │     Media Truncada Equiponderada (62.0, 80.0) │  0.230044 │
-# │         Media Truncada Ponderada (23.0, 95.0) │  0.155348 │
-# │    Inflación de exclusión dinámica (0.3, 1.5) │  0.173277 │
-# │ Exclusión fija de gastos básicos IPC (13, 18) │ 0.0618645 │
-# └───────────────────────────────────────────────┴───────────┘
+# ┌───────────────────────────────────────────────┬────────────┐
+# │                                       measure │    weights │
+# │                                        String │    Float64 │
+# ├───────────────────────────────────────────────┼────────────┤
+# │                  Percentil equiponderado 72.0 │   0.482095 │
+# │                      Percentil ponderado 70.0 │  0.0553004 │
+# │     Media Truncada Equiponderada (62.0, 80.0) │   0.289238 │
+# │         Media Truncada Ponderada (23.0, 95.0) │ 1.81019e-7 │
+# │    Inflación de exclusión dinámica (0.3, 1.5) │   0.173366 │
+# │ Exclusión fija de gastos básicos IPC (13, 18) │        0.0 │
+# └───────────────────────────────────────────────┴────────────┘
 
 
 ######################################################################################
@@ -180,6 +180,6 @@ pretty_table(hcat(["upper","lower"],bounds),["","CompletePereiod()"])
 # ┌───────┬───────────────────┐
 # │       │ CompletePereiod() │
 # ├───────┼───────────────────┤
-# │ upper │          0.982193 │
-# │ lower │         -0.685509 │
+# │ upper │          0.997946 │
+# │ lower │         -0.640623 │
 # └───────┴───────────────────┘

@@ -24,10 +24,11 @@ optmai2023_absme = let
 end
 
 # Definir la función de exclusión fija
-optfx2023_absme = InflationFixedExclusionCPI(
+optfx2023_absme = InflationFixedExclusionCPI{3}((
     [35, 30, 190, 36, 37, 40, 31, 104, 162], 
-    [29, 31, 116, 39, 46, 40]
-)
+    [29, 31, 116, 39, 46, 40],
+    []
+))
 
 # Definir la combinación óptima ABSME 2023, con componentes optimizadas hasta 2019
 # y ponderadores ajustados con datos hasta 2021.

@@ -36,7 +36,7 @@ function cloud_plot(
         cmu_font ? font_family = "Computer Modern" : font_family = "sans-serif"
         
         #GRAFICAMOS
-        p=plot(
+        p=Plots.plot(
             X,
             TRAY_VEC;
             legend = true,

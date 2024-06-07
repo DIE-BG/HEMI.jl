@@ -9,7 +9,7 @@ ENSEMBLE1 = [
     InflationTrimmedMeanEq(63.0f0, 96.0f0),
     InflationTrimmedMeanWeighted(52.0f0, 97.0f0),
     InflationDynamicExclusion(0.8f0, 2.4f0),
-    InflationFixedExclusionCPI{2}(([32], [28, 42]))
+    InflationFixedExclusionCPI{3}(([32], [28, 42],[]))
 ]
 
 ENSEMBLE2 = [
@@ -18,7 +18,7 @@ ENSEMBLE2 = [
     InflationTrimmedMeanEq(77.0f0, 93.0f0),
     InflationTrimmedMeanWeighted(78.0f0, 97.0f0),
     InflationDynamicExclusion(0.5f0, 1.7f0),
-    InflationFixedExclusionCPI{2}(([32], [28, 42]))
+    InflationFixedExclusionCPI{3}(([32], [28, 42],[]))
 ]
 
 c1 = CombinationFunction(
@@ -31,7 +31,7 @@ c2= CombinationFunction(
     w_10
 )
 
-optcorr2024_no_trans = Splice([c1,c2]; dates=nothing, name="Subyacente Óptima CORR No Transable 2024", tag="SubOptCORR_2024_NoTrans")
+optcorr2024_no_trans = Splice([c1,c2,c2]; dates=nothing, name="Subyacente Óptima CORR No Transable 2024", tag="SubOptCORR_2024_NoTrans")
 
 
 # ┌──────────────────────────────────────────┬─────────────┬───────────────┬─────────────┬───────────────┬──────────┐

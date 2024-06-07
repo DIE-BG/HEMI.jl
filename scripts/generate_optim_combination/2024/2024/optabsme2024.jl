@@ -9,7 +9,7 @@ ENSEMBLE1 = [
     InflationTrimmedMeanEq(63.0f0, 80.0f0),
     InflationTrimmedMeanWeighted(63.0f0, 76.0f0), 
     InflationDynamicExclusion(1.2f0, 3.6f0), 
-    InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162], [29, 31, 116, 39, 46, 40])), 
+    InflationFixedExclusionCPI{3}(([35, 30, 190, 36, 37, 40, 31, 104, 162], [29, 31, 116, 39, 46, 40],[])), 
     InflationCoreMai(MaiFP([0.0, 0.01443501550099045, 0.4054140156662617, 0.40962401341704674, 0.9926516774108755, 1.0])),
     InflationCoreMai(MaiF([0.0, 0.35859786931406085, 0.6110773114491551, 0.9199836222660053, 1.0])),
     InflationCoreMai(MaiG([0.0, 0.16666666666666666, 0.3333333333333333, 0.5, 0.6666666666666666, 0.8333333333333334, 1.0]))
@@ -21,7 +21,7 @@ ENSEMBLE2 = [
     InflationTrimmedMeanEq(57.0f0, 83.0f0),
     InflationTrimmedMeanWeighted(67.0f0, 78.0f0),
     InflationDynamicExclusion(0.7f0, 3.0f0),
-    InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162], [29, 31, 116, 39, 46, 40])),
+    InflationFixedExclusionCPI{3}(([35, 30, 190, 36, 37, 40, 31, 104, 162], [29, 31, 116, 39, 46, 40],[])),
     InflationCoreMai(MaiFP([0.0, 0.379280146972861, 0.4638464024329255, 0.6627648560234276, 0.9992936015281153, 1.0])),
     InflationCoreMai(MaiF([0.0, 0.3157767072323891, 0.39533970890059356, 0.5325194928987427, 0.8020712456196974, 0.9683431434693862, 1.0])),
     InflationCoreMai(MaiG([0.0, 0.3827623832395122, 0.46567742156161374, 0.7436252875246401, 1.0]))
@@ -38,7 +38,7 @@ c2= CombinationFunction(
     w_10
 )
 
-optabsme2024 = Splice([c1,c2]; dates=nothing, name="Subyacente Óptima ABSME 2024", tag="SubOptABSME_2024")
+optabsme2024 = Splice([c1,c2,c2]; dates=nothing, name="Subyacente Óptima ABSME 2024", tag="SubOptABSME_2024")
 
 
 optabsme2024_ci = DataFrame(

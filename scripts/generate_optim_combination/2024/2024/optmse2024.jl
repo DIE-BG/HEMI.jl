@@ -9,7 +9,7 @@ ENSEMBLE1 = [
     InflationTrimmedMeanEq(52.0f0, 87.0f0), 
     InflationTrimmedMeanWeighted(34.0f0, 92.0f0), 
     InflationDynamicExclusion(0.3f0, 1.5f0),
-    InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184])), 
+    InflationFixedExclusionCPI{3}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184],[])), 
     InflationCoreMai(MaiFP([0.0, 0.006287041634702409, 0.4763169240418438, 0.8411085012613978, 1.0])),
     InflationCoreMai(MaiF([0.0, 0.30007700254937775, 0.3806979438933833, 0.6592801609973685, 0.8572920039185152, 1.0])), 
     InflationCoreMai(MaiG([0.0, 0.2658236991960707, 0.5601153961330196, 0.8278967604925729, 1.0])),
@@ -21,7 +21,7 @@ ENSEMBLE2 = [
     InflationTrimmedMeanEq(52.0f0, 86.0f0), 
     InflationTrimmedMeanWeighted(60.0f0, 83.0f0), 
     InflationDynamicExclusion(0.3f0, 1.6f0), 
-    InflationFixedExclusionCPI{2}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184])), 
+    InflationFixedExclusionCPI{3}(([35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], [29, 31, 116, 39, 46, 40, 30, 35, 186, 47, 197, 41, 22, 48, 185, 34, 184],[])), 
     InflationCoreMai(MaiFP([0.0, 0.5284098303517797, 0.5601390976116516, 0.8452089641556906, 0.9993493866637225, 1.0])), 
     InflationCoreMai(MaiF([0.0, 0.31862161044309834, 0.4455906849926661, 0.8172109274523476, 1.0])), 
     InflationCoreMai(MaiG([0.0, 0.42007669750748233, 0.5, 0.7913978925837042, 1.0]))
@@ -37,7 +37,7 @@ c2= CombinationFunction(
     w_10
 )
 
-optmse2024 = Splice([c1,c2]; dates=nothing, name="Subyacente Óptima MSE 2024", tag="SubOptMSE_2024")
+optmse2024 = Splice([c1,c2,c2]; dates=nothing, name="Subyacente Óptima MSE 2024", tag="SubOptMSE_2024")
 
 optmse2024_ci = DataFrame(
     period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 

@@ -24,10 +24,11 @@ optmai2022 = let
 end
 
 # Definir la función de exclusión fija
-optfx2018 = InflationFixedExclusionCPI(
+optfx2018 = InflationFixedExclusionCPI{3}((
     [35, 30, 190, 36, 37, 40, 31, 104, 162, 32, 33, 159, 193, 161], 
-    [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184]
-)
+    [29, 116, 31, 46, 39, 40, 186, 30, 35, 185, 197, 34, 48, 184],
+    []
+))
 
 # Definir la combinación óptima MSE 2022, con componentes optimizadas hasta 2018
 # y ponderadores ajustados con datos hasta 2020.

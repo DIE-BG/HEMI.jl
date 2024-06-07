@@ -9,7 +9,7 @@ ENSEMBLE1 = [
     InflationTrimmedMeanEq(21.0f0, 96.0f0),
     InflationTrimmedMeanWeighted(24.0f0, 97.0f0),
     InflationDynamicExclusion(0.8f0, 3.7f0),
-    InflationFixedExclusionCPI{2}(([32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7], [28, 42, 47, 27, 64, 26, 65, 6, 46, 32]))
+    InflationFixedExclusionCPI{3}(([32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7], [28, 42, 47, 27, 64, 26, 65, 6, 46, 32],[]))
 ]
 
 ENSEMBLE2 = [
@@ -18,7 +18,7 @@ ENSEMBLE2 = [
     InflationTrimmedMeanEq(43.0f0, 95.0f0),
     InflationTrimmedMeanWeighted(44.0f0, 97.0f0),
     InflationDynamicExclusion(0.3f0, 3.0f0),
-    InflationFixedExclusionCPI{2}(([32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7], [28, 42, 47, 27, 64, 26, 65, 6, 46, 32]))
+    InflationFixedExclusionCPI{3}(([32, 8, 35, 17, 16, 18, 33, 30, 29, 28, 41, 5, 7], [28, 42, 47, 27, 64, 26, 65, 6, 46, 32],[]))
 ]
 
 c1 = CombinationFunction(
@@ -31,7 +31,7 @@ c2= CombinationFunction(
     w_10
 )
 
-optmse2024_no_trans = Splice([c1,c2]; dates=nothing, name="Subyacente Óptima MSE No Transable 2024", tag="SubOptMSE_2024_NoTrans")
+optmse2024_no_trans = Splice([c1,c2,c2]; dates=nothing, name="Subyacente Óptima MSE No Transable 2024", tag="SubOptMSE_2024_NoTrans")
 
 optmse2024_no_trans_ci = DataFrame(
     period = ["Base 2000", "Transición 2000-2010", "Base 2010"], 
